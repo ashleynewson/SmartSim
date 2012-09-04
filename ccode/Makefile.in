@@ -91,9 +91,12 @@ am_smartsim_OBJECTS = smartsim-annotation.$(OBJEXT) \
 	smartsim-propertyitem-selection.$(OBJEXT) \
 	smartsim-propertyitem-string.$(OBJEXT)
 smartsim_OBJECTS = $(am_smartsim_OBJECTS)
-smartsim_LDADD = $(LDADD)
-smartsim_LINK = $(CCLD) $(smartsim_CFLAGS) $(CFLAGS) \
-	$(smartsim_LDFLAGS) $(LDFLAGS) -o $@
+am__DEPENDENCIES_1 =
+smartsim_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+smartsim_LINK = $(CCLD) $(smartsim_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -278,7 +281,7 @@ DEF_CFLAGS = \
 	-DPACKAGE_DATADIR=\"$(pkgdatadir)/\"    \
 	-DPACKAGE_VERSION=\"$(VERSION)\"        
 
-smartsim_LDFLAGS = $(GLIB_LIBS) $(GTK_LIBS) $(CAIRO_LIBS) $(LIBRSVG_LIBS) $(LIBXML_LIBS)
+smartsim_LDADD = $(GLIB_LIBS) $(GTK_LIBS) $(CAIRO_LIBS) $(LIBRSVG_LIBS) $(LIBXML_LIBS)
 smartsim_CFLAGS = $(GLIB_CFLAGS) $(GTK_CFLAGS) $(CAIRO_CFLAGS) $(LIBRSVG_CFLAGS) $(LIBXML_CFLAGS) $(DEF_CFLAGS)
 all: all-am
 
