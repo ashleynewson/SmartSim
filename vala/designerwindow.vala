@@ -372,7 +372,7 @@ public class DesignerWindow : Gtk.Window {
 	public DesignerWindow () {
 		populate ();
 		
-		register_window ();
+		register_designerwindow ();
 	}
 	
 	/**
@@ -380,13 +380,13 @@ public class DesignerWindow : Gtk.Window {
 	 */
 	public DesignerWindow.with_new_project () {
 		populate ();
-		register_window ();
+		register_designerwindow ();
 		new_project ();
 	}
 	
 	public DesignerWindow.with_project_from_file (string filename) {
 		populate ();
-		register_window ();
+		register_designerwindow ();
 		load_project (filename);
 	}
 	
@@ -396,7 +396,7 @@ public class DesignerWindow : Gtk.Window {
 	 */
 	public DesignerWindow.with_new_designer (Project project) {
 		populate ();
-		register_window ();
+		register_designerwindow ();
 		this.project = project;
 		hasProject = true;
 		update_title ();
@@ -406,7 +406,7 @@ public class DesignerWindow : Gtk.Window {
 	
 	public DesignerWindow.with_existing_component (Project project, CustomComponentDef customComponentDef) {
 		populate ();
-		register_window ();
+		register_designerwindow ();
 		this.project = project;
 		hasProject = true;
 		update_title ();
@@ -421,7 +421,7 @@ public class DesignerWindow : Gtk.Window {
 	 */
 	public DesignerWindow.with_new_component (Project project) {
 		populate ();
-		register_window ();
+		register_designerwindow ();
 		this.project = project;
 		hasProject = true;
 		update_title ();
@@ -436,7 +436,7 @@ public class DesignerWindow : Gtk.Window {
 	 */
 	public DesignerWindow.with_component_from_file (Project project, string filename) {
 		populate ();
-		register_window ();
+		register_designerwindow ();
 		this.project = project;
 		hasProject = true;
 		update_title ();
@@ -2356,7 +2356,7 @@ public class DesignerWindow : Gtk.Window {
 		}
 		
 		if (hasDesigner) {
-			unregister_window ();
+			unregister_designerwindow ();
 			hide ();
 			gridCache = null;
 		} else {
@@ -2404,7 +2404,7 @@ public class DesignerWindow : Gtk.Window {
 		
 		update_custom_menu ();
 		
-		unregister_window ();
+		unregister_designerwindow ();
 		
 		destroy ();
 	}
@@ -2502,14 +2502,14 @@ public class DesignerWindow : Gtk.Window {
 	/**
 	 * Registers the window.
 	 */
-	private void register_window () {
+	private void register_designerwindow () {
 		DesignerWindow.register (this);
 	}
 	
 	/**
 	 * Unregisters the window.
 	 */
-	private void unregister_window () {
+	private void unregister_designerwindow () {
 		DesignerWindow.unregister (this);
 	}
 	
