@@ -16,7 +16,7 @@
  * CompiledCircuit as a back-end.
  */
 public class SimulatorWindow : Gtk.Window {
-	private Gtk.VBox vBox;
+	private Gtk.Box vBox;
 	private Gtk.MenuBar menubar;
 		private Gtk.MenuItem menuSimulation;
 			private Gtk.Menu menuSimulationMenu;
@@ -57,12 +57,12 @@ public class SimulatorWindow : Gtk.Window {
 		private Gtk.ToggleToolButton toolMaxspeed;
 			private Gtk.Image toolMaxspeedImage;
 		private Gtk.ToolItem toolSpeed;
-			private Gtk.HBox toolSpeedBox;
+			private Gtk.Box toolSpeedBox;
 				private Gtk.Label toolSpeedLabel;
 				private Gtk.SpinButton toolSpeedSpin;
 		private Gtk.SeparatorToolItem toolSeparator5;
 		private Gtk.ToolItem toolStepsize;
-			private Gtk.HBox toolStepsizeBox;
+			private Gtk.Box toolStepsizeBox;
 				private Gtk.Label toolStepsizeLabel;
 				private Gtk.SpinButton toolStepsizeSpin;
 //		private Gtk.ToolButton toolTiming;
@@ -199,7 +199,7 @@ public class SimulatorWindow : Gtk.Window {
 			stderr.printf ("Could not load window image.\n");
 		}
 		
-		vBox = new Gtk.VBox (false, 2);
+		vBox = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
 		add (vBox);
 		
 		//Menus
@@ -351,7 +351,7 @@ public class SimulatorWindow : Gtk.Window {
 			
 			toolSpeed = new Gtk.ToolItem ();
 			toolbar.insert (toolSpeed, -1);
-				toolSpeedBox = new Gtk.HBox (false, 0);
+				toolSpeedBox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
 				toolSpeed.add (toolSpeedBox);
 					toolSpeedLabel = new Gtk.Label ("Speed (Hz):");
 					toolSpeedBox.pack_start (toolSpeedLabel, false, true, 0);
@@ -389,7 +389,7 @@ public class SimulatorWindow : Gtk.Window {
 			
 			toolStepsize = new Gtk.ToolItem ();
 			toolbar.insert (toolStepsize, -1);
-				toolStepsizeBox = new Gtk.HBox (false, 0);
+				toolStepsizeBox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
 				toolStepsize.add (toolStepsizeBox);
 					toolStepsizeLabel = new Gtk.Label ("Multi Step:");
 					toolStepsizeBox.pack_start (toolStepsizeLabel, false, true, 0);
@@ -405,7 +405,8 @@ public class SimulatorWindow : Gtk.Window {
 		
 		display = new Gtk.DrawingArea ();
 		controller.add (display);
-		display.expose_event.connect (() => {render(true); return false;});
+		// display.expose_event.connect (() => {render(true); return false;});
+		display.draw.connect ((context) => {render(true, false, context); return false;});
 		
 		show_all ();
 		
@@ -825,7 +826,8 @@ public class SimulatorWindow : Gtk.Window {
 	 * Renders the currently viewed part of the simulation. If
 	 * //fullRefresh// is false, then the circuit design is not redrawn.
 	 */
-	public bool render (bool fullRefresh = true, bool cancelIfRunning = false) {
+	public bool render (bool fullRefresh = true, bool cancelIfRunning = false, Cairo.Context? passedDisplayContext = null) {
+		Cairo.Context displayContext;
 		int width, height;
 		Gtk.Allocation areaAllocation;
 		
@@ -852,7 +854,12 @@ public class SimulatorWindow : Gtk.Window {
 		width = areaAllocation.width;
 		height = areaAllocation.height;
 		
-		Cairo.Context displayContext = Gdk.cairo_create (display.window);
+		if (passedDisplayContext == null) {
+			displayContext = Gdk.cairo_create (display.get_window());
+		} else {
+			displayContext = passedDisplayContext;
+		}
+		// Cairo.Context displayContext = Gdk.cairo_create (display.window);
 		
 		if (fullRefresh) {
 			Cairo.Surface offScreenSurface = new Cairo.Surface.similar (displayContext.get_target(), displayContext.get_target().get_content(), width, height);

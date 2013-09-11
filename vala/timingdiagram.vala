@@ -10,7 +10,7 @@
 
 
 public class TimingDiagram : Gtk.Window {
-	private Gtk.VBox vBox;
+	private Gtk.Box vBox;
 	private Gtk.MenuBar menubar;
 		private Gtk.MenuItem menuFile;
 			private Gtk.Menu menuFileMenu;
@@ -127,7 +127,7 @@ public class TimingDiagram : Gtk.Window {
 			stderr.printf ("Could not load window image.\n");
 		}
 		
-		vBox = new Gtk.VBox (false, 2);
+		vBox = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
 		add (vBox);
 		
 		//Menus
@@ -263,7 +263,8 @@ public class TimingDiagram : Gtk.Window {
 		
 		display = new Gtk.DrawingArea ();
 		controller.add (display);
-		display.expose_event.connect (() => {render(true); return false;});
+		// display.expose_event.connect (() => {render(true); return false;});
+		display.draw.connect ((context) => {render(true, context); return false;});
 		display.configure_event.connect (() => {diagramCache = null; render(true); return false;});
 		
 		show_all ();
@@ -642,7 +643,9 @@ public class TimingDiagram : Gtk.Window {
 		}
 	}
 	
-	public bool render (bool fullRefresh = true) {
+	public bool render (bool fullRefresh = true, Cairo.Context? passedDisplayContext = null) {
+		Cairo.Context displayContext;
+		
 		if (!visible) {
 			return false;
 		}
@@ -654,7 +657,12 @@ public class TimingDiagram : Gtk.Window {
 		width = areaAllocation.width;
 		height = areaAllocation.height;
 		
-		Cairo.Context displayContext = Gdk.cairo_create (display.window);
+		if (passedDisplayContext == null) {
+			displayContext = Gdk.cairo_create (display.get_window());
+		} else {
+			displayContext = passedDisplayContext;
+		}
+		// Cairo.Context displayContext = Gdk.cairo_create (display.window);
 		
 //		Cairo.Matrix oldMatrix;
 		

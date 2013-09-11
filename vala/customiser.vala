@@ -19,35 +19,35 @@
  */
 public class Customiser {
 	private Gtk.Dialog dialog;
-		private Gtk.HBox layoutHBox;
+		private Gtk.Box layoutHBox;
 			private Gtk.EventBox controller;
 				private Gtk.DrawingArea display;
-			private Gtk.VBox controlsVBox;
-				private Gtk.HBox nameHBox;
+			private Gtk.Box controlsVBox;
+				private Gtk.Box nameHBox;
 					private Gtk.Entry nameEntry;
 					private Gtk.Label nameLabel;
-				private Gtk.HBox descriptionHBox;
+				private Gtk.Box descriptionHBox;
 					private Gtk.Entry descriptionEntry;
 					private Gtk.Label descriptionLabel;
-				private Gtk.HBox labelHBox;
+				private Gtk.Box labelHBox;
 					private Gtk.Entry labelEntry;
 					private Gtk.Label labelLabel;
-				private Gtk.HBox pinHBox;
+				private Gtk.Box pinHBox;
 					private Gtk.SpinButton pinSpinButton;
 					private Gtk.Label pinLabel;
 				private Gtk.Label tagNameLabel;
 				private Gtk.CheckButton requiredCheck;
-				private Gtk.VBox labelTypeVBox;
+				private Gtk.Box labelTypeVBox;
 					private Gtk.Label labelTypeLabel;
 					private Gtk.RadioButton labelTypeNoneRadio;
 					private Gtk.RadioButton labelTypeTextRadio;
 					private Gtk.RadioButton labelTypeTextBarRadio;
 					private Gtk.RadioButton labelTypeClockRadio;
-				private Gtk.HBox pinLabelHBox;
+				private Gtk.Box pinLabelHBox;
 					private Gtk.Entry pinLabelEntry;
 					private Gtk.Label pinLabelLabel;
 				private Gtk.Label boundsLabel;
-				private Gtk.Table boundsTable;
+				private Gtk.Grid boundsGrid;
 					private Gtk.Label rightBoundLabel;
 					private Gtk.SpinButton rightBoundSpinButton;
 					private Gtk.Label downBoundLabel;
@@ -132,7 +132,7 @@ public class Customiser {
 		dialog.set_default_size (600, 200);
 		dialog.set_border_width (1);
 		
-		layoutHBox = new Gtk.HBox (false, 2);
+		layoutHBox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 2);
 		content.pack_start (layoutHBox, true, true, 1);
 		
 			controller = new Gtk.EventBox ();
@@ -142,13 +142,14 @@ public class Customiser {
 			
 				display = new Gtk.DrawingArea ();
 				controller.add (display);
-				display.expose_event.connect (() => {render_def (); return false;});
+				// display.expose_event.connect (() => {render_def (); return false;});
+				display.draw.connect ((context) => {render_def (context); return false;});
 				display.configure_event.connect (() => {gridCache = null; render_def (); return false;});
 			
-			controlsVBox = new Gtk.VBox (false, 2);
+			controlsVBox = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
 			layoutHBox.pack_start (controlsVBox, false, true, 1);
 			
-				nameHBox = new Gtk.HBox (false, 2);
+				nameHBox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 2);
 				controlsVBox.pack_start (nameHBox, false, true, 1);
 					nameLabel = new Gtk.Label ("Name:");
 					nameHBox.pack_start (nameLabel, false, true, 1);
@@ -157,7 +158,7 @@ public class Customiser {
 					nameEntry.text = customComponentDef.name;
 					nameHBox.pack_start (nameEntry, true, true, 1);
 				
-				descriptionHBox = new Gtk.HBox (false, 2);
+				descriptionHBox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 2);
 				controlsVBox.pack_start (descriptionHBox, false, true, 1);
 					descriptionLabel = new Gtk.Label ("Description:");
 					descriptionHBox.pack_start (descriptionLabel, false, true, 1);
@@ -166,7 +167,7 @@ public class Customiser {
 					descriptionEntry.text = customComponentDef.description;
 					descriptionHBox.pack_start (descriptionEntry, true, true, 1);
 				
-				labelHBox = new Gtk.HBox (false, 2);
+				labelHBox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 2);
 				controlsVBox.pack_start (labelHBox, false, true, 1);
 					labelLabel = new Gtk.Label ("Box Label:");
 					labelHBox.pack_start (labelLabel, false, true, 1);
@@ -185,7 +186,7 @@ public class Customiser {
 					selectedPin = customComponentDef.pinDefs[selectedPinID];
 					tag = customComponentDef.resolve_tag_id(selectedPinID);
 					
-					pinHBox = new Gtk.HBox (false, 2);
+					pinHBox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 2);
 					controlsVBox.pack_start (pinHBox, false, true, 1);
 						pinLabel = new Gtk.Label ("Pin Select:");
 						pinHBox.pack_start (pinLabel, false, true, 1);
@@ -211,7 +212,7 @@ public class Customiser {
 						});
 					controlsVBox.pack_start (requiredCheck, false, true, 1);
 					
-					labelTypeVBox = new Gtk.VBox (false, 0);
+					labelTypeVBox = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
 					controlsVBox.pack_start (labelTypeVBox, false, true, 1);
 						labelTypeLabel = new Gtk.Label ("Pin labels can be text or a symbol:");
 						labelTypeVBox.pack_start (labelTypeLabel, false, true, 1);
@@ -232,7 +233,7 @@ public class Customiser {
 						labelTypeClockRadio.toggled.connect (update_label_type);
 						labelTypeVBox.pack_start (labelTypeClockRadio, false, true, 1);
 					
-					pinLabelHBox = new Gtk.HBox (false, 2);
+					pinLabelHBox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 2);
 					controlsVBox.pack_start (pinLabelHBox, false, true, 1);
 						pinLabelLabel = new Gtk.Label ("Pin Label:");
 						pinLabelHBox.pack_start (pinLabelLabel, false, true, 1);
@@ -252,40 +253,41 @@ public class Customiser {
 				boundsLabel = new Gtk.Label ("Bounds define the visual size:");
 				controlsVBox.pack_start (boundsLabel, false, true, 1);
 				
-				boundsTable = new Gtk.Table (2, 4, false);
-				controlsVBox.pack_start (boundsTable, false, true, 1);
+				// boundsTable = new Gtk.Table (2, 4, false);
+				boundsGrid = new Gtk.Grid ();
+				controlsVBox.pack_start (boundsGrid, false, true, 1);
 					
 					rightBoundLabel = new Gtk.Label ("Right:");
-					boundsTable.attach_defaults (rightBoundLabel, 0, 1, 0, 1);
+					boundsGrid.attach (rightBoundLabel, 0, 0, 1, 1);
 					
 					rightBoundSpinButton = new Gtk.SpinButton.with_range (0, (double)int.MAX, 5);
 					rightBoundSpinButton.value = (double)customComponentDef.rightBound;
 					rightBoundSpinButton.value_changed.connect (update_bounds);
-					boundsTable.attach_defaults (rightBoundSpinButton, 1, 2, 0, 1);
+					boundsGrid.attach (rightBoundSpinButton, 1, 0, 1, 1);
 					
 					downBoundLabel = new Gtk.Label ("Down:");
-					boundsTable.attach_defaults (downBoundLabel, 0, 1, 1, 2);
+					boundsGrid.attach (downBoundLabel, 0, 1, 1, 1);
 					
 					downBoundSpinButton = new Gtk.SpinButton.with_range (0, (double)int.MAX, 5);
 					downBoundSpinButton.value = (double)customComponentDef.downBound;
 					downBoundSpinButton.value_changed.connect (update_bounds);
-					boundsTable.attach_defaults (downBoundSpinButton, 1, 2, 1, 2);
+					boundsGrid.attach (downBoundSpinButton, 1, 1, 1, 1);
 					
 					leftBoundLabel = new Gtk.Label ("Left:");
-					boundsTable.attach_defaults (leftBoundLabel, 0, 1, 2, 3);
+					boundsGrid.attach (leftBoundLabel, 0, 2, 1, 1);
 					
 					leftBoundSpinButton = new Gtk.SpinButton.with_range ((double)int.MIN, 0, 5);
 					leftBoundSpinButton.value = (double)customComponentDef.leftBound;
 					leftBoundSpinButton.value_changed.connect (update_bounds);
-					boundsTable.attach_defaults (leftBoundSpinButton, 1, 2, 2, 3);
+					boundsGrid.attach (leftBoundSpinButton, 1, 2, 1, 1);
 					
 					upBoundLabel = new Gtk.Label ("Up:");
-					boundsTable.attach_defaults (upBoundLabel, 0, 1, 3, 4);
+					boundsGrid.attach (upBoundLabel, 0, 3, 1, 1);
 					
 					upBoundSpinButton = new Gtk.SpinButton.with_range ((double)int.MIN, 0, 5);
 					upBoundSpinButton.value = (double)customComponentDef.upBound;
 					upBoundSpinButton.value_changed.connect (update_bounds);
-					boundsTable.attach_defaults (upBoundSpinButton, 1, 2, 3, 4);
+					boundsGrid.attach (upBoundSpinButton, 1, 3, 1, 1);
 		
 				colourButton = new Gtk.Button.with_label ("Background Colour");
 				colourButton.clicked.connect (() => {set_colour();});
@@ -411,33 +413,38 @@ public class Customiser {
 	}
 	
 	public void set_colour () {
-		Gtk.ColorSelectionDialog colorDialog = new Gtk.ColorSelectionDialog ("Component Background");
-		Gtk.ColorSelection colorSelection = (Gtk.ColorSelection)colorDialog.get_color_selection ();
-		Gdk.Color color = Gdk.Color ();
+		Gtk.ColorChooserDialog colorDialog = new Gtk.ColorChooserDialog ("Component Background", dialog);
+		// Gtk.ColorSelection colorSelection = (Gtk.ColorSelection)colorDialog.get_color_selection ();
+		Gdk.RGBA color = Gdk.RGBA ();
 		
-		colorSelection.has_opacity_control = true;
+		colorDialog.use_alpha = true;
 		
-		color.red = (uint16)(customComponentDef.backgroundRed * 257);
-		color.green = (uint16)(customComponentDef.backgroundGreen * 257);
-		color.blue = (uint16)(customComponentDef.backgroundBlue * 257);
+		// color.red = (uint16)(customComponentDef.backgroundRed * 257);
+		// color.green = (uint16)(customComponentDef.backgroundGreen * 257);
+		// color.blue = (uint16)(customComponentDef.backgroundBlue * 257);
+		color.red   = (double)customComponentDef.backgroundRed   / 255.0;
+		color.green = (double)customComponentDef.backgroundGreen / 255.0;
+		color.blue  = (double)customComponentDef.backgroundBlue  / 255.0;
 		
 		if (customComponentDef.backgroundAlpha == 0) {
-			colorSelection.set_previous_alpha (65535);
-			colorSelection.set_current_alpha (65535);
+			color.alpha = 1.0;
+			// colorSelection.set_previous_alpha (65535);
+			// colorSelection.set_current_alpha (65535);
 		} else {
-			colorSelection.set_previous_alpha ((uint16)(customComponentDef.backgroundAlpha * 257));
-			colorSelection.set_current_alpha ((uint16)(customComponentDef.backgroundAlpha * 257));
+			color.alpha = (double)customComponentDef.backgroundAlpha / 255.0;
+			// colorSelection.set_previous_alpha ((uint16)(customComponentDef.backgroundAlpha * 257));
+			// colorSelection.set_current_alpha ((uint16)(customComponentDef.backgroundAlpha * 257));
 		}
-		colorSelection.set_previous_color (color);
-		colorSelection.set_current_color (color);
+		// colorSelection.set_previous_rgba (color);
+		colorDialog.set_rgba (color);
 		
 		if (colorDialog.run() == Gtk.ResponseType.OK) {
-			colorSelection.get_current_color (out color);
+			color = colorDialog.get_rgba ();
 			
-			customComponentDef.backgroundAlpha = (int)colorSelection.get_current_alpha() / 257;
-			customComponentDef.backgroundRed = (int)color.red / 257;
-			customComponentDef.backgroundGreen = (int)color.green / 257;
-			customComponentDef.backgroundBlue = (int)color.blue / 257;
+			customComponentDef.backgroundRed = (int)(color.red * 255.0);
+			customComponentDef.backgroundGreen = (int)(color.green * 255.0);
+			customComponentDef.backgroundBlue = (int)(color.blue * 255.0);
+			customComponentDef.backgroundAlpha = (int)(color.alpha * 255.0);
 			
 			customComponentDef.backgroundAlphaF = (double)customComponentDef.backgroundAlpha / 255.0;
 			customComponentDef.backgroundRedF = (double)customComponentDef.backgroundRed / 255.0;
@@ -541,7 +548,8 @@ public class Customiser {
 	/**
 	 * Render the current box design.
 	 */
-	public bool render_def () {
+	public bool render_def (Cairo.Context? passedDisplayContext = null) {
+		Cairo.Context displayContext;
 		int width, height;
 		Gtk.Allocation areaAllocation;
 		
@@ -549,7 +557,12 @@ public class Customiser {
 		width = areaAllocation.width;
 		height = areaAllocation.height;
 		
-		Cairo.Context displayContext = Gdk.cairo_create (display.window);
+		if (passedDisplayContext == null) {
+			displayContext = Gdk.cairo_create (display.get_window());
+		} else {
+			displayContext = passedDisplayContext;
+		}
+		// Cairo.Context displayContext = Gdk.cairo_create (display.window);
 		Cairo.Surface offScreenSurface = new Cairo.Surface.similar (displayContext.get_target(), Cairo.Content.COLOR, width, height);
 		Cairo.Context context = new Cairo.Context (offScreenSurface);
 		displayContext.set_source_surface (offScreenSurface, 0, 0);

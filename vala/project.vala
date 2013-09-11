@@ -438,7 +438,7 @@ public class Project {
 		if (compiledCircuit.errorOccurred) {
 			stdout.printf ("Circuit failed validation check.\n");
 			
-			BasicDialog.error (null, "Circuit failed validation:\n" + compiledCircuit.errorMessage + "\nNote: Unused components can still cause errors.");
+			BasicDialog.warning (null, "Circuit failed validation:\n" + compiledCircuit.errorMessage + "\nNote: Unused components can still cause errors.");
 			
 			update_error_modes (true);
 		}
@@ -446,13 +446,13 @@ public class Project {
 		if (compiledCircuit.warningOccurred) {
 			stdout.printf ("Circuit failed validation check.\n");
 			
-			BasicDialog.error (null, "Warning:\n" + compiledCircuit.warningMessage + "\nNote: Unused components can still cause errors.");
+			BasicDialog.warning (null, "Warning:\n" + compiledCircuit.warningMessage + "\nNote: Unused components can still cause errors.");
 			
 			update_error_modes (false);
 		}
 		
 		if (!compiledCircuit.errorOccurred && !compiledCircuit.warningOccurred) {
-			BasicDialog.error (null, "Circuit has passed validation without any errors or warnings.");
+			BasicDialog.information (null, "Circuit has passed validation without any errors or warnings.");
 			
 			update_error_modes (false);
 		}

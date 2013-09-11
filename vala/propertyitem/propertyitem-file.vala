@@ -94,7 +94,7 @@ public class PropertyItemFile : PropertyItem {
 	}*/
 	
 	public override Gtk.Widget create_widget () {
-		Gtk.HBox hBox = new Gtk.HBox (false, 1);
+		Gtk.Box hBox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 1);
 		
 		Gtk.Entry stringEntry = new Gtk.Entry ();
 		stringEntry.text = filename;

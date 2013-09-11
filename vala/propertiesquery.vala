@@ -5,7 +5,7 @@
  *   
  *   Filename: propertiesquery.vala
  *   
- *   Copyright Ashley Newson 2012
+ *   Copyright Ashley Newson 2013
  */
 
 
@@ -23,7 +23,7 @@ public class PropertiesQuery {
 	private Gtk.Dialog dialog;
 		private Gtk.Label titleNameLabel;
 		private Gtk.Label titleDescriptionLabel;
-		private Gtk.VBox[] propertyVBoxes;
+		private Gtk.Box[] propertyVBoxes;
 			private Gtk.Label[] nameLabels;
 			private Gtk.Label[] descriptionLabels;
 			
@@ -54,7 +54,7 @@ public class PropertiesQuery {
 			string name = propertyItem.name;
 			string description = propertyItem.description;
 			
-			Gtk.VBox propertyVBox = new Gtk.VBox (false, 1);
+			Gtk.Box propertyVBox = new Gtk.Box (Gtk.Orientation.VERTICAL, 1);
 			propertyVBoxes += propertyVBox;
 			
 			Gtk.Label nameLabel = new Gtk.Label (name);

@@ -91,7 +91,7 @@ public class DesignerWindow : Gtk.Window {
 	
 	
 	
-	private Gtk.Box vBox;
+	private Gtk.VBox vBox;
 	private Gtk.MenuBar menubar;
 		private Gtk.MenuItem menuFile;
 			private Gtk.Menu menuFileMenu;
@@ -462,7 +462,7 @@ public class DesignerWindow : Gtk.Window {
 			stderr.printf ("Could not load window image.\n");
 		}
 		
-		vBox = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
+		vBox = new Gtk.VBox (false, 2);
 		add (vBox);
 		
 		//Menus
@@ -906,8 +906,9 @@ public class DesignerWindow : Gtk.Window {
 		
 		display = new Gtk.DrawingArea ();
 		controller.add (display);
+		display.draw.connect (render_overlay_do);
+		// Expose not yet handled!
 		// display.expose_event.connect (() => {render_design(); return false;});
-		display.draw.connect ((context) => {render_design(context); return false;});
 		display.configure_event.connect (() => {gridCache = null; render_design(); return false;});
 		
 		printSettings = new Gtk.PrintSettings ();
@@ -1794,37 +1795,16 @@ public class DesignerWindow : Gtk.Window {
 			stderr.printf ("Could not load logo image.\n");
 		}
 		
-		Gtk.AboutDialog aboutDialog = new Gtk.AboutDialog ();
-		aboutDialog.logo = logo;
-		aboutDialog.program_name = Core.programName;
-		aboutDialog.title = "About " + Core.programName;
-		aboutDialog.version = Core.versionString;
-		aboutDialog.comments = "A logic circuit designer and simulator.";
-		aboutDialog.authors = Core.authorsStrings;
-		aboutDialog.copyright = Core.copyrightString;
-		aboutDialog.license_type = Core.licenseType;
-		aboutDialog.license = Core.licenseName + "\n\n" + Core.shortLicenseText;
-		aboutDialog.website = Core.websiteString;
-		aboutDialog.website_label = "SmartSim Website - Software and Documentation";
-		// aboutDialog.set_default_size (700, 500);
-		aboutDialog.wrap_license = false;
-		aboutDialog.run ();
-		aboutDialog.destroy ();
-		
-		// Gtk.show_about_dialog (
-		// 		this,
-		// 		"logo", logo,
-		// 		"program-name", Core.programName,
-		// 		"title", "About " + Core.programName,
-		// 		"version", Core.versionString,
-		// 		"comments", "A logic circuit designer and simulator.",
-		// 		"authors", Core.authorsStrings,
-		// 		"copyright", Core.copyrightString,
-		// 		"license-type", Gtk.License.CUSTOM,
-		// 		"license", Core.licenseName + "\n\n" + Core.licenseText + "\n\n" + Core.fullLicenseText,
-		// 		"website", Core.websiteString,
-		// 		"website-label", "SmartSim Website"
-		// 	);
+		Gtk.show_about_dialog (
+				this,
+				"logo", logo,
+				"program-name", Core.programName,
+				"title", "About" + Core.programName,
+				"version", Core.versionString,
+				"comments", "A logic circuit designer and simulator.",
+				"copyright", Core.copyrightString,
+				"license", Core.licenseName + "\n\n" + Core.licenseText
+			);
 	}
 	
 	/**
@@ -1882,6 +1862,21 @@ public class DesignerWindow : Gtk.Window {
 	}
 	
 	public bool render_overlay () {
+		display.draw ();
+		return false;
+	}
+	
+	public bool render_design () {
+		staticCache = null;
+		display.draw ();
+		return false;
+	}
+	
+	/**
+	 * Draw any overlays (currently only shadowed component).
+	 * Actually, this may run a full render if necessary.
+	 */
+	public bool render_overlay_do (Cairo.Context displayContext) {
 		if (display == null || !hasDesigner) {
 			return false;
 		}
@@ -1894,10 +1889,10 @@ public class DesignerWindow : Gtk.Window {
 		height = areaAllocation.height;
 		
 		if (staticCache == null) {
-			render_design ();
+			render_design_do (displayContext);
 		}
 		
-		Cairo.Context displayContext = Gdk.cairo_create (display.get_window());
+		// Cairo.Context displayContext = Gdk.cairo_create (display.window);
 		Cairo.Surface offScreenSurface = new Cairo.Surface.similar (displayContext.get_target(), Cairo.Content.COLOR, width, height);
 		Cairo.Context context = new Cairo.Context (offScreenSurface);
 		displayContext.set_source_surface (offScreenSurface, 0, 0);
@@ -1922,22 +1917,17 @@ public class DesignerWindow : Gtk.Window {
 	}
 	
 	/**
-	 * Refreshes the work area display.
+	 * Refreshes the work area display entirely.
 	 */
-	public bool render_design (Cairo.Context? passedDisplayContext = null) {
+	public bool render_design_do (Cairo.Context displayContext) {
 		int width, height;
 		Gtk.Allocation areaAllocation;
-		Cairo.Context displayContext;
 		
 		display.get_allocation (out areaAllocation);
 		width = areaAllocation.width;
 		height = areaAllocation.height;
 		
-		if (passedDisplayContext == null) {
-			displayContext = Gdk.cairo_create (display.get_window());
-		} else {
-			displayContext = passedDisplayContext;
-		}
+		// Cairo.Context displayContext = Gdk.cairo_create (display.window);
 		Cairo.Surface offScreenSurface = new Cairo.Surface.similar (displayContext.get_target(), Cairo.Content.COLOR, width, height);
 		Cairo.Context context = new Cairo.Context (offScreenSurface);
 		displayContext.set_source_surface (offScreenSurface, 0, 0);

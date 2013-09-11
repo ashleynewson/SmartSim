@@ -3,9 +3,9 @@
  *   
  *   Expansion Version
  *   
- *   Filename: logic.vala
+ *   Filename: main.vala
  *   
- *   Copyright Ashley Newson 2012
+ *   Copyright Ashley Newson 2013
  */
 
 
@@ -46,19 +46,24 @@ public class Core {
 	public static ComponentDef[] standardComponentDefs;
 	
 	public static const string programName = "SmartSim";
+	public static const string[] authorsStrings = {"Ashley Newson <ashleynewson@smartsim.org.uk>"};
+	public static const string websiteString = "http://www.smartsim.org.uk";
 	public static const string shortVersionString = Config.version;
 	public static const string versionString = Config.version + "";
-	public static const string copyrightString = "Ashley Newson 2012";
-	public static const string licenseName = "Public Package - Freely Distributable";
-	public static const string licenseText = 
+	public static const string copyrightString = "Ashley Newson 2013";
+	public static const Gtk.License licenseType = Gtk.License.GPL_3_0;
+	public static const string licenseName = "Public Package - GNU GPL 3.0 - Freely Distributable";
+	public static const string shortLicenseText = 
 """This software, SmartSim, and its corresponding resource files are the
 intellectual property of Ashley Newson. This package is released under
-the GNU General Public License 3.0 - See the "COPYING" file provided.
+the GNU General Public License 3.0 - The full text is included below.
+A provided "COPYING" file should also provide the full license text.
 
 This package may be provided with the Gtk and Rsvg Libraries. The
 licenses of these libraries are included in the "GTK_COPYING" and
 "RSVG_COPYING" files.
 """;
+	public static string fullLicenseText = "";
 	
 	
 	/**
@@ -72,6 +77,8 @@ licenses of these libraries are included in the "GTK_COPYING" and
 		stdout.printf ("License: %s\n", Core.licenseName);
 		
 		stdout.printf ("Loading System...\n");
+		
+		Core.fullLicenseText = Core.load_string_from_file ("COPYING");
 		
 		Gtk.init (ref args);
 		
@@ -125,6 +132,31 @@ licenses of these libraries are included in the "GTK_COPYING" and
 			Process.exit (1);
 		}
 		Core.standardComponentDefs = standardComponentDefs;
+	}
+	
+	private static string load_string_from_file (string filename) {
+		FileStream file = FileStream.open (Config.resourcesDir + filename, "r");
+		uint8[] data;
+		long length;
+		
+		if (file == null) {
+			stderr.printf ("File could not be opened.\n");
+			return "Error opening file! Please see the \"" + filename + "\" file.\n";
+		}
+		
+		file.seek (0, FileSeek.END);
+		length = file.tell ();
+		file.seek (0, FileSeek.SET);
+		
+		data = new uint8[length+1];
+		
+		if (length == file.read(data)) {
+			data[length] = 0;
+			return (string)data;
+		} else {
+			stderr.printf ("File could not be read.\n");
+			return "Error reading file! Please see the \"" + filename + "\" file.\n";
+		}
 	}
 	
 	/**

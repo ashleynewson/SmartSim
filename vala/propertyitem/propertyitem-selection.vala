@@ -105,7 +105,7 @@ public class PropertyItemSelection : PropertyItem {
 	
 	public override Gtk.Widget create_widget () {
 		int numberOfOptions = options.length;
-		Gtk.VBox vBox = new Gtk.VBox (false, 1);
+		Gtk.Box vBox = new Gtk.Box (Gtk.Orientation.VERTICAL, 1);
 		Gtk.RadioButton[] radioButtons = {};
 		
 		for (int i = 0; i < numberOfOptions; i++) {
