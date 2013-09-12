@@ -46,7 +46,7 @@ public class Core {
 	public static ComponentDef[] standardComponentDefs;
 	
 	public static const string programName = "SmartSim";
-	public static const string[] authorsStrings = {"Ashley Newson <ashleynewson@smartsim.org.uk>"};
+	public static const string[] authorsStrings = {"Ashley Newson <ashleynewson@smartsim.org.uk>", null};
 	public static const string websiteString = "http://www.smartsim.org.uk";
 	public static const string shortVersionString = Config.version;
 	public static const string versionString = Config.version + "";
@@ -56,12 +56,26 @@ public class Core {
 	public static const string shortLicenseText = 
 """This software, SmartSim, and its corresponding resource files are the
 intellectual property of Ashley Newson. This package is released under
-the GNU General Public License 3.0 - The full text is included below.
-A provided "COPYING" file should also provide the full license text.
+the GNU General Public License 3.0. A provided "COPYING" file provides
+the full license text.
 
 This package may be provided with the Gtk and Rsvg Libraries. The
 licenses of these libraries are included in the "GTK_COPYING" and
 "RSVG_COPYING" files.
+
+SmartSim is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public Licence as published by the
+Free Software Foundation; either version 3 of the Licence, or (at your
+option) any later version.
+
+SmartSim is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public Licence
+for more details.
+
+You should have received a copy of the GNU General Public Licence along
+with SmartSim. If not, see:
+  http://www.gnu.org/licenses/
 """;
 	public static string fullLicenseText = "";
 	
