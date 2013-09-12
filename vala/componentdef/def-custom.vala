@@ -5,7 +5,7 @@
  *   
  *   Filename: componentdef/custom.vala
  *   
- *   Copyright Ashley Newson 2012
+ *   Copyright Ashley Newson 2013
  */
 
 
@@ -314,7 +314,7 @@ public class CustomComponentDef : ComponentDef {
 	 */
 	public CustomComponentDef[]? validate_dependencies (CustomComponentDef[] componentChain) {
 		CustomComponentDef[] newComponentChain
-			= new CustomComponentDef[componentChain.length + 1];
+		= new CustomComponentDef[componentChain.length + 1];
 		
 		for (int i = 0; i < componentChain.length; i++) {
 			newComponentChain[i] = componentChain[i];
@@ -387,7 +387,7 @@ public class CustomComponentDef : ComponentDef {
 			for (int i2 = i1+1; i2 < componentInsts.length; i2++) {
 				ComponentInst componentInst2 = componentInsts[i2];
 				if (componentInst1.xPosition == componentInst2.xPosition
-						&& componentInst1.yPosition == componentInst2.yPosition) {
+					&& componentInst1.yPosition == componentInst2.yPosition) {
 					stdout.printf ("Found overlaping components!\n");
 					componentInst1.errorMark = true;
 					componentInst2.errorMark = true;
@@ -446,43 +446,43 @@ public class CustomComponentDef : ComponentDef {
 			}
 			
 			switch (xmlnode->name) {
-				case "wire":
-					{
-						WireInst newWireInst = new WireInst.load (xmlnode);
+			case "wire":
+			{
+				WireInst newWireInst = new WireInst.load (xmlnode);
 						
-						newWireInsts += newWireInst;
-					}
-					break;
-				case "component":
-					{
-						ComponentInst newComponentInst;
+				newWireInsts += newWireInst;
+			}
+			break;
+			case "component":
+			{
+				ComponentInst newComponentInst;
 						
-						try {
-							newComponentInst = new ComponentInst.load (xmlnode, project, newWireInsts);
-							newComponentInsts += newComponentInst;
-						} catch (ComponentInstLoadError.INVALID error) {
-							stderr.printf ("Error adding new component: %s\n", error.message);
-							throw new CustomComponentDefLoadError.INVALID (error.message);
-						} catch (ComponentInstLoadError.MISSING_DEF error) {
-							stderr.printf ("Error adding new component: %s\n", error.message);
-							throw new CustomComponentDefLoadError.MISSING_DEPENDENCY (error.message);
-						}
+				try {
+					newComponentInst = new ComponentInst.load (xmlnode, project, newWireInsts);
+					newComponentInsts += newComponentInst;
+				} catch (ComponentInstLoadError.INVALID error) {
+					stderr.printf ("Error adding new component: %s\n", error.message);
+					throw new CustomComponentDefLoadError.INVALID (error.message);
+				} catch (ComponentInstLoadError.MISSING_DEF error) {
+					stderr.printf ("Error adding new component: %s\n", error.message);
+					throw new CustomComponentDefLoadError.MISSING_DEPENDENCY (error.message);
+				}
 						
-					}
-					break;
-				case "annotation":
-					{
-						Annotation newAnnotation;
+			}
+			break;
+			case "annotation":
+			{
+				Annotation newAnnotation;
 						
-						try {
-							newAnnotation = new Annotation.load (xmlnode);
-							newAnnotations += newAnnotation;
-						} catch (AnnotationLoadError.EMPTY error) {
-							stderr.printf ("Error adding new annotation: %s\n", error.message);
-						}
+				try {
+					newAnnotation = new Annotation.load (xmlnode);
+					newAnnotations += newAnnotation;
+				} catch (AnnotationLoadError.EMPTY error) {
+					stderr.printf ("Error adding new annotation: %s\n", error.message);
+				}
 						
-					}
-					break;
+			}
+			break;
 			}
 		}
 		

@@ -5,7 +5,7 @@
  *   
  *   Filename: componentdef.vala
  *   
- *   Copyright Ashley Newson 2012
+ *   Copyright Ashley Newson 2013
  */
 
 
@@ -502,9 +502,11 @@ public abstract class ComponentDef {
 	 * cannot process. This saves properties to a file using libxml.
 	 */
 	public virtual void save_properties (Xml.TextWriter xmlWriter, PropertySet configurationProperty) {
+		//Do nothing.
 	}
 	
 	public virtual void configure_inst (ComponentInst componentInst, bool firstLoad = false) {
+		//Do nothing.
 	}
 	
 	/**
