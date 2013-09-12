@@ -84,7 +84,7 @@ public abstract class ComponentDef {
 	/**
 	 * Loads a component definition from a file.
 	 */
-	public ComponentDef.from_file (string infoFilename) throws ComponentDefLoadError, CustomComponentDefLoadError {
+	public ComponentDef.from_file (string infoFilename) throws ComponentDefLoadError, CustomComponentDefLoadError, PluginComponentDefLoadError {
 		if (infoFilename == "") {
 			stdout.printf ("Defining component later\n");
 			return;
@@ -117,6 +117,12 @@ public abstract class ComponentDef {
 				stdout.printf ("Error loading info xml file \"%s\".\n", infoFilename);
 				stdout.printf ("Wanted \"custom_component\" info, but got \"%s\"\n", xmlroot->name);
 				throw new CustomComponentDefLoadError.NOT_CUSTOM ("Wanted \"custom_component\" info, but got \"" + xmlroot->name + "\"");
+			}
+		} else if (this is PluginComponentDef) {
+			if (xmlroot->name != "plugin_component") {
+				stdout.printf ("Error loading info xml file \"%s\".\n", infoFilename);
+				stdout.printf ("Wanted \"plugin_component\" info, but got \"%s\"\n", xmlroot->name);
+				throw new PluginComponentDefLoadError.NOT_PLUGIN ("Wanted \"plugin_component\" info, but got \"" + xmlroot->name + "\"");
 			}
 		} else {
 			if (xmlroot->name != "component") {
@@ -469,6 +475,13 @@ public abstract class ComponentDef {
 	 * Some ComponentDefs do extra rendering.
 	 */
 	public virtual void extra_render (Cairo.Context context, Direction direction, bool flipped, ComponentInst? componentInst) {
+		//Do nothing.
+	}
+	
+	/**
+	 * Some ComponentDefs do extra validation.
+	 */
+	public virtual void extra_validate (CustomComponentDef[] componentChain, ComponentInst? componentInst) {
 		//Do nothing.
 	}
 	

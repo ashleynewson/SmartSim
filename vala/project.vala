@@ -90,7 +90,7 @@ public class Project {
 				project.myID = newID;
 				newID++;
 			} else {
-				project.destroy_all_windows (); //Hidden window destoryer
+				project.destroy_all_windows (); //Hidden window destroyer
 				
 				stdout.printf ("Unregistered project %i (no windows)\n", project.myID);
 			}
@@ -173,53 +173,53 @@ public class Project {
 			}
 			
 			switch (xmlnode->name) {
-				case "name":
-					{
-						for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
-							if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
-								continue;
-							}
-							name = xmldata->content;
-						}
+			case "name":
+			{
+				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
+					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
+						continue;
 					}
-					break;
-				case "description":
-					{
-						for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
-							if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
-								continue;
-							}
-							description = xmldata->content;
-						}
+					name = xmldata->content;
+				}
+			}
+			break;
+			case "description":
+			{
+				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
+					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
+						continue;
 					}
-					break;
-				case "component":
-					{
-						for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
-							if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
-								continue;
-							}
+					description = xmldata->content;
+				}
+			}
+			break;
+			case "component":
+			{
+				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
+					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
+						continue;
+					}
 							
-							string componentFilename = xmldata->content;
+					string componentFilename = xmldata->content;
 							
-							stdout.printf ("Absolute path of file \"%s\" is \"%s\"\n", componentFilename, absolute_filename(componentFilename));
+					stdout.printf ("Absolute path of file \"%s\" is \"%s\"\n", componentFilename, absolute_filename(componentFilename));
 							
-							CustomComponentDef component = load_component(absolute_filename(componentFilename));
+					CustomComponentDef component = load_component(absolute_filename(componentFilename));
 							
-							if (component != null) {
-								for (Xml.Attr* xmlattr = xmlnode->properties; xmlattr != null; xmlattr = xmlattr->next) {
-									switch (xmlattr->name) {
-										case "root":
-											if (bool.parse(xmlattr->children->content)) {
-												set_root_component (component);
-											}
-											break;
-									}
+					if (component != null) {
+						for (Xml.Attr* xmlattr = xmlnode->properties; xmlattr != null; xmlattr = xmlattr->next) {
+							switch (xmlattr->name) {
+							case "root":
+								if (bool.parse(xmlattr->children->content)) {
+									set_root_component (component);
 								}
+								break;
 							}
 						}
 					}
-					break;
+				}
+			}
+			break;
 			}
 		}
 	}
