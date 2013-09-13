@@ -50,11 +50,43 @@ SOURCE_FILES= \
 	imageexporter.vala \
 	basicdialog.vala \
 	componentdef.vala \
-	componentdef/*.vala \
+	componentdef/def-and.vala \
+	componentdef/def-basic-ss-display.vala \
+	componentdef/def-buffer.vala \
+	componentdef/def-clock.vala \
+	componentdef/def-constant.vala \
+	componentdef/def-custom.vala \
+	componentdef/def-memory.vala \
+	componentdef/def-multiplexer.vala \
+	componentdef/def-or.vala \
+	componentdef/def-pe-d-flipflop.vala \
+	componentdef/def-reader.vala \
+	componentdef/def-t-flipflop.vala \
+	componentdef/def-toggle.vala \
+	componentdef/def-tristate.vala \
+	componentdef/def-xor.vala \
 	componentstate.vala \
-	componentstate/*.vala \
+	componentstate/state-and.vala \
+	componentstate/state-basic-ss-display.vala \
+	componentstate/state-buffer.vala \
+	componentstate/state-clock.vala \
+	componentstate/state-constant.vala \
+	componentstate/state-memory.vala \
+	componentstate/state-multiplexer.vala \
+	componentstate/state-or.vala \
+	componentstate/state-pe-d-flipflop.vala \
+	componentstate/state-reader.vala \
+	componentstate/state-t-flipflop.vala \
+	componentstate/state-toggle.vala \
+	componentstate/state-tristate.vala \
+	componentstate/state-xor.vala \
 	propertyitem.vala \
-	propertyitem/*.vala \
+	propertyitem/propertyitem-double.vala \
+	propertyitem/propertyitem-file.vala \
+	propertyitem/propertyitem-int.vala \
+	propertyitem/propertyitem-propertyset.vala \
+	propertyitem/propertyitem-selection.vala \
+	propertyitem/propertyitem-string.vala \
 	$(NOTHING)
 
 CONFIG_FILES= \

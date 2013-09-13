@@ -15,7 +15,7 @@ public class ClockComponentDef : ComponentDef {
 	
 	public ClockComponentDef () throws ComponentDefLoadError.LOAD {
 		try {
-			base.from_file (infoFilename);
+			load_from_file (infoFilename);
 		} catch {
 			stdout.printf ("Failed to load built in component \"%s\"\n", infoFilename);
 			throw new ComponentDefLoadError.LOAD ("Failed to load \"" + infoFilename + "\"\n");

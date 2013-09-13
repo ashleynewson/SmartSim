@@ -192,6 +192,10 @@ public class DesignerWindow : Gtk.Window {
 			private Gtk.Image toolCustomsImage;
 			private Gtk.Menu toolCustomsMenu;
 			private Gtk.MenuItem[] toolCustomsMenuComponents;
+		private Gtk.MenuToolButton toolPlugins;
+			private Gtk.Image toolPluginsImage;
+			private Gtk.Menu toolPluginsMenu;
+			private Gtk.MenuItem[] toolPluginsMenuComponents;
 		private Gtk.SeparatorToolItem toolSeparator4;
 		private Gtk.RadioToolButton[] toolStandards;
 			private Gtk.Image[] toolStandardImages;
@@ -865,6 +869,20 @@ public class DesignerWindow : Gtk.Window {
 				}
 			});
 			
+			// toolPluginsImage = new Gtk.Image.from_file (Config.resourcesDir + "images/toolbar/plugin.png");
+			toolPlugins = new Gtk.MenuToolButton (toolPluginsImage, "Plugin...");
+			toolbar.insert (toolPlugins, -1);
+			toolPlugins.set_tooltip_text ("Plugin Components: Select a plugin component from the drop-down menu. Click the button for the last used component.");
+			toolPlugins.clicked.connect (() => {
+				if (hasDesigner) {
+					if (designer.set_insert_last_plugin()) {
+						mouseMode = MouseMode.INSERT;
+						deselect_tools ();
+						render_overlay ();
+					}
+				}
+			});
+			
 				//Component listing defined Dynamically
 			
 			toolSeparator4 = new Gtk.SeparatorToolItem ();
@@ -966,7 +984,7 @@ public class DesignerWindow : Gtk.Window {
 	}
 	
 	/**
-	 * Updates the custom components listed the "Windows" menu and
+	 * Updates the custom components listed in the "Windows" menu and
 	 * custom component insert menu.
 	 */
 	public void update_custom_menu () {
@@ -998,7 +1016,6 @@ public class DesignerWindow : Gtk.Window {
 							mouseMode = MouseMode.INSERT;
 							designer.set_insert_component (customComponentDef);
 							render_overlay ();
-							stdout.printf ("DEBUG\n");
 						}
 					}
 				);
@@ -1025,6 +1042,52 @@ public class DesignerWindow : Gtk.Window {
 		
 		toolCustomsMenu.show_all ();
 		menuWindowsMenu.show_all ();
+	}
+	
+	
+	/**
+	 * Updates the plugin components listed in the "Windows" menu and
+	 * plugin component insert menu.
+	 */
+	public void update_plugin_menu () {
+		
+		if (toolPluginsMenu != null) {
+			toolPluginsMenu.destroy ();
+		}
+		
+		toolPluginsMenu = new Gtk.Menu ();
+		
+		if (hasProject) {
+			
+			toolPluginsMenuComponents = {};
+			
+			for (int i = 0; i < project.pluginComponentDefs.length; i++) {
+				PluginComponentDef pluginComponentDef = project.pluginComponentDefs[i];
+				
+				Gtk.MenuItem toolMenuItem = new Gtk.MenuItem.with_label (pluginComponentDef.name);
+				toolPluginsMenu.append (toolMenuItem);
+				toolMenuItem.activate.connect (
+					() => {
+						if (hasDesigner) {
+							deselect_tools ();
+							mouseMode = MouseMode.INSERT;
+							designer.set_insert_component (pluginComponentDef);
+							render_overlay ();
+						}
+					}
+				);
+				if (hasDesigner) {
+					if (pluginComponentDef == designer.pluginComponentDef) {
+						toolMenuItem.set_sensitive (false);
+					}
+				}
+				toolPluginsMenuComponents += toolMenuItem;
+			}
+		}
+		
+		toolPlugins.set_menu (toolPluginsMenu);
+		
+		toolPluginsMenu.show_all ();
 	}
 	
 	private void deselect_tools () {

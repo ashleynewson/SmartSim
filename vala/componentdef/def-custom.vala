@@ -59,7 +59,7 @@ public class CustomComponentDef : ComponentDef {
 	 */
 	public CustomComponentDef.from_file (string infoFilename, Project project) throws ComponentDefLoadError, CustomComponentDefLoadError {
 		try {
-			base.from_file (infoFilename);
+			load_from_file (infoFilename);
 		} catch (ComponentDefLoadError error) {
 			throw error;
 		} catch (CustomComponentDefLoadError error) {

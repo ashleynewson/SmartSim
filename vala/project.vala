@@ -106,6 +106,10 @@ public class Project {
 	 */
 	public CustomComponentDef[] customComponentDefs;
 	/**
+	 * Contains all the plugin components which the user has loaded.
+	 */
+	public PluginComponentDef[] pluginComponentDefs;
+	/**
 	 * The custom component which is the root component.
 	 */
 	public CustomComponentDef rootComponent;
@@ -356,6 +360,31 @@ public class Project {
 	}
 	
 	/**
+	 * Loads and returns a plugin component from the file //fileName//.
+	 * Returns null on failure.
+	 */
+	public PluginComponentDef? load_plugin_component (string fileName) {
+		PluginComponentDef newComponent;
+		
+		try {
+			newComponent = new PluginComponentDef.from_file (fileName, this);
+			PluginComponentDef[] newPluginComponentDefs = pluginComponentDefs;
+			newPluginComponentDefs += newComponent;
+			pluginComponentDefs = newPluginComponentDefs;
+			update_plugin_menus ();
+		} catch (ComponentDefLoadError error) {
+			BasicDialog.error (null, "Could not load plugin component: \n" + error.message);
+			
+			newComponent = null;
+		} catch (PluginComponentDefLoadError error) {
+			BasicDialog.error (null, "Could not load plugin component: \n" + error.message);
+			
+			newComponent = null;
+		}
+		return newComponent;
+	}
+	
+	/**
 	 * Returns the ComponentDef with the name //name//, be it a built-in
 	 * or custom component.
 	 */
@@ -400,6 +429,14 @@ public class Project {
 		foreach (Designer designer in designers) {
 			if (designer.window != null) {
 				designer.window.update_custom_menu ();
+			}
+		}
+	}
+	
+	public void update_plugin_menus () {
+		foreach (Designer designer in designers) {
+			if (designer.window != null) {
+				designer.window.update_plugin_menu ();
 			}
 		}
 	}

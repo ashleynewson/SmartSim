@@ -74,17 +74,17 @@ public abstract class ComponentDef {
 	
 	public string filename = "";
 	
-	/**
-	 * Creates a new ComponentDef.
-	 */
-	public ComponentDef () {
+	// /**
+	//  * Creates a new ComponentDef.
+	//  */
+	// public ComponentDef () {
 		
-	}
+	// }
 
 	/**
 	 * Loads a component definition from a file.
 	 */
-	public ComponentDef.from_file (string infoFilename) throws ComponentDefLoadError, CustomComponentDefLoadError, PluginComponentDefLoadError {
+	public void load_from_file (string infoFilename) throws ComponentDefLoadError, CustomComponentDefLoadError , PluginComponentDefLoadError {
 		if (infoFilename == "") {
 			stdout.printf ("Defining component later\n");
 			return;
