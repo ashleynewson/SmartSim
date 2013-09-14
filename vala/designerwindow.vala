@@ -935,25 +935,25 @@ public class DesignerWindow : Gtk.Window {
 		//File Filters
 		
 		anysspFileFilter = new Gtk.FileFilter();
-		anysspFileFilter.set_name("Any SmartSim Project Format (.ssp)");
+		anysspFileFilter.set_filter_name("Any SmartSim Project Format (.ssp)");
 		anysspFileFilter.add_pattern("*.ssp");
 		
 		anysscFileFilter = new Gtk.FileFilter();
-		anysscFileFilter.set_name("Any SmartSim Component Format (.ssc, .ssc.xml, .xml)");
+		anysscFileFilter.set_filter_name("Any SmartSim Component Format (.ssc, .ssc.xml, .xml)");
 		anysscFileFilter.add_pattern("*.ssc");
 		anysscFileFilter.add_pattern("*.ssc.xml");
 		anysscFileFilter.add_pattern("*.xml");
 		
 		sscFileFilter = new Gtk.FileFilter();
-		sscFileFilter.set_name("SmartSim Component (.ssc)");
+		sscFileFilter.set_filter_name("SmartSim Component (.ssc)");
 		sscFileFilter.add_pattern("*.ssc");
 		
 		xmlFileFilter = new Gtk.FileFilter();
-		xmlFileFilter.set_name("SmartSim Component (.xml)");
+		xmlFileFilter.set_filter_name("SmartSim Component (.xml)");
 		xmlFileFilter.add_pattern("*.xml");
 		
 		sscxmlFileFilter = new Gtk.FileFilter();
-		sscxmlFileFilter.set_name("SmartSim Component (.ssc.xml)");
+		sscxmlFileFilter.set_filter_name("SmartSim Component (.ssc.xml)");
 		sscxmlFileFilter.add_pattern("*.ssc.xml");
 		
 		/*

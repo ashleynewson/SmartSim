@@ -10,9 +10,13 @@
 
 public errordomain ProjectLoadError {
 	/**
-	 * The file being loaded is not a component file.
+	 * The file being loaded is not a project file.
 	 */
 	NOT_PROJECT,
+	/**
+	 * The user has cancelled loading (possibly for security).
+	 */
+	CANCEL,
 	/**
 	 * File could not be openned or is invalid.
 	 */
@@ -36,6 +40,7 @@ public class Project {
 	 */
 	private static Project[] projects;
 	private static int projectCount = 0;
+	private bool pluginsAllowed = false;
 	
 	/**
 	 * Whether or not the project's circuit is being simulated.
@@ -227,16 +232,31 @@ public class Project {
 			break;
 			case "plugin":
 			{
+				if (pluginsAllowed == false) {
+					if (BasicDialog.ask_proceed (
+							null,
+							"Warning:\nThis project uses plugin components. Plugin components can expand the capabilities of SmartSim, but allow the execution of arbitrary code. Plugins may contain viruses or other malware, so only open projects and plugins you fully trust. SmartSim and its developers are not responsible for any damage which results from the use of third party plugins. Allow plugins at your own risk.",
+							"Allow Plugins", "Cancel Loading") == Gtk.ResponseType.OK) {
+						pluginsAllowed = true;
+					} else {
+						throw new ProjectLoadError.CANCEL ("User disallowed plugins.");
+					}
+				}
+				
 				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
 					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
 						continue;
 					}
-							
+					
 					string componentFilename = xmldata->content;
-							
+					
 					stdout.printf ("Absolute path of file \"%s\" is \"%s\"\n", componentFilename, absolute_filename(componentFilename));
-							
-					load_plugin_component (absolute_filename(componentFilename));
+					
+					PluginComponentDef component = load_plugin_component (absolute_filename(componentFilename), Config.resourcesDir + "plugins/" + componentFilename);
+					
+					if (component == null) {
+						throw new ProjectLoadError.FILE ("Error loading plugin from file \"" + componentFilename + "\".");
+					}
 				}
 			}
 			break;
@@ -362,7 +382,7 @@ public class Project {
 			CustomComponentDef[] newCustomComponentDefs = customComponentDefs;
 			newCustomComponentDefs += newComponent;
 			customComponentDefs = newCustomComponentDefs;
-			update_custom_menus ();
+			update_plugin_menus ();
 		} catch (ComponentDefLoadError error) {
 			BasicDialog.error (null, "Could not load custom component: \n" + error.message);
 			
@@ -379,9 +399,9 @@ public class Project {
 	 * Loads and returns a plugin component from the file //fileName//.
 	 * Returns null on failure.
 	 */
-	public PluginComponentDef? load_plugin_component (string fileName) {
-		PluginComponentDef newComponent;
-		PluginComponentManager newManager;
+	public PluginComponentDef? load_plugin_component (string fileName, string? altFileName = null) {
+		PluginComponentDef newComponent = null;
+		PluginComponentManager newManager = null;
 		
 		try {
 			newManager = new PluginComponentManager.from_file (fileName, this);
@@ -394,13 +414,20 @@ public class Project {
 			pluginComponentManagers = newPluginComponentManagers;
 			update_plugin_menus ();
 		} catch (ComponentDefLoadError error) {
-			BasicDialog.error (null, "Could not load plugin component: \n" + error.message);
-			
-			newComponent = null;
+			if (error is ComponentDefLoadError.FILE && altFileName != null) {
+				newComponent = load_plugin_component (altFileName);
+				if (newComponent == null) {
+					BasicDialog.error (null, "Could not load local plugin component: \n" + error.message);
+				}
+			} else {
+				BasicDialog.error (null, "Could not load shared plugin component: \n" + error.message);
+			}
 		} catch (PluginComponentDefLoadError error) {
-			BasicDialog.error (null, "Could not load plugin component: \n" + error.message);
-			
-			newComponent = null;
+			if (altFileName == null) {
+				BasicDialog.error (null, "Could not load shared plugin component: \n" + error.message);
+			} else {
+				BasicDialog.error (null, "Could not load local plugin component: \n" + error.message);
+			}
 		}
 		return newComponent;
 	}

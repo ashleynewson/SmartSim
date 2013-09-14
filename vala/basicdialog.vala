@@ -15,6 +15,23 @@ namespace BasicDialog {
 		return result;
 	}
 	
+	public int ask_proceed (Gtk.Window? window, string text, string buttonOK, string buttonCancel) {
+		Gtk.MessageDialog messageDialog = new Gtk.MessageDialog (
+			window,
+			Gtk.DialogFlags.MODAL,
+			Gtk.MessageType.WARNING,
+			Gtk.ButtonsType.NONE,
+			"%s", text);
+		messageDialog.add_button (buttonOK, Gtk.ResponseType.OK);
+		messageDialog.add_button (buttonCancel, Gtk.ResponseType.CANCEL);
+		
+		int result = messageDialog.run ();
+		
+		messageDialog.destroy ();
+		
+		return result;
+	}
+	
 	public void information (Gtk.Window? window, string text) {
 		Gtk.MessageDialog messageDialog = new Gtk.MessageDialog (
 			window,
