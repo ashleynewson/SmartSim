@@ -64,6 +64,8 @@ public class CustomComponentDef : ComponentDef {
 			throw error;
 		} catch (CustomComponentDefLoadError error) {
 			throw error;
+		} catch (PluginComponentDefLoadError error) {
+			throw new CustomComponentDefLoadError.NOT_CUSTOM ("Got Plugin.");
 		}
 		
 		if (project.resolve_def_name(name) != null) {

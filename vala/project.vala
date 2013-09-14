@@ -109,6 +109,7 @@ public class Project {
 	 * Contains all the plugin components which the user has loaded.
 	 */
 	public PluginComponentDef[] pluginComponentDefs;
+	public PluginComponentManager[] pluginComponentManagers;
 	/**
 	 * The custom component which is the root component.
 	 */
@@ -208,7 +209,7 @@ public class Project {
 							
 					stdout.printf ("Absolute path of file \"%s\" is \"%s\"\n", componentFilename, absolute_filename(componentFilename));
 							
-					CustomComponentDef component = load_component(absolute_filename(componentFilename));
+					CustomComponentDef component = load_component (absolute_filename(componentFilename));
 							
 					if (component != null) {
 						for (Xml.Attr* xmlattr = xmlnode->properties; xmlattr != null; xmlattr = xmlattr->next) {
@@ -224,12 +225,27 @@ public class Project {
 				}
 			}
 			break;
+			case "plugin":
+			{
+				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
+					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
+						continue;
+					}
+							
+					string componentFilename = xmldata->content;
+							
+					stdout.printf ("Absolute path of file \"%s\" is \"%s\"\n", componentFilename, absolute_filename(componentFilename));
+							
+					load_plugin_component (absolute_filename(componentFilename));
+				}
+			}
+			break;
 			}
 		}
 	}
 	
 	~Project () {
-		stdout.printf ("Project Destroyed\n");
+		stdout.printf ("Project Destroyed.\n");
 	}
 	
 	/**
@@ -365,12 +381,17 @@ public class Project {
 	 */
 	public PluginComponentDef? load_plugin_component (string fileName) {
 		PluginComponentDef newComponent;
+		PluginComponentManager newManager;
 		
 		try {
-			newComponent = new PluginComponentDef.from_file (fileName, this);
+			newManager = new PluginComponentManager.from_file (fileName, this);
+			newComponent = newManager.pluginComponentDef;
 			PluginComponentDef[] newPluginComponentDefs = pluginComponentDefs;
+			PluginComponentManager[] newPluginComponentManagers = pluginComponentManagers;
 			newPluginComponentDefs += newComponent;
+			newPluginComponentManagers += newManager;
 			pluginComponentDefs = newPluginComponentDefs;
+			pluginComponentManagers = newPluginComponentManagers;
 			update_plugin_menus ();
 		} catch (ComponentDefLoadError error) {
 			BasicDialog.error (null, "Could not load plugin component: \n" + error.message);
@@ -689,6 +710,14 @@ public class Project {
 			}
 			
 			unsavedComponents = newUnsavedComponents;
+		}
+		
+		foreach (PluginComponentManager pluginComponentManager in pluginComponentManagers) {
+			xmlWriter.start_element ("plugin");
+			
+			xmlWriter.write_string (pluginComponentManager.filename);
+			
+			xmlWriter.end_element ();
 		}
 		
 		foreach (CustomComponentDef customComponentDef in saveLoadOrder) {

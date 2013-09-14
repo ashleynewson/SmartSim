@@ -869,7 +869,7 @@ public class DesignerWindow : Gtk.Window {
 				}
 			});
 			
-			// toolPluginsImage = new Gtk.Image.from_file (Config.resourcesDir + "images/toolbar/plugin.png");
+			toolPluginsImage = new Gtk.Image.from_file (Config.resourcesDir + "images/toolbar/plugin.png");
 			toolPlugins = new Gtk.MenuToolButton (toolPluginsImage, "Plugin...");
 			toolbar.insert (toolPlugins, -1);
 			toolPlugins.set_tooltip_text ("Plugin Components: Select a plugin component from the drop-down menu. Click the button for the last used component.");
@@ -977,6 +977,7 @@ public class DesignerWindow : Gtk.Window {
 		//Update window and custom component selections
 		
 		update_custom_menu ();
+		update_plugin_menu ();
 		
 		//Finish
 		
@@ -1076,11 +1077,6 @@ public class DesignerWindow : Gtk.Window {
 						}
 					}
 				);
-				if (hasDesigner) {
-					if (pluginComponentDef == designer.pluginComponentDef) {
-						toolMenuItem.set_sensitive (false);
-					}
-				}
 				toolPluginsMenuComponents += toolMenuItem;
 			}
 		}

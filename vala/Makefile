@@ -49,6 +49,7 @@ SOURCE_FILES= \
 	updatequeue.vala \
 	imageexporter.vala \
 	basicdialog.vala \
+	plugincomponentmanager.vala \
 	componentdef.vala \
 	componentdef/def-and.vala \
 	componentdef/def-basic-ss-display.vala \
@@ -60,6 +61,7 @@ SOURCE_FILES= \
 	componentdef/def-multiplexer.vala \
 	componentdef/def-or.vala \
 	componentdef/def-pe-d-flipflop.vala \
+	componentdef/def-plugin.vala \
 	componentdef/def-reader.vala \
 	componentdef/def-t-flipflop.vala \
 	componentdef/def-toggle.vala \
@@ -99,6 +101,7 @@ VALA_PACKAGES= \
 	--pkg gtk+-3.0 \
 	--pkg librsvg-2.0 \
 	--pkg libxml-2.0 \
+	--pkg gmodule-2.0 \
 	$(NOTHING)
 
 

@@ -56,6 +56,10 @@ public class Designer {
 	 * The last custom component selected for insertion.
 	 */
 	public weak ComponentDef lastInsertCustomComponentDef;
+	/**
+	 * The last plugin component selected for insertion.
+	 */
+	public weak ComponentDef lastInsertPluginComponentDef;
 	
 	public ComponentInst shadowComponentInst;
 	
@@ -109,6 +113,8 @@ public class Designer {
 		this.insertComponentDef = insertComponentDef;
 		if (insertComponentDef is CustomComponentDef) {
 			lastInsertCustomComponentDef = insertComponentDef;
+		} else if (insertComponentDef is PluginComponentDef) {
+			lastInsertPluginComponentDef = insertComponentDef;
 		}
 		hasInsert = true;
 		shadowComponentInst = new ComponentInst (insertComponentDef, 0, 0, Direction.RIGHT, false);
@@ -123,6 +129,21 @@ public class Designer {
 //			this.insertComponentDef = lastInsertCustomComponentDef;
 //			hasInsert = true;
 			set_insert_component (lastInsertCustomComponentDef);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Sets the component for insertion as the last plugin component
+	 * which was selected for insertion.
+	 */
+	public bool set_insert_last_plugin () {
+		if (lastInsertPluginComponentDef != null) {
+//			this.insertComponentDef = lastInsertPluginComponentDef;
+//			hasInsert = true;
+			set_insert_component (lastInsertPluginComponentDef);
 			return true;
 		} else {
 			return false;
