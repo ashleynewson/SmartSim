@@ -25,4 +25,5 @@ public errordomain PluginComponentDefLoadError {
  * Super class which is used by all plugin components.
  */
 public abstract class PluginComponentDef : ComponentDef {
+	public PluginComponentManager manager;
 }

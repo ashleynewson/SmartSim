@@ -25,6 +25,72 @@ WINCC_PATH_FLAGS= \
 	-L/usr/i586-mingw32msvc/lib \
 	$(NOTHING)
 
+C_FILES= \
+	main.c \
+	designerwindow.c \
+	designer.c \
+	project.c \
+	graphic.c \
+	componentinst.c \
+	pindef.c \
+	pininst.c \
+	wireinst.c \
+	path.c \
+	tag.c \
+	annotation.c \
+	propertiesquery.c \
+	compiledcircuit.c \
+	connection.c \
+	wirestate.c \
+	simulatorwindow.c \
+	customiser.c \
+	circuitinformation.c \
+	timingdiagram.c \
+	updatequeue.c \
+	imageexporter.c \
+	basicdialog.c \
+	plugincomponentmanager.c \
+	componentdef.c \
+	componentdef/def-and.c \
+	componentdef/def-basic-ss-display.c \
+	componentdef/def-buffer.c \
+	componentdef/def-clock.c \
+	componentdef/def-constant.c \
+	componentdef/def-custom.c \
+	componentdef/def-memory.c \
+	componentdef/def-multiplexer.c \
+	componentdef/def-or.c \
+	componentdef/def-pe-d-flipflop.c \
+	componentdef/def-plugin.c \
+	componentdef/def-reader.c \
+	componentdef/def-t-flipflop.c \
+	componentdef/def-toggle.c \
+	componentdef/def-tristate.c \
+	componentdef/def-xor.c \
+	componentstate.c \
+	componentstate/state-and.c \
+	componentstate/state-basic-ss-display.c \
+	componentstate/state-buffer.c \
+	componentstate/state-clock.c \
+	componentstate/state-constant.c \
+	componentstate/state-memory.c \
+	componentstate/state-multiplexer.c \
+	componentstate/state-or.c \
+	componentstate/state-pe-d-flipflop.c \
+	componentstate/state-reader.c \
+	componentstate/state-t-flipflop.c \
+	componentstate/state-toggle.c \
+	componentstate/state-tristate.c \
+	componentstate/state-xor.c \
+	propertyitem.c \
+	propertyitem/propertyitem-double.c \
+	propertyitem/propertyitem-file.c \
+	propertyitem/propertyitem-int.c \
+	propertyitem/propertyitem-propertyset.c \
+	propertyitem/propertyitem-selection.c \
+	propertyitem/propertyitem-string.c \
+	$(NOTHING)
+
 SOURCE_FILES= \
 	main.vala \
 	designerwindow.vala \
@@ -91,6 +157,32 @@ SOURCE_FILES= \
 	propertyitem/propertyitem-string.vala \
 	$(NOTHING)
 
+PLUGIN_COMMON_CFLAGS= \
+	-I/usr/include/glib-2.0 \
+	-I/usr/lib/i386-linux-gnu/glib-2.0/include \
+	`pkg-config --cflags glib-2.0 gtk+-3.0 cairo librsvg-2.0 libxml-2.0 gmodule-2.0`
+PLUGIN_COMMON_LIBS= \
+	`pkg-config --libs glib-2.0 gtk+-3.0 cairo librsvg-2.0 libxml-2.0 gmodule-2.0` \
+	$(NOTHING)
+
+PLUGIN_OUTPUT_PREFIX= "plugincomponents/lib"
+PLUGIN_OUTPUT_SUFFIX= ".so"
+
+PLUGIN_ALTAND_C_FILES= \
+	plugincomponents/plugin-def-altand.c \
+	plugincomponents/plugin-state-altand.c \
+	$(NOTHING)
+
+PLUGIN_ALTAND_SOURCE_FILES= \
+	plugincomponents/plugin-def-altand.vala \
+	plugincomponents/plugin-state-altand.vala \
+	$(NOTHING)
+
+PLUGIN_ALTAND_CFLAGS=
+PLUGIN_ALTAND_LIBS=
+
+PLUGIN_ALTAND_OUTPUT_NAME= $(PLUGIN_OUTPUT_PREFIX)"altand"$(PLUGIN_OUTPUT_SUFFIX)
+
 CONFIG_FILES= \
 	--vapidir ./ \
 	--pkg config \
@@ -105,10 +197,17 @@ VALA_PACKAGES= \
 	$(NOTHING)
 
 
-all: linux
+all: linux plugins
 
 linux:
 	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -o smartsim --verbose $(VALA_PACKAGES)
+
+plugins: plugin_altand
+
+plugin_altand:
+	$(VALAC) $(SOURCE_FILES) $(PLUGIN_ALTAND_SOURCE_FILES) $(CONFIG_FILES) -C --verbose $(VALA_PACKAGES)
+	$(CC) -shared -fPIC $(PLUGIN_COMMON_CFLAGS) $(PLUGIN_COMMON_LIBS) $(PLUGIN_ALTAND_CFLAGS) $(PLUGIN_ALTAND_LIBS) -o $(PLUGIN_ALTAND_OUTPUT_NAME) $(PLUGIN_ALTAND_C_FILES)
+
 
 linuxO3:
 	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -o smartsim --verbose $(VALA_PACKAGES) -X -O3
@@ -118,35 +217,6 @@ debug:
 
 cfiles:
 	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -C $(VALA_PACKAGES)
-	mv main.c c/
-	mv designerwindow.c c/
-	mv designer.c c/
-	mv project.c c/
-	mv graphic.c c/
-	mv componentinst.c c/
-	mv pindef.c c/
-	mv pininst.c c/
-	mv wireinst.c c/
-	mv path.c c/
-	mv tag.c c/
-	mv annotation.c c/
-	mv propertiesquery.c c/
-	mv compiledcircuit.c c/
-	mv connection.c c/
-	mv wirestate.c c/
-	mv simulatorwindow.c c/
-	mv customiser.c c/
-	mv circuitinformation.c c/
-	mv timingdiagram.c c/
-	mv updatequeue.c c/
-	mv imageexporter.c c/
-	mv basicdialog.c c/
-	mv componentdef.c c/
-	mv componentstate.c c/
-	mv propertyitem.c c/
-	mv componentdef/*.c c/componentdef/
-	mv componentstate/*.c c/componentstate/
-	mv propertyitem/*.c c/propertyitem/
 
 win32: cfiles
 	$(WINCC) -I./ -o smartsim.exe c/*.c c/componentdef/*.c c/componentstate/*.c c/propertyitem/*.c -mms-bitfields $(WINCC_PATH_FLAGS) -lgtk-win32-2.0 -latk-1.0 -lgdk-win32-2.0 -lpangowin32-1.0 -lgdi32 -lpangocairo-1.0 -lpango-1.0 -lrsvg-2 -lm -lgio-2.0 -lgdk_pixbuf-2.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lglib-2.0 -lintl -llibxml2
@@ -164,10 +234,7 @@ doc:
 clean:
 	-rm smartsim
 	-rm smartsim.exe
-	-rm c/*.c
-	-rm c/componentdef/*.c
-	-rm c/componentstate/*.c
-	-rm c/propertyitem/*.c
+	-rm $(C_FILES)
 
 
 
@@ -180,6 +247,8 @@ clean:
 .PHONY : win32O3
 .PHONY : debug
 .PHONY : doc
+.PHONY : plugins
+.PHONY : plugin_altand
 
 
 

@@ -43,7 +43,7 @@ public class CustomComponentDef : ComponentDef {
 	 */
 	private weak Project project;
 	
-	public CustomComponentDef[] immediateDependencies;
+	public ComponentDef[] immediateDependencies;
 	
 	/**
 	 * Creates a new custom component, associated with //project//.
@@ -678,15 +678,16 @@ public class CustomComponentDef : ComponentDef {
 		}
 	}
 	
-	public void update_immediate_dependencies () {
-		CustomComponentDef[] newImmediateDependencies = {};
+	public void update_immediate_dependencies (bool includePlugins = false) {
+		ComponentDef[] newImmediateDependencies = {};
 		
 		foreach (ComponentInst componentInst in componentInsts) {
-			if (componentInst.componentDef is CustomComponentDef) {
-				CustomComponentDef customComponentDef = componentInst.componentDef as CustomComponentDef;
+			if (componentInst.componentDef is CustomComponentDef ||
+				(includePlugins == true && componentInst.componentDef is PluginComponentDef)) {
+				ComponentDef componentDef = componentInst.componentDef;
 				
-				if (!(customComponentDef in immediateDependencies)) {
-					newImmediateDependencies += customComponentDef;
+				if (!(componentDef in immediateDependencies)) {
+					newImmediateDependencies += componentDef;
 				}
 			}
 		}
@@ -694,12 +695,12 @@ public class CustomComponentDef : ComponentDef {
 		immediateDependencies = newImmediateDependencies;
 	}
 	
-	public void remove_immediate_dependency (CustomComponentDef removeComponent) {
-		CustomComponentDef[] newImmediateDependencies = {};
+	public void remove_immediate_dependency (ComponentDef removeComponent) {
+		ComponentDef[] newImmediateDependencies = {};
 		
-		foreach (CustomComponentDef customComponentDef in immediateDependencies) {
-			if (customComponentDef != removeComponent) {
-				newImmediateDependencies += customComponentDef;
+		foreach (ComponentDef componentDef in immediateDependencies) {
+			if (componentDef != removeComponent) {
+				newImmediateDependencies += componentDef;
 			}
 		}
 		

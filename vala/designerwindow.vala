@@ -120,6 +120,9 @@ public class DesignerWindow : Gtk.Window {
 			private Gtk.MenuItem menuFilePrint;
 			private Gtk.MenuItem menuFileSeparator7;
 			private Gtk.MenuItem menuFileRemovecomponent;
+			private Gtk.MenuItem menuFileRemoveplugincomponent;
+				private Gtk.Menu menuFileRemoveplugincomponentMenu;
+				private Gtk.MenuItem[] menuFileRemoveplugincomponentComponents;
 			private Gtk.MenuItem menuFileSeparator8;
 			private Gtk.MenuItem menuFileExit;
 		private Gtk.MenuItem menuView;
@@ -204,9 +207,11 @@ public class DesignerWindow : Gtk.Window {
 	
 	private Gtk.FileFilter anysspFileFilter;
 	private Gtk.FileFilter anysscFileFilter;
+	private Gtk.FileFilter anyssxFileFilter;
 	private Gtk.FileFilter sscFileFilter;
 	private Gtk.FileFilter sscxmlFileFilter;
 	private Gtk.FileFilter xmlFileFilter;
+	private Gtk.FileFilter ssxFileFilter;
 //	private Gtk.FileFilter pngFileFilter;
 //	private Gtk.FileFilter pdfFileFilter;
 //	private Gtk.FileFilter svgFileFilter;
@@ -272,6 +277,7 @@ public class DesignerWindow : Gtk.Window {
 			menuWindows.set_sensitive (value);
 			
 			update_custom_menu ();
+			update_plugin_menu ();
 		}
 	}
 	
@@ -575,6 +581,10 @@ public class DesignerWindow : Gtk.Window {
 				menuFileMenu.append (menuFileRemovecomponent);
 				menuFileRemovecomponent.activate.connect (() => {remove_component();});
 				menuFileRemovecomponent.set_sensitive (false);
+				
+				menuFileRemoveplugincomponent = new Gtk.MenuItem.with_label ("Remove Plugin Component");
+				menuFileMenu.append (menuFileRemoveplugincomponent);
+				menuFileRemoveplugincomponent.set_sensitive (false);
 				
 				menuFileSeparator8 = new Gtk.SeparatorMenuItem ();
 				menuFileMenu.append (menuFileSeparator8);
@@ -1051,16 +1061,21 @@ public class DesignerWindow : Gtk.Window {
 	 * plugin component insert menu.
 	 */
 	public void update_plugin_menu () {
-		
 		if (toolPluginsMenu != null) {
 			toolPluginsMenu.destroy ();
 		}
+		if (menuFileRemoveplugincomponentMenu != null) {
+			menuFileRemoveplugincomponentMenu.destroy ();
+		}
+		menuFileRemoveplugincomponent.set_sensitive (false);
 		
 		toolPluginsMenu = new Gtk.Menu ();
+		menuFileRemoveplugincomponentMenu = new Gtk.Menu ();
 		
 		if (hasProject) {
 			
 			toolPluginsMenuComponents = {};
+			menuFileRemoveplugincomponentComponents = {};
 			
 			for (int i = 0; i < project.pluginComponentDefs.length; i++) {
 				PluginComponentDef pluginComponentDef = project.pluginComponentDefs[i];
@@ -1078,12 +1093,24 @@ public class DesignerWindow : Gtk.Window {
 					}
 				);
 				toolPluginsMenuComponents += toolMenuItem;
+				
+				Gtk.MenuItem removeplugincomponentMenuItem = new Gtk.MenuItem.with_label (pluginComponentDef.name);
+				menuFileRemoveplugincomponentMenu.append (removeplugincomponentMenuItem);
+				removeplugincomponentMenuItem.activate.connect (
+					() => {
+						remove_plugin_component (pluginComponentDef);
+					}
+				);
+				menuFileRemoveplugincomponentComponents += removeplugincomponentMenuItem;
+				menuFileRemoveplugincomponent.set_sensitive (true);
 			}
 		}
 		
 		toolPlugins.set_menu (toolPluginsMenu);
+		menuFileRemoveplugincomponent.set_submenu (menuFileRemoveplugincomponentMenu);
 		
 		toolPluginsMenu.show_all ();
+		menuFileRemoveplugincomponentMenu.show_all ();
 	}
 	
 	private void deselect_tools () {
@@ -1745,6 +1772,7 @@ public class DesignerWindow : Gtk.Window {
 //			designer.set_name ("Not saved - " + designer.customComponentDef.name);
 		}
 		update_custom_menu ();
+		update_plugin_menu ();
 		update_title ();
 		render_design ();
 	}
@@ -1756,6 +1784,7 @@ public class DesignerWindow : Gtk.Window {
 			componentFileName = designer.customComponentDef.filename;
 		}
 		update_custom_menu ();
+		update_plugin_menu ();
 		update_title ();
 		render_design ();
 	}
@@ -1774,6 +1803,7 @@ public class DesignerWindow : Gtk.Window {
 			componentFileName = filename;
 		}
 		update_custom_menu ();
+		update_plugin_menu ();
 		update_title ();
 		render_design ();
 	}
@@ -2462,6 +2492,7 @@ public class DesignerWindow : Gtk.Window {
 		hasProject = false;
 		
 		update_custom_menu ();
+		update_plugin_menu ();
 		
 		unregister_designerwindow ();
 		
@@ -2473,12 +2504,29 @@ public class DesignerWindow : Gtk.Window {
 			return false;
 		}
 		
-		if (project.remove_component(designer.customComponentDef) == 0) {
-			project.update_custom_menus ();
-			project.unregister_designer (designer);
-			hasDesigner = false;
-			update_title ();
-			render_design ();
+		if (BasicDialog.ask_proceed(this, "Are you sure you want to remove this component from the project?\nAll unsaved progress will be lost.", "Remove", "Keep") == Gtk.ResponseType.OK) {
+			if (project.remove_component(designer.customComponentDef) == 0) {
+				project.update_custom_menus ();
+				project.update_plugin_menus ();
+				project.unregister_designer (designer);
+				hasDesigner = false;
+				update_title ();
+				render_design ();
+			}
+		}
+		
+		return false;
+	}
+	
+	private bool remove_plugin_component (PluginComponentDef pluginComponentDef) {
+		if (!hasProject) {
+			return false;
+		}
+		
+		if (BasicDialog.ask_proceed(this, "Are you sure you want to remove this plugin component from the project?", "Remove", "Keep") == Gtk.ResponseType.OK) {
+			if (project.remove_plugin_component(pluginComponentDef) == 0) {
+				project.update_plugin_menus ();
+			}
 		}
 		
 		return false;

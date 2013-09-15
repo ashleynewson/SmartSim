@@ -300,6 +300,7 @@ public class Project {
 		newCustomComponentDefs += newComponent;
 		customComponentDefs = newCustomComponentDefs;
 		update_custom_menus ();
+		update_plugin_menus ();
 		return newComponent;
 	}
 	
@@ -315,6 +316,7 @@ public class Project {
 						designer.window.show_all ();
 						DesignerWindow.register (designer.window);
 						update_custom_menus ();
+						update_plugin_menus ();
 					}
 					designer.window.present ();
 					return 1;
@@ -345,6 +347,7 @@ public class Project {
 						designer.window.show_all ();
 						DesignerWindow.register (designer.window);
 						update_custom_menus ();
+						update_plugin_menus ();
 					}
 					designer.window.present ();
 					return 1;
@@ -382,6 +385,7 @@ public class Project {
 			CustomComponentDef[] newCustomComponentDefs = customComponentDefs;
 			newCustomComponentDefs += newComponent;
 			customComponentDefs = newCustomComponentDefs;
+			update_custom_menus ();
 			update_plugin_menus ();
 		} catch (ComponentDefLoadError error) {
 			BasicDialog.error (null, "Could not load custom component: \n" + error.message);
@@ -447,6 +451,11 @@ public class Project {
 				return componentDef;
 			}
 		}
+		foreach (ComponentDef componentDef in pluginComponentDefs) {
+			if (componentDef.name.down() == name.down()) {
+				return componentDef;
+			}
+		}
 		
 		return null;
 	}
@@ -461,10 +470,6 @@ public class Project {
 		}
 	}
 	
-	/**
-	 * Makes all associated windows update their menus listing
-	 * custom components.
-	 */
 	public void update_error_modes (bool error) {
 		foreach (Designer designer in designers) {
 			if (designer.window != null) {
@@ -473,6 +478,10 @@ public class Project {
 		}
 	}
 	
+	/**
+	 * Makes all associated windows update their menus listing
+	 * custom components.
+	 */
 	public void update_custom_menus () {
 		foreach (Designer designer in designers) {
 			if (designer.window != null) {
@@ -773,18 +782,7 @@ public class Project {
 				usersString += "  " + customComponentDef.name + "\n";
 			}
 			
-			Gtk.MessageDialog messageDialog = new Gtk.MessageDialog (
-				null,
-				Gtk.DialogFlags.MODAL,
-				Gtk.MessageType.ERROR,
-				Gtk.ButtonsType.OK,
-				"You cannot remove this component from your project because it is used within one or more other components:\n%s",
-				usersString);
-			
-			messageDialog.run ();
-			messageDialog.destroy ();
-			
-			BasicDialog.information (null, "You cannot remove this component from your project because it is used within one or more other components:" + usersString);
+			BasicDialog.error (null, "You cannot remove this component from your project because it is used within one or more other components:\n" + usersString);
 			
 			return 2;
 		}
@@ -808,11 +806,52 @@ public class Project {
 		return result;
 	}
 	
-	public CustomComponentDef[] component_users (CustomComponentDef usedComponent) {
+	public int remove_plugin_component (PluginComponentDef removeComponent) {
+		int result = 1;
+		CustomComponentDef[] usersOfComponent = component_users (removeComponent);
+		
+		if (usersOfComponent.length > 0) {
+			string usersString = "";
+			
+			foreach (CustomComponentDef customComponentDef in usersOfComponent) {
+				usersString += "  " + customComponentDef.name + "\n";
+			}
+			
+			BasicDialog.error (null, "You cannot remove this plugin component from your project because it is used within one or more other components:\n" + usersString);
+			
+			return 2;
+		}
+		
+		PluginComponentDef[] newPluginComponentDefs = {};
+		
+		foreach (PluginComponentDef pluginComponentDef in pluginComponentDefs) {
+			if (pluginComponentDef == removeComponent) {
+				result = 0;
+			} else {
+				newPluginComponentDefs += pluginComponentDef;
+			}
+		}
+		pluginComponentDefs = newPluginComponentDefs;
+		
+		PluginComponentManager[] newPluginComponentManagers = {};
+		
+		foreach (PluginComponentManager pluginComponentManager in pluginComponentManagers) {
+			if (pluginComponentManager.pluginComponentDef == removeComponent) {
+				pluginComponentManager.unload ();
+			} else {
+				newPluginComponentManagers += pluginComponentManager;
+			}
+		}
+		// pluginComponentManagers = newPluginComponentManagers;
+		
+		return result;
+	}
+	
+	public CustomComponentDef[] component_users (ComponentDef usedComponent) {
 		CustomComponentDef[] userList = {};
 		
 		foreach (CustomComponentDef customComponentDef in customComponentDefs) {
-			customComponentDef.update_immediate_dependencies ();
+			customComponentDef.update_immediate_dependencies (true);
 			
 			if (usedComponent in customComponentDef.immediateDependencies) {
 				userList += customComponentDef;

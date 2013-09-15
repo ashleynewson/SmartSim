@@ -27,37 +27,37 @@ public class PluginComponentManager {
 	public Module module = null;
 	public string filename = null;
 	public string name = null;
-	// private Type defType;
-	// private Type stateType;
-	// /**
-	//  * The plugin of type //defType// which is given the task of
-	//  * implementing the def's functions.
-	//  */
-	// private PluginComponentInterface plugin;
 	public weak Project project;
 	public PluginComponentDef pluginComponentDef;
-	// private delegate Type get_type_delegate ();
 	private delegate bool init_delegate (PluginComponentManager manager);
-	private delegate PluginComponentDef get_def_delegate ();
+	private delegate PluginComponentDef? get_def_delegate (string infoFilename);
 	
-	// private delegate void extra_render_delegate (Cairo.Context context, Direction direction, bool flipped, ComponentInst? componentInst);
-	// private delegate void extra_validate_delegate (CustomComponentDef[] componentChain, ComponentInst? componentInst);
-	// private delegate void add_properties (PropertySet queryProperty, PropertySet configurationProperty);
-	// private delegate void get_properties (PropertySet queryProperty, out PropertySet configurationProperty);
-	// private delegate void load_properties (Xml.Node* xmlnode, out PropertySet configurationProperty);
-	// private delegate void save_properties (Xml.TextWriter xmlWriter, PropertySet configurationProperty);
-	// private delegate void configure_inst (ComponentInst componentInst, bool firstLoad = false);
-	// private delegate void compile_component (CompiledCircuit compiledCircuit, ComponentInst? componentInst, Connection[] connections, ComponentInst[] ancestry);
-	// private delegate void create_information (CircuitInformation circuitInformation);
+	/**
+	 * A reference to standard in for use by the plugin
+	 */
+	public unowned FileStream stdinFileStream;
+	/**
+	 * A reference to standard out for use by the plugin
+	 */
+	public unowned FileStream stdoutFileStream;
+	/**
+	 * A reference to standard err for use by the plugin
+	 */
+	public unowned FileStream stderrFileStream;
 	
 	
 	/**
 	 * Loads a PluginComponentDef from a file using libxml.
 	 */
-	public PluginComponentManager.from_file (string infoFilename, Project project) throws ComponentDefLoadError, PluginComponentDefLoadError {
+	public PluginComponentManager.from_file (string infoFilename, Project project) throws ComponentDefLoadError, PluginComponentDefLoadError 
+{
 		this.filename = infoFilename;
 		
 		this.project = project;
+		
+		this.stdinFileStream = stdin;
+		this.stdoutFileStream = stdout;
+		this.stderrFileStream = stderr;
 		
 		try {
 			load (infoFilename);
@@ -73,9 +73,15 @@ public class PluginComponentManager {
 		// 	throw error;
 		// }
 		
-		if (project.resolve_def_name(name) != null) {
+		if (project.resolve_def_name(pluginComponentDef.name) != null) {
 			throw new PluginComponentDefLoadError.NAME_CONFLICT ("A component with the name \"" + name + "\" already exists. Rename the component which is already open using the customiser dialog, accessible via the component menu.");
 		}
+		
+		pluginComponentDef.manager = this;
+	}
+	
+    ~PluginComponentManager () {
+		stdout.printf ("Plugin \"%s\" (\"%s\") Unloaded.\n", name, filename);
 	}
 	
 	/**
@@ -180,17 +186,13 @@ public class PluginComponentManager {
 		
 		module = Module.open (fullLibraryPath, ModuleFlags.BIND_LAZY);
 		if (module == null) {
-			stdout.printf ("Error opening module: %s\n", Module.error());
+			stdout.printf ("Unable to open module: %s\n", Module.error());
 			throw new PluginComponentDefLoadError.LIBRARY_NOT_ACCESSIBLE ("Library could not be opened: \"" + filename + "\": \"" + fullLibraryPath + "\": ");
 		}
 		stdout.printf ("Successfully opened module.\n");
 		
-		// void* get_def_type_pointer;
-		// void* get_state_type_pointer;
-		void* init_pointer;
-		void* get_def_pointer;
-		// get_type_delegate get_def_type_function = null;
-		// get_type_delegate get_state_type_function = null;
+		void* init_pointer = null;
+		void* get_def_pointer = null;
 		init_delegate init_function = null;
 		get_def_delegate get_def_function = null;
 		
@@ -201,7 +203,12 @@ public class PluginComponentManager {
 					stdout.printf ("Error initialising plugin: Plugin init function reported failure.\n");
 					throw new PluginComponentDefLoadError.INIT_ERROR ("Plugin init function reported failure: \"" + filename + "\": \"" + fullLibraryPath + "\": ");
 				}
+			} else {
+				stdout.printf ("Got null plugin_component_init function.\n");
 			}
+		}
+		if (init_pointer == null) {
+			stdout.printf ("Plugin has no init function (plugin_component_init).\n");
 		}
 		
 		if (module.symbol("plugin_component_get_def", out get_def_pointer)) {
@@ -209,34 +216,32 @@ public class PluginComponentManager {
 				get_def_function = (get_def_delegate) get_def_pointer;
 			}
 		}
-		if (get_def_function != null) {
+		if (get_def_pointer == null) {
 			stdout.printf ("Error initialising plugin: Could not get component definition function.\n");
 			throw new PluginComponentDefLoadError.LIBRARY_NOT_COMPATIBLE ("Could not get component definition function: \"" + filename + "\": \"" + fullLibraryPath + "\": ");
 		} else {
-			pluginComponentDef = get_def_function ();
+			pluginComponentDef = get_def_function (this.filename);
 			if (pluginComponentDef == null) {
 				stdout.printf ("Error initialising plugin: Failure getting component definition.\n");
 				throw new PluginComponentDefLoadError.INIT_ERROR ("Failure getting component definition: \"" + filename + "\": \"" + fullLibraryPath + "\": ");
 			}
 		}
-		
-		// if (module.symbol("plugin_component_get_def_type", out get_def_type_pointer)) {
-		// 	if (get_def_type_pointer != null) {
-		// 		get_def_type_function = (get_type_delegate) get_def_type_pointer;
-		// 	}
-		// }
-		// if (module.symbol("plugin_component_get_state_type", out get_state_type_pointer)) {
-		// 	if (get_state_type_pointer != null) {
-		// 		get_state_type_function = (get_type_delegate) get_state_type_pointer;
-		// 	}
-		// }
-		// if (get_def_type_function == null) {
-		// 	stdout.printf ("Error loading module: \"plugin_component_get_def_type\" function not found in module.\n");
-		// 	throw new PluginComponentDefLoadError.LIBRARY_NOT_COMPATIBLE ("\"plugin_component_get_def_type\" function not found in module.");
-		// }
-		// if (get_state_type_function == null) {
-		// 	stdout.printf ("Error loading module: \"plugin_component_get_state_type\" function not found in module.\n");
-		// 	throw new PluginComponentDefLoadError.LIBRARY_NOT_COMPATIBLE ("\"plugin_component_get_state_type\" function not found in module.");
-		// }
+	}
+	
+	public void print_info (string text) {
+		stdout.printf ("Plugin \"%s\" (\"%s\") Info:\n\t%s\n", name, filename, text);
+	}
+	
+	public void print_error (string text) {
+		stdout.printf ("Plugin \"%s\" (\"%s\") Error:\n\t%s\n", name, filename, text);
+	}
+	
+	/*
+	 * The external code needs to be unreferenced and freed before unloading the module while deconstructing.
+	 * It cannot be assumed that the order in which things are dereferenced is the one needed.
+	 */
+	public void unload () {
+		pluginComponentDef.manager = null;
+		pluginComponentDef = null;
 	}
 }
