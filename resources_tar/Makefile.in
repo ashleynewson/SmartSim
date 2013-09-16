@@ -412,10 +412,10 @@ uninstall-am: uninstall-smartsimdataDATA
 
 install-data-hook:
 	cd $(DESTDIR)$(pkgdatadir); \
-    cat $(RESOURCES_TAR) | $(TAR) --list > uninstall_manifest.txt; \
-    cat $(RESOURCES_TAR) | $(TAR) --no-same-owner --extract; \
-    rm --force $(RESOURCES_TAR); \
-    cat uninstall_manifest.txt | sed --expression='s/^\|$$/"/g' | xargs chmod a=rX,u+w
+	cat $(RESOURCES_TAR) | $(TAR) --list > uninstall_manifest.txt; \
+	cat $(RESOURCES_TAR) | $(TAR) --no-same-owner --extract; \
+	rm --force $(RESOURCES_TAR); \
+	cat uninstall_manifest.txt | sed --expression='s/^\|$$/"/g' | xargs chmod a=rX,u+w
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
