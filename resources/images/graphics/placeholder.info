@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphic_info>
+	<name>And</name>
+	<description>Two input AND gate</description>
+	<centre x="31" y="21" />
+	<size width="62" height="42" />
+	<!--
+	<pin x="-31" y="-11" direction="left" flow="in"/>
+	<pin x="-31" y="11" direction="left" flow="in"/>
+	<pin x="31" y="0" direction="right" flow="out"/>
+	-->
+</graphic_info>
+

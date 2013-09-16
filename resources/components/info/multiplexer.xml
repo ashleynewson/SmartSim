@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>Multiplexer</name>
+	<description>Produces the signal of the selected input.</description>
+	<icon>multiplexer.png</icon>
+	<bound right="10" down="25" left="-10" up="-25" drawbox="false"/>
+	<pin x="0" y="-20" direction="up" length="10" flow="in" array="true" arraydefault="1" idealspace="20" minspace="20"/>
+	<pin x="-10" y="0" direction="left" length="10" flow="in" array="true" arraydefault="2" idealspace="30" minspace="20" required="false" userresize="false"/>
+	<pin x="10" y="0" direction="right" length="10" flow="out"/>
+</component>

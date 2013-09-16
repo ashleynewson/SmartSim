@@ -1,2 +1,2 @@
-SUBDIRS=ccode resources
+SUBDIRS=ccode resources_tar
 

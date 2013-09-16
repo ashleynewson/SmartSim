@@ -218,7 +218,7 @@ public class PluginComponentManager {
 				// The path's version was not found, fall back to resources directory.
 				if (error is PluginComponentDefLoadError.LIBRARY_NOT_ACCESSIBLE) {
 					try {
-						libraryPath = Config.resourcesDir + "plugins/" + this.name.down();
+						libraryPath = Config.librariesDir + this.name.down();
 						load_library (libraryPath);
 					} catch (PluginComponentDefLoadError error) {
 						throw error;

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphic_info>
+	<name>And</name>
+	<description>Two input AND gate</description>
+	<centre x="25" y="20" />
+	<size width="50" height="40" />
+</graphic_info>
+

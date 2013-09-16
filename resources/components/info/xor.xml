@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>Xor</name>
+	<description>Variable width input XOR ("Exclusive Or") gate. Produces 1 only if an odd number of inputs are 1.</description>
+	<icon>xor.png</icon>
+	<graphic>xor</graphic>
+	<bound right="25" down="20" left="-30" up="-20"/>
+	<pin x="-22" y="0" direction="left" length="13" flow="in" array="true" arraydefault="2" idealspace="20" minspace="10"/>
+	<pin x="25" y="0" direction="right" length="10" flow="out"/>
+</component>

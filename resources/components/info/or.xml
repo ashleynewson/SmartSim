@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>Or</name>
+	<description>Variable width input OR gate. Produces 1 if at least one input is 1.</description>
+	<icon>or.png</icon>
+	<graphic>or</graphic>
+	<bound right="25" down="20" left="-25" up="-20"/>
+	<pin x="-17" y="0" direction="left" length="18" flow="in" array="true" arraydefault="2" idealspace="20" minspace="10"/>
+	<pin x="25" y="0" direction="right" length="10" flow="out"/>
+</component>

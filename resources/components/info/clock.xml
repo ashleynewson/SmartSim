@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>Clock</name>
+	<description>A clock which pulses on and off at configurable timings.</description>
+	<icon>clock.png</icon>
+	<label>Clk</label>
+	<bound right="20" down="20" left="-20" up="-20"/>
+	<pin x="20" y="0" direction="right" length="10" flow="out"/>
+</component>

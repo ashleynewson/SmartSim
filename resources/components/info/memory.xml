@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>Memory</name>
+	<description>Memory Chip. Store a large array of data, with read and write access. Data can be loaded and saved to files.</description>
+	<label>MEM</label>
+	<icon>memory.png</icon>
+	<bound right="40" down="60" left="-40" up="-60"/>
+	<pin x="-40" y="0" direction="left" length="10" flow="in" array="true" arraydefault="8" idealspace="10" minspace="10" label="Ad"/>
+	<pin x="40" y="0" direction="right" length="10" flow="bi" array="true" arraydefault="8" idealspace="10" minspace="10" label="D"/>
+	<pin x="0" y="-60" direction="up" length="10" flow="in" label="CS" required="true"/>
+	<pin x="-20" y="60" direction="down" length="10" flow="in" label="RE" required="false"/>
+	<pin x="0" y="60" direction="down" length="10" flow="in" label="WE" required="false"/>
+	<pin x="20" y="60" direction="down" length="10" flow="in" symlabel="clock" required="false"/>
+</component>

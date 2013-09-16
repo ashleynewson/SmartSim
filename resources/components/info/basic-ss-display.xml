@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>Basic Seven Segment Display</name>
+	<description>Display an octal, decimal or hexadecimal number with an optional point.</description>
+	<icon>ss-display.png</icon>
+	<bound right="20" down="35" left="-20" up="-35"/>
+	<pin x="15" y="35" direction="down" length="10" flow="in" required="false"/>
+	<pin x="5" y="35" direction="down" length="10" flow="in" required="false"/>
+	<pin x="-5" y="35" direction="down" length="10" flow="in" required="false"/>
+	<pin x="-15" y="35" direction="down" length="10" flow="in" required="false"/>
+	<pin x="25" y="35" direction="down" length="10" flow="in" required="false" show="false"/>
+</component>

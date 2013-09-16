@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>T Flipflop</name>
+	<description>Positive Edge Triggered T flipflop. Stores a binary bit which is toggled as the clock becomes 1 when "T" is 1.</description>
+	<label>TFF</label>
+	<icon>t-flipflop.png</icon>
+	<bound right="20" down="30" left="-20" up="-30"/>
+	<pin x="-20" y="-20" direction="left" length="10" flow="in" label="T"/>
+	<pin x="-20" y="20" direction="left" length="10" flow="in" symlabel="clock"/>
+	<pin x="20" y="-20" direction="right" length="10" flow="out" label="Q" required="false"/>
+	<pin x="20" y="20" direction="right" length="10" flow="out" barlabel="Q" required="false"/>
+</component>

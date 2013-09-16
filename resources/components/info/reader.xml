@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>Reader</name>
+	<description>Displays the input signal visually as a "0" or "1", or "Z" if there is no signal.</description>
+	<icon>reader.png</icon>
+	<graphic>reader</graphic>
+	<bound right="20" down="15" left="-20" up="-15"/>
+	<pin x="-20" y="0" direction="left" length="10" flow="in"/>
+</component>

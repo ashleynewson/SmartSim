@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>Buffer</name>
+	<description>BUFFER. Produces the same value as the input.</description>
+	<icon>buffer.png</icon>
+	<graphic>buffer</graphic>
+	<bound right="14" down="15" left="-14" up="-15"/>
+	<pin x="-12" y="0" direction="left" length="13" flow="in"/>
+	<pin x="12" y="0" direction="right" length="13" flow="out"/>
+</component>

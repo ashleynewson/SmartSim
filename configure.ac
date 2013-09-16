@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([smartsim], [1.2.1], [ashleynewson@smartsim.org.uk])
+AC_INIT([smartsim], [1.3.1], [ashleynewson@smartsim.org.uk])
 AC_CONFIG_SRCDIR([config.h.in])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
@@ -15,11 +15,11 @@ AC_PATH_PROG([tar])
 AC_SUBST(TAR, tar)
 
 # Checks for libraries.
-PKG_CHECK_MODULES([GLIB], glib-2.0 gobject-2.0)
+PKG_CHECK_MODULES([GLIB], glib-2.0 gobject-2.0 gmodule-2.0)
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GLIB_CFLAGS)
 
-PKG_CHECK_MODULES([GTK], gtk+-2.0)
+PKG_CHECK_MODULES([GTK], gtk+-3.0)
 AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 
@@ -45,5 +45,5 @@ AC_CHECK_FUNCS([memset strstr])
 
 AC_CONFIG_FILES([Makefile
                  ccode/Makefile
-                 resources/Makefile])
+                 resources_tar/Makefile])
 AC_OUTPUT

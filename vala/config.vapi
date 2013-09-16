@@ -8,5 +8,8 @@ namespace Config {
 	
 	[CCode (cname = "PACKAGE_DATADIR")]
 	public const string resourcesDir;
+	
+	[CCode (cname = "PACKAGE_LIBDIR")]
+	public const string librariesDir;
 }
 

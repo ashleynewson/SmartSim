@@ -27,29 +27,10 @@ WINCC_PATH_FLAGS= \
 
 C_FILES= \
 	main.c \
-	designerwindow.c \
-	designer.c \
-	project.c \
-	graphic.c \
-	componentinst.c \
-	pindef.c \
-	pininst.c \
-	wireinst.c \
-	path.c \
-	tag.c \
 	annotation.c \
-	propertiesquery.c \
-	compiledcircuit.c \
-	connection.c \
-	wirestate.c \
-	simulatorwindow.c \
-	customiser.c \
-	circuitinformation.c \
-	timingdiagram.c \
-	updatequeue.c \
-	imageexporter.c \
 	basicdialog.c \
-	plugincomponentmanager.c \
+	circuitinformation.c \
+	compiledcircuit.c \
 	componentdef.c \
 	componentdef/def-and.c \
 	componentdef/def-basic-ss-display.c \
@@ -82,6 +63,19 @@ C_FILES= \
 	componentstate/state-toggle.c \
 	componentstate/state-tristate.c \
 	componentstate/state-xor.c \
+	componentinst.c \
+	connection.c \
+	customiser.c \
+	designer.c \
+	designerwindow.c \
+	graphic.c \
+	imageexporter.c \
+	path.c \
+	pindef.c \
+	pininst.c \
+	plugincomponentmanager.c \
+	project.c \
+	propertiesquery.c \
 	propertyitem.c \
 	propertyitem/propertyitem-double.c \
 	propertyitem/propertyitem-file.c \
@@ -89,33 +83,20 @@ C_FILES= \
 	propertyitem/propertyitem-propertyset.c \
 	propertyitem/propertyitem-selection.c \
 	propertyitem/propertyitem-string.c \
+	simulatorwindow.c \
+	tag.c \
+	wireinst.c \
+	wirestate.c \
+	timingdiagram.c \
+	updatequeue.c \
 	$(NOTHING)
 
 SOURCE_FILES= \
 	main.vala \
-	designerwindow.vala \
-	designer.vala \
-	project.vala \
-	graphic.vala \
-	componentinst.vala \
-	pindef.vala \
-	pininst.vala \
-	wireinst.vala \
-	path.vala \
-	tag.vala \
 	annotation.vala \
-	propertiesquery.vala \
-	compiledcircuit.vala \
-	connection.vala \
-	wirestate.vala \
-	simulatorwindow.vala \
-	customiser.vala \
-	circuitinformation.vala \
-	timingdiagram.vala \
-	updatequeue.vala \
-	imageexporter.vala \
 	basicdialog.vala \
-	plugincomponentmanager.vala \
+	circuitinformation.vala \
+	compiledcircuit.vala \
 	componentdef.vala \
 	componentdef/def-and.vala \
 	componentdef/def-basic-ss-display.vala \
@@ -148,6 +129,19 @@ SOURCE_FILES= \
 	componentstate/state-toggle.vala \
 	componentstate/state-tristate.vala \
 	componentstate/state-xor.vala \
+	componentinst.vala \
+	connection.vala \
+	customiser.vala \
+	designer.vala \
+	designerwindow.vala \
+	graphic.vala \
+	imageexporter.vala \
+	path.vala \
+	pindef.vala \
+	pininst.vala \
+	plugincomponentmanager.vala \
+	project.vala \
+	propertiesquery.vala \
 	propertyitem.vala \
 	propertyitem/propertyitem-double.vala \
 	propertyitem/propertyitem-file.vala \
@@ -155,6 +149,12 @@ SOURCE_FILES= \
 	propertyitem/propertyitem-propertyset.vala \
 	propertyitem/propertyitem-selection.vala \
 	propertyitem/propertyitem-string.vala \
+	simulatorwindow.vala \
+	tag.vala \
+	wireinst.vala \
+	wirestate.vala \
+	timingdiagram.vala \
+	updatequeue.vala \
 	$(NOTHING)
 
 PLUGIN_COMMON_CFLAGS= \

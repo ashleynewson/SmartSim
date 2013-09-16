@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>Toggle</name>
+	<description>An interactive button which toggles its output when clicked.</description>
+	<icon>toggle.png</icon>
+	<graphic>toggle</graphic>
+	<bound right="20" down="15" left="-20" up="-15"/>
+	<pin x="20" y="0" direction="right" length="10" flow="out"/>
+</component>

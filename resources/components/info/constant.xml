@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>Constant</name>
+	<description>Produces a configurable constant value output</description>
+	<icon>constant.png</icon>
+	<label></label>
+	<bound right="10" down="10" left="-10" up="-10"/>
+	<pin x="10" y="0" direction="right" length="10" flow="out"/>
+</component>

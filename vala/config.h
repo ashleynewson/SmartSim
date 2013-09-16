@@ -5,3 +5,4 @@
 #define VERSION "1.3.1"
 
 #define PACKAGE_DATADIR "resources/"
+#define PACKAGE_LIBDIR "resources/plugins/"

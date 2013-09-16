@@ -49,6 +49,11 @@ public class Project {
 			if (_pluginsAllowed == true) {
 				return true;
 			}
+			if (Module.supported() == false) {
+				BasicDialog.error (
+					null, "Error: Plugin components are not supported on your host system, and cannot be loaded.");
+				_pluginsAllowed = false;
+			}
 			if (BasicDialog.ask_proceed (
 					null,
 					"Warning:\nYou are about to load one or more plugin components. Plugin components can expand the capabilities of SmartSim, but allow the execution of arbitrary code. Plugins may contain viruses or other malware, so only open projects and plugins that you fully trust. SmartSim and its developers are not responsible for any damage which results from the use of third party plugins. Allow plugins at your own risk.",

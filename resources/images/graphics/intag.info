@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphic_info>
+	<name>InTag</name>
+	<description>Tag to represent an interface going into the custom component</description>
+	<centre x="0" y="10" />
+	<size width="50" height="20" />
+</graphic_info>
+

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+	<name>Tristate</name>
+	<description>TRISTATE BUFFER. Only outputs the data input onto a wire if the enable signal is 1. If enable is 0, neither 0 nor 1 is produced (Z State).</description>
+	<icon>tristate.png</icon>
+	<graphic>tristate</graphic>
+	<bound right="14" down="15" left="-14" up="-15"/>
+	<pin x="-12" y="0" direction="left" length="13" flow="in"/>
+	<pin x="0" y="-7" direction="up" length="13" flow="in"/>
+	<pin x="12" y="0" direction="right" length="13" flow="out"/>
+</component>
