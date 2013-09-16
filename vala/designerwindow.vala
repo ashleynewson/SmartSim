@@ -89,6 +89,17 @@ public class DesignerWindow : Gtk.Window {
 		return count;
 	}
 	
+	public static DesignerWindow[] get_project_windows (Project project) {
+		DesignerWindow[] projectDesignerWindows = {};
+		foreach (DesignerWindow designerWindow in designerWindows) {
+			if (designerWindow.project == project) {
+				projectDesignerWindows += designerWindow;
+			}
+		}
+		
+		return projectDesignerWindows;
+	}
+	
 	
 	
 	private Gtk.Box vBox;
@@ -879,8 +890,9 @@ public class DesignerWindow : Gtk.Window {
 			toolCustoms.clicked.connect (() => {
 				if (hasDesigner) {
 					if (designer.set_insert_last_custom()) {
-						mouseMode = MouseMode.INSERT;
 						deselect_tools ();
+						mouseMode = MouseMode.INSERT;
+						designer.set_insert_last_custom ();
 						render_overlay ();
 					}
 				}
@@ -893,8 +905,9 @@ public class DesignerWindow : Gtk.Window {
 			toolPlugins.clicked.connect (() => {
 				if (hasDesigner) {
 					if (designer.set_insert_last_plugin()) {
-						mouseMode = MouseMode.INSERT;
 						deselect_tools ();
+						mouseMode = MouseMode.INSERT;
+						designer.set_insert_last_plugin ();
 						render_overlay ();
 					}
 				}

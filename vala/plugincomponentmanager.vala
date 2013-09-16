@@ -204,21 +204,23 @@ public class PluginComponentManager {
 		
 		// If a path is given, try to use that plugin, else resort to the resources directory.
 		if (libraryPath == null) {
-			libraryPath = Config.resourcesDir + "plugins/" + this.name.down();
+			libraryPath = Config.librariesDir + this.name.down();
 			try {
 				load_library (libraryPath);
 			} catch (PluginComponentDefLoadError error) {
 				throw error;
 			}
 		} else {
-			libraryPath = project.relative_filename (libraryPath);
+			if (GLib.Path.is_absolute(libraryPath) == false) {
+				libraryPath = GLib.Path.build_filename (GLib.Path.get_dirname(filename), GLib.Path.get_dirname(libraryPath), GLib.Path.get_basename(libraryPath));
+			}
 			try {
 				load_library (libraryPath);
 			} catch (PluginComponentDefLoadError error) {
 				// The path's version was not found, fall back to resources directory.
 				if (error is PluginComponentDefLoadError.LIBRARY_NOT_ACCESSIBLE) {
 					try {
-						libraryPath = Config.librariesDir + this.name.down();
+						libraryPath = Config.librariesDir + libraryPath;
 						load_library (libraryPath);
 					} catch (PluginComponentDefLoadError error) {
 						throw error;
@@ -233,7 +235,14 @@ public class PluginComponentManager {
 	}
 	
 	private void load_library (string libraryPath) throws PluginComponentDefLoadError {
-		string fullLibraryPath = Module.build_path (GLib.Path.get_dirname(libraryPath), GLib.Path.get_basename(libraryPath));
+		string fullLibraryPath;
+		
+		// if (GLib.Path.is_absolute(libraryPath) == true) {
+		// 	fullLibraryPath = Module.build_path (GLib.Path.get_dirname(libraryPath), GLib.Path.get_basename(libraryPath));
+		// } else {
+		// 	fullLibraryPath = Module.build_path (project.absolute_filename(GLib.Path.get_dirname(libraryPath)), GLib.Path.get_basename(libraryPath));
+		// }
+		fullLibraryPath = Module.build_path (GLib.Path.get_dirname(libraryPath), GLib.Path.get_basename(libraryPath));
 		
 		stdout.printf ("Attempting to open module: %s\n", fullLibraryPath);
 		

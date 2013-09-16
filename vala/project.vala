@@ -436,7 +436,6 @@ public class Project {
 		if (newManager == null && altFilename != null) {
 			newManager = PluginComponentManager.from_filename (altFilename);
 		}
-		stdout.printf ("CHECK %p\n",(void*)newManager);
 		if (newManager != null) {
 			newComponent = newManager.pluginComponentDef;
 			PluginComponentDef[] newPluginComponentDefs = pluginComponentDefs;
@@ -525,18 +524,16 @@ public class Project {
 	 * custom components.
 	 */
 	public void update_custom_menus () {
-		foreach (Designer designer in designers) {
-			if (designer.window != null) {
-				designer.window.update_custom_menu ();
-			}
+		DesignerWindow[] designerWindows = DesignerWindow.get_project_windows(this);
+		foreach (DesignerWindow designerWindow in designerWindows) {
+			designerWindow.update_custom_menu ();
 		}
 	}
 	
 	public void update_plugin_menus () {
-		foreach (Designer designer in designers) {
-			if (designer.window != null) {
-				designer.window.update_plugin_menu ();
-			}
+		DesignerWindow[] designerWindows = DesignerWindow.get_project_windows(this);
+		foreach (DesignerWindow designerWindow in designerWindows) {
+			designerWindow.update_plugin_menu ();
 		}
 	}
 	
