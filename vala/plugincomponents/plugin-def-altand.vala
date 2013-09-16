@@ -49,15 +49,18 @@ public class AndPluginComponentDef : PluginComponentDef {
 		}
 		
 		ComponentState componentState = new AndPluginComponentState (inputWires, outputWire, ancestry, componentInst);
-		pluginManager.print_info ("Test deconstruct start.\n");
-		componentState = null; /* Test deconstructor */
-		pluginManager.print_info ("Test deconstruct end.\n");
-		componentState = new AndPluginComponentState (inputWires, outputWire, ancestry, componentInst);
 		
 		compiledCircuit.add_component (componentState);
 	}
 }
 
+
+[CCode (cname = "plugin_component_init")]
+public bool plugin_component_init (PluginComponentManager manager) {
+	pluginManager = manager;
+	pluginManager.print_info ("And Plugin Component Init Complete!\n");
+	return true;
+}
 
 [CCode (cname = "plugin_component_get_def")]
 public PluginComponentDef? plugin_component_get_def (string infoFilename) {
@@ -68,11 +71,4 @@ public PluginComponentDef? plugin_component_get_def (string infoFilename) {
 		pluginManager.print_info ("Error during plugin component def construction (altand).\n");
 		return null;
 	}
-}
-
-[CCode (cname = "plugin_component_init")]
-public bool plugin_component_init (PluginComponentManager manager) {
-	pluginManager = manager;
-	pluginManager.print_info ("And Plugin Component Init Complete!\n");
-	return false;
 }

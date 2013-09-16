@@ -98,15 +98,16 @@ public class DesignerWindow : Gtk.Window {
 			private Gtk.MenuItem menuFileNewproject;
 			private Gtk.MenuItem menuFileNewcomponent;
 			private Gtk.MenuItem menuFileSeparator1;
-			private Gtk.MenuItem menuFileOpen;
-			private Gtk.MenuItem menuFileSeparator2;
-			private Gtk.MenuItem menuFileSave;
-			private Gtk.MenuItem menuFileSaveas;
-			private Gtk.MenuItem menuFileSeparator3;
 			private Gtk.MenuItem menuFileSaveproject;
 			private Gtk.MenuItem menuFileSaveasproject;
-			private Gtk.MenuItem menuFileSeparator4;
+			private Gtk.MenuItem menuFileSeparator2;
+			private Gtk.MenuItem menuFileOpen;
+			private Gtk.MenuItem menuFileOpenplugincomponent;
+			private Gtk.MenuItem menuFileSeparator3;
 			private Gtk.MenuItem menuFileOpenproject;
+			private Gtk.MenuItem menuFileSeparator4;
+			private Gtk.MenuItem menuFileSave;
+			private Gtk.MenuItem menuFileSaveas;
 			private Gtk.MenuItem menuFileSeparator5;
 //			private Gtk.MenuItem menuFileResumesimulation;
 //			private Gtk.MenuItem menuFileSeparator6;
@@ -211,7 +212,7 @@ public class DesignerWindow : Gtk.Window {
 	private Gtk.FileFilter sscFileFilter;
 	private Gtk.FileFilter sscxmlFileFilter;
 	private Gtk.FileFilter xmlFileFilter;
-	private Gtk.FileFilter ssxFileFilter;
+//	private Gtk.FileFilter ssxFileFilter;
 //	private Gtk.FileFilter pngFileFilter;
 //	private Gtk.FileFilter pdfFileFilter;
 //	private Gtk.FileFilter svgFileFilter;
@@ -268,6 +269,7 @@ public class DesignerWindow : Gtk.Window {
 			
 			menuFileNewcomponent.set_sensitive (value);
 			menuFileOpen.set_sensitive (value);
+			menuFileOpenplugincomponent.set_sensitive (value);
 			
 			menuFileSaveproject.set_sensitive (value);
 			menuFileSaveasproject.set_sensitive (value);
@@ -534,6 +536,11 @@ public class DesignerWindow : Gtk.Window {
 				menuFileMenu.append (menuFileOpen);
 				menuFileOpen.activate.connect (() => {open_component ();});
 				menuFileOpen.set_sensitive (false);
+				
+				menuFileOpenplugincomponent = new Gtk.MenuItem.with_label ("Open Plugin Component");
+				menuFileMenu.append (menuFileOpenplugincomponent);
+				menuFileOpenplugincomponent.activate.connect (() => {open_plugin_component ();});
+				menuFileOpenplugincomponent.set_sensitive (false);
 				
 				menuFileSeparator5 = new Gtk.SeparatorMenuItem ();
 				menuFileMenu.append (menuFileSeparator5);
@@ -966,6 +973,14 @@ public class DesignerWindow : Gtk.Window {
 		sscxmlFileFilter.set_filter_name("SmartSim Component (.ssc.xml)");
 		sscxmlFileFilter.add_pattern("*.ssc.xml");
 		
+		anyssxFileFilter = new Gtk.FileFilter();
+		anyssxFileFilter.set_filter_name("Any SmartSim Plugin Component (.ssx)");
+		anyssxFileFilter.add_pattern("*.ssx");
+		
+		// ssxFileFilter = new Gtk.FileFilter();
+		// ssxFileFilter.set_filter_name("SmartSim Plugin Component (.ssx)");
+		// ssxFileFilter.add_pattern("*.ssc");
+		
 		/*
 		pngFileFilter = new Gtk.FileFilter();
 		pngFileFilter.set_name("Portable Network Graphic (.png)");
@@ -1016,7 +1031,7 @@ public class DesignerWindow : Gtk.Window {
 			menuWindowsComponents = {};
 			
 			for (int i = 0; i < project.customComponentDefs.length; i++) {
-				CustomComponentDef customComponentDef = project.customComponentDefs[i];
+				weak CustomComponentDef customComponentDef = project.customComponentDefs[i];
 				
 				Gtk.MenuItem toolMenuItem = new Gtk.MenuItem.with_label (customComponentDef.name);
 				toolCustomsMenu.append (toolMenuItem);
@@ -1078,7 +1093,8 @@ public class DesignerWindow : Gtk.Window {
 			menuFileRemoveplugincomponentComponents = {};
 			
 			for (int i = 0; i < project.pluginComponentDefs.length; i++) {
-				PluginComponentDef pluginComponentDef = project.pluginComponentDefs[i];
+				//These must not interfere with the freeing order of plugins.
+				weak PluginComponentDef pluginComponentDef = project.pluginComponentDefs[i];
 				
 				Gtk.MenuItem toolMenuItem = new Gtk.MenuItem.with_label (pluginComponentDef.name);
 				toolPluginsMenu.append (toolMenuItem);
@@ -1604,6 +1620,36 @@ public class DesignerWindow : Gtk.Window {
 	}
 	
 	/**
+	 * Prompts the user to open a file (when "File>>Open Plugin Component" is selected) and
+	 * loads the file as a plugin component.
+	 */
+	private bool open_plugin_component () {
+		if (project.pluginsAllowed == false) {
+			return false;
+		}
+		
+		Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog (
+			"Load Component",
+			this,
+			Gtk.FileChooserAction.OPEN,
+			Gtk.Stock.CANCEL,
+			Gtk.ResponseType.CANCEL,
+			Gtk.Stock.OPEN,
+			Gtk.ResponseType.ACCEPT);
+		
+		fileChooser.add_filter(anyssxFileFilter);
+		
+		if (fileChooser.run () == Gtk.ResponseType.ACCEPT) {
+			stdout.printf ("Load Plugin Component From: %s\n", fileChooser.get_filename());
+			project.load_plugin_component (fileChooser.get_filename());
+			project.update_plugin_menus ();
+		}
+		fileChooser.destroy ();
+		
+		return false;
+	}
+	
+	/**
 	 * Prompts the user to save to a file (when File>>Open is selected)
 	 * if a filename is unknown, or if //saveAs// is true, and saves the
 	 * component to a file.
@@ -1791,7 +1837,7 @@ public class DesignerWindow : Gtk.Window {
 	
 	/**
 	 * Loads a component from a file in this window. Does not open a new
-	 * window if there is already a component.
+	 * window if there is not already a component.
 	 */
 	private void load_component (string filename) {
 		if (hasDesigner && hasProject) {
@@ -2523,7 +2569,7 @@ public class DesignerWindow : Gtk.Window {
 			return false;
 		}
 		
-		if (BasicDialog.ask_proceed(this, "Are you sure you want to remove this plugin component from the project?", "Remove", "Keep") == Gtk.ResponseType.OK) {
+		if (BasicDialog.ask_proceed(this, "Are you sure you want to remove this plugin component from the project?\nThis will only dissociate the plugin with the project. The plugin will remain loaded until SmartSim is closed.\n", "Remove", "Keep") == Gtk.ResponseType.OK) {
 			if (project.remove_plugin_component(pluginComponentDef) == 0) {
 				project.update_plugin_menus ();
 			}

@@ -40,7 +40,26 @@ public class Project {
 	 */
 	private static Project[] projects;
 	private static int projectCount = 0;
-	private bool pluginsAllowed = false;
+	private bool _pluginsAllowed = false;
+	public bool pluginsAllowed {
+		set {
+			_pluginsAllowed = value;
+		}
+		get {
+			if (_pluginsAllowed == true) {
+				return true;
+			}
+			if (BasicDialog.ask_proceed (
+					null,
+					"Warning:\nYou are about to load one or more plugin components. Plugin components can expand the capabilities of SmartSim, but allow the execution of arbitrary code. Plugins may contain viruses or other malware, so only open projects and plugins that you fully trust. SmartSim and its developers are not responsible for any damage which results from the use of third party plugins. Allow plugins at your own risk.",
+					"Allow Plugins", "Cancel Loading") == Gtk.ResponseType.OK) {
+				_pluginsAllowed = true;
+			} else {
+				_pluginsAllowed = false;
+			}
+			return _pluginsAllowed;
+		}
+	}
 	
 	/**
 	 * Whether or not the project's circuit is being simulated.
@@ -233,14 +252,7 @@ public class Project {
 			case "plugin":
 			{
 				if (pluginsAllowed == false) {
-					if (BasicDialog.ask_proceed (
-							null,
-							"Warning:\nThis project uses plugin components. Plugin components can expand the capabilities of SmartSim, but allow the execution of arbitrary code. Plugins may contain viruses or other malware, so only open projects and plugins you fully trust. SmartSim and its developers are not responsible for any damage which results from the use of third party plugins. Allow plugins at your own risk.",
-							"Allow Plugins", "Cancel Loading") == Gtk.ResponseType.OK) {
-						pluginsAllowed = true;
-					} else {
-						throw new ProjectLoadError.CANCEL ("User disallowed plugins.");
-					}
+					throw new ProjectLoadError.CANCEL ("User disallowed plugins.");
 				}
 				
 				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
@@ -403,12 +415,37 @@ public class Project {
 	 * Loads and returns a plugin component from the file //fileName//.
 	 * Returns null on failure.
 	 */
-	public PluginComponentDef? load_plugin_component (string fileName, string? altFileName = null) {
+	public PluginComponentDef? load_plugin_component (string filename, string? altFilename = null) {
 		PluginComponentDef newComponent = null;
 		PluginComponentManager newManager = null;
 		
+		foreach (PluginComponentManager pluginComponentManager in pluginComponentManagers) {
+			if (pluginComponentManager.filename == filename) {
+				BasicDialog.error (null, "The plugin component with filename \"" + filename + "\" is already loaded in this project.\n");
+				return null;
+			}
+		}
+		
+		// Check if it is already loaded globally.
+		newManager = PluginComponentManager.from_filename (filename);
+		if (newManager == null && altFilename != null) {
+			newManager = PluginComponentManager.from_filename (altFilename);
+		}
+		stdout.printf ("CHECK %p\n",(void*)newManager);
+		if (newManager != null) {
+			newComponent = newManager.pluginComponentDef;
+			PluginComponentDef[] newPluginComponentDefs = pluginComponentDefs;
+			PluginComponentManager[] newPluginComponentManagers = pluginComponentManagers;
+			newPluginComponentDefs += newComponent;
+			newPluginComponentManagers += newManager;
+			pluginComponentDefs = newPluginComponentDefs;
+			pluginComponentManagers = newPluginComponentManagers;
+			update_plugin_menus ();
+			return newComponent;
+		}
+		
 		try {
-			newManager = new PluginComponentManager.from_file (fileName, this);
+			newManager = new PluginComponentManager.from_file (filename, this);
 			newComponent = newManager.pluginComponentDef;
 			PluginComponentDef[] newPluginComponentDefs = pluginComponentDefs;
 			PluginComponentManager[] newPluginComponentManagers = pluginComponentManagers;
@@ -418,8 +455,8 @@ public class Project {
 			pluginComponentManagers = newPluginComponentManagers;
 			update_plugin_menus ();
 		} catch (ComponentDefLoadError error) {
-			if (error is ComponentDefLoadError.FILE && altFileName != null) {
-				newComponent = load_plugin_component (altFileName);
+			if (error is ComponentDefLoadError.FILE && altFilename != null) {
+				newComponent = load_plugin_component (altFilename);
 				if (newComponent == null) {
 					BasicDialog.error (null, "Could not load local plugin component: \n" + error.message);
 				}
@@ -427,7 +464,7 @@ public class Project {
 				BasicDialog.error (null, "Could not load shared plugin component: \n" + error.message);
 			}
 		} catch (PluginComponentDefLoadError error) {
-			if (altFileName == null) {
+			if (altFilename == null) {
 				BasicDialog.error (null, "Could not load shared plugin component: \n" + error.message);
 			} else {
 				BasicDialog.error (null, "Could not load local plugin component: \n" + error.message);
@@ -831,18 +868,20 @@ public class Project {
 				newPluginComponentDefs += pluginComponentDef;
 			}
 		}
-		pluginComponentDefs = newPluginComponentDefs;
 		
 		PluginComponentManager[] newPluginComponentManagers = {};
 		
 		foreach (PluginComponentManager pluginComponentManager in pluginComponentManagers) {
 			if (pluginComponentManager.pluginComponentDef == removeComponent) {
-				pluginComponentManager.unload ();
+				// pluginComponentManager.unload ();
 			} else {
 				newPluginComponentManagers += pluginComponentManager;
 			}
 		}
-		// pluginComponentManagers = newPluginComponentManagers;
+		
+		pluginComponentDefs = newPluginComponentDefs;
+		// update_plugin_menus ();
+		pluginComponentManagers = newPluginComponentManagers;
 		
 		return result;
 	}

@@ -18,6 +18,72 @@
  */
 public class PluginComponentManager {
 	/**
+	 * Due to the inability of easily being able to reload plugins,
+	 * the current system must keep plugins loaded
+	 */
+	private static PluginComponentManager[] pluginComponentManagers = {};
+	
+	/**
+	 * Adds //pluginComponentManager// to the list of loaded managers.
+	 */
+	private static void register (PluginComponentManager pluginComponentManager) {
+		int position;
+		position = pluginComponentManagers.length;
+		pluginComponentManagers += pluginComponentManager;
+		
+		stdout.printf ("Registered Plugin Component Manager (%i: \"%s\").\n", position, pluginComponentManager.name);
+	}
+	
+	/**
+	 * Dereference everything. Only call at program termination.
+	 */
+	public static void unregister_all () {
+		/*
+		 * The order for the unloading of plugins is very important.
+		 * All references to plugin code must be removed before un linking.
+		 */ 
+		
+		stdout.printf ("Unregistering Plugin Component Managers...\n");
+		
+		foreach (PluginComponentManager pluginComponentManager in pluginComponentManagers) {
+			pluginComponentManager.unload ();
+		}
+		pluginComponentManagers = null;
+		
+		stdout.printf ("Unregistered Plugin Component Managers.\n");
+	}
+	
+	/**
+	 * Returns a manager which is found with name //name//,
+	 * or null is none exists.
+	 */
+	public static PluginComponentManager? from_name (string name) {
+		foreach (PluginComponentManager pluginComponentManager in pluginComponentManagers) {
+			if (pluginComponentManager.name == name) {
+				return pluginComponentManager;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns a manager which is found with filename //filename//,
+	 * or null is none exists.
+	 */
+	public static PluginComponentManager? from_filename (string filename) {
+		foreach (PluginComponentManager pluginComponentManager in pluginComponentManagers) {
+			stdout.printf ("Comparing component filenames: \n\t\"%s\"\n\t\"%s\"\n",
+						   Core.absolute_filename(pluginComponentManager.filename),
+						   Core.absolute_filename(filename));
+			if (Core.absolute_filename(pluginComponentManager.filename) == Core.absolute_filename(filename)) {
+				return pluginComponentManager;
+			}
+		}
+		return null;
+	}
+	
+	
+	/**
 	 * A reference to the main program itself.
 	 */
 	public Module mainProgram = Module.open (null, 0);
@@ -32,32 +98,20 @@ public class PluginComponentManager {
 	private delegate bool init_delegate (PluginComponentManager manager);
 	private delegate PluginComponentDef? get_def_delegate (string infoFilename);
 	
-	/**
-	 * A reference to standard in for use by the plugin
-	 */
-	public unowned FileStream stdinFileStream;
-	/**
-	 * A reference to standard out for use by the plugin
-	 */
-	public unowned FileStream stdoutFileStream;
-	/**
-	 * A reference to standard err for use by the plugin
-	 */
-	public unowned FileStream stderrFileStream;
-	
 	
 	/**
 	 * Loads a PluginComponentDef from a file using libxml.
 	 */
 	public PluginComponentManager.from_file (string infoFilename, Project project) throws ComponentDefLoadError, PluginComponentDefLoadError 
 {
+		if (PluginComponentManager.from_filename(infoFilename) != null) {
+			stdout.printf ("Error initialising plugin: Plugin cannot load twice conflict: \"%s\".\n", infoFilename);
+			throw new PluginComponentDefLoadError.NAME_CONFLICT ("Plugin cannot load twice: \"" + infoFilename + "\"");
+		}
+		
 		this.filename = infoFilename;
 		
 		this.project = project;
-		
-		this.stdinFileStream = stdin;
-		this.stdoutFileStream = stdout;
-		this.stderrFileStream = stderr;
 		
 		try {
 			load (infoFilename);
@@ -65,17 +119,7 @@ public class PluginComponentManager {
 			throw error;
 		}
 		
-		// try {
-		// 	load_from_file (infoFilename);
-		// } catch (ComponentDefLoadError error) {
-		// 	throw error;
-		// } catch (PluginComponentDefLoadError error) {
-		// 	throw error;
-		// }
-		
-		if (project.resolve_def_name(pluginComponentDef.name) != null) {
-			throw new PluginComponentDefLoadError.NAME_CONFLICT ("A component with the name \"" + name + "\" already exists. Rename the component which is already open using the customiser dialog, accessible via the component menu.");
-		}
+		PluginComponentManager.register (this);
 		
 		pluginComponentDef.manager = this;
 	}
@@ -149,6 +193,15 @@ public class PluginComponentManager {
 		
 		delete xmldoc;
 		
+		if (project.resolve_def_name(this.name) != null) {
+			throw new PluginComponentDefLoadError.NAME_CONFLICT ("A component with the name \"" + name + "\" already exists. Rename the component which is already open (if it is a custom component) using the customiser dialog, accessible via the component menu.");
+		}
+		
+		if (PluginComponentManager.from_name(this.name) != null) {
+			stdout.printf ("Error initialising plugin: Plugin name conflict: \"%s\".\n", this.name);
+			throw new PluginComponentDefLoadError.NAME_CONFLICT ("Plugin name conflict: \"" + this.name + "\"");
+		}
+		
 		// If a path is given, try to use that plugin, else resort to the resources directory.
 		if (libraryPath == null) {
 			libraryPath = Config.resourcesDir + "plugins/" + this.name.down();
@@ -184,7 +237,7 @@ public class PluginComponentManager {
 		
 		stdout.printf ("Attempting to open module: %s\n", fullLibraryPath);
 		
-		module = Module.open (fullLibraryPath, ModuleFlags.BIND_LAZY);
+		module = Module.open (fullLibraryPath, 0);
 		if (module == null) {
 			stdout.printf ("Unable to open module: %s\n", Module.error());
 			throw new PluginComponentDefLoadError.LIBRARY_NOT_ACCESSIBLE ("Library could not be opened: \"" + filename + "\": \"" + fullLibraryPath + "\": ");
@@ -198,10 +251,13 @@ public class PluginComponentManager {
 		
 		if (module.symbol("plugin_component_init", out init_pointer)) {
 			if (init_pointer != null) {
+				stdout.printf ("Initialising plugin... (plugin_component_init).\n");
 				init_function = (init_delegate) init_pointer;
 				if (init_function(this) == false) {
 					stdout.printf ("Error initialising plugin: Plugin init function reported failure.\n");
 					throw new PluginComponentDefLoadError.INIT_ERROR ("Plugin init function reported failure: \"" + filename + "\": \"" + fullLibraryPath + "\": ");
+				} else {
+					stdout.printf ("Initialising plugin... (plugin_component_init).\n");
 				}
 			} else {
 				stdout.printf ("Got null plugin_component_init function.\n");
@@ -236,11 +292,7 @@ public class PluginComponentManager {
 		stdout.printf ("Plugin \"%s\" (\"%s\") Error:\n\t%s\n", name, filename, text);
 	}
 	
-	/*
-	 * The external code needs to be unreferenced and freed before unloading the module while deconstructing.
-	 * It cannot be assumed that the order in which things are dereferenced is the one needed.
-	 */
-	public void unload () {
+	private void unload () {
 		pluginComponentDef.manager = null;
 		pluginComponentDef = null;
 	}

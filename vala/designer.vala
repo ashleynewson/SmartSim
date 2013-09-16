@@ -495,7 +495,7 @@ public class Designer {
 	public void adjust_components (int x, int y, bool autoBind = false) {
 		foreach (ComponentInst componentInst in customComponentDef.componentInsts) {
 			if (componentInst.find(x, y) == 1) {
-				PropertySet componentProperties = new PropertySet ("Component Instance", "Component Instance Properties");
+				PropertySet componentProperties = new PropertySet (componentInst.componentDef.name + " Component Instance", "Component Instance Properties");
 				
 				for (int i = 0; i < componentInst.pinInsts.length; i++) {
 					if (componentInst.pinInsts[i].pinDef.array && componentInst.pinInsts[i].pinDef.userArrayResize) {

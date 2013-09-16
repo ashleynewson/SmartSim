@@ -108,6 +108,12 @@ with SmartSim. If not, see:
 		
 		Gtk.main ();
 		
+		stdout.printf ("Program Terminating...\n");
+		
+		PluginComponentManager.unregister_all ();
+		
+		stdout.printf ("Program Terminated.\n");
+		
 		return 0;
 	}
 	
@@ -178,6 +184,17 @@ with SmartSim. If not, see:
 	 */
 	public static ComponentDef[] get_standard_defs () {
 		return standardComponentDefs;
+	}
+	
+	/**
+	 * Returns the absolute filename based upon the current working directory.
+	 */
+	public static string absolute_filename (string filename) {
+		if (GLib.Path.is_absolute(filename) == true) {
+			return filename;
+		}
+		string pwd = Environment.get_current_dir ();
+		return GLib.Path.build_filename (pwd, filename);
 	}
 }
 

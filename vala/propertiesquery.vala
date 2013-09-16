@@ -46,10 +46,12 @@ public class PropertiesQuery {
 		titleNameLabel = new Gtk.Label (propertySet.name);
 		titleDescriptionLabel = new Gtk.Label (propertySet.description);
 		
-		content.pack_start (titleNameLabel, false, true, 1);
+		content.pack_start (titleNameLabel, false, true, 4);
 		content.pack_start (titleDescriptionLabel, false, true, 1);
 		
 		for (int i = 0; i < propertySet.propertyItems.length; i ++) {
+			content.pack_start (new Gtk.Separator(Gtk.Orientation.HORIZONTAL), false, false, 3);
+			
 			PropertyItem propertyItem = propertySet.propertyItems[i];
 			string name = propertyItem.name;
 			string description = propertyItem.description;
@@ -67,7 +69,7 @@ public class PropertiesQuery {
 //			});
 			descriptionLabels += descriptionLabel;
 			
-			propertyVBox.pack_start (nameLabel, false, true, 1);
+			propertyVBox.pack_start (nameLabel, false, true, 4);
 			
 			if (description != "") {
 				propertyVBox.pack_start (descriptionLabel, false, true, 1);
