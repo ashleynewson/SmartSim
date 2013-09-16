@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin_component>
+	<name>AltAnd</name>
+	<description>Variable width input AND gate. Produces 1 if all inputs are 1.</description>
+	<graphic>and</graphic>
+	<library>altand</library>
+	<bound right="25" down="20" left="-25" up="-20"/>
+	<pin x="-25" y="0" direction="left" length="10" flow="in" array="true" arraydefault="2" idealspace="20" minspace="10"/>
+	<pin x="25" y="0" direction="right" length="10" flow="out"/>
+</plugin_component>
