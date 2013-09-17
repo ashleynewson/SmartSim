@@ -25,13 +25,37 @@ WINCC_PATH_FLAGS= \
 	-L/usr/i586-mingw32msvc/lib \
 	$(NOTHING)
 
-C_FILES= \
+C_FILES_ROOT= \
 	main.c \
 	annotation.c \
 	basicdialog.c \
 	circuitinformation.c \
 	compiledcircuit.c \
 	componentdef.c \
+	componentstate.c \
+	componentinst.c \
+	connection.c \
+	customiser.c \
+	designer.c \
+	designerwindow.c \
+	graphic.c \
+	imageexporter.c \
+	path.c \
+	pindef.c \
+	pininst.c \
+	plugincomponentmanager.c \
+	project.c \
+	propertiesquery.c \
+	propertyitem.c \
+	simulatorwindow.c \
+	tag.c \
+	wireinst.c \
+	wirestate.c \
+	timingdiagram.c \
+	updatequeue.c \
+	$(NOTHING)
+
+C_FILES_COMPONENTDEF= \
 	componentdef/def-and.c \
 	componentdef/def-basic-ss-display.c \
 	componentdef/def-buffer.c \
@@ -48,7 +72,9 @@ C_FILES= \
 	componentdef/def-toggle.c \
 	componentdef/def-tristate.c \
 	componentdef/def-xor.c \
-	componentstate.c \
+	$(NOTHING)
+
+C_FILES_COMPONENTSTATE= \
 	componentstate/state-and.c \
 	componentstate/state-basic-ss-display.c \
 	componentstate/state-buffer.c \
@@ -63,32 +89,22 @@ C_FILES= \
 	componentstate/state-toggle.c \
 	componentstate/state-tristate.c \
 	componentstate/state-xor.c \
-	componentinst.c \
-	connection.c \
-	customiser.c \
-	designer.c \
-	designerwindow.c \
-	graphic.c \
-	imageexporter.c \
-	path.c \
-	pindef.c \
-	pininst.c \
-	plugincomponentmanager.c \
-	project.c \
-	propertiesquery.c \
-	propertyitem.c \
+	$(NOTHING)
+
+C_FILES_PROPERTYITEM= \
 	propertyitem/propertyitem-double.c \
 	propertyitem/propertyitem-file.c \
 	propertyitem/propertyitem-int.c \
 	propertyitem/propertyitem-propertyset.c \
 	propertyitem/propertyitem-selection.c \
 	propertyitem/propertyitem-string.c \
-	simulatorwindow.c \
-	tag.c \
-	wireinst.c \
-	wirestate.c \
-	timingdiagram.c \
-	updatequeue.c \
+	$(NOTHING)
+
+C_FILES= \
+	$(C_FILES_ROOT) \
+	$(C_FILES_COMPONENTDEF) \
+	$(C_FILES_COMPONENTSTATE) \
+	$(C_FILES_PROPERTYITEM) \
 	$(NOTHING)
 
 SOURCE_FILES= \
@@ -199,7 +215,7 @@ VALA_PACKAGES= \
 
 all: linux plugins
 
-linux:
+native:
 	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -o smartsim --verbose $(VALA_PACKAGES)
 
 plugins: plugin_altand
@@ -209,14 +225,20 @@ plugin_altand:
 	$(CC) -shared -fPIC $(PLUGIN_COMMON_CFLAGS) $(PLUGIN_COMMON_LIBS) $(PLUGIN_ALTAND_CFLAGS) $(PLUGIN_ALTAND_LIBS) -o $(PLUGIN_ALTAND_OUTPUT_NAME) $(PLUGIN_ALTAND_C_FILES)
 
 
-linuxO3:
+nativeO3:
 	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -o smartsim --verbose $(VALA_PACKAGES) -X -O3
 
 debug:
 	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -o smartsim --verbose $(VALA_PACKAGES) -X -g
 
 cfiles:
-	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -C $(VALA_PACKAGES)
+	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -C --verbose $(VALA_PACKAGES)
+
+update_ccode: cfiles
+	mv $(C_FILES_ROOT) ../ccode/
+	mv $(C_FILES_COMPONENTDEF) ../ccode/componentdef/
+	mv $(C_FILES_COMPONENTSTATE) ../ccode/componentstate/
+	mv $(C_FILES_PROPERTYITEM) ../ccode/propertyitem/
 
 win32: cfiles
 	$(WINCC) -I./ -o smartsim.exe c/*.c c/componentdef/*.c c/componentstate/*.c c/propertyitem/*.c -mms-bitfields $(WINCC_PATH_FLAGS) -lgtk-win32-2.0 -latk-1.0 -lgdk-win32-2.0 -lpangowin32-1.0 -lgdi32 -lpangocairo-1.0 -lpango-1.0 -lrsvg-2 -lm -lgio-2.0 -lgdk_pixbuf-2.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lglib-2.0 -lintl -llibxml2

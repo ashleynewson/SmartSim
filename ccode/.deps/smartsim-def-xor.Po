@@ -1,41 +1,31 @@
 smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
  /usr/include/glib-2.0/glib/galloca.h /usr/include/glib-2.0/glib/gtypes.h \
- /usr/lib/i386-linux-gnu/glib-2.0/include/glibconfig.h \
+ /usr/lib64/glib-2.0/include/glibconfig.h \
  /usr/include/glib-2.0/glib/gmacros.h \
- /usr/lib/gcc/i686-linux-gnu/4.7/include/stddef.h \
- /usr/lib/gcc/i686-linux-gnu/4.7/include-fixed/limits.h \
- /usr/lib/gcc/i686-linux-gnu/4.7/include-fixed/syslimits.h \
- /usr/include/limits.h /usr/include/features.h /usr/include/stdc-predef.h \
- /usr/include/i386-linux-gnu/bits/predefs.h \
- /usr/include/i386-linux-gnu/sys/cdefs.h \
- /usr/include/i386-linux-gnu/bits/wordsize.h \
- /usr/include/i386-linux-gnu/gnu/stubs.h \
- /usr/include/i386-linux-gnu/gnu/stubs-32.h \
- /usr/include/i386-linux-gnu/bits/posix1_lim.h \
- /usr/include/i386-linux-gnu/bits/local_lim.h /usr/include/linux/limits.h \
- /usr/include/i386-linux-gnu/bits/posix2_lim.h \
- /usr/lib/gcc/i686-linux-gnu/4.7/include/float.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include/stddef.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include-fixed/limits.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include-fixed/syslimits.h \
+ /usr/include/limits.h /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
+ /usr/include/gnu/stubs-64.h /usr/include/bits/posix1_lim.h \
+ /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+ /usr/include/bits/posix2_lim.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include/float.h \
  /usr/include/glib-2.0/glib/gversionmacros.h /usr/include/time.h \
- /usr/include/i386-linux-gnu/bits/time.h \
- /usr/include/i386-linux-gnu/bits/types.h \
- /usr/include/i386-linux-gnu/bits/typesizes.h /usr/include/xlocale.h \
+ /usr/include/bits/time.h /usr/include/bits/types.h \
+ /usr/include/bits/typesizes.h /usr/include/xlocale.h \
  /usr/include/glib-2.0/glib/garray.h \
  /usr/include/glib-2.0/glib/gasyncqueue.h \
  /usr/include/glib-2.0/glib/gthread.h \
  /usr/include/glib-2.0/glib/gatomic.h /usr/include/glib-2.0/glib/gerror.h \
- /usr/lib/gcc/i686-linux-gnu/4.7/include/stdarg.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include/stdarg.h \
  /usr/include/glib-2.0/glib/gquark.h \
  /usr/include/glib-2.0/glib/gbacktrace.h /usr/include/signal.h \
- /usr/include/i386-linux-gnu/bits/sigset.h \
- /usr/include/i386-linux-gnu/bits/signum.h \
- /usr/include/i386-linux-gnu/bits/siginfo.h \
- /usr/include/i386-linux-gnu/bits/sigaction.h \
- /usr/include/i386-linux-gnu/bits/sigcontext.h \
- /usr/include/i386-linux-gnu/bits/sigstack.h \
- /usr/include/i386-linux-gnu/sys/ucontext.h \
- /usr/include/i386-linux-gnu/bits/pthreadtypes.h \
- /usr/include/i386-linux-gnu/bits/sigthread.h \
- /usr/include/glib-2.0/glib/gbase64.h \
+ /usr/include/bits/sigset.h /usr/include/bits/signum.h \
+ /usr/include/bits/siginfo.h /usr/include/bits/sigaction.h \
+ /usr/include/bits/sigcontext.h /usr/include/bits/sigstack.h \
+ /usr/include/sys/ucontext.h /usr/include/bits/pthreadtypes.h \
+ /usr/include/bits/sigthread.h /usr/include/glib-2.0/glib/gbase64.h \
  /usr/include/glib-2.0/glib/gbitlock.h \
  /usr/include/glib-2.0/glib/gbookmarkfile.h \
  /usr/include/glib-2.0/glib/gbytes.h \
@@ -49,7 +39,7 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
  /usr/include/glib-2.0/glib/gfileutils.h \
  /usr/include/glib-2.0/glib/ggettext.h /usr/include/glib-2.0/glib/ghash.h \
  /usr/include/glib-2.0/glib/glist.h /usr/include/glib-2.0/glib/gmem.h \
- /usr/include/glib-2.0/glib/gnode.h /usr/include/glib-2.0/glib/ghmac.h \
+ /usr/include/glib-2.0/glib/ghmac.h \
  /usr/include/glib-2.0/glib/gchecksum.h \
  /usr/include/glib-2.0/glib/ghook.h \
  /usr/include/glib-2.0/glib/ghostutils.h \
@@ -62,7 +52,7 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
  /usr/include/glib-2.0/glib/gmappedfile.h \
  /usr/include/glib-2.0/glib/gmarkup.h \
  /usr/include/glib-2.0/glib/gmessages.h \
- /usr/include/glib-2.0/glib/goption.h \
+ /usr/include/glib-2.0/glib/gnode.h /usr/include/glib-2.0/glib/goption.h \
  /usr/include/glib-2.0/glib/gpattern.h \
  /usr/include/glib-2.0/glib/gprimes.h /usr/include/glib-2.0/glib/gqsort.h \
  /usr/include/glib-2.0/glib/gqueue.h /usr/include/glib-2.0/glib/grand.h \
@@ -88,11 +78,9 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
  /usr/include/glib-2.0/glib/deprecated/gmain.h \
  /usr/include/glib-2.0/glib/deprecated/grel.h \
  /usr/include/glib-2.0/glib/deprecated/gthread.h /usr/include/pthread.h \
- /usr/include/endian.h /usr/include/i386-linux-gnu/bits/endian.h \
- /usr/include/i386-linux-gnu/bits/byteswap.h \
- /usr/include/i386-linux-gnu/bits/byteswap-16.h /usr/include/sched.h \
- /usr/include/i386-linux-gnu/bits/sched.h \
- /usr/include/i386-linux-gnu/bits/setjmp.h \
+ /usr/include/endian.h /usr/include/bits/endian.h \
+ /usr/include/bits/byteswap.h /usr/include/sched.h \
+ /usr/include/bits/sched.h /usr/include/bits/setjmp.h \
  /usr/include/glib-2.0/glib-object.h \
  /usr/include/glib-2.0/gobject/gbinding.h \
  /usr/include/glib-2.0/gobject/gobject.h \
@@ -114,11 +102,9 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
  /usr/include/cairo/cairo-version.h /usr/include/cairo/cairo-features.h \
  /usr/include/cairo/cairo-deprecated.h /usr/include/libxml2/libxml/tree.h \
  /usr/include/stdio.h /usr/include/libio.h /usr/include/_G_config.h \
- /usr/include/wchar.h /usr/include/i386-linux-gnu/bits/stdio_lim.h \
- /usr/include/i386-linux-gnu/bits/sys_errlist.h \
- /usr/include/i386-linux-gnu/bits/stdio.h \
- /usr/include/i386-linux-gnu/bits/stdio2.h \
- /usr/include/libxml2/libxml/xmlversion.h \
+ /usr/include/wchar.h /usr/include/bits/stdio_lim.h \
+ /usr/include/bits/sys_errlist.h /usr/include/bits/stdio.h \
+ /usr/include/bits/stdio2.h /usr/include/libxml2/libxml/xmlversion.h \
  /usr/include/libxml2/libxml/xmlexports.h \
  /usr/include/libxml2/libxml/xmlstring.h \
  /usr/include/libxml2/libxml/xmlregexp.h \
@@ -133,29 +119,30 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
  /usr/include/libxml2/libxml/xmlautomata.h \
  /usr/include/libxml2/libxml/entities.h \
  /usr/include/libxml2/libxml/encoding.h /usr/include/iconv.h \
+ /usr/include/unicode/ucnv.h /usr/include/unicode/ucnv_err.h \
+ /usr/include/unicode/utypes.h /usr/include/unicode/umachine.h \
+ /usr/include/unicode/ptypes.h /usr/include/unicode/platform.h \
+ /usr/include/unicode/uconfig.h /usr/include/unicode/uvernum.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include/stdint.h \
+ /usr/include/stdint.h /usr/include/bits/wchar.h \
+ /usr/include/unicode/urename.h /usr/include/unicode/uversion.h \
+ /usr/include/unicode/utf.h /usr/include/unicode/utf8.h \
+ /usr/include/unicode/utf16.h /usr/include/unicode/utf_old.h \
+ /usr/include/unicode/uenum.h /usr/include/unicode/localpointer.h \
  /usr/include/libxml2/libxml/xmlIO.h /usr/include/libxml2/libxml/SAX.h \
- /usr/include/stdlib.h /usr/include/i386-linux-gnu/bits/waitflags.h \
- /usr/include/i386-linux-gnu/bits/waitstatus.h \
- /usr/include/i386-linux-gnu/sys/types.h \
- /usr/include/i386-linux-gnu/sys/select.h \
- /usr/include/i386-linux-gnu/bits/select.h \
- /usr/include/i386-linux-gnu/bits/select2.h \
- /usr/include/i386-linux-gnu/sys/sysmacros.h /usr/include/alloca.h \
- /usr/include/i386-linux-gnu/bits/stdlib-float.h \
- /usr/include/i386-linux-gnu/bits/stdlib.h \
+ /usr/include/stdlib.h /usr/include/bits/waitflags.h \
+ /usr/include/bits/waitstatus.h /usr/include/sys/types.h \
+ /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/select2.h /usr/include/sys/sysmacros.h \
+ /usr/include/alloca.h /usr/include/bits/stdlib.h \
  /usr/include/libxml2/libxml/xlink.h /usr/include/libxml2/libxml/SAX2.h \
  /usr/include/libxml2/libxml/xmlwriter.h /usr/include/string.h \
- /usr/include/i386-linux-gnu/bits/string.h \
- /usr/include/i386-linux-gnu/bits/string2.h \
- /usr/include/i386-linux-gnu/bits/string3.h /usr/include/math.h \
- /usr/include/i386-linux-gnu/bits/huge_val.h \
- /usr/include/i386-linux-gnu/bits/huge_valf.h \
- /usr/include/i386-linux-gnu/bits/huge_vall.h \
- /usr/include/i386-linux-gnu/bits/inf.h \
- /usr/include/i386-linux-gnu/bits/nan.h \
- /usr/include/i386-linux-gnu/bits/mathdef.h \
- /usr/include/i386-linux-gnu/bits/mathcalls.h \
- /usr/include/i386-linux-gnu/bits/mathinline.h ../config.h
+ /usr/include/bits/string.h /usr/include/bits/string2.h \
+ /usr/include/bits/string3.h /usr/include/math.h \
+ /usr/include/bits/huge_val.h /usr/include/bits/huge_valf.h \
+ /usr/include/bits/huge_vall.h /usr/include/bits/inf.h \
+ /usr/include/bits/nan.h /usr/include/bits/mathdef.h \
+ /usr/include/bits/mathcalls.h /usr/include/bits/mathinline.h ../config.h
 
 /usr/include/glib-2.0/glib.h:
 
@@ -163,51 +150,47 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
 
 /usr/include/glib-2.0/glib/gtypes.h:
 
-/usr/lib/i386-linux-gnu/glib-2.0/include/glibconfig.h:
+/usr/lib64/glib-2.0/include/glibconfig.h:
 
 /usr/include/glib-2.0/glib/gmacros.h:
 
-/usr/lib/gcc/i686-linux-gnu/4.7/include/stddef.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include/stddef.h:
 
-/usr/lib/gcc/i686-linux-gnu/4.7/include-fixed/limits.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include-fixed/limits.h:
 
-/usr/lib/gcc/i686-linux-gnu/4.7/include-fixed/syslimits.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
 /usr/include/features.h:
 
-/usr/include/stdc-predef.h:
+/usr/include/sys/cdefs.h:
 
-/usr/include/i386-linux-gnu/bits/predefs.h:
+/usr/include/bits/wordsize.h:
 
-/usr/include/i386-linux-gnu/sys/cdefs.h:
+/usr/include/gnu/stubs.h:
 
-/usr/include/i386-linux-gnu/bits/wordsize.h:
+/usr/include/gnu/stubs-64.h:
 
-/usr/include/i386-linux-gnu/gnu/stubs.h:
+/usr/include/bits/posix1_lim.h:
 
-/usr/include/i386-linux-gnu/gnu/stubs-32.h:
-
-/usr/include/i386-linux-gnu/bits/posix1_lim.h:
-
-/usr/include/i386-linux-gnu/bits/local_lim.h:
+/usr/include/bits/local_lim.h:
 
 /usr/include/linux/limits.h:
 
-/usr/include/i386-linux-gnu/bits/posix2_lim.h:
+/usr/include/bits/posix2_lim.h:
 
-/usr/lib/gcc/i686-linux-gnu/4.7/include/float.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include/float.h:
 
 /usr/include/glib-2.0/glib/gversionmacros.h:
 
 /usr/include/time.h:
 
-/usr/include/i386-linux-gnu/bits/time.h:
+/usr/include/bits/time.h:
 
-/usr/include/i386-linux-gnu/bits/types.h:
+/usr/include/bits/types.h:
 
-/usr/include/i386-linux-gnu/bits/typesizes.h:
+/usr/include/bits/typesizes.h:
 
 /usr/include/xlocale.h:
 
@@ -221,7 +204,7 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
 
 /usr/include/glib-2.0/glib/gerror.h:
 
-/usr/lib/gcc/i686-linux-gnu/4.7/include/stdarg.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include/stdarg.h:
 
 /usr/include/glib-2.0/glib/gquark.h:
 
@@ -229,23 +212,23 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
 
 /usr/include/signal.h:
 
-/usr/include/i386-linux-gnu/bits/sigset.h:
+/usr/include/bits/sigset.h:
 
-/usr/include/i386-linux-gnu/bits/signum.h:
+/usr/include/bits/signum.h:
 
-/usr/include/i386-linux-gnu/bits/siginfo.h:
+/usr/include/bits/siginfo.h:
 
-/usr/include/i386-linux-gnu/bits/sigaction.h:
+/usr/include/bits/sigaction.h:
 
-/usr/include/i386-linux-gnu/bits/sigcontext.h:
+/usr/include/bits/sigcontext.h:
 
-/usr/include/i386-linux-gnu/bits/sigstack.h:
+/usr/include/bits/sigstack.h:
 
-/usr/include/i386-linux-gnu/sys/ucontext.h:
+/usr/include/sys/ucontext.h:
 
-/usr/include/i386-linux-gnu/bits/pthreadtypes.h:
+/usr/include/bits/pthreadtypes.h:
 
-/usr/include/i386-linux-gnu/bits/sigthread.h:
+/usr/include/bits/sigthread.h:
 
 /usr/include/glib-2.0/glib/gbase64.h:
 
@@ -283,8 +266,6 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
 
 /usr/include/glib-2.0/glib/gmem.h:
 
-/usr/include/glib-2.0/glib/gnode.h:
-
 /usr/include/glib-2.0/glib/ghmac.h:
 
 /usr/include/glib-2.0/glib/gchecksum.h:
@@ -314,6 +295,8 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
 /usr/include/glib-2.0/glib/gmarkup.h:
 
 /usr/include/glib-2.0/glib/gmessages.h:
+
+/usr/include/glib-2.0/glib/gnode.h:
 
 /usr/include/glib-2.0/glib/goption.h:
 
@@ -377,17 +360,15 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
 
 /usr/include/endian.h:
 
-/usr/include/i386-linux-gnu/bits/endian.h:
+/usr/include/bits/endian.h:
 
-/usr/include/i386-linux-gnu/bits/byteswap.h:
-
-/usr/include/i386-linux-gnu/bits/byteswap-16.h:
+/usr/include/bits/byteswap.h:
 
 /usr/include/sched.h:
 
-/usr/include/i386-linux-gnu/bits/sched.h:
+/usr/include/bits/sched.h:
 
-/usr/include/i386-linux-gnu/bits/setjmp.h:
+/usr/include/bits/setjmp.h:
 
 /usr/include/glib-2.0/glib-object.h:
 
@@ -443,13 +424,13 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
 
 /usr/include/wchar.h:
 
-/usr/include/i386-linux-gnu/bits/stdio_lim.h:
+/usr/include/bits/stdio_lim.h:
 
-/usr/include/i386-linux-gnu/bits/sys_errlist.h:
+/usr/include/bits/sys_errlist.h:
 
-/usr/include/i386-linux-gnu/bits/stdio.h:
+/usr/include/bits/stdio.h:
 
-/usr/include/i386-linux-gnu/bits/stdio2.h:
+/usr/include/bits/stdio2.h:
 
 /usr/include/libxml2/libxml/xmlversion.h:
 
@@ -485,31 +466,67 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
 
 /usr/include/iconv.h:
 
+/usr/include/unicode/ucnv.h:
+
+/usr/include/unicode/ucnv_err.h:
+
+/usr/include/unicode/utypes.h:
+
+/usr/include/unicode/umachine.h:
+
+/usr/include/unicode/ptypes.h:
+
+/usr/include/unicode/platform.h:
+
+/usr/include/unicode/uconfig.h:
+
+/usr/include/unicode/uvernum.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.6.3/include/stdint.h:
+
+/usr/include/stdint.h:
+
+/usr/include/bits/wchar.h:
+
+/usr/include/unicode/urename.h:
+
+/usr/include/unicode/uversion.h:
+
+/usr/include/unicode/utf.h:
+
+/usr/include/unicode/utf8.h:
+
+/usr/include/unicode/utf16.h:
+
+/usr/include/unicode/utf_old.h:
+
+/usr/include/unicode/uenum.h:
+
+/usr/include/unicode/localpointer.h:
+
 /usr/include/libxml2/libxml/xmlIO.h:
 
 /usr/include/libxml2/libxml/SAX.h:
 
 /usr/include/stdlib.h:
 
-/usr/include/i386-linux-gnu/bits/waitflags.h:
+/usr/include/bits/waitflags.h:
 
-/usr/include/i386-linux-gnu/bits/waitstatus.h:
+/usr/include/bits/waitstatus.h:
 
-/usr/include/i386-linux-gnu/sys/types.h:
+/usr/include/sys/types.h:
 
-/usr/include/i386-linux-gnu/sys/select.h:
+/usr/include/sys/select.h:
 
-/usr/include/i386-linux-gnu/bits/select.h:
+/usr/include/bits/select.h:
 
-/usr/include/i386-linux-gnu/bits/select2.h:
+/usr/include/bits/select2.h:
 
-/usr/include/i386-linux-gnu/sys/sysmacros.h:
+/usr/include/sys/sysmacros.h:
 
 /usr/include/alloca.h:
 
-/usr/include/i386-linux-gnu/bits/stdlib-float.h:
-
-/usr/include/i386-linux-gnu/bits/stdlib.h:
+/usr/include/bits/stdlib.h:
 
 /usr/include/libxml2/libxml/xlink.h:
 
@@ -519,28 +536,28 @@ smartsim-def-xor.o: componentdef/def-xor.c /usr/include/glib-2.0/glib.h \
 
 /usr/include/string.h:
 
-/usr/include/i386-linux-gnu/bits/string.h:
+/usr/include/bits/string.h:
 
-/usr/include/i386-linux-gnu/bits/string2.h:
+/usr/include/bits/string2.h:
 
-/usr/include/i386-linux-gnu/bits/string3.h:
+/usr/include/bits/string3.h:
 
 /usr/include/math.h:
 
-/usr/include/i386-linux-gnu/bits/huge_val.h:
+/usr/include/bits/huge_val.h:
 
-/usr/include/i386-linux-gnu/bits/huge_valf.h:
+/usr/include/bits/huge_valf.h:
 
-/usr/include/i386-linux-gnu/bits/huge_vall.h:
+/usr/include/bits/huge_vall.h:
 
-/usr/include/i386-linux-gnu/bits/inf.h:
+/usr/include/bits/inf.h:
 
-/usr/include/i386-linux-gnu/bits/nan.h:
+/usr/include/bits/nan.h:
 
-/usr/include/i386-linux-gnu/bits/mathdef.h:
+/usr/include/bits/mathdef.h:
 
-/usr/include/i386-linux-gnu/bits/mathcalls.h:
+/usr/include/bits/mathcalls.h:
 
-/usr/include/i386-linux-gnu/bits/mathinline.h:
+/usr/include/bits/mathinline.h:
 
 ../config.h:
