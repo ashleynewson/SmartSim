@@ -1,3 +1,8 @@
 autom4te.cache
 resources/plugins
-
+ccode/.deps
+Makefile
+ccode/Makefile
+resource_tar/Makefile
+config.status
+config.log
