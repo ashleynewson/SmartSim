@@ -4,11 +4,22 @@
 /* 
  * SmartSim - Digital Logic Circuit Designer and Simulator
  *   
- *   Expansion Version
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
  *   
- *   Filename: componentdef/clock.vala
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
  *   
- *   Copyright Ashley Newson 2012
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   
+ *   Filename: componentdef/def-clock.vala
+ *   
+ *   Copyright Ashley Newson 2013
  */
 
 #include <glib.h>
@@ -418,8 +429,8 @@ static void clock_component_def_real_add_properties (ComponentDef* base, Propert
 GQuark property_item_error_quark (void);
 gint property_item_int_get_data_throw (PropertySet* propertySet, const gchar* name, GError** error);
 gint property_set_add_item (PropertySet* self, PropertyItem* propertyItem);
-PropertyItemInt* property_item_int_new (const gchar* name, const gchar* description, gint data);
-PropertyItemInt* property_item_int_construct (GType object_type, const gchar* name, const gchar* description, gint data);
+PropertyItemInt* property_item_int_new (const gchar* name, const gchar* description, gint data, gint min, gint max);
+PropertyItemInt* property_item_int_construct (GType object_type, const gchar* name, const gchar* description, gint data, gint min, gint max);
 GType property_item_int_get_type (void) G_GNUC_CONST;
 static void clock_component_def_real_get_properties (ComponentDef* base, PropertySet* queryProperty, PropertySet** configurationProperty);
 PropertySet* property_set_new (const gchar* name, const gchar* description);
@@ -508,12 +519,14 @@ static void clock_component_def_real_add_properties (ComponentDef* base, Propert
 	gint offFor = 0;
 	PropertySet* _tmp3_;
 	gint _tmp4_;
-	PropertyItemInt* _tmp5_;
+	gint _tmp5_;
 	PropertyItemInt* _tmp6_;
-	PropertySet* _tmp10_;
-	gint _tmp11_;
-	PropertyItemInt* _tmp12_;
-	PropertyItemInt* _tmp13_;
+	PropertyItemInt* _tmp7_;
+	PropertySet* _tmp11_;
+	gint _tmp12_;
+	gint _tmp13_;
+	PropertyItemInt* _tmp14_;
+	PropertyItemInt* _tmp15_;
 	GError * _inner_error_ = NULL;
 	self = (ClockComponentDef*) base;
 	g_return_if_fail (queryProperty != NULL);
@@ -545,21 +558,22 @@ static void clock_component_def_real_add_properties (ComponentDef* base, Propert
 	}
 	_tmp3_ = queryProperty;
 	_tmp4_ = onFor;
-	_tmp5_ = property_item_int_new ("On For", "Duration which clock is on.", _tmp4_);
-	_tmp6_ = _tmp5_;
-	property_set_add_item (_tmp3_, (PropertyItem*) _tmp6_);
-	_property_item_unref0 (_tmp6_);
+	_tmp5_ = G_MAXINT;
+	_tmp6_ = property_item_int_new ("On For", "Duration which clock is on.", _tmp4_, 1, _tmp5_);
+	_tmp7_ = _tmp6_;
+	property_set_add_item (_tmp3_, (PropertyItem*) _tmp7_);
+	_property_item_unref0 (_tmp7_);
 	{
-		PropertySet* _tmp7_;
-		gint _tmp8_ = 0;
-		gint _tmp9_;
-		_tmp7_ = configurationProperty;
-		_tmp8_ = property_item_int_get_data_throw (_tmp7_, "Off For", &_inner_error_);
-		_tmp9_ = _tmp8_;
+		PropertySet* _tmp8_;
+		gint _tmp9_ = 0;
+		gint _tmp10_;
+		_tmp8_ = configurationProperty;
+		_tmp9_ = property_item_int_get_data_throw (_tmp8_, "Off For", &_inner_error_);
+		_tmp10_ = _tmp9_;
 		if (_inner_error_ != NULL) {
 			goto __catch11_g_error;
 		}
-		offFor = _tmp9_;
+		offFor = _tmp10_;
 	}
 	goto __finally11;
 	__catch11_g_error:
@@ -574,12 +588,13 @@ static void clock_component_def_real_add_properties (ComponentDef* base, Propert
 		g_clear_error (&_inner_error_);
 		return;
 	}
-	_tmp10_ = queryProperty;
-	_tmp11_ = offFor;
-	_tmp12_ = property_item_int_new ("Off For", "Duration which clock is off.", _tmp11_);
-	_tmp13_ = _tmp12_;
-	property_set_add_item (_tmp10_, (PropertyItem*) _tmp13_);
-	_property_item_unref0 (_tmp13_);
+	_tmp11_ = queryProperty;
+	_tmp12_ = offFor;
+	_tmp13_ = G_MAXINT;
+	_tmp14_ = property_item_int_new ("Off For", "Duration which clock is off.", _tmp12_, 1, _tmp13_);
+	_tmp15_ = _tmp14_;
+	property_set_add_item (_tmp11_, (PropertyItem*) _tmp15_);
+	_property_item_unref0 (_tmp15_);
 }
 
 
@@ -594,12 +609,14 @@ static void clock_component_def_real_get_properties (ComponentDef* base, Propert
 	PropertySet* _tmp3_;
 	PropertySet* _tmp4_;
 	gint _tmp5_ = 0;
-	PropertyItemInt* _tmp6_;
+	gint _tmp6_;
 	PropertyItemInt* _tmp7_;
-	PropertySet* _tmp8_;
-	gint _tmp9_ = 0;
-	PropertyItemInt* _tmp10_;
-	PropertyItemInt* _tmp11_;
+	PropertyItemInt* _tmp8_;
+	PropertySet* _tmp9_;
+	gint _tmp10_ = 0;
+	gint _tmp11_;
+	PropertyItemInt* _tmp12_;
+	PropertyItemInt* _tmp13_;
 	self = (ClockComponentDef*) base;
 	g_return_if_fail (queryProperty != NULL);
 	_tmp0_ = ((ComponentDef*) self)->name;
@@ -612,17 +629,19 @@ static void clock_component_def_real_get_properties (ComponentDef* base, Propert
 	_tmp4_ = queryProperty;
 	_tmp5_ = property_item_int_get_data (_tmp4_, "On For");
 	onFor = _tmp5_;
-	_tmp6_ = property_item_int_new ("On For", "", onFor);
-	_tmp7_ = _tmp6_;
-	property_set_add_item (_vala_configurationProperty, (PropertyItem*) _tmp7_);
-	_property_item_unref0 (_tmp7_);
-	_tmp8_ = queryProperty;
-	_tmp9_ = property_item_int_get_data (_tmp8_, "Off For");
-	offFor = _tmp9_;
-	_tmp10_ = property_item_int_new ("Off For", "", offFor);
-	_tmp11_ = _tmp10_;
-	property_set_add_item (_vala_configurationProperty, (PropertyItem*) _tmp11_);
-	_property_item_unref0 (_tmp11_);
+	_tmp6_ = G_MAXINT;
+	_tmp7_ = property_item_int_new ("On For", "", onFor, 1, _tmp6_);
+	_tmp8_ = _tmp7_;
+	property_set_add_item (_vala_configurationProperty, (PropertyItem*) _tmp8_);
+	_property_item_unref0 (_tmp8_);
+	_tmp9_ = queryProperty;
+	_tmp10_ = property_item_int_get_data (_tmp9_, "Off For");
+	offFor = _tmp10_;
+	_tmp11_ = G_MAXINT;
+	_tmp12_ = property_item_int_new ("Off For", "", offFor, 1, _tmp11_);
+	_tmp13_ = _tmp12_;
+	property_set_add_item (_vala_configurationProperty, (PropertyItem*) _tmp13_);
+	_property_item_unref0 (_tmp13_);
 	if (configurationProperty) {
 		*configurationProperty = _vala_configurationProperty;
 	} else {
@@ -642,12 +661,14 @@ static void clock_component_def_real_load_properties (ComponentDef* base, xmlNod
 	PropertySet* _tmp3_;
 	PropertySet* _tmp24_;
 	gint _tmp25_;
-	PropertyItemInt* _tmp26_;
+	gint _tmp26_;
 	PropertyItemInt* _tmp27_;
-	PropertySet* _tmp28_;
-	gint _tmp29_;
-	PropertyItemInt* _tmp30_;
-	PropertyItemInt* _tmp31_;
+	PropertyItemInt* _tmp28_;
+	PropertySet* _tmp29_;
+	gint _tmp30_;
+	gint _tmp31_;
+	PropertyItemInt* _tmp32_;
+	PropertyItemInt* _tmp33_;
 	self = (ClockComponentDef*) base;
 	onFor = 25;
 	offFor = 25;
@@ -732,16 +753,18 @@ static void clock_component_def_real_load_properties (ComponentDef* base, xmlNod
 	}
 	_tmp24_ = _vala_configurationProperty;
 	_tmp25_ = onFor;
-	_tmp26_ = property_item_int_new ("On For", "", _tmp25_);
-	_tmp27_ = _tmp26_;
-	property_set_add_item (_tmp24_, (PropertyItem*) _tmp27_);
-	_property_item_unref0 (_tmp27_);
-	_tmp28_ = _vala_configurationProperty;
-	_tmp29_ = offFor;
-	_tmp30_ = property_item_int_new ("Off For", "", _tmp29_);
-	_tmp31_ = _tmp30_;
-	property_set_add_item (_tmp28_, (PropertyItem*) _tmp31_);
-	_property_item_unref0 (_tmp31_);
+	_tmp26_ = G_MAXINT;
+	_tmp27_ = property_item_int_new ("On For", "", _tmp25_, 1, _tmp26_);
+	_tmp28_ = _tmp27_;
+	property_set_add_item (_tmp24_, (PropertyItem*) _tmp28_);
+	_property_item_unref0 (_tmp28_);
+	_tmp29_ = _vala_configurationProperty;
+	_tmp30_ = offFor;
+	_tmp31_ = G_MAXINT;
+	_tmp32_ = property_item_int_new ("Off For", "", _tmp30_, 1, _tmp31_);
+	_tmp33_ = _tmp32_;
+	property_set_add_item (_tmp29_, (PropertyItem*) _tmp33_);
+	_property_item_unref0 (_tmp33_);
 	if (configurationProperty) {
 		*configurationProperty = _vala_configurationProperty;
 	} else {

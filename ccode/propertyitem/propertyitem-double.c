@@ -4,11 +4,22 @@
 /* 
  * SmartSim - Digital Logic Circuit Designer and Simulator
  *   
- *   Expansion Version
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
  *   
- *   Filename: propertyitem/double.vala
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
  *   
- *   Copyright Ashley Newson 2012
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   
+ *   Filename: propertyitem/propertyitem-double.vala
+ *   
+ *   Copyright Ashley Newson 2013
  */
 
 #include <glib.h>
@@ -73,11 +84,16 @@ struct _PropertyItemClass {
 struct _PropertyItemDouble {
 	PropertyItem parent_instance;
 	PropertyItemDoublePrivate * priv;
-	gdouble data;
 };
 
 struct _PropertyItemDoubleClass {
 	PropertyItemClass parent_class;
+};
+
+struct _PropertyItemDoublePrivate {
+	gdouble data;
+	gdouble min;
+	gdouble max;
 };
 
 typedef enum  {
@@ -95,6 +111,7 @@ void value_take_property_item (GValue* value, gpointer v_object);
 gpointer value_get_property_item (const GValue* value);
 GType property_item_get_type (void) G_GNUC_CONST;
 GType property_item_double_get_type (void) G_GNUC_CONST;
+#define PROPERTY_ITEM_DOUBLE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_PROPERTY_ITEM_DOUBLE, PropertyItemDoublePrivate))
 enum  {
 	PROPERTY_ITEM_DOUBLE_DUMMY_PROPERTY
 };
@@ -105,8 +122,8 @@ PropertyItem* property_set_get_item (PropertySet* self, const gchar* name);
 void property_item_double_set_data_throw (PropertySet* propertySet, const gchar* name, gdouble data, GError** error);
 gdouble property_item_double_get_data (PropertySet* propertySet, const gchar* name);
 void property_item_double_set_data (PropertySet* propertySet, const gchar* name, gdouble data);
-PropertyItemDouble* property_item_double_new (const gchar* name, const gchar* description, gdouble data);
-PropertyItemDouble* property_item_double_construct (GType object_type, const gchar* name, const gchar* description, gdouble data);
+PropertyItemDouble* property_item_double_new (const gchar* name, const gchar* description, gdouble data, gdouble min, gdouble max);
+PropertyItemDouble* property_item_double_construct (GType object_type, const gchar* name, const gchar* description, gdouble data, gdouble min, gdouble max);
 PropertyItem* property_item_construct (GType object_type, const gchar* name, const gchar* description);
 static GtkWidget* property_item_double_real_create_widget (PropertyItem* base);
 static void property_item_double_real_read_widget (PropertyItem* base, GtkWidget* propertyWidget);
@@ -148,7 +165,7 @@ gdouble property_item_double_get_data_throw (PropertySet* propertySet, const gch
 			PropertyItem* _tmp5_;
 			gdouble _tmp6_;
 			_tmp5_ = propertyItem;
-			_tmp6_ = (G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_DOUBLE) ? ((PropertyItemDouble*) _tmp5_) : NULL)->data;
+			_tmp6_ = (G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_DOUBLE) ? ((PropertyItemDouble*) _tmp5_) : NULL)->priv->data;
 			result = _tmp6_;
 			_property_item_unref0 (propertyItem);
 			return result;
@@ -221,7 +238,7 @@ void property_item_double_set_data_throw (PropertySet* propertySet, const gchar*
 			gdouble _tmp6_;
 			_tmp5_ = propertyItem;
 			_tmp6_ = data;
-			(G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_DOUBLE) ? ((PropertyItemDouble*) _tmp5_) : NULL)->data = _tmp6_;
+			(G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_DOUBLE) ? ((PropertyItemDouble*) _tmp5_) : NULL)->priv->data = _tmp6_;
 			_property_item_unref0 (propertyItem);
 			return;
 		}
@@ -324,24 +341,30 @@ void property_item_double_set_data (PropertySet* propertySet, const gchar* name,
 }
 
 
-PropertyItemDouble* property_item_double_construct (GType object_type, const gchar* name, const gchar* description, gdouble data) {
+PropertyItemDouble* property_item_double_construct (GType object_type, const gchar* name, const gchar* description, gdouble data, gdouble min, gdouble max) {
 	PropertyItemDouble* self = NULL;
 	const gchar* _tmp0_;
 	const gchar* _tmp1_;
 	gdouble _tmp2_;
+	gdouble _tmp3_;
+	gdouble _tmp4_;
 	g_return_val_if_fail (name != NULL, NULL);
 	g_return_val_if_fail (description != NULL, NULL);
 	_tmp0_ = name;
 	_tmp1_ = description;
 	self = (PropertyItemDouble*) property_item_construct (object_type, _tmp0_, _tmp1_);
 	_tmp2_ = data;
-	self->data = _tmp2_;
+	self->priv->data = _tmp2_;
+	_tmp3_ = min;
+	self->priv->min = _tmp3_;
+	_tmp4_ = max;
+	self->priv->max = _tmp4_;
 	return self;
 }
 
 
-PropertyItemDouble* property_item_double_new (const gchar* name, const gchar* description, gdouble data) {
-	return property_item_double_construct (TYPE_PROPERTY_ITEM_DOUBLE, name, description, data);
+PropertyItemDouble* property_item_double_new (const gchar* name, const gchar* description, gdouble data, gdouble min, gdouble max) {
+	return property_item_double_construct (TYPE_PROPERTY_ITEM_DOUBLE, name, description, data, min, max);
 }
 
 
@@ -354,13 +377,15 @@ static GtkWidget* property_item_double_real_create_widget (PropertyItem* base) {
 	GtkSpinButton* doubleSpinButton;
 	gdouble _tmp3_;
 	self = (PropertyItemDouble*) base;
-	_tmp0_ = DBL_MIN;
-	_tmp1_ = DBL_MAX;
+	_tmp0_ = self->priv->min;
+	_tmp1_ = self->priv->max;
 	_tmp2_ = (GtkSpinButton*) gtk_spin_button_new_with_range (_tmp0_, _tmp1_, (gdouble) 1);
 	g_object_ref_sink (_tmp2_);
 	doubleSpinButton = _tmp2_;
-	_tmp3_ = self->data;
+	_tmp3_ = self->priv->data;
 	gtk_spin_button_set_value (doubleSpinButton, _tmp3_);
+	gtk_spin_button_set_digits (doubleSpinButton, (guint) 10);
+	gtk_spin_button_set_snap_to_ticks (doubleSpinButton, FALSE);
 	result = (GtkWidget*) doubleSpinButton;
 	return result;
 }
@@ -380,7 +405,7 @@ static void property_item_double_real_read_widget (PropertyItem* base, GtkWidget
 			gdouble _tmp3_ = 0.0;
 			_tmp2_ = propertyWidget;
 			_tmp3_ = gtk_spin_button_get_value (G_TYPE_CHECK_INSTANCE_TYPE (_tmp2_, GTK_TYPE_SPIN_BUTTON) ? ((GtkSpinButton*) _tmp2_) : NULL);
-			self->data = _tmp3_;
+			self->priv->data = _tmp3_;
 		}
 	}
 }
@@ -389,12 +414,14 @@ static void property_item_double_real_read_widget (PropertyItem* base, GtkWidget
 static void property_item_double_class_init (PropertyItemDoubleClass * klass) {
 	property_item_double_parent_class = g_type_class_peek_parent (klass);
 	PROPERTY_ITEM_CLASS (klass)->finalize = property_item_double_finalize;
+	g_type_class_add_private (klass, sizeof (PropertyItemDoublePrivate));
 	PROPERTY_ITEM_CLASS (klass)->create_widget = property_item_double_real_create_widget;
 	PROPERTY_ITEM_CLASS (klass)->read_widget = property_item_double_real_read_widget;
 }
 
 
 static void property_item_double_instance_init (PropertyItemDouble * self) {
+	self->priv = PROPERTY_ITEM_DOUBLE_GET_PRIVATE (self);
 }
 
 

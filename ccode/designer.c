@@ -4,11 +4,22 @@
 /* 
  * SmartSim - Digital Logic Circuit Designer and Simulator
  *   
- *   Expansion Version
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *   
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *   
  *   Filename: designer.vala
  *   
- *   Copyright Ashley Newson 2012
+ *   Copyright Ashley Newson 2013
  */
 
 #include <glib.h>
@@ -784,8 +795,8 @@ PropertyItemSelection* property_item_selection_construct (GType object_type, con
 GType property_item_selection_get_type (void) G_GNUC_CONST;
 void property_item_selection_add_option (PropertyItemSelection* self, const gchar* option);
 gint property_item_selection_set_option (PropertyItemSelection* self, const gchar* option);
-PropertyItemInt* property_item_int_new (const gchar* name, const gchar* description, gint data);
-PropertyItemInt* property_item_int_construct (GType object_type, const gchar* name, const gchar* description, gint data);
+PropertyItemInt* property_item_int_new (const gchar* name, const gchar* description, gint data, gint min, gint max);
+PropertyItemInt* property_item_int_construct (GType object_type, const gchar* name, const gchar* description, gint data, gint min, gint max);
 GType property_item_int_get_type (void) G_GNUC_CONST;
 PropertiesQuery* properties_query_new (const gchar* title, GtkWindow* parent, PropertySet* propertySet);
 PropertiesQuery* properties_query_construct (GType object_type, const gchar* title, GtkWindow* parent, PropertySet* propertySet);
@@ -826,8 +837,8 @@ void designer_adjust_annotations (Designer* self, gint x, gint y);
 gint annotation_find (Annotation* self, gint x, gint y);
 const gchar* annotation_get_text (Annotation* self);
 gdouble annotation_get_fontSize (Annotation* self);
-PropertyItemDouble* property_item_double_new (const gchar* name, const gchar* description, gdouble data);
-PropertyItemDouble* property_item_double_construct (GType object_type, const gchar* name, const gchar* description, gdouble data);
+PropertyItemDouble* property_item_double_new (const gchar* name, const gchar* description, gdouble data, gdouble min, gdouble max);
+PropertyItemDouble* property_item_double_construct (GType object_type, const gchar* name, const gchar* description, gdouble data, gdouble min, gdouble max);
 GType property_item_double_get_type (void) G_GNUC_CONST;
 gdouble property_item_double_get_data (PropertySet* propertySet, const gchar* name);
 void annotation_set_text (Annotation* self, const gchar* value);
@@ -1643,8 +1654,9 @@ void designer_tag_wire (Designer* self, gint x1, gint y1, gint x2, gint y2, gboo
 					PropertyItemString* _tmp42_;
 					PropertySet* _tmp54_;
 					gint _tmp55_;
-					PropertyItemInt* _tmp56_;
+					gint _tmp56_;
 					PropertyItemInt* _tmp57_;
+					PropertyItemInt* _tmp58_;
 					gboolean notValid;
 					_tmp24_ = tag;
 					_tmp25_ = text;
@@ -1734,130 +1746,131 @@ void designer_tag_wire (Designer* self, gint x1, gint y1, gint x2, gint y2, gboo
 					}
 					_tmp54_ = tagProperties;
 					_tmp55_ = pinid;
-					_tmp56_ = property_item_int_new ("Pin ID", "ID of the pin which this tag represents a connection to. Each pin has " \
-"its own unique ID.", _tmp55_);
-					_tmp57_ = _tmp56_;
-					property_set_add_item (_tmp54_, (PropertyItem*) _tmp57_);
-					_property_item_unref0 (_tmp57_);
+					_tmp56_ = G_MAXINT;
+					_tmp57_ = property_item_int_new ("Pin ID", "ID of the pin which this tag represents a connection to. Each pin has " \
+"its own unique ID.", _tmp55_, 0, _tmp56_);
+					_tmp58_ = _tmp57_;
+					property_set_add_item (_tmp54_, (PropertyItem*) _tmp58_);
+					_property_item_unref0 (_tmp58_);
 					notValid = TRUE;
 					while (TRUE) {
-						gboolean _tmp58_;
-						DesignerWindow* _tmp59_;
-						PropertySet* _tmp60_;
-						PropertiesQuery* _tmp61_;
-						PropertiesQuery* tagQuery;
+						gboolean _tmp59_;
+						DesignerWindow* _tmp60_;
+						PropertySet* _tmp61_;
 						PropertiesQuery* _tmp62_;
-						gint _tmp63_ = 0;
-						_tmp58_ = notValid;
-						if (!_tmp58_) {
+						PropertiesQuery* tagQuery;
+						PropertiesQuery* _tmp63_;
+						gint _tmp64_ = 0;
+						_tmp59_ = notValid;
+						if (!_tmp59_) {
 							break;
 						}
 						notValid = FALSE;
-						_tmp59_ = self->window;
-						_tmp60_ = tagProperties;
-						_tmp61_ = properties_query_new ("Interface Tag Properties", (GtkWindow*) _tmp59_, _tmp60_);
-						tagQuery = _tmp61_;
-						_tmp62_ = tagQuery;
-						_tmp63_ = properties_query_run (_tmp62_);
-						if (_tmp63_ == ((gint) GTK_RESPONSE_APPLY)) {
+						_tmp60_ = self->window;
+						_tmp61_ = tagProperties;
+						_tmp62_ = properties_query_new ("Interface Tag Properties", (GtkWindow*) _tmp60_, _tmp61_);
+						tagQuery = _tmp62_;
+						_tmp63_ = tagQuery;
+						_tmp64_ = properties_query_run (_tmp63_);
+						if (_tmp64_ == ((gint) GTK_RESPONSE_APPLY)) {
 							gchar* option = NULL;
-							PropertySet* _tmp64_;
-							gchar* _tmp65_ = NULL;
-							PropertySet* _tmp66_;
-							gint _tmp67_ = 0;
-							PropertySet* _tmp68_;
-							gchar* _tmp69_ = NULL;
-							gint _tmp70_;
-							const gchar* _tmp74_;
+							PropertySet* _tmp65_;
+							gchar* _tmp66_ = NULL;
+							PropertySet* _tmp67_;
+							gint _tmp68_ = 0;
+							PropertySet* _tmp69_;
+							gchar* _tmp70_ = NULL;
+							gint _tmp71_;
 							const gchar* _tmp75_;
-							GQuark _tmp77_ = 0U;
-							static GQuark _tmp76_label0 = 0;
-							static GQuark _tmp76_label1 = 0;
-							static GQuark _tmp76_label2 = 0;
-							Tag* _tmp81_;
-							gint _tmp82_;
-							Tag* _tmp83_;
-							const gchar* _tmp84_;
-							gchar* _tmp85_;
-							_tmp64_ = tagProperties;
-							_tmp65_ = property_item_string_get_data (_tmp64_, "Text");
+							const gchar* _tmp76_;
+							GQuark _tmp78_ = 0U;
+							static GQuark _tmp77_label0 = 0;
+							static GQuark _tmp77_label1 = 0;
+							static GQuark _tmp77_label2 = 0;
+							Tag* _tmp82_;
+							gint _tmp83_;
+							Tag* _tmp84_;
+							const gchar* _tmp85_;
+							gchar* _tmp86_;
+							_tmp65_ = tagProperties;
+							_tmp66_ = property_item_string_get_data (_tmp65_, "Text");
 							_g_free0 (text);
-							text = _tmp65_;
-							_tmp66_ = tagProperties;
-							_tmp67_ = property_item_int_get_data (_tmp66_, "Pin ID");
-							pinid = _tmp67_;
-							_tmp68_ = tagProperties;
-							_tmp69_ = property_item_selection_get_data (_tmp68_, "Flow");
+							text = _tmp66_;
+							_tmp67_ = tagProperties;
+							_tmp68_ = property_item_int_get_data (_tmp67_, "Pin ID");
+							pinid = _tmp68_;
+							_tmp69_ = tagProperties;
+							_tmp70_ = property_item_selection_get_data (_tmp69_, "Flow");
 							_g_free0 (option);
-							option = _tmp69_;
-							_tmp70_ = pinid;
-							if (_tmp70_ < 0) {
-								GtkMessageDialog* _tmp71_;
-								GtkMessageDialog* messageDialog;
+							option = _tmp70_;
+							_tmp71_ = pinid;
+							if (_tmp71_ < 0) {
 								GtkMessageDialog* _tmp72_;
+								GtkMessageDialog* messageDialog;
 								GtkMessageDialog* _tmp73_;
+								GtkMessageDialog* _tmp74_;
 								notValid = TRUE;
-								_tmp71_ = (GtkMessageDialog*) gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Pin ID must be greater than or equal to 0.\n");
-								g_object_ref_sink (_tmp71_);
-								messageDialog = _tmp71_;
-								_tmp72_ = messageDialog;
-								gtk_dialog_run ((GtkDialog*) _tmp72_);
+								_tmp72_ = (GtkMessageDialog*) gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Pin ID must be greater than or equal to 0.\n");
+								g_object_ref_sink (_tmp72_);
+								messageDialog = _tmp72_;
 								_tmp73_ = messageDialog;
-								gtk_widget_destroy ((GtkWidget*) _tmp73_);
+								gtk_dialog_run ((GtkDialog*) _tmp73_);
+								_tmp74_ = messageDialog;
+								gtk_widget_destroy ((GtkWidget*) _tmp74_);
 								_g_object_unref0 (messageDialog);
 							}
-							_tmp74_ = option;
-							_tmp75_ = _tmp74_;
-							_tmp77_ = (NULL == _tmp75_) ? 0 : g_quark_from_string (_tmp75_);
-							if (_tmp77_ == ((0 != _tmp76_label0) ? _tmp76_label0 : (_tmp76_label0 = g_quark_from_static_string ("Input")))) {
-								switch (0) {
-									default:
-									{
-										Tag* _tmp78_;
-										_tmp78_ = tag;
-										_tmp78_->flow = FLOW_IN;
-										break;
-									}
-								}
-							} else if (_tmp77_ == ((0 != _tmp76_label1) ? _tmp76_label1 : (_tmp76_label1 = g_quark_from_static_string ("Output")))) {
+							_tmp75_ = option;
+							_tmp76_ = _tmp75_;
+							_tmp78_ = (NULL == _tmp76_) ? 0 : g_quark_from_string (_tmp76_);
+							if (_tmp78_ == ((0 != _tmp77_label0) ? _tmp77_label0 : (_tmp77_label0 = g_quark_from_static_string ("Input")))) {
 								switch (0) {
 									default:
 									{
 										Tag* _tmp79_;
 										_tmp79_ = tag;
-										_tmp79_->flow = FLOW_OUT;
+										_tmp79_->flow = FLOW_IN;
 										break;
 									}
 								}
-							} else if (_tmp77_ == ((0 != _tmp76_label2) ? _tmp76_label2 : (_tmp76_label2 = g_quark_from_static_string ("Bidirectional")))) {
+							} else if (_tmp78_ == ((0 != _tmp77_label1) ? _tmp77_label1 : (_tmp77_label1 = g_quark_from_static_string ("Output")))) {
 								switch (0) {
 									default:
 									{
 										Tag* _tmp80_;
 										_tmp80_ = tag;
-										_tmp80_->flow = FLOW_BIDIRECTIONAL;
+										_tmp80_->flow = FLOW_OUT;
+										break;
+									}
+								}
+							} else if (_tmp78_ == ((0 != _tmp77_label2) ? _tmp77_label2 : (_tmp77_label2 = g_quark_from_static_string ("Bidirectional")))) {
+								switch (0) {
+									default:
+									{
+										Tag* _tmp81_;
+										_tmp81_ = tag;
+										_tmp81_->flow = FLOW_BIDIRECTIONAL;
 										break;
 									}
 								}
 							}
-							_tmp81_ = tag;
-							_tmp82_ = pinid;
-							_tmp81_->pinid = _tmp82_;
-							_tmp83_ = tag;
-							_tmp84_ = text;
-							_tmp85_ = g_strdup (_tmp84_);
-							_g_free0 (_tmp83_->text);
-							_tmp83_->text = _tmp85_;
+							_tmp82_ = tag;
+							_tmp83_ = pinid;
+							_tmp82_->pinid = _tmp83_;
+							_tmp84_ = tag;
+							_tmp85_ = text;
+							_tmp86_ = g_strdup (_tmp85_);
+							_g_free0 (_tmp84_->text);
+							_tmp84_->text = _tmp86_;
 							_g_free0 (option);
 						} else {
-							WireInst* _tmp86_;
-							Tag* _tmp87_;
+							WireInst* _tmp87_;
 							Tag* _tmp88_;
-							_tmp86_ = wireInst;
-							_tmp87_ = oldTag;
-							_tmp88_ = _tag_ref0 (_tmp87_);
-							_tag_unref0 (_tmp86_->interfaceTag);
-							_tmp86_->interfaceTag = _tmp88_;
+							Tag* _tmp89_;
+							_tmp87_ = wireInst;
+							_tmp88_ = oldTag;
+							_tmp89_ = _tag_ref0 (_tmp88_);
+							_tag_unref0 (_tmp87_->interfaceTag);
+							_tmp87_->interfaceTag = _tmp89_;
 						}
 						_properties_query_unref0 (tagQuery);
 					}
@@ -2650,32 +2663,32 @@ void designer_adjust_components (Designer* self, gint x, gint y, gboolean autoBi
 					PropertySet* _tmp12_;
 					PropertySet* _tmp13_;
 					PropertySet* componentProperties;
-					ComponentInst* _tmp70_;
-					ComponentDef* _tmp71_;
-					PropertySet* _tmp72_;
-					ComponentInst* _tmp73_;
-					PropertySet* _tmp74_;
-					ComponentInst* _tmp75_;
-					ComponentDef* _tmp76_;
-					const gchar* _tmp77_;
-					gchar* _tmp78_;
+					ComponentInst* _tmp71_;
+					ComponentDef* _tmp72_;
+					PropertySet* _tmp73_;
+					ComponentInst* _tmp74_;
+					PropertySet* _tmp75_;
+					ComponentInst* _tmp76_;
+					ComponentDef* _tmp77_;
+					const gchar* _tmp78_;
+					gchar* _tmp79_;
 					gchar* title;
-					const gchar* _tmp79_;
-					DesignerWindow* _tmp80_;
-					PropertySet* _tmp81_;
-					PropertiesQuery* _tmp82_;
-					PropertiesQuery* componentQuery;
+					const gchar* _tmp80_;
+					DesignerWindow* _tmp81_;
+					PropertySet* _tmp82_;
 					PropertiesQuery* _tmp83_;
-					gint _tmp84_ = 0;
-					ComponentInst* _tmp160_;
-					ComponentDef* _tmp161_;
-					PropertySet* _tmp162_;
-					ComponentInst* _tmp163_;
-					PropertySet* _tmp164_ = NULL;
-					ComponentInst* _tmp165_;
-					ComponentDef* _tmp166_;
-					ComponentInst* _tmp167_;
-					gboolean _tmp168_;
+					PropertiesQuery* componentQuery;
+					PropertiesQuery* _tmp84_;
+					gint _tmp85_ = 0;
+					ComponentInst* _tmp161_;
+					ComponentDef* _tmp162_;
+					PropertySet* _tmp163_;
+					ComponentInst* _tmp164_;
+					PropertySet* _tmp165_ = NULL;
+					ComponentInst* _tmp166_;
+					ComponentDef* _tmp167_;
+					ComponentInst* _tmp168_;
+					gboolean _tmp169_;
 					_tmp7_ = componentInst;
 					_tmp8_ = _tmp7_->componentDef;
 					_tmp9_ = _tmp8_->name;
@@ -2783,8 +2796,9 @@ void designer_adjust_components (Designer* self, gint x, gint y, gboolean autoBi
 									gint _tmp65_;
 									PinInst* _tmp66_;
 									gint _tmp67_;
-									PropertyItemInt* _tmp68_;
+									gint _tmp68_;
 									PropertyItemInt* _tmp69_;
+									PropertyItemInt* _tmp70_;
 									_tmp34_ = g_strdup ("");
 									propertyName = _tmp34_;
 									_tmp35_ = componentInst;
@@ -2854,259 +2868,260 @@ void designer_adjust_components (Designer* self, gint x, gint y, gboolean autoBi
 									_tmp65_ = i;
 									_tmp66_ = _tmp64_[_tmp65_];
 									_tmp67_ = _tmp66_->arraySize;
-									_tmp68_ = property_item_int_new (_tmp62_, "The number of pins that this component should use.", _tmp67_);
-									_tmp69_ = _tmp68_;
-									property_set_add_item (_tmp61_, (PropertyItem*) _tmp69_);
-									_property_item_unref0 (_tmp69_);
+									_tmp68_ = G_MAXINT;
+									_tmp69_ = property_item_int_new (_tmp62_, "The number of pins that this component should use.", _tmp67_, 1, _tmp68_);
+									_tmp70_ = _tmp69_;
+									property_set_add_item (_tmp61_, (PropertyItem*) _tmp70_);
+									_property_item_unref0 (_tmp70_);
 									_g_free0 (propertyName);
 								}
 							}
 						}
 					}
-					_tmp70_ = componentInst;
-					_tmp71_ = _tmp70_->componentDef;
-					_tmp72_ = componentProperties;
-					_tmp73_ = componentInst;
-					_tmp74_ = _tmp73_->configuration;
-					component_def_add_properties (_tmp71_, _tmp72_, _tmp74_);
-					_tmp75_ = componentInst;
-					_tmp76_ = _tmp75_->componentDef;
-					_tmp77_ = _tmp76_->name;
-					_tmp78_ = g_strconcat (_tmp77_, " Component Properties", NULL);
-					title = _tmp78_;
-					_tmp79_ = title;
-					_tmp80_ = self->window;
-					_tmp81_ = componentProperties;
-					_tmp82_ = properties_query_new (_tmp79_, (GtkWindow*) _tmp80_, _tmp81_);
-					componentQuery = _tmp82_;
-					_tmp83_ = componentQuery;
-					_tmp84_ = properties_query_run (_tmp83_);
-					if (_tmp84_ == ((gint) GTK_RESPONSE_APPLY)) {
+					_tmp71_ = componentInst;
+					_tmp72_ = _tmp71_->componentDef;
+					_tmp73_ = componentProperties;
+					_tmp74_ = componentInst;
+					_tmp75_ = _tmp74_->configuration;
+					component_def_add_properties (_tmp72_, _tmp73_, _tmp75_);
+					_tmp76_ = componentInst;
+					_tmp77_ = _tmp76_->componentDef;
+					_tmp78_ = _tmp77_->name;
+					_tmp79_ = g_strconcat (_tmp78_, " Component Properties", NULL);
+					title = _tmp79_;
+					_tmp80_ = title;
+					_tmp81_ = self->window;
+					_tmp82_ = componentProperties;
+					_tmp83_ = properties_query_new (_tmp80_, (GtkWindow*) _tmp81_, _tmp82_);
+					componentQuery = _tmp83_;
+					_tmp84_ = componentQuery;
+					_tmp85_ = properties_query_run (_tmp84_);
+					if (_tmp85_ == ((gint) GTK_RESPONSE_APPLY)) {
 						{
 							gint i;
 							i = 0;
 							{
-								gboolean _tmp85_;
-								_tmp85_ = TRUE;
+								gboolean _tmp86_;
+								_tmp86_ = TRUE;
 								while (TRUE) {
-									gboolean _tmp86_;
-									gint _tmp88_;
-									ComponentInst* _tmp89_;
-									PinInst** _tmp90_;
-									gint _tmp90__length1;
-									gboolean _tmp91_ = FALSE;
-									ComponentInst* _tmp92_;
-									PinInst** _tmp93_;
-									gint _tmp93__length1;
-									gint _tmp94_;
-									PinInst* _tmp95_;
-									PinDef* _tmp96_;
-									gboolean _tmp97_;
-									gboolean _tmp104_;
-									_tmp86_ = _tmp85_;
-									if (!_tmp86_) {
-										gint _tmp87_;
-										_tmp87_ = i;
-										i = _tmp87_ + 1;
+									gboolean _tmp87_;
+									gint _tmp89_;
+									ComponentInst* _tmp90_;
+									PinInst** _tmp91_;
+									gint _tmp91__length1;
+									gboolean _tmp92_ = FALSE;
+									ComponentInst* _tmp93_;
+									PinInst** _tmp94_;
+									gint _tmp94__length1;
+									gint _tmp95_;
+									PinInst* _tmp96_;
+									PinDef* _tmp97_;
+									gboolean _tmp98_;
+									gboolean _tmp105_;
+									_tmp87_ = _tmp86_;
+									if (!_tmp87_) {
+										gint _tmp88_;
+										_tmp88_ = i;
+										i = _tmp88_ + 1;
 									}
-									_tmp85_ = FALSE;
-									_tmp88_ = i;
-									_tmp89_ = componentInst;
-									_tmp90_ = _tmp89_->pinInsts;
-									_tmp90__length1 = _tmp89_->pinInsts_length1;
-									if (!(_tmp88_ < _tmp90__length1)) {
+									_tmp86_ = FALSE;
+									_tmp89_ = i;
+									_tmp90_ = componentInst;
+									_tmp91_ = _tmp90_->pinInsts;
+									_tmp91__length1 = _tmp90_->pinInsts_length1;
+									if (!(_tmp89_ < _tmp91__length1)) {
 										break;
 									}
-									_tmp92_ = componentInst;
-									_tmp93_ = _tmp92_->pinInsts;
-									_tmp93__length1 = _tmp92_->pinInsts_length1;
-									_tmp94_ = i;
-									_tmp95_ = _tmp93_[_tmp94_];
-									_tmp96_ = _tmp95_->pinDef;
-									_tmp97_ = _tmp96_->array;
-									if (_tmp97_) {
-										ComponentInst* _tmp98_;
-										PinInst** _tmp99_;
-										gint _tmp99__length1;
-										gint _tmp100_;
-										PinInst* _tmp101_;
-										PinDef* _tmp102_;
-										gboolean _tmp103_;
-										_tmp98_ = componentInst;
-										_tmp99_ = _tmp98_->pinInsts;
-										_tmp99__length1 = _tmp98_->pinInsts_length1;
-										_tmp100_ = i;
-										_tmp101_ = _tmp99_[_tmp100_];
-										_tmp102_ = _tmp101_->pinDef;
-										_tmp103_ = _tmp102_->userArrayResize;
-										_tmp91_ = _tmp103_;
+									_tmp93_ = componentInst;
+									_tmp94_ = _tmp93_->pinInsts;
+									_tmp94__length1 = _tmp93_->pinInsts_length1;
+									_tmp95_ = i;
+									_tmp96_ = _tmp94_[_tmp95_];
+									_tmp97_ = _tmp96_->pinDef;
+									_tmp98_ = _tmp97_->array;
+									if (_tmp98_) {
+										ComponentInst* _tmp99_;
+										PinInst** _tmp100_;
+										gint _tmp100__length1;
+										gint _tmp101_;
+										PinInst* _tmp102_;
+										PinDef* _tmp103_;
+										gboolean _tmp104_;
+										_tmp99_ = componentInst;
+										_tmp100_ = _tmp99_->pinInsts;
+										_tmp100__length1 = _tmp99_->pinInsts_length1;
+										_tmp101_ = i;
+										_tmp102_ = _tmp100_[_tmp101_];
+										_tmp103_ = _tmp102_->pinDef;
+										_tmp104_ = _tmp103_->userArrayResize;
+										_tmp92_ = _tmp104_;
 									} else {
-										_tmp91_ = FALSE;
+										_tmp92_ = FALSE;
 									}
-									_tmp104_ = _tmp91_;
-									if (_tmp104_) {
+									_tmp105_ = _tmp92_;
+									if (_tmp105_) {
 										gint arraySize = 0;
-										gchar* _tmp105_;
+										gchar* _tmp106_;
 										gchar* propertyName;
-										ComponentInst* _tmp106_;
-										PinInst** _tmp107_;
-										gint _tmp107__length1;
-										gint _tmp108_;
-										PinInst* _tmp109_;
-										PinDef* _tmp110_;
-										Flow _tmp111_;
-										const gchar* _tmp115_;
-										ComponentInst* _tmp116_;
-										PinInst** _tmp117_;
-										gint _tmp117__length1;
-										gint _tmp118_;
-										PinInst* _tmp119_;
-										PinDef* _tmp120_;
-										const gchar* _tmp121_;
-										gchar* _tmp122_;
+										ComponentInst* _tmp107_;
+										PinInst** _tmp108_;
+										gint _tmp108__length1;
+										gint _tmp109_;
+										PinInst* _tmp110_;
+										PinDef* _tmp111_;
+										Flow _tmp112_;
+										const gchar* _tmp116_;
+										ComponentInst* _tmp117_;
+										PinInst** _tmp118_;
+										gint _tmp118__length1;
+										gint _tmp119_;
+										PinInst* _tmp120_;
+										PinDef* _tmp121_;
+										const gchar* _tmp122_;
 										gchar* _tmp123_;
 										gchar* _tmp124_;
 										gchar* _tmp125_;
-										gint _tmp126_;
-										gchar* _tmp127_ = NULL;
-										gchar* _tmp128_;
+										gchar* _tmp126_;
+										gint _tmp127_;
+										gchar* _tmp128_ = NULL;
 										gchar* _tmp129_;
 										gchar* _tmp130_;
 										gchar* _tmp131_;
-										PropertySet* _tmp132_;
-										const gchar* _tmp133_;
-										gint _tmp134_ = 0;
-										gboolean _tmp135_ = FALSE;
-										gint _tmp136_;
-										ComponentInst* _tmp137_;
-										PinInst** _tmp138_;
-										gint _tmp138__length1;
-										gint _tmp139_;
-										PinInst* _tmp140_;
-										gint _tmp141_;
-										gboolean _tmp143_;
-										_tmp105_ = g_strdup ("");
-										propertyName = _tmp105_;
-										_tmp106_ = componentInst;
-										_tmp107_ = _tmp106_->pinInsts;
-										_tmp107__length1 = _tmp106_->pinInsts_length1;
-										_tmp108_ = i;
-										_tmp109_ = _tmp107_[_tmp108_];
-										_tmp110_ = _tmp109_->pinDef;
-										_tmp111_ = _tmp110_->flow;
-										switch (_tmp111_) {
+										gchar* _tmp132_;
+										PropertySet* _tmp133_;
+										const gchar* _tmp134_;
+										gint _tmp135_ = 0;
+										gboolean _tmp136_ = FALSE;
+										gint _tmp137_;
+										ComponentInst* _tmp138_;
+										PinInst** _tmp139_;
+										gint _tmp139__length1;
+										gint _tmp140_;
+										PinInst* _tmp141_;
+										gint _tmp142_;
+										gboolean _tmp144_;
+										_tmp106_ = g_strdup ("");
+										propertyName = _tmp106_;
+										_tmp107_ = componentInst;
+										_tmp108_ = _tmp107_->pinInsts;
+										_tmp108__length1 = _tmp107_->pinInsts_length1;
+										_tmp109_ = i;
+										_tmp110_ = _tmp108_[_tmp109_];
+										_tmp111_ = _tmp110_->pinDef;
+										_tmp112_ = _tmp111_->flow;
+										switch (_tmp112_) {
 											case FLOW_IN:
 											{
-												gchar* _tmp112_;
-												_tmp112_ = g_strdup ("Input - ");
-												_g_free0 (propertyName);
-												propertyName = _tmp112_;
-												break;
-											}
-											case FLOW_OUT:
-											{
 												gchar* _tmp113_;
-												_tmp113_ = g_strdup ("Output - ");
+												_tmp113_ = g_strdup ("Input - ");
 												_g_free0 (propertyName);
 												propertyName = _tmp113_;
 												break;
 											}
-											case FLOW_BIDIRECTIONAL:
+											case FLOW_OUT:
 											{
 												gchar* _tmp114_;
-												_tmp114_ = g_strdup ("Bidirectional - ");
+												_tmp114_ = g_strdup ("Output - ");
 												_g_free0 (propertyName);
 												propertyName = _tmp114_;
+												break;
+											}
+											case FLOW_BIDIRECTIONAL:
+											{
+												gchar* _tmp115_;
+												_tmp115_ = g_strdup ("Bidirectional - ");
+												_g_free0 (propertyName);
+												propertyName = _tmp115_;
 												break;
 											}
 											default:
 											break;
 										}
-										_tmp115_ = propertyName;
-										_tmp116_ = componentInst;
-										_tmp117_ = _tmp116_->pinInsts;
-										_tmp117__length1 = _tmp116_->pinInsts_length1;
-										_tmp118_ = i;
-										_tmp119_ = _tmp117_[_tmp118_];
-										_tmp120_ = _tmp119_->pinDef;
-										_tmp121_ = _tmp120_->label;
-										_tmp122_ = g_strconcat ("Set width of \"", _tmp121_, NULL);
-										_tmp123_ = _tmp122_;
-										_tmp124_ = g_strconcat (_tmp123_, "\" / ID ", NULL);
-										_tmp125_ = _tmp124_;
-										_tmp126_ = i;
-										_tmp127_ = g_strdup_printf ("%i", _tmp126_);
-										_tmp128_ = _tmp127_;
-										_tmp129_ = g_strconcat (_tmp125_, _tmp128_, NULL);
-										_tmp130_ = _tmp129_;
-										_tmp131_ = g_strconcat (_tmp115_, _tmp130_, NULL);
+										_tmp116_ = propertyName;
+										_tmp117_ = componentInst;
+										_tmp118_ = _tmp117_->pinInsts;
+										_tmp118__length1 = _tmp117_->pinInsts_length1;
+										_tmp119_ = i;
+										_tmp120_ = _tmp118_[_tmp119_];
+										_tmp121_ = _tmp120_->pinDef;
+										_tmp122_ = _tmp121_->label;
+										_tmp123_ = g_strconcat ("Set width of \"", _tmp122_, NULL);
+										_tmp124_ = _tmp123_;
+										_tmp125_ = g_strconcat (_tmp124_, "\" / ID ", NULL);
+										_tmp126_ = _tmp125_;
+										_tmp127_ = i;
+										_tmp128_ = g_strdup_printf ("%i", _tmp127_);
+										_tmp129_ = _tmp128_;
+										_tmp130_ = g_strconcat (_tmp126_, _tmp129_, NULL);
+										_tmp131_ = _tmp130_;
+										_tmp132_ = g_strconcat (_tmp116_, _tmp131_, NULL);
 										_g_free0 (propertyName);
-										propertyName = _tmp131_;
-										_g_free0 (_tmp130_);
-										_g_free0 (_tmp128_);
-										_g_free0 (_tmp125_);
-										_g_free0 (_tmp123_);
-										_tmp132_ = componentProperties;
-										_tmp133_ = propertyName;
-										_tmp134_ = property_item_int_get_data (_tmp132_, _tmp133_);
-										arraySize = _tmp134_;
-										_tmp136_ = arraySize;
-										_tmp137_ = componentInst;
-										_tmp138_ = _tmp137_->pinInsts;
-										_tmp138__length1 = _tmp137_->pinInsts_length1;
-										_tmp139_ = i;
-										_tmp140_ = _tmp138_[_tmp139_];
-										_tmp141_ = _tmp140_->arraySize;
-										if (_tmp136_ != _tmp141_) {
-											gint _tmp142_;
-											_tmp142_ = arraySize;
-											_tmp135_ = _tmp142_ >= 1;
+										propertyName = _tmp132_;
+										_g_free0 (_tmp131_);
+										_g_free0 (_tmp129_);
+										_g_free0 (_tmp126_);
+										_g_free0 (_tmp124_);
+										_tmp133_ = componentProperties;
+										_tmp134_ = propertyName;
+										_tmp135_ = property_item_int_get_data (_tmp133_, _tmp134_);
+										arraySize = _tmp135_;
+										_tmp137_ = arraySize;
+										_tmp138_ = componentInst;
+										_tmp139_ = _tmp138_->pinInsts;
+										_tmp139__length1 = _tmp138_->pinInsts_length1;
+										_tmp140_ = i;
+										_tmp141_ = _tmp139_[_tmp140_];
+										_tmp142_ = _tmp141_->arraySize;
+										if (_tmp137_ != _tmp142_) {
+											gint _tmp143_;
+											_tmp143_ = arraySize;
+											_tmp136_ = _tmp143_ >= 1;
 										} else {
-											_tmp135_ = FALSE;
+											_tmp136_ = FALSE;
 										}
-										_tmp143_ = _tmp135_;
-										if (_tmp143_) {
-											ComponentInst* _tmp144_;
-											PinInst** _tmp145_;
-											gint _tmp145__length1;
-											gint _tmp146_;
-											PinInst* _tmp147_;
-											ComponentInst* _tmp148_;
+										_tmp144_ = _tmp136_;
+										if (_tmp144_) {
+											ComponentInst* _tmp145_;
+											PinInst** _tmp146_;
+											gint _tmp146__length1;
+											gint _tmp147_;
+											PinInst* _tmp148_;
 											ComponentInst* _tmp149_;
-											PinInst** _tmp150_;
-											gint _tmp150__length1;
-											gint _tmp151_;
-											ComponentInst* _tmp152_;
-											ComponentDef* _tmp153_;
-											PinDef** _tmp154_;
-											gint _tmp154__length1;
-											gint _tmp155_;
-											PinDef* _tmp156_;
-											gint _tmp157_;
-											PinInst* _tmp158_;
+											ComponentInst* _tmp150_;
+											PinInst** _tmp151_;
+											gint _tmp151__length1;
+											gint _tmp152_;
+											ComponentInst* _tmp153_;
+											ComponentDef* _tmp154_;
+											PinDef** _tmp155_;
+											gint _tmp155__length1;
+											gint _tmp156_;
+											PinDef* _tmp157_;
+											gint _tmp158_;
 											PinInst* _tmp159_;
-											_tmp144_ = componentInst;
-											_tmp145_ = _tmp144_->pinInsts;
-											_tmp145__length1 = _tmp144_->pinInsts_length1;
-											_tmp146_ = i;
-											_tmp147_ = _tmp145_[_tmp146_];
-											_tmp148_ = componentInst;
-											pin_inst_disconnect (_tmp147_, _tmp148_);
+											PinInst* _tmp160_;
+											_tmp145_ = componentInst;
+											_tmp146_ = _tmp145_->pinInsts;
+											_tmp146__length1 = _tmp145_->pinInsts_length1;
+											_tmp147_ = i;
+											_tmp148_ = _tmp146_[_tmp147_];
 											_tmp149_ = componentInst;
-											_tmp150_ = _tmp149_->pinInsts;
-											_tmp150__length1 = _tmp149_->pinInsts_length1;
-											_tmp151_ = i;
-											_tmp152_ = componentInst;
-											_tmp153_ = _tmp152_->componentDef;
-											_tmp154_ = _tmp153_->pinDefs;
-											_tmp154__length1 = _tmp153_->pinDefs_length1;
-											_tmp155_ = i;
-											_tmp156_ = _tmp154_[_tmp155_];
-											_tmp157_ = arraySize;
-											_tmp158_ = pin_inst_new (_tmp156_, _tmp157_);
-											_pin_inst_unref0 (_tmp150_[_tmp151_]);
-											_tmp150_[_tmp151_] = _tmp158_;
-											_tmp159_ = _tmp150_[_tmp151_];
+											pin_inst_disconnect (_tmp148_, _tmp149_);
+											_tmp150_ = componentInst;
+											_tmp151_ = _tmp150_->pinInsts;
+											_tmp151__length1 = _tmp150_->pinInsts_length1;
+											_tmp152_ = i;
+											_tmp153_ = componentInst;
+											_tmp154_ = _tmp153_->componentDef;
+											_tmp155_ = _tmp154_->pinDefs;
+											_tmp155__length1 = _tmp154_->pinDefs_length1;
+											_tmp156_ = i;
+											_tmp157_ = _tmp155_[_tmp156_];
+											_tmp158_ = arraySize;
+											_tmp159_ = pin_inst_new (_tmp157_, _tmp158_);
+											_pin_inst_unref0 (_tmp151_[_tmp152_]);
+											_tmp151_[_tmp152_] = _tmp159_;
+											_tmp160_ = _tmp151_[_tmp152_];
 										}
 										_g_free0 (propertyName);
 									}
@@ -3114,22 +3129,22 @@ void designer_adjust_components (Designer* self, gint x, gint y, gboolean autoBi
 							}
 						}
 					}
-					_tmp160_ = componentInst;
-					_tmp161_ = _tmp160_->componentDef;
-					_tmp162_ = componentProperties;
-					_tmp163_ = componentInst;
-					component_def_get_properties (_tmp161_, _tmp162_, &_tmp164_);
-					_property_item_unref0 (_tmp163_->configuration);
-					_tmp163_->configuration = _tmp164_;
-					_tmp165_ = componentInst;
-					_tmp166_ = _tmp165_->componentDef;
-					_tmp167_ = componentInst;
-					component_def_configure_inst (_tmp166_, _tmp167_, FALSE);
-					_tmp168_ = autoBind;
-					if (_tmp168_) {
-						ComponentInst* _tmp169_;
-						_tmp169_ = componentInst;
-						designer_auto_connect_component (self, _tmp169_);
+					_tmp161_ = componentInst;
+					_tmp162_ = _tmp161_->componentDef;
+					_tmp163_ = componentProperties;
+					_tmp164_ = componentInst;
+					component_def_get_properties (_tmp162_, _tmp163_, &_tmp165_);
+					_property_item_unref0 (_tmp164_->configuration);
+					_tmp164_->configuration = _tmp165_;
+					_tmp166_ = componentInst;
+					_tmp167_ = _tmp166_->componentDef;
+					_tmp168_ = componentInst;
+					component_def_configure_inst (_tmp167_, _tmp168_, FALSE);
+					_tmp169_ = autoBind;
+					if (_tmp169_) {
+						ComponentInst* _tmp170_;
+						_tmp170_ = componentInst;
+						designer_auto_connect_component (self, _tmp170_);
 					}
 					_properties_query_unref0 (componentQuery);
 					_g_free0 (title);
@@ -3225,7 +3240,7 @@ void designer_adjust_annotations (Designer* self, gint x, gint y) {
 					_property_item_unref0 (_tmp18_);
 					_tmp19_ = annotationProperties;
 					_tmp20_ = fontSize;
-					_tmp21_ = property_item_double_new ("Font Size", "Font size with which to display text", _tmp20_);
+					_tmp21_ = property_item_double_new ("Font Size", "Font size with which to display text", _tmp20_, (gdouble) 0, (gdouble) 10000);
 					_tmp22_ = _tmp21_;
 					property_set_add_item (_tmp19_, (PropertyItem*) _tmp22_);
 					_property_item_unref0 (_tmp22_);

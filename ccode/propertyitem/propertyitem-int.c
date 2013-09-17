@@ -4,11 +4,22 @@
 /* 
  * SmartSim - Digital Logic Circuit Designer and Simulator
  *   
- *   Expansion Version
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
  *   
- *   Filename: propertyitem/int.vala
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
  *   
- *   Copyright Ashley Newson 2012
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   
+ *   Filename: propertyitem/propertyitem-int.vala
+ *   
+ *   Copyright Ashley Newson 2013
  */
 
 #include <glib.h>
@@ -73,11 +84,16 @@ struct _PropertyItemClass {
 struct _PropertyItemInt {
 	PropertyItem parent_instance;
 	PropertyItemIntPrivate * priv;
-	gint data;
 };
 
 struct _PropertyItemIntClass {
 	PropertyItemClass parent_class;
+};
+
+struct _PropertyItemIntPrivate {
+	gint data;
+	gint min;
+	gint max;
 };
 
 typedef enum  {
@@ -95,6 +111,7 @@ void value_take_property_item (GValue* value, gpointer v_object);
 gpointer value_get_property_item (const GValue* value);
 GType property_item_get_type (void) G_GNUC_CONST;
 GType property_item_int_get_type (void) G_GNUC_CONST;
+#define PROPERTY_ITEM_INT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_PROPERTY_ITEM_INT, PropertyItemIntPrivate))
 enum  {
 	PROPERTY_ITEM_INT_DUMMY_PROPERTY
 };
@@ -105,8 +122,8 @@ PropertyItem* property_set_get_item (PropertySet* self, const gchar* name);
 void property_item_int_set_data_throw (PropertySet* propertySet, const gchar* name, gint data, GError** error);
 gint property_item_int_get_data (PropertySet* propertySet, const gchar* name);
 void property_item_int_set_data (PropertySet* propertySet, const gchar* name, gint data);
-PropertyItemInt* property_item_int_new (const gchar* name, const gchar* description, gint data);
-PropertyItemInt* property_item_int_construct (GType object_type, const gchar* name, const gchar* description, gint data);
+PropertyItemInt* property_item_int_new (const gchar* name, const gchar* description, gint data, gint min, gint max);
+PropertyItemInt* property_item_int_construct (GType object_type, const gchar* name, const gchar* description, gint data, gint min, gint max);
 PropertyItem* property_item_construct (GType object_type, const gchar* name, const gchar* description);
 static GtkWidget* property_item_int_real_create_widget (PropertyItem* base);
 static void property_item_int_real_read_widget (PropertyItem* base, GtkWidget* propertyWidget);
@@ -148,7 +165,7 @@ gint property_item_int_get_data_throw (PropertySet* propertySet, const gchar* na
 			PropertyItem* _tmp5_;
 			gint _tmp6_;
 			_tmp5_ = propertyItem;
-			_tmp6_ = (G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_INT) ? ((PropertyItemInt*) _tmp5_) : NULL)->data;
+			_tmp6_ = (G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_INT) ? ((PropertyItemInt*) _tmp5_) : NULL)->priv->data;
 			result = _tmp6_;
 			_property_item_unref0 (propertyItem);
 			return result;
@@ -221,7 +238,7 @@ void property_item_int_set_data_throw (PropertySet* propertySet, const gchar* na
 			gint _tmp6_;
 			_tmp5_ = propertyItem;
 			_tmp6_ = data;
-			(G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_INT) ? ((PropertyItemInt*) _tmp5_) : NULL)->data = _tmp6_;
+			(G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_INT) ? ((PropertyItemInt*) _tmp5_) : NULL)->priv->data = _tmp6_;
 			_property_item_unref0 (propertyItem);
 			return;
 		}
@@ -324,24 +341,30 @@ void property_item_int_set_data (PropertySet* propertySet, const gchar* name, gi
 }
 
 
-PropertyItemInt* property_item_int_construct (GType object_type, const gchar* name, const gchar* description, gint data) {
+PropertyItemInt* property_item_int_construct (GType object_type, const gchar* name, const gchar* description, gint data, gint min, gint max) {
 	PropertyItemInt* self = NULL;
 	const gchar* _tmp0_;
 	const gchar* _tmp1_;
 	gint _tmp2_;
+	gint _tmp3_;
+	gint _tmp4_;
 	g_return_val_if_fail (name != NULL, NULL);
 	g_return_val_if_fail (description != NULL, NULL);
 	_tmp0_ = name;
 	_tmp1_ = description;
 	self = (PropertyItemInt*) property_item_construct (object_type, _tmp0_, _tmp1_);
 	_tmp2_ = data;
-	self->data = _tmp2_;
+	self->priv->data = _tmp2_;
+	_tmp3_ = min;
+	self->priv->min = _tmp3_;
+	_tmp4_ = max;
+	self->priv->max = _tmp4_;
 	return self;
 }
 
 
-PropertyItemInt* property_item_int_new (const gchar* name, const gchar* description, gint data) {
-	return property_item_int_construct (TYPE_PROPERTY_ITEM_INT, name, description, data);
+PropertyItemInt* property_item_int_new (const gchar* name, const gchar* description, gint data, gint min, gint max) {
+	return property_item_int_construct (TYPE_PROPERTY_ITEM_INT, name, description, data, min, max);
 }
 
 
@@ -354,13 +377,14 @@ static GtkWidget* property_item_int_real_create_widget (PropertyItem* base) {
 	GtkSpinButton* intSpinButton;
 	gint _tmp3_;
 	self = (PropertyItemInt*) base;
-	_tmp0_ = G_MININT;
-	_tmp1_ = G_MAXINT;
+	_tmp0_ = self->priv->min;
+	_tmp1_ = self->priv->max;
 	_tmp2_ = (GtkSpinButton*) gtk_spin_button_new_with_range ((gdouble) _tmp0_, (gdouble) _tmp1_, (gdouble) 1);
 	g_object_ref_sink (_tmp2_);
 	intSpinButton = _tmp2_;
-	_tmp3_ = self->data;
+	_tmp3_ = self->priv->data;
 	gtk_spin_button_set_value (intSpinButton, (gdouble) _tmp3_);
+	gtk_spin_button_set_snap_to_ticks (intSpinButton, TRUE);
 	result = (GtkWidget*) intSpinButton;
 	return result;
 }
@@ -380,7 +404,7 @@ static void property_item_int_real_read_widget (PropertyItem* base, GtkWidget* p
 			gint _tmp3_ = 0;
 			_tmp2_ = propertyWidget;
 			_tmp3_ = gtk_spin_button_get_value_as_int (G_TYPE_CHECK_INSTANCE_TYPE (_tmp2_, GTK_TYPE_SPIN_BUTTON) ? ((GtkSpinButton*) _tmp2_) : NULL);
-			self->data = _tmp3_;
+			self->priv->data = _tmp3_;
 		}
 	}
 }
@@ -389,12 +413,14 @@ static void property_item_int_real_read_widget (PropertyItem* base, GtkWidget* p
 static void property_item_int_class_init (PropertyItemIntClass * klass) {
 	property_item_int_parent_class = g_type_class_peek_parent (klass);
 	PROPERTY_ITEM_CLASS (klass)->finalize = property_item_int_finalize;
+	g_type_class_add_private (klass, sizeof (PropertyItemIntPrivate));
 	PROPERTY_ITEM_CLASS (klass)->create_widget = property_item_int_real_create_widget;
 	PROPERTY_ITEM_CLASS (klass)->read_widget = property_item_int_real_read_widget;
 }
 
 
 static void property_item_int_instance_init (PropertyItemInt * self) {
+	self->priv = PROPERTY_ITEM_INT_GET_PRIVATE (self);
 }
 
 
