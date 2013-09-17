@@ -106,10 +106,12 @@ smartsim-state-memory.o: componentstate/state-memory.c \
  /usr/include/bits/huge_vall.h /usr/include/bits/inf.h \
  /usr/include/bits/nan.h /usr/include/bits/mathdef.h \
  /usr/include/bits/mathcalls.h /usr/include/bits/mathinline.h \
+ /usr/include/glib-2.0/glib/gstdio.h /usr/include/glib-2.0/glib/gprintf.h \
  /usr/include/stdio.h /usr/include/libio.h /usr/include/_G_config.h \
  /usr/include/wchar.h /usr/include/bits/stdio_lim.h \
  /usr/include/bits/sys_errlist.h /usr/include/bits/stdio.h \
- /usr/include/bits/stdio2.h
+ /usr/include/bits/stdio2.h /usr/include/sys/stat.h \
+ /usr/include/bits/stat.h
 
 /usr/include/glib-2.0/glib.h:
 
@@ -399,6 +401,10 @@ smartsim-state-memory.o: componentstate/state-memory.c \
 
 /usr/include/bits/mathinline.h:
 
+/usr/include/glib-2.0/glib/gstdio.h:
+
+/usr/include/glib-2.0/glib/gprintf.h:
+
 /usr/include/stdio.h:
 
 /usr/include/libio.h:
@@ -414,3 +420,7 @@ smartsim-state-memory.o: componentstate/state-memory.c \
 /usr/include/bits/stdio.h:
 
 /usr/include/bits/stdio2.h:
+
+/usr/include/sys/stat.h:
+
+/usr/include/bits/stat.h:

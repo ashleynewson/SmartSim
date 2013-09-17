@@ -790,7 +790,9 @@ public class Project {
 		foreach (PluginComponentManager pluginComponentManager in pluginComponentManagers) {
 			xmlWriter.start_element ("plugin");
 			
-			xmlWriter.write_string (pluginComponentManager.filename);
+			stdout.printf ("Relative path of file \"%s\" is \"%s\"\n", pluginComponentManager.filename, relative_filename(pluginComponentManager.filename));
+			
+			xmlWriter.write_string (relative_filename(pluginComponentManager.filename));
 			
 			xmlWriter.end_element ();
 		}

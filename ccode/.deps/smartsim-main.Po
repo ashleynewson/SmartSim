@@ -534,6 +534,8 @@ smartsim-main.o: main.c /usr/include/glib-2.0/glib.h \
  /usr/include/gtk-3.0/gtk/deprecated/gtkvscale.h \
  /usr/include/gtk-3.0/gtk/deprecated/gtkvscrollbar.h \
  /usr/include/gtk-3.0/gtk/deprecated/gtkvseparator.h \
+ /usr/include/glib-2.0/glib/gstdio.h /usr/include/glib-2.0/glib/gprintf.h \
+ /usr/include/sys/stat.h /usr/include/bits/stat.h \
  /usr/include/glib-2.0/gobject/gvaluecollector.h
 
 /usr/include/glib-2.0/glib.h:
@@ -1749,5 +1751,13 @@ smartsim-main.o: main.c /usr/include/glib-2.0/glib.h \
 /usr/include/gtk-3.0/gtk/deprecated/gtkvscrollbar.h:
 
 /usr/include/gtk-3.0/gtk/deprecated/gtkvseparator.h:
+
+/usr/include/glib-2.0/glib/gstdio.h:
+
+/usr/include/glib-2.0/glib/gprintf.h:
+
+/usr/include/sys/stat.h:
+
+/usr/include/bits/stat.h:
 
 /usr/include/glib-2.0/gobject/gvaluecollector.h:

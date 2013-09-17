@@ -284,6 +284,7 @@ smartsim-graphic.o: graphic.c /usr/include/glib-2.0/glib.h \
  /usr/include/bits/inf.h /usr/include/bits/nan.h \
  /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h \
  /usr/include/bits/mathinline.h \
+ /usr/include/librsvg-2.0/librsvg/rsvg-cairo.h \
  /usr/include/glib-2.0/gobject/gvaluecollector.h
 
 /usr/include/glib-2.0/glib.h:
@@ -1003,5 +1004,7 @@ smartsim-graphic.o: graphic.c /usr/include/glib-2.0/glib.h \
 /usr/include/bits/mathcalls.h:
 
 /usr/include/bits/mathinline.h:
+
+/usr/include/librsvg-2.0/librsvg/rsvg-cairo.h:
 
 /usr/include/glib-2.0/gobject/gvaluecollector.h:

@@ -271,6 +271,7 @@ clean:
 .PHONY : doc
 .PHONY : plugins
 .PHONY : plugin_altand
+.PHONY : update_ccode
 
 
 
