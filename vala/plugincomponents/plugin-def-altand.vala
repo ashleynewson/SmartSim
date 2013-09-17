@@ -1,11 +1,11 @@
 /* 
  * SmartSim - Digital Logic Circuit Designer and Simulator
  *   
- *   Expansion Version
+ *   Example - Public Domain
  *   
  *   Filename: plugincomponents/plugin-def-altand.vala
  *   
- *   Copyright Ashley Newson 2013 - Public Domain
+ *   Copyright Ashley Newson 2013
  */
 
 

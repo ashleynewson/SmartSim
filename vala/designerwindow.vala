@@ -1,11 +1,22 @@
 /* 
  * SmartSim - Digital Logic Circuit Designer and Simulator
  *   
- *   Expansion Version
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *   
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *   
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *   
  *   Filename: designerwindow.vala
  *   
- *   Copyright Ashley Newson 2012
+ *   Copyright Ashley Newson 2013
  */
 
 
@@ -2239,186 +2250,14 @@ public class DesignerWindow : Gtk.Window {
 	
 	public void export_png () {
 		ImageExporter.export_png (file_render);
-		
-		/*
-		string filename = "";
-		ImageFormat imageFormat = ImageFormat.PNG_RGB;;
-		double resolution;
-		
-		if (!hasDesigner) {
-			return;
-		} else if (!designer.hasComponent) {
-			return;
-		}
-		
-		PropertySet propertySet = new PropertySet ("PNG Export", "PNG image export options.");
-		PropertyItemSelection formatProperty = new PropertyItemSelection ("Format", "PNG colour format to use.");
-			formatProperty.add_option ("RGB (White Background)");
-			formatProperty.add_option ("ARGB (Transparent Background)");
-			formatProperty.set_option ("RGB (White Background)");
-		propertySet.add_item (formatProperty);
-		PropertyItemDouble resolutionProperty = new PropertyItemDouble ("Resolution", "Pixels per unit of distance.", 2);
-		propertySet.add_item (resolutionProperty);
-		
-		PropertiesQuery propertiesQuery = new PropertiesQuery ("Export PNG Options", this, propertySet);
-		
-		if (propertiesQuery.run() == Gtk.ResponseType.APPLY) {
-			Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog (
-				"Export to PNG",
-				this,
-				Gtk.FileChooserAction.SAVE,
-				Gtk.Stock.CANCEL,
-				Gtk.ResponseType.CANCEL,
-				Gtk.Stock.SAVE,
-				Gtk.ResponseType.ACCEPT);
-			
-			fileChooser.add_filter (pngFileFilter);
-			fileChooser.do_overwrite_confirmation = true;
-			
-			if (fileChooser.run () == Gtk.ResponseType.ACCEPT) {
-				filename = fileChooser.get_filename ();
-				if ("." in filename) {
-					stdout.printf ("File extension already given\n");
-				} else {
-					if (fileChooser.filter == pngFileFilter) {
-						filename += ".png";
-					}
-				}
-				
-				fileChooser.destroy ();
-			} else {
-				fileChooser.destroy ();
-				return;
-			}
-		}
-		
-		if (filename != "") {
-			switch (PropertyItemSelection.get_data(propertySet, "Format")) {
-				case "RGB (White Background)":
-					imageFormat = ImageFormat.PNG_RGB;
-					break;
-				case "ARGB (Transparent Background)":
-					imageFormat = ImageFormat.PNG_ARGB;
-					break;
-			}
-			
-			resolution = PropertyItemDouble.get_data (propertySet, "Resolution");
-			
-			file_render (filename, imageFormat, resolution);
-		}
-		*/
 	}
 	
 	public void export_pdf () {
 		ImageExporter.export_pdf (file_render);
-		
-		/*
-		string filename = "";
-		
-		if (!hasDesigner) {
-			return;
-		} else if (!designer.hasComponent) {
-			return;
-		}
-		
-		Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog (
-			"Export to PDF",
-			this,
-			Gtk.FileChooserAction.SAVE,
-			Gtk.Stock.CANCEL,
-			Gtk.ResponseType.CANCEL,
-			Gtk.Stock.SAVE,
-			Gtk.ResponseType.ACCEPT);
-		
-		fileChooser.add_filter (pdfFileFilter);
-		fileChooser.do_overwrite_confirmation = true;
-		
-		if (fileChooser.run () == Gtk.ResponseType.ACCEPT) {
-			filename = fileChooser.get_filename ();
-			if ("." in filename) {
-				stdout.printf ("File extension already given\n");
-			} else {
-				if (fileChooser.filter == pdfFileFilter) {
-					filename += ".pdf";
-				}
-			}
-			
-			fileChooser.destroy ();
-		} else {
-			fileChooser.destroy ();
-		}
-		
-		if (filename != "") {
-			file_render (filename, ImageFormat.PDF, 1);
-		}
-		*/
 	}
 	
 	public void export_svg () {
 		ImageExporter.export_svg (file_render);
-		
-		/*
-		string filename = "";
-		ImageFormat imageFormat = ImageFormat.SVG;
-		
-		if (!hasDesigner) {
-			return;
-		} else if (!designer.hasComponent) {
-			return;
-		}
-		
-		PropertySet propertySet = new PropertySet ("SVG Export", "SVG image export options.");
-		PropertyItemSelection formatProperty = new PropertyItemSelection ("Background", "The background for the SVG to use.");
-			formatProperty.add_option ("White Background");
-			formatProperty.add_option ("Transparent Background");
-			formatProperty.set_option ("White Background");
-		propertySet.add_item (formatProperty);
-		
-		PropertiesQuery propertiesQuery = new PropertiesQuery ("Export SVG Options", this, propertySet);
-		
-		if (propertiesQuery.run() == Gtk.ResponseType.APPLY) {
-			Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog (
-				"Export to SVG",
-				this,
-				Gtk.FileChooserAction.SAVE,
-				Gtk.Stock.CANCEL,
-				Gtk.ResponseType.CANCEL,
-				Gtk.Stock.SAVE,
-				Gtk.ResponseType.ACCEPT);
-			
-			fileChooser.add_filter (svgFileFilter);
-			fileChooser.do_overwrite_confirmation = true;
-			
-			if (fileChooser.run () == Gtk.ResponseType.ACCEPT) {
-				filename = fileChooser.get_filename ();
-				if ("." in filename) {
-					stdout.printf ("File extension already given\n");
-				} else {
-					if (fileChooser.filter == svgFileFilter) {
-						filename += ".svg";
-					}
-				}
-				
-				fileChooser.destroy ();
-			} else {
-				fileChooser.destroy ();
-				return;
-			}
-		}
-		
-		if (filename != "") {
-			switch (PropertyItemSelection.get_data(propertySet, "Background")) {
-				case "White Background":
-					imageFormat = ImageFormat.SVG;
-					break;
-				case "Transparent Background":
-					imageFormat = ImageFormat.SVG_CLEAR;
-					break;
-			}
-			
-			file_render (filename, imageFormat, 1);
-		}
-		*/
 	}
 	
 	/**

@@ -1,11 +1,22 @@
 /* 
  * SmartSim - Digital Logic Circuit Designer and Simulator
  *   
- *   Expansion Version
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
  *   
- *   Filename: componentdef/clock.vala
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
  *   
- *   Copyright Ashley Newson 2012
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   
+ *   Filename: componentdef/def-clock.vala
+ *   
+ *   Copyright Ashley Newson 2013
  */
 
 
@@ -31,13 +42,13 @@ public class ClockComponentDef : ComponentDef {
 		} catch {
 			onFor = 25;
 		}
-		queryProperty.add_item (new PropertyItemInt("On For", "Duration which clock is on.", onFor));
+		queryProperty.add_item (new PropertyItemInt("On For", "Duration which clock is on.", onFor, 1, int.MAX));
 		try {
 			offFor = PropertyItemInt.get_data_throw (configurationProperty, "Off For");
 		} catch {
 			offFor = 25;
 		}
-		queryProperty.add_item (new PropertyItemInt("Off For", "Duration which clock is off.", offFor));
+		queryProperty.add_item (new PropertyItemInt("Off For", "Duration which clock is off.", offFor, 1, int.MAX));
 	}
 	
 	public override void get_properties (PropertySet queryProperty, out PropertySet configurationProperty) {
@@ -46,9 +57,9 @@ public class ClockComponentDef : ComponentDef {
 		configurationProperty = new PropertySet (name + " configuration");
 		
 		onFor = PropertyItemInt.get_data (queryProperty, "On For");
-		configurationProperty.add_item (new PropertyItemInt("On For", "", onFor));
+		configurationProperty.add_item (new PropertyItemInt("On For", "", onFor, 1, int.MAX));
 		offFor = PropertyItemInt.get_data (queryProperty, "Off For");
-		configurationProperty.add_item (new PropertyItemInt("Off For", "", offFor));
+		configurationProperty.add_item (new PropertyItemInt("Off For", "", offFor, 1, int.MAX));
 	}
 	
 	public override void load_properties (Xml.Node* xmlnode, out PropertySet configurationProperty) {
@@ -67,8 +78,8 @@ public class ClockComponentDef : ComponentDef {
 			}
 		}
 		
-		configurationProperty.add_item (new PropertyItemInt("On For", "", onFor));
-		configurationProperty.add_item (new PropertyItemInt("Off For", "", offFor));
+		configurationProperty.add_item (new PropertyItemInt("On For", "", onFor, 1, int.MAX));
+		configurationProperty.add_item (new PropertyItemInt("Off For", "", offFor, 1, int.MAX));
 	}
 	
 	public override void save_properties (Xml.TextWriter xmlWriter, PropertySet configurationProperty) {

@@ -20,7 +20,7 @@ public class ImageExporter {
 			formatProperty.add_option ("ARGB (Transparent Background)");
 			formatProperty.set_option ("RGB (White Background)");
 		propertySet.add_item (formatProperty);
-		PropertyItemDouble resolutionProperty = new PropertyItemDouble ("Resolution", "Pixel density multiplier.", 1);
+		PropertyItemDouble resolutionProperty = new PropertyItemDouble ("Resolution", "Pixel density multiplier.", 1, 0, 100);
 		propertySet.add_item (resolutionProperty);
 		
 		PropertiesQuery propertiesQuery = new PropertiesQuery ("Export PNG Options", null, propertySet);

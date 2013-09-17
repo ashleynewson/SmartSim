@@ -1,16 +1,29 @@
 /* 
  * SmartSim - Digital Logic Circuit Designer and Simulator
  *   
- *   Expansion Version
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
  *   
- *   Filename: propertyitem/int.vala
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
  *   
- *   Copyright Ashley Newson 2012
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *   
+ *   Filename: propertyitem/propertyitem-int.vala
+ *   
+ *   Copyright Ashley Newson 2013
  */
 
 
 public class PropertyItemInt : PropertyItem {
-	public int data;
+	private int data;
+	private int min;
+	private int max;
 	
 	public static int get_data_throw (PropertySet propertySet, string name) throws PropertyItemError {
 		PropertyItem propertyItem = propertySet.get_item (name);
@@ -52,14 +65,17 @@ public class PropertyItemInt : PropertyItem {
 	}
 	
 	
-	public PropertyItemInt (string name, string description = "", int data = 0) {
+	public PropertyItemInt (string name, string description = "", int data = 0, int min = int.MIN, int max = int.MAX) {
 		base (name, description);
 		this.data = data;
+		this.min = min;
+		this.max = max;
 	}
 	
 	public override Gtk.Widget create_widget () {
-		Gtk.SpinButton intSpinButton = new Gtk.SpinButton.with_range (int.MIN, int.MAX, 1);
+		Gtk.SpinButton intSpinButton = new Gtk.SpinButton.with_range (min, max, 1);
 		intSpinButton.set_value (data);
+		intSpinButton.set_snap_to_ticks (true);
 		
 		return intSpinButton;
 	}
