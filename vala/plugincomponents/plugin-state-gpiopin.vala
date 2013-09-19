@@ -41,7 +41,7 @@ public class GpioPinPluginComponentState : ComponentState {
 		newPin.number = number;
 		
 		usedPins += newPin;
-		pluginManager.print_info ("Added GPIO Pin %i. Currently, %i are in use.", number, usedPins.length);
+		pluginManager.print_info ("Registered GPIO Pin %i. Currently, %i are in use.\n", number, usedPins.length);
 		
 		return true;
 	}
@@ -74,6 +74,7 @@ public class GpioPinPluginComponentState : ComponentState {
 		this.gpioNumber = gpioNumber;
 		if (direction == "in") {
 			isInput = true;
+			value = false;
 		} else {
 			isInput = false;
 			if (direction == "high") {
@@ -84,6 +85,13 @@ public class GpioPinPluginComponentState : ComponentState {
 			accessWire.set_affects (this);
 		}
 		this.activeLow = activeLow;
+		
+		pluginManager.print_info ("Configuring GPIO Pin %i: active_low = %s, input = %s, value = %s.\n",
+								  gpioNumber,
+								  active_low.to_string(),
+								  isInput.to_string(),
+								  value.to_string()
+			);
 		
 		FileStream exportFile = FileStream.open ("/sys/class/gpio/export", "w");
 		if (exportFile == null) {
