@@ -88,7 +88,7 @@ public class GpioPinPluginComponentState : ComponentState {
 		
 		pluginManager.print_info ("Configuring GPIO Pin %i: active_low = %s, input = %s, value = %s.\n".printf(
 									  gpioNumber,
-									  active_low.to_string(),
+									  activeLow.to_string(),
 									  isInput.to_string(),
 									  value.to_string()
 									  ));
