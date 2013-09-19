@@ -66,6 +66,9 @@ public class GpioPinPluginComponentState : ComponentState {
 	
 	
 	public GpioPinPluginComponentState (Connection accessWire, int gpioNumber, string direction, bool activeLow, ComponentInst[] ancestry, ComponentInst componentInst) throws ComponentStateError {
+		this.ancestry = ancestry;
+		this.componentInst = componentInst;
+		
 		if (GpioPinPluginComponentState.register_pin(gpioNumber, this) == false) {
 			throw new ComponentStateError.COMPILE ("The circuit has conflicting GPIO Pin Components with the same pin number.");
 		}
@@ -124,9 +127,6 @@ public class GpioPinPluginComponentState : ComponentState {
 			unexport ();
 			throw new ComponentStateError.COMPILE ("Unable to access \"" + gpioDirectory + "value\". Ensure SmartSim has permission to access GPIO.");
 		}
-		
-		this.ancestry = ancestry;
-		this.componentInst = componentInst;
 	}
 	
 	~GpioPinPluginComponentState () {
