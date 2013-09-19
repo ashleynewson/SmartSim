@@ -232,7 +232,6 @@ public class Project {
 						for (Xml.Attr* xmlattr = xmldata->properties; xmlattr != null; xmlattr = xmlattr->next) {
 							switch (xmlattr->name) {
 							case "smartsim":
-								stdout.printf ("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA %s\n", xmlattr->children->content);
 								if (Core.compare_versions(xmlattr->children->content) == VersionComparison.GREATER) {
 									if (Core.version_ignored("Project File: \"" + filename + "\"") == false) {
 										throw new ProjectLoadError.CANCEL ("SmartSim version of project is higher than running version.");

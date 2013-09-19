@@ -276,7 +276,6 @@ with SmartSim. If not, see:
 			default: //Includes null character
 				if (number != "") {
 					numbers += int.parse (number);
-					stdout.printf ("%i\n", int.parse(number));
 					number = "";
 				}
 				break;
@@ -296,7 +295,6 @@ with SmartSim. If not, see:
 		}
 		if (number != "") {
 			numbers += int.parse (number);
-			stdout.printf ("%i\n", int.parse(number));
 			number = "";
 		}
 		

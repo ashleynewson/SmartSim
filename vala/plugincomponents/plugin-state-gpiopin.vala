@@ -41,6 +41,7 @@ public class GpioPinPluginComponentState : ComponentState {
 		newPin.number = number;
 		
 		usedPins += newPin;
+		pluginManager.print_info ("Added GPIO Pin %i. Currently, %i are in use.", number, usedPins.length);
 		
 		return true;
 	}
@@ -70,6 +71,7 @@ public class GpioPinPluginComponentState : ComponentState {
 		}
 		
 		this.accessWire = accessWire;
+		this.gpioNumber = gpioNumber;
 		if (direction == "in") {
 			isInput = true;
 		} else {
