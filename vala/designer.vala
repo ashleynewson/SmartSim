@@ -605,18 +605,18 @@ public class Designer {
 				PropertySet wireProperties = new PropertySet ("Wire", "Wire Properties");
 				
 				PropertyItemSelection selection = new PropertyItemSelection ("Initial Signal", "Wire's preset signal at the start of simulation");
-				selection.add_option ("Default");
-				selection.add_option ("0 (False)");
-				selection.add_option ("1 (True)");
+				selection.add_option ("default", "Default");
+				selection.add_option ("0", "0 (False)");
+				selection.add_option ("1", "1 (True)");
 				switch (wireInst.presetSignal) {
 					case WireInst.PresetSignal.DEFAULT:
-						selection.set_option ("Default");
+						selection.set_option ("default");
 						break;
 					case WireInst.PresetSignal.FALSE:
-						selection.set_option ("0 (False)");
+						selection.set_option ("0");
 						break;
 					case WireInst.PresetSignal.TRUE:
-						selection.set_option ("1 (True)");
+						selection.set_option ("1");
 						break;
 				}
 				
@@ -625,13 +625,13 @@ public class Designer {
 				
 				if (wireQuery.run () == Gtk.ResponseType.APPLY) {
 					switch (selection.get_option()) {
-						case "Default":
+						case "default":
 							wireInst.presetSignal = WireInst.PresetSignal.DEFAULT;
 							break;
-						case "0 (False)":
+						case "0":
 							wireInst.presetSignal = WireInst.PresetSignal.FALSE;
 							break;
-						case "1 (True)":
+						case "1":
 							wireInst.presetSignal = WireInst.PresetSignal.TRUE;
 							break;
 					}

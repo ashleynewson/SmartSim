@@ -93,7 +93,7 @@ public class GpioPinPluginComponentDef : PluginComponentDef {
 				case "number":
 					gpioNumber = int.parse(xmlattr->children->content);
 					break;
-				case "direction":
+				case "iodirection":
 					direction = xmlattr->children->content;
 					break;
 				case "active":
@@ -142,7 +142,7 @@ public class GpioPinPluginComponentDef : PluginComponentDef {
 		}
 		
 		xmlWriter.write_attribute ("number", gpioNumber.to_string());
-		xmlWriter.write_attribute ("direction", direction);
+		xmlWriter.write_attribute ("iodirection", direction);
 		xmlWriter.write_attribute ("active", activeState);
 	}
 	
