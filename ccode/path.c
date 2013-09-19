@@ -110,18 +110,18 @@ enum  {
 Path* path_new (gint xStart, gint yStart);
 Path* path_construct (GType object_type, gint xStart, gint yStart);
 void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse);
-static void _vala_array_add56 (PathLine** array, int* length, int* size, const PathLine* value);
-static PathLine* _vala_array_dup46 (PathLine* self, int length);
+static void _vala_array_add58 (PathLine** array, int* length, int* size, const PathLine* value);
 static PathLine* _vala_array_dup47 (PathLine* self, int length);
 static PathLine* _vala_array_dup48 (PathLine* self, int length);
 static PathLine* _vala_array_dup49 (PathLine* self, int length);
 static PathLine* _vala_array_dup50 (PathLine* self, int length);
-static void _vala_array_add57 (PathLine** array, int* length, int* size, const PathLine* value);
 static PathLine* _vala_array_dup51 (PathLine* self, int length);
-gint path_append (Path* self, gint x, gint y, gfloat diagonalThreshold);
+static void _vala_array_add59 (PathLine** array, int* length, int* size, const PathLine* value);
 static PathLine* _vala_array_dup52 (PathLine* self, int length);
-static void _vala_array_add58 (PathLine** array, int* length, int* size, const PathLine* value);
+gint path_append (Path* self, gint x, gint y, gfloat diagonalThreshold);
 static PathLine* _vala_array_dup53 (PathLine* self, int length);
+static void _vala_array_add60 (PathLine** array, int* length, int* size, const PathLine* value);
+static PathLine* _vala_array_dup54 (PathLine* self, int length);
 gint path_find (Path* self, gint x, gint y);
 void path_move (Path* self, gint x, gint y);
 void path_render (Path* self, cairo_t* context);
@@ -157,17 +157,12 @@ Path* path_new (gint xStart, gint yStart) {
 }
 
 
-static void _vala_array_add56 (PathLine** array, int* length, int* size, const PathLine* value) {
+static void _vala_array_add58 (PathLine** array, int* length, int* size, const PathLine* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PathLine, *array, *size);
 	}
 	(*array)[(*length)++] = *value;
-}
-
-
-static PathLine* _vala_array_dup46 (PathLine* self, int length) {
-	return g_memdup (self, length * sizeof (PathLine));
 }
 
 
@@ -191,7 +186,12 @@ static PathLine* _vala_array_dup50 (PathLine* self, int length) {
 }
 
 
-static void _vala_array_add57 (PathLine** array, int* length, int* size, const PathLine* value) {
+static PathLine* _vala_array_dup51 (PathLine* self, int length) {
+	return g_memdup (self, length * sizeof (PathLine));
+}
+
+
+static void _vala_array_add59 (PathLine** array, int* length, int* size, const PathLine* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PathLine, *array, *size);
@@ -200,7 +200,7 @@ static void _vala_array_add57 (PathLine** array, int* length, int* size, const P
 }
 
 
-static PathLine* _vala_array_dup51 (PathLine* self, int length) {
+static PathLine* _vala_array_dup52 (PathLine* self, int length) {
 	return g_memdup (self, length * sizeof (PathLine));
 }
 
@@ -357,7 +357,7 @@ void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse
 					_tmp33_ = extraLines;
 					_tmp33__length1 = extraLines_length1;
 					_tmp34_ = reversedLine;
-					_vala_array_add56 (&extraLines, &extraLines_length1, &_extraLines_size_, &_tmp34_);
+					_vala_array_add58 (&extraLines, &extraLines_length1, &_extraLines_size_, &_tmp34_);
 				}
 			}
 		}
@@ -370,7 +370,7 @@ void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse
 		_tmp35_ = extraPath;
 		_tmp36_ = _tmp35_->lines;
 		_tmp36__length1 = _tmp35_->lines_length1;
-		_tmp37_ = (_tmp36_ != NULL) ? _vala_array_dup46 (_tmp36_, _tmp36__length1) : ((gpointer) _tmp36_);
+		_tmp37_ = (_tmp36_ != NULL) ? _vala_array_dup47 (_tmp36_, _tmp36__length1) : ((gpointer) _tmp36_);
 		_tmp37__length1 = _tmp36__length1;
 		extraLines = (g_free (extraLines), NULL);
 		extraLines = _tmp37_;
@@ -389,7 +389,7 @@ void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse
 		gint _tmp42__length1;
 		_tmp39_ = extraLines;
 		_tmp39__length1 = extraLines_length1;
-		_tmp40_ = (_tmp39_ != NULL) ? _vala_array_dup47 (_tmp39_, _tmp39__length1) : ((gpointer) _tmp39_);
+		_tmp40_ = (_tmp39_ != NULL) ? _vala_array_dup48 (_tmp39_, _tmp39__length1) : ((gpointer) _tmp39_);
 		_tmp40__length1 = _tmp39__length1;
 		newLines = (g_free (newLines), NULL);
 		newLines = _tmp40_;
@@ -397,7 +397,7 @@ void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse
 		_newLines_size_ = newLines_length1;
 		_tmp41_ = self->lines;
 		_tmp41__length1 = self->lines_length1;
-		_tmp42_ = (_tmp41_ != NULL) ? _vala_array_dup48 (_tmp41_, _tmp41__length1) : ((gpointer) _tmp41_);
+		_tmp42_ = (_tmp41_ != NULL) ? _vala_array_dup49 (_tmp41_, _tmp41__length1) : ((gpointer) _tmp41_);
 		_tmp42__length1 = _tmp41__length1;
 		lastLines = (g_free (lastLines), NULL);
 		lastLines = _tmp42_;
@@ -414,7 +414,7 @@ void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse
 		gint _tmp46__length1;
 		_tmp43_ = self->lines;
 		_tmp43__length1 = self->lines_length1;
-		_tmp44_ = (_tmp43_ != NULL) ? _vala_array_dup49 (_tmp43_, _tmp43__length1) : ((gpointer) _tmp43_);
+		_tmp44_ = (_tmp43_ != NULL) ? _vala_array_dup50 (_tmp43_, _tmp43__length1) : ((gpointer) _tmp43_);
 		_tmp44__length1 = _tmp43__length1;
 		newLines = (g_free (newLines), NULL);
 		newLines = _tmp44_;
@@ -422,7 +422,7 @@ void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse
 		_newLines_size_ = newLines_length1;
 		_tmp45_ = extraLines;
 		_tmp45__length1 = extraLines_length1;
-		_tmp46_ = (_tmp45_ != NULL) ? _vala_array_dup50 (_tmp45_, _tmp45__length1) : ((gpointer) _tmp45_);
+		_tmp46_ = (_tmp45_ != NULL) ? _vala_array_dup51 (_tmp45_, _tmp45__length1) : ((gpointer) _tmp45_);
 		_tmp46__length1 = _tmp45__length1;
 		lastLines = (g_free (lastLines), NULL);
 		lastLines = _tmp46_;
@@ -550,13 +550,13 @@ void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse
 				_tmp81__length1 = lastLines_length1;
 				_tmp82_ = i;
 				_tmp83_ = _tmp81_[_tmp82_];
-				_vala_array_add57 (&newLines, &newLines_length1, &_newLines_size_, &_tmp83_);
+				_vala_array_add59 (&newLines, &newLines_length1, &_newLines_size_, &_tmp83_);
 			}
 		}
 	}
 	_tmp84_ = newLines;
 	_tmp84__length1 = newLines_length1;
-	_tmp85_ = (_tmp84_ != NULL) ? _vala_array_dup51 (_tmp84_, _tmp84__length1) : ((gpointer) _tmp84_);
+	_tmp85_ = (_tmp84_ != NULL) ? _vala_array_dup52 (_tmp84_, _tmp84__length1) : ((gpointer) _tmp84_);
 	_tmp85__length1 = _tmp84__length1;
 	self->lines = (g_free (self->lines), NULL);
 	self->lines = _tmp85_;
@@ -604,12 +604,12 @@ void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse
  * Add a point to the path. Returns 1 if a paths should finallise.
  * Returns 2 if a point should be undone.
  */
-static PathLine* _vala_array_dup52 (PathLine* self, int length) {
+static PathLine* _vala_array_dup53 (PathLine* self, int length) {
 	return g_memdup (self, length * sizeof (PathLine));
 }
 
 
-static void _vala_array_add58 (PathLine** array, int* length, int* size, const PathLine* value) {
+static void _vala_array_add60 (PathLine** array, int* length, int* size, const PathLine* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PathLine, *array, *size);
@@ -618,7 +618,7 @@ static void _vala_array_add58 (PathLine** array, int* length, int* size, const P
 }
 
 
-static PathLine* _vala_array_dup53 (PathLine* self, int length) {
+static PathLine* _vala_array_dup54 (PathLine* self, int length) {
 	return g_memdup (self, length * sizeof (PathLine));
 }
 
@@ -750,7 +750,7 @@ gint path_append (Path* self, gint x, gint y, gfloat diagonalThreshold) {
 	yDiffAbs = _tmp25_;
 	_tmp26_ = self->lines;
 	_tmp26__length1 = self->lines_length1;
-	_tmp27_ = (_tmp26_ != NULL) ? _vala_array_dup52 (_tmp26_, _tmp26__length1) : ((gpointer) _tmp26_);
+	_tmp27_ = (_tmp26_ != NULL) ? _vala_array_dup53 (_tmp26_, _tmp26__length1) : ((gpointer) _tmp26_);
 	_tmp27__length1 = _tmp26__length1;
 	newLines = _tmp27_;
 	newLines_length1 = _tmp27__length1;
@@ -1054,7 +1054,7 @@ gint path_append (Path* self, gint x, gint y, gfloat diagonalThreshold) {
 			_tmp106_ = newLines;
 			_tmp106__length1 = newLines_length1;
 			_tmp107_ = line;
-			_vala_array_add58 (&newLines, &newLines_length1, &_newLines_size_, &_tmp107_);
+			_vala_array_add60 (&newLines, &newLines_length1, &_newLines_size_, &_tmp107_);
 		}
 	}
 	_tmp108_ = newLines;
@@ -1083,7 +1083,7 @@ gint path_append (Path* self, gint x, gint y, gfloat diagonalThreshold) {
 	self->yLast = _tmp123_;
 	_tmp124_ = newLines;
 	_tmp124__length1 = newLines_length1;
-	_tmp125_ = (_tmp124_ != NULL) ? _vala_array_dup53 (_tmp124_, _tmp124__length1) : ((gpointer) _tmp124_);
+	_tmp125_ = (_tmp124_ != NULL) ? _vala_array_dup54 (_tmp124_, _tmp124__length1) : ((gpointer) _tmp124_);
 	_tmp125__length1 = _tmp124__length1;
 	self->lines = (g_free (self->lines), NULL);
 	self->lines = _tmp125_;

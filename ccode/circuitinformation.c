@@ -266,7 +266,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
@@ -374,7 +374,7 @@ GType pin_def_get_type (void) G_GNUC_CONST;
 void component_def_create_information (ComponentDef* self, CircuitInformation* circuitInformation);
 const gchar* circuit_information_get_summary (CircuitInformation* self);
 void circuit_information_count_component (CircuitInformation* self, ComponentDef* componentDef);
-static void _vala_array_add15 (CircuitInformationComponentCount** array, int* length, int* size, const CircuitInformationComponentCount* value);
+static void _vala_array_add17 (CircuitInformationComponentCount** array, int* length, int* size, const CircuitInformationComponentCount* value);
 static void circuit_information_finalize (CircuitInformation* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
@@ -624,7 +624,7 @@ CircuitInformation* circuit_information_new (Project* project) {
 }
 
 
-static void _vala_array_add15 (CircuitInformationComponentCount** array, int* length, int* size, const CircuitInformationComponentCount* value) {
+static void _vala_array_add17 (CircuitInformationComponentCount** array, int* length, int* size, const CircuitInformationComponentCount* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (CircuitInformationComponentCount, *array, *size);
@@ -709,7 +709,7 @@ void circuit_information_count_component (CircuitInformation* self, ComponentDef
 		_tmp17__length1 = self->priv->componentCounts_length1;
 		_tmp18_ = componentCount;
 		circuit_information_component_count_copy (&_tmp18_, &_tmp19_);
-		_vala_array_add15 (&self->priv->componentCounts, &self->priv->componentCounts_length1, &self->priv->_componentCounts_size_, &_tmp19_);
+		_vala_array_add17 (&self->priv->componentCounts, &self->priv->componentCounts_length1, &self->priv->_componentCounts_size_, &_tmp19_);
 		circuit_information_component_count_destroy (&componentCount);
 	}
 }

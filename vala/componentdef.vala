@@ -35,7 +35,11 @@ public errordomain ComponentDefLoadError {
 	/**
 	 * The data within the file is erroneous.
 	 */
-	LOAD
+	LOAD,
+	/**
+	 * Loading was cancelled (e.g. due to version).
+	 */
+	CANCEL
 }
 
 
@@ -151,112 +155,139 @@ public abstract class ComponentDef {
 			}
 			
 			switch (xmlnode->name) {
-				case "name":
-					{
-						for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
-							if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
-								continue;
-							}
-							name = xmldata->content;
-						}
+			case "metadata":
+			{
+				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
+					if (xmldata->type != Xml.ElementType.ELEMENT_NODE) {
+						continue;
 					}
-					break;
-				case "description":
+					
+					switch (xmldata->name) {
+					case "version":
 					{
-						for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
-							if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
-								continue;
-							}
-							description = xmldata->content;
-						}
-					}
-					break;
-				case "icon":
-					{
-						for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
-							if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
-								continue;
-							}
-							iconFilename = xmldata->content;
-						}
-					}
-					break;
-				case "graphic":
-					{
-						for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
-							if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
-								continue;
-							}
-							this.graphic = new Graphic.from_file (Config.resourcesDir + "components/graphics/" + xmldata->content);
-						}
-					}
-					break;
-				case "label":
-					{
-						for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
-							if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
-								continue;
-							}
-							label = xmldata->content;
-						}
-					}
-					break;
-				case "bound":
-					{
-						for (Xml.Attr* xmlattr = xmlnode->properties; xmlattr != null; xmlattr = xmlattr->next) {
+						for (Xml.Attr* xmlattr = xmldata->properties; xmlattr != null; xmlattr = xmlattr->next) {
 							switch (xmlattr->name) {
-								case "right":
-									rightBound = int.parse(xmlattr->children->content);
-									break;
-								case "down":
-									downBound = int.parse(xmlattr->children->content);
-									break;
-								case "left":
-									leftBound = int.parse(xmlattr->children->content);
-									break;
-								case "up":
-									upBound = int.parse(xmlattr->children->content);
-									break;
-								case "drawbox":
-									drawBox = bool.parse(xmlattr->children->content);
-									break;
+							case "smartsim":
+								if (Core.compare_versions(xmlattr->children->content) == VersionComparison.GREATER) {
+									if (Core.version_ignored("Component File: \"" + infoFilename + "\"") == false) {
+										throw new ComponentDefLoadError.CANCEL ("SmartSim version of component is higher than running version.");
+									}
+								}
+								break;
 							}
+						}
+					}
+					break;
+					}
+				}
+			}
+			break;
+			case "name":
+			{
+				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
+					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
+						continue;
+					}
+					name = xmldata->content;
+				}
+			}
+			break;
+			case "description":
+			{
+				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
+					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
+						continue;
+					}
+					description = xmldata->content;
+				}
+			}
+			break;
+			case "icon":
+			{
+				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
+					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
+						continue;
+					}
+					iconFilename = xmldata->content;
+				}
+			}
+			break;
+			case "graphic":
+			{
+				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
+					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
+						continue;
+					}
+					this.graphic = new Graphic.from_file (Config.resourcesDir + "components/graphics/" + xmldata->content);
+				}
+			}
+			break;
+			case "label":
+			{
+				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
+					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
+						continue;
+					}
+					label = xmldata->content;
+				}
+			}
+			break;
+			case "bound":
+			{
+				for (Xml.Attr* xmlattr = xmlnode->properties; xmlattr != null; xmlattr = xmlattr->next) {
+					switch (xmlattr->name) {
+					case "right":
+						rightBound = int.parse(xmlattr->children->content);
+						break;
+					case "down":
+						downBound = int.parse(xmlattr->children->content);
+						break;
+					case "left":
+						leftBound = int.parse(xmlattr->children->content);
+						break;
+					case "up":
+						upBound = int.parse(xmlattr->children->content);
+						break;
+					case "drawbox":
+						drawBox = bool.parse(xmlattr->children->content);
+						break;
+					}
 							
-						}
+				}
+			}
+			break;
+			case "color":
+			case "colour":
+			{
+				for (Xml.Attr* xmlattr = xmlnode->properties; xmlattr != null; xmlattr = xmlattr->next) {
+					switch (xmlattr->name) {
+					case "a":
+						backgroundAlpha = int.parse(xmlattr->children->content);
+						backgroundAlphaF = (double)backgroundAlpha / 255.0;
+						break;
+					case "r":
+						backgroundRed = int.parse(xmlattr->children->content);
+						backgroundRedF = (double)backgroundRed / 255.0;
+						break;
+					case "g":
+						backgroundGreen = int.parse(xmlattr->children->content);
+						backgroundGreenF = (double)backgroundGreen / 255.0;
+						break;
+					case "b":
+						backgroundBlue = int.parse(xmlattr->children->content);
+						backgroundBlueF = (double)backgroundBlue / 255.0;
+						break;
 					}
-					break;
-				case "color":
-				case "colour":
-					{
-						for (Xml.Attr* xmlattr = xmlnode->properties; xmlattr != null; xmlattr = xmlattr->next) {
-							switch (xmlattr->name) {
-								case "a":
-									backgroundAlpha = int.parse(xmlattr->children->content);
-									backgroundAlphaF = (double)backgroundAlpha / 255.0;
-									break;
-								case "r":
-									backgroundRed = int.parse(xmlattr->children->content);
-									backgroundRedF = (double)backgroundRed / 255.0;
-									break;
-								case "g":
-									backgroundGreen = int.parse(xmlattr->children->content);
-									backgroundGreenF = (double)backgroundGreen / 255.0;
-									break;
-								case "b":
-									backgroundBlue = int.parse(xmlattr->children->content);
-									backgroundBlueF = (double)backgroundBlue / 255.0;
-									break;
-							}
-						}
-					}
-					break;
-				case "pin":
-					{
-						PinDef pinDef = new PinDef.load (xmlnode);
+				}
+			}
+			break;
+			case "pin":
+			{
+				PinDef pinDef = new PinDef.load (xmlnode);
 						
-						pinDefs += pinDef;
-					}
-					break;
+				pinDefs += pinDef;
+			}
+			break;
 			}
 		}
 		
@@ -280,18 +311,18 @@ public abstract class ComponentDef {
 			double angle = 0;
 			
 			switch (direction) {
-				case Direction.RIGHT:
-					angle = 0;
-					break;
-				case Direction.DOWN:
-					angle = Math.PI * 0.5;
-					break;
-				case Direction.LEFT:
-					angle = Math.PI;
-					break;
-				case Direction.UP:
-					angle = Math.PI * 1.5;
-					break;
+			case Direction.RIGHT:
+				angle = 0;
+				break;
+			case Direction.DOWN:
+				angle = Math.PI * 0.5;
+				break;
+			case Direction.LEFT:
+				angle = Math.PI;
+				break;
+			case Direction.UP:
+				angle = Math.PI * 1.5;
+				break;
 			}
 			context.rotate (angle);
 			
@@ -346,18 +377,18 @@ public abstract class ComponentDef {
 		double angle = 0;
 		
 		switch (direction) {
-			case Direction.RIGHT:
-				angle = 0;
-				break;
-			case Direction.DOWN:
-				angle = Math.PI * 0.5;
-				break;
-			case Direction.LEFT:
-				angle = Math.PI;
-				break;
-			case Direction.UP:
-				angle = Math.PI * 1.5;
-				break;
+		case Direction.RIGHT:
+			angle = 0;
+			break;
+		case Direction.DOWN:
+			angle = Math.PI * 0.5;
+			break;
+		case Direction.LEFT:
+			angle = Math.PI;
+			break;
+		case Direction.UP:
+			angle = Math.PI * 1.5;
+			break;
 		}
 		context.rotate (angle);
 		
@@ -415,67 +446,67 @@ public abstract class ComponentDef {
 			
 			PinDef pinDef = pinDefs[i];
 			switch (pinDef.labelType) {
-				case PinDef.LabelType.TEXT:
-				case PinDef.LabelType.TEXTBAR:
-					context.get_matrix (out oldmatrix2);
+			case PinDef.LabelType.TEXT:
+			case PinDef.LabelType.TEXTBAR:
+				context.get_matrix (out oldmatrix2);
 					
-					if (componentInst == null) {
-						context.translate (pinDef.xLabel, pinDef.yLabel);
-					} else {
-						context.translate (componentInst.pinInsts[i].xLabel, componentInst.pinInsts[i].yLabel);
-					}
-					if (flipped) {
-						context.scale (1.0, -1.0);
-					}
-					context.rotate (-angle);
+				if (componentInst == null) {
+					context.translate (pinDef.xLabel, pinDef.yLabel);
+				} else {
+					context.translate (componentInst.pinInsts[i].xLabel, componentInst.pinInsts[i].yLabel);
+				}
+				if (flipped) {
+					context.scale (1.0, -1.0);
+				}
+				context.rotate (-angle);
 					
-					context.set_font_size (8);
-					context.text_extents (pinDef.label, out textExtents);
-					context.move_to (-textExtents.width/2, +textExtents.height/2);
-					context.show_text (pinDef.label);
+				context.set_font_size (8);
+				context.text_extents (pinDef.label, out textExtents);
+				context.move_to (-textExtents.width/2, +textExtents.height/2);
+				context.show_text (pinDef.label);
 					
-					if (pinDef.labelType == PinDef.LabelType.TEXTBAR) {
-						context.move_to (-textExtents.width/2, -1 - textExtents.height/2);
-						context.line_to ( textExtents.width/2, -1 - textExtents.height/2);
-						context.stroke ();
-					}
-					
-					context.set_matrix (oldmatrix2);
-					break;
-				case PinDef.LabelType.CLOCK:
-					context.get_matrix (out oldmatrix2);
-					
-					if (componentInst == null) {
-						context.translate (pinDef.x, pinDef.y);
-					} else {
-						context.translate (componentInst.pinInsts[i].x[0], componentInst.pinInsts[i].y[0]);
-					}
-					
-					double angle2 = 0;
-					
-					switch (pinDef.direction) {
-						case Direction.RIGHT:
-							angle2 = 0;
-							break;
-						case Direction.DOWN:
-							angle2 = Math.PI * 0.5;
-							break;
-						case Direction.LEFT:
-							angle2 = Math.PI;
-							break;
-						case Direction.UP:
-							angle2 = Math.PI * 1.5;
-							break;
-					}
-					context.rotate (angle2);
-					
-					context.move_to (0, -6);
-					context.line_to (-9, 0);
-					context.line_to (0,  6);
+				if (pinDef.labelType == PinDef.LabelType.TEXTBAR) {
+					context.move_to (-textExtents.width/2, -1 - textExtents.height/2);
+					context.line_to ( textExtents.width/2, -1 - textExtents.height/2);
 					context.stroke ();
+				}
 					
-					context.set_matrix (oldmatrix2);
+				context.set_matrix (oldmatrix2);
+				break;
+			case PinDef.LabelType.CLOCK:
+				context.get_matrix (out oldmatrix2);
+					
+				if (componentInst == null) {
+					context.translate (pinDef.x, pinDef.y);
+				} else {
+					context.translate (componentInst.pinInsts[i].x[0], componentInst.pinInsts[i].y[0]);
+				}
+					
+				double angle2 = 0;
+					
+				switch (pinDef.direction) {
+				case Direction.RIGHT:
+					angle2 = 0;
 					break;
+				case Direction.DOWN:
+					angle2 = Math.PI * 0.5;
+					break;
+				case Direction.LEFT:
+					angle2 = Math.PI;
+					break;
+				case Direction.UP:
+					angle2 = Math.PI * 1.5;
+					break;
+				}
+				context.rotate (angle2);
+					
+				context.move_to (0, -6);
+				context.line_to (-9, 0);
+				context.line_to (0,  6);
+				context.stroke ();
+					
+				context.set_matrix (oldmatrix2);
+				break;
 			}
 		}
 		
@@ -490,9 +521,9 @@ public abstract class ComponentDef {
 	}
 	
 	/**
-	 * Some ComponentDefs do extra validation.
+	 * Some ComponentDefs do extra validation. CURRENTLY UNUSED.
 	 */
-	public virtual void extra_validate (CustomComponentDef[] componentChain, ComponentInst? componentInst) {
+	public virtual void extra_validate (Project project, CustomComponentDef[] componentChain, ComponentInst? componentInst) {
 		//Do nothing.
 	}
 	

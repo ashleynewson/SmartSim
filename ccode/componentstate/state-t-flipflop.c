@@ -161,7 +161,7 @@ TFlipflopComponentState* tflipflop_component_state_new (Connection* toggleWire, 
 TFlipflopComponentState* tflipflop_component_state_construct (GType object_type, Connection* toggleWire, Connection* clockWire, Connection* outputWire, Connection* outputNotWire, ComponentInst** ancestry, int ancestry_length1, ComponentInst* componentInst);
 ComponentState* component_state_construct (GType object_type);
 void connection_set_affects (Connection* self, ComponentState* componentState);
-static ComponentInst** _vala_array_dup35 (ComponentInst** self, int length);
+static ComponentInst** _vala_array_dup36 (ComponentInst** self, int length);
 static void tflipflop_component_state_real_update (ComponentState* base);
 gboolean connection_get_signalState (Connection* self);
 void connection_set_signalState (Connection* self, gboolean value);
@@ -180,7 +180,7 @@ static gpointer _component_inst_ref0 (gpointer self) {
 }
 
 
-static ComponentInst** _vala_array_dup35 (ComponentInst** self, int length) {
+static ComponentInst** _vala_array_dup36 (ComponentInst** self, int length) {
 	ComponentInst** result;
 	int i;
 	result = g_new0 (ComponentInst*, length + 1);
@@ -238,7 +238,7 @@ TFlipflopComponentState* tflipflop_component_state_construct (GType object_type,
 	self->priv->previousClockSignal = TRUE;
 	_tmp9_ = ancestry;
 	_tmp9__length1 = ancestry_length1;
-	_tmp10_ = (_tmp9_ != NULL) ? _vala_array_dup35 (_tmp9_, _tmp9__length1) : ((gpointer) _tmp9_);
+	_tmp10_ = (_tmp9_ != NULL) ? _vala_array_dup36 (_tmp9_, _tmp9__length1) : ((gpointer) _tmp9_);
 	_tmp10__length1 = _tmp9__length1;
 	((ComponentState*) self)->ancestry = (_vala_array_free (((ComponentState*) self)->ancestry, ((ComponentState*) self)->ancestry_length1, (GDestroyNotify) component_inst_unref), NULL);
 	((ComponentState*) self)->ancestry = _tmp10_;

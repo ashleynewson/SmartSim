@@ -126,6 +126,8 @@ void property_item_file_browse_widget (GtkEntry* stringEntry);
 PropertyItemFile* property_item_file_new (const gchar* name, const gchar* description, const gchar* filename);
 PropertyItemFile* property_item_file_construct (GType object_type, const gchar* name, const gchar* description, const gchar* filename);
 PropertyItem* property_item_construct (GType object_type, const gchar* name, const gchar* description);
+PropertyItemFile* property_item_file_new_copy (PropertyItemFile* source);
+PropertyItemFile* property_item_file_construct_copy (GType object_type, PropertyItemFile* source);
 static GtkWidget* property_item_file_real_create_widget (PropertyItem* base);
 static Block4Data* block4_data_ref (Block4Data* _data4_);
 static void block4_data_unref (void * _userdata_);
@@ -416,6 +418,35 @@ PropertyItemFile* property_item_file_construct (GType object_type, const gchar* 
 
 PropertyItemFile* property_item_file_new (const gchar* name, const gchar* description, const gchar* filename) {
 	return property_item_file_construct (TYPE_PROPERTY_ITEM_FILE, name, description, filename);
+}
+
+
+PropertyItemFile* property_item_file_construct_copy (GType object_type, PropertyItemFile* source) {
+	PropertyItemFile* self = NULL;
+	PropertyItemFile* _tmp0_;
+	const gchar* _tmp1_;
+	PropertyItemFile* _tmp2_;
+	const gchar* _tmp3_;
+	PropertyItemFile* _tmp4_;
+	const gchar* _tmp5_;
+	gchar* _tmp6_;
+	g_return_val_if_fail (source != NULL, NULL);
+	_tmp0_ = source;
+	_tmp1_ = ((PropertyItem*) _tmp0_)->name;
+	_tmp2_ = source;
+	_tmp3_ = ((PropertyItem*) _tmp2_)->description;
+	self = (PropertyItemFile*) property_item_construct (object_type, _tmp1_, _tmp3_);
+	_tmp4_ = source;
+	_tmp5_ = _tmp4_->filename;
+	_tmp6_ = g_strdup (_tmp5_);
+	_g_free0 (self->filename);
+	self->filename = _tmp6_;
+	return self;
+}
+
+
+PropertyItemFile* property_item_file_new_copy (PropertyItemFile* source) {
+	return property_item_file_construct_copy (TYPE_PROPERTY_ITEM_FILE, source);
 }
 
 

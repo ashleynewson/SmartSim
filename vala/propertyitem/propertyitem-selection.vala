@@ -26,10 +26,14 @@ public errordomain PropertyItemStringError {
 
 
 public class PropertyItemSelection : PropertyItem {
-	public string[] options;
+	private struct Option {
+		string value;
+		string text;
+	}
+	private Option[] options;
 	
-	int _selected;
-	int selected {
+	private int _selected;
+	public int selected {
 		public set {
 			if (value >= 0 && value < options.length) {
 				_selected = value;
@@ -52,13 +56,13 @@ public class PropertyItemSelection : PropertyItem {
 		throw new PropertyItemError.ITEM_NOT_FOUND ("\"" + propertySet.name + "\" does not contain a selection named \"" + name + "\"");
 	}
 	
-	public static void set_data_throw (PropertySet propertySet, string name, string option) throws PropertyItemError, PropertyItemStringError {
+	public static void set_data_throw (PropertySet propertySet, string name, string value) throws PropertyItemError, PropertyItemStringError {
 		PropertyItem propertyItem = propertySet.get_item (name);
 		
 		if (propertyItem != null) {
 			if (propertyItem is PropertyItemSelection) {
-				if ( (propertyItem as PropertyItemSelection).set_option(option) == 1 ) {
-					throw new PropertyItemStringError.OPTION_NOT_FOUND ("\"" + propertySet.name + "\"'s selection named \"" + name + "\" does not contain option \"" + option + "\"");
+				if ( (propertyItem as PropertyItemSelection).set_option(value) == 1 ) {
+					throw new PropertyItemStringError.OPTION_NOT_FOUND ("\"" + propertySet.name + "\"'s selection named \"" + name + "\" does not contain option \"" + value + "\"");
 				}
 				return;
 			}
@@ -75,9 +79,9 @@ public class PropertyItemSelection : PropertyItem {
 		}
 	}
 	
-	public static void set_data (PropertySet propertySet, string name, string option) {
+	public static void set_data (PropertySet propertySet, string name, string value) {
 		try {
-			set_data_throw (propertySet, name, option);
+			set_data_throw (propertySet, name, value);
 		} catch {}
 	}
 	
@@ -89,10 +93,23 @@ public class PropertyItemSelection : PropertyItem {
 		_selected = 0;
 	}
 	
-	public void add_option (string option) {
-		string[] newOptions = options;
-		newOptions += option;
-		options = newOptions;
+	public PropertyItemSelection.copy (PropertyItemSelection source) {
+		base (source.name, source.description);
+		this.options = {};
+		foreach (Option option in source.options) {
+			this.options += option;
+		}
+		this._selected = source._selected;
+	}
+	
+	public void add_option (string value, string? text = null) {
+		// string[] newOptions = options;
+		// newOptions += option;
+		// options = newOptions;
+		Option option = Option ();
+		option.value = value;
+		option.text = (text != null) ? text : value;
+		options += option;
 	}
 	
 	public string get_option () {
@@ -100,12 +117,31 @@ public class PropertyItemSelection : PropertyItem {
 			return "";
 		}
 		
-		return options[selected];
+		return options[selected].value;
 	}
 	
-	public int set_option (string option) {
+	public string get_option_text () {
+		if (options.length == 0) {
+			return "";
+		}
+		
+		return options[selected].text;
+	}
+	
+	public int set_option (string value) {
 		for (int i = 0; i < options.length; i++) {
-			if (option == options[i]) {
+			if (value == options[i].value) {
+				selected = i;
+				return 0;
+			}
+		}
+		
+		return 1;
+	}
+	
+	public int set_option_text (string text) {
+		for (int i = 0; i < options.length; i++) {
+			if (text == options[i].text) {
 				selected = i;
 				return 0;
 			}
@@ -123,9 +159,9 @@ public class PropertyItemSelection : PropertyItem {
 			Gtk.RadioButton radioButton;
 			
 			if (i == 0) {
-				radioButton = new Gtk.RadioButton.with_label (null, options[i]);
+				radioButton = new Gtk.RadioButton.with_label (null, options[i].text);
 			} else {
-				radioButton = new Gtk.RadioButton.with_label_from_widget (radioButtons[0], options[i]);
+				radioButton = new Gtk.RadioButton.with_label_from_widget (radioButtons[0], options[i].text);
 			}
 			
 			radioButtons += radioButton;
@@ -142,8 +178,8 @@ public class PropertyItemSelection : PropertyItem {
 	
 	public override void read_widget (Gtk.Widget propertyWidget) {
 		if (propertyWidget != null) {
-			if (propertyWidget is Gtk.VBox) {
-				Gtk.VBox vBox = (propertyWidget as Gtk.VBox);
+			if (propertyWidget is Gtk.Box) {
+				Gtk.Box vBox = (propertyWidget as Gtk.Box);
 				List<weak Gtk.Widget> radioButtons = vBox.get_children ();
 				
 				if (radioButtons.length() == options.length) {

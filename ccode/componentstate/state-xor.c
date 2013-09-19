@@ -158,9 +158,9 @@ enum  {
 XorComponentState* xor_component_state_new (Connection** inputWires, int inputWires_length1, Connection* outputWire, ComponentInst** ancestry, int ancestry_length1, ComponentInst* componentInst);
 XorComponentState* xor_component_state_construct (GType object_type, Connection** inputWires, int inputWires_length1, Connection* outputWire, ComponentInst** ancestry, int ancestry_length1, ComponentInst* componentInst);
 ComponentState* component_state_construct (GType object_type);
-static Connection** _vala_array_dup38 (Connection** self, int length);
+static Connection** _vala_array_dup39 (Connection** self, int length);
 void connection_set_affects (Connection* self, ComponentState* componentState);
-static ComponentInst** _vala_array_dup39 (ComponentInst** self, int length);
+static ComponentInst** _vala_array_dup40 (ComponentInst** self, int length);
 static void xor_component_state_real_update (ComponentState* base);
 gboolean connection_get_signalState (Connection* self);
 void connection_set_signalState (Connection* self, gboolean value);
@@ -174,7 +174,7 @@ static gpointer _connection_ref0 (gpointer self) {
 }
 
 
-static Connection** _vala_array_dup38 (Connection** self, int length) {
+static Connection** _vala_array_dup39 (Connection** self, int length) {
 	Connection** result;
 	int i;
 	result = g_new0 (Connection*, length + 1);
@@ -192,7 +192,7 @@ static gpointer _component_inst_ref0 (gpointer self) {
 }
 
 
-static ComponentInst** _vala_array_dup39 (ComponentInst** self, int length) {
+static ComponentInst** _vala_array_dup40 (ComponentInst** self, int length) {
 	ComponentInst** result;
 	int i;
 	result = g_new0 (ComponentInst*, length + 1);
@@ -226,7 +226,7 @@ XorComponentState* xor_component_state_construct (GType object_type, Connection*
 	self = (XorComponentState*) component_state_construct (object_type);
 	_tmp0_ = inputWires;
 	_tmp0__length1 = inputWires_length1;
-	_tmp1_ = (_tmp0_ != NULL) ? _vala_array_dup38 (_tmp0_, _tmp0__length1) : ((gpointer) _tmp0_);
+	_tmp1_ = (_tmp0_ != NULL) ? _vala_array_dup39 (_tmp0_, _tmp0__length1) : ((gpointer) _tmp0_);
 	_tmp1__length1 = _tmp0__length1;
 	self->priv->inputWires = (_vala_array_free (self->priv->inputWires, self->priv->inputWires_length1, (GDestroyNotify) connection_unref), NULL);
 	self->priv->inputWires = _tmp1_;
@@ -260,7 +260,7 @@ XorComponentState* xor_component_state_construct (GType object_type, Connection*
 	self->priv->outputWire = _tmp6_;
 	_tmp7_ = ancestry;
 	_tmp7__length1 = ancestry_length1;
-	_tmp8_ = (_tmp7_ != NULL) ? _vala_array_dup39 (_tmp7_, _tmp7__length1) : ((gpointer) _tmp7_);
+	_tmp8_ = (_tmp7_ != NULL) ? _vala_array_dup40 (_tmp7_, _tmp7__length1) : ((gpointer) _tmp7_);
 	_tmp8__length1 = _tmp7__length1;
 	((ComponentState*) self)->ancestry = (_vala_array_free (((ComponentState*) self)->ancestry, ((ComponentState*) self)->ancestry_length1, (GDestroyNotify) component_inst_unref), NULL);
 	((ComponentState*) self)->ancestry = _tmp8_;

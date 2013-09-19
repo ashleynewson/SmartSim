@@ -50,6 +50,7 @@ typedef struct _PropertyItemPrivate PropertyItemPrivate;
 typedef struct _PropertySet PropertySet;
 typedef struct _PropertySetClass PropertySetClass;
 typedef struct _PropertySetPrivate PropertySetPrivate;
+#define _property_item_unref0(var) ((var == NULL) ? NULL : (var = (property_item_unref (var), NULL)))
 
 struct _PropertyItem {
 	GTypeInstance parent_instance;
@@ -94,12 +95,16 @@ enum  {
 PropertySet* property_set_new (const gchar* name, const gchar* description);
 PropertySet* property_set_construct (GType object_type, const gchar* name, const gchar* description);
 PropertyItem* property_item_construct (GType object_type, const gchar* name, const gchar* description);
+PropertySet* property_set_new_copy (PropertySet* source);
+PropertySet* property_set_construct_copy (GType object_type, PropertySet* source);
+static void _vala_array_add87 (PropertyItem*** array, int* length, int* size, PropertyItem* value);
+static PropertyItem** _vala_array_dup74 (PropertyItem** self, int length);
 gint property_set_index_of_item (PropertySet* self, const gchar* name);
 PropertyItem* property_set_get_item (PropertySet* self, const gchar* name);
 gint property_set_add_item (PropertySet* self, PropertyItem* propertyItem);
-static PropertyItem** _vala_array_dup73 (PropertyItem** self, int length);
-static void _vala_array_add85 (PropertyItem*** array, int* length, int* size, PropertyItem* value);
-static PropertyItem** _vala_array_dup74 (PropertyItem** self, int length);
+static PropertyItem** _vala_array_dup75 (PropertyItem** self, int length);
+static void _vala_array_add88 (PropertyItem*** array, int* length, int* size, PropertyItem* value);
+static PropertyItem** _vala_array_dup76 (PropertyItem** self, int length);
 static void property_set_finalize (PropertyItem* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
@@ -128,6 +133,107 @@ PropertySet* property_set_construct (GType object_type, const gchar* name, const
 
 PropertySet* property_set_new (const gchar* name, const gchar* description) {
 	return property_set_construct (TYPE_PROPERTY_SET, name, description);
+}
+
+
+static gpointer _property_item_ref0 (gpointer self) {
+	return self ? property_item_ref (self) : NULL;
+}
+
+
+static void _vala_array_add87 (PropertyItem*** array, int* length, int* size, PropertyItem* value) {
+	if ((*length) == (*size)) {
+		*size = (*size) ? (2 * (*size)) : 4;
+		*array = g_renew (PropertyItem*, *array, (*size) + 1);
+	}
+	(*array)[(*length)++] = value;
+	(*array)[*length] = NULL;
+}
+
+
+static PropertyItem** _vala_array_dup74 (PropertyItem** self, int length) {
+	PropertyItem** result;
+	int i;
+	result = g_new0 (PropertyItem*, length + 1);
+	for (i = 0; i < length; i++) {
+		PropertyItem* _tmp0_;
+		_tmp0_ = _property_item_ref0 (self[i]);
+		result[i] = _tmp0_;
+	}
+	return result;
+}
+
+
+PropertySet* property_set_construct_copy (GType object_type, PropertySet* source) {
+	PropertySet* self = NULL;
+	PropertySet* _tmp0_;
+	const gchar* _tmp1_;
+	PropertySet* _tmp2_;
+	const gchar* _tmp3_;
+	PropertyItem** _tmp4_ = NULL;
+	PropertyItem** newPropertyItems;
+	gint newPropertyItems_length1;
+	gint _newPropertyItems_size_;
+	PropertySet* _tmp5_;
+	PropertyItem** _tmp6_;
+	gint _tmp6__length1;
+	PropertyItem** _tmp11_;
+	gint _tmp11__length1;
+	PropertyItem** _tmp12_;
+	gint _tmp12__length1;
+	g_return_val_if_fail (source != NULL, NULL);
+	_tmp0_ = source;
+	_tmp1_ = ((PropertyItem*) _tmp0_)->name;
+	_tmp2_ = source;
+	_tmp3_ = ((PropertyItem*) _tmp2_)->description;
+	self = (PropertySet*) property_item_construct (object_type, _tmp1_, _tmp3_);
+	_tmp4_ = g_new0 (PropertyItem*, 0 + 1);
+	newPropertyItems = _tmp4_;
+	newPropertyItems_length1 = 0;
+	_newPropertyItems_size_ = newPropertyItems_length1;
+	_tmp5_ = source;
+	_tmp6_ = _tmp5_->propertyItems;
+	_tmp6__length1 = _tmp5_->propertyItems_length1;
+	{
+		PropertyItem** propertyItem_collection = NULL;
+		gint propertyItem_collection_length1 = 0;
+		gint _propertyItem_collection_size_ = 0;
+		gint propertyItem_it = 0;
+		propertyItem_collection = _tmp6_;
+		propertyItem_collection_length1 = _tmp6__length1;
+		for (propertyItem_it = 0; propertyItem_it < _tmp6__length1; propertyItem_it = propertyItem_it + 1) {
+			PropertyItem* _tmp7_;
+			PropertyItem* propertyItem = NULL;
+			_tmp7_ = _property_item_ref0 (propertyItem_collection[propertyItem_it]);
+			propertyItem = _tmp7_;
+			{
+				PropertyItem** _tmp8_;
+				gint _tmp8__length1;
+				PropertyItem* _tmp9_;
+				PropertyItem* _tmp10_;
+				_tmp8_ = newPropertyItems;
+				_tmp8__length1 = newPropertyItems_length1;
+				_tmp9_ = propertyItem;
+				_tmp10_ = _property_item_ref0 (_tmp9_);
+				_vala_array_add87 (&newPropertyItems, &newPropertyItems_length1, &_newPropertyItems_size_, _tmp10_);
+				_property_item_unref0 (propertyItem);
+			}
+		}
+	}
+	_tmp11_ = newPropertyItems;
+	_tmp11__length1 = newPropertyItems_length1;
+	_tmp12_ = (_tmp11_ != NULL) ? _vala_array_dup74 (_tmp11_, _tmp11__length1) : ((gpointer) _tmp11_);
+	_tmp12__length1 = _tmp11__length1;
+	self->propertyItems = (_vala_array_free (self->propertyItems, self->propertyItems_length1, (GDestroyNotify) property_item_unref), NULL);
+	self->propertyItems = _tmp12_;
+	self->propertyItems_length1 = _tmp12__length1;
+	newPropertyItems = (_vala_array_free (newPropertyItems, newPropertyItems_length1, (GDestroyNotify) property_item_unref), NULL);
+	return self;
+}
+
+
+PropertySet* property_set_new_copy (PropertySet* source) {
+	return property_set_construct_copy (TYPE_PROPERTY_SET, source);
 }
 
 
@@ -184,11 +290,6 @@ gint property_set_index_of_item (PropertySet* self, const gchar* name) {
 	}
 	result = -1;
 	return result;
-}
-
-
-static gpointer _property_item_ref0 (gpointer self) {
-	return self ? property_item_ref (self) : NULL;
 }
 
 
@@ -254,7 +355,7 @@ PropertyItem* property_set_get_item (PropertySet* self, const gchar* name) {
 }
 
 
-static PropertyItem** _vala_array_dup73 (PropertyItem** self, int length) {
+static PropertyItem** _vala_array_dup75 (PropertyItem** self, int length) {
 	PropertyItem** result;
 	int i;
 	result = g_new0 (PropertyItem*, length + 1);
@@ -267,7 +368,7 @@ static PropertyItem** _vala_array_dup73 (PropertyItem** self, int length) {
 }
 
 
-static void _vala_array_add85 (PropertyItem*** array, int* length, int* size, PropertyItem* value) {
+static void _vala_array_add88 (PropertyItem*** array, int* length, int* size, PropertyItem* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PropertyItem*, *array, (*size) + 1);
@@ -277,7 +378,7 @@ static void _vala_array_add85 (PropertyItem*** array, int* length, int* size, Pr
 }
 
 
-static PropertyItem** _vala_array_dup74 (PropertyItem** self, int length) {
+static PropertyItem** _vala_array_dup76 (PropertyItem** self, int length) {
 	PropertyItem** result;
 	int i;
 	result = g_new0 (PropertyItem*, length + 1);
@@ -321,7 +422,7 @@ gint property_set_add_item (PropertySet* self, PropertyItem* propertyItem) {
 	}
 	_tmp3_ = self->propertyItems;
 	_tmp3__length1 = self->propertyItems_length1;
-	_tmp4_ = (_tmp3_ != NULL) ? _vala_array_dup73 (_tmp3_, _tmp3__length1) : ((gpointer) _tmp3_);
+	_tmp4_ = (_tmp3_ != NULL) ? _vala_array_dup75 (_tmp3_, _tmp3__length1) : ((gpointer) _tmp3_);
 	_tmp4__length1 = _tmp3__length1;
 	newPropertyItems = _tmp4_;
 	newPropertyItems_length1 = _tmp4__length1;
@@ -330,10 +431,10 @@ gint property_set_add_item (PropertySet* self, PropertyItem* propertyItem) {
 	_tmp5__length1 = newPropertyItems_length1;
 	_tmp6_ = propertyItem;
 	_tmp7_ = _property_item_ref0 (_tmp6_);
-	_vala_array_add85 (&newPropertyItems, &newPropertyItems_length1, &_newPropertyItems_size_, _tmp7_);
+	_vala_array_add88 (&newPropertyItems, &newPropertyItems_length1, &_newPropertyItems_size_, _tmp7_);
 	_tmp8_ = newPropertyItems;
 	_tmp8__length1 = newPropertyItems_length1;
-	_tmp9_ = (_tmp8_ != NULL) ? _vala_array_dup74 (_tmp8_, _tmp8__length1) : ((gpointer) _tmp8_);
+	_tmp9_ = (_tmp8_ != NULL) ? _vala_array_dup76 (_tmp8_, _tmp8__length1) : ((gpointer) _tmp8_);
 	_tmp9__length1 = _tmp8__length1;
 	self->propertyItems = (_vala_array_free (self->propertyItems, self->propertyItems_length1, (GDestroyNotify) property_item_unref), NULL);
 	self->propertyItems = _tmp9_;

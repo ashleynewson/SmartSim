@@ -1648,7 +1648,7 @@ public class DesignerWindow : Gtk.Window {
 	 * loads the file as a plugin component.
 	 */
 	private bool open_plugin_component () {
-		if (project.pluginsAllowed == false) {
+		if (project.plugins_allowed() == false) {
 			return false;
 		}
 		

@@ -117,6 +117,8 @@ void property_item_string_set_data (PropertySet* propertySet, const gchar* name,
 PropertyItemString* property_item_string_new (const gchar* name, const gchar* description, const gchar* data);
 PropertyItemString* property_item_string_construct (GType object_type, const gchar* name, const gchar* description, const gchar* data);
 PropertyItem* property_item_construct (GType object_type, const gchar* name, const gchar* description);
+PropertyItemString* property_item_string_new_copy (PropertyItemString* source);
+PropertyItemString* property_item_string_construct_copy (GType object_type, PropertyItemString* source);
 static GtkWidget* property_item_string_real_create_widget (PropertyItem* base);
 static void property_item_string_real_read_widget (PropertyItem* base, GtkWidget* propertyWidget);
 static void property_item_string_finalize (PropertyItem* obj);
@@ -364,6 +366,35 @@ PropertyItemString* property_item_string_construct (GType object_type, const gch
 
 PropertyItemString* property_item_string_new (const gchar* name, const gchar* description, const gchar* data) {
 	return property_item_string_construct (TYPE_PROPERTY_ITEM_STRING, name, description, data);
+}
+
+
+PropertyItemString* property_item_string_construct_copy (GType object_type, PropertyItemString* source) {
+	PropertyItemString* self = NULL;
+	PropertyItemString* _tmp0_;
+	const gchar* _tmp1_;
+	PropertyItemString* _tmp2_;
+	const gchar* _tmp3_;
+	PropertyItemString* _tmp4_;
+	const gchar* _tmp5_;
+	gchar* _tmp6_;
+	g_return_val_if_fail (source != NULL, NULL);
+	_tmp0_ = source;
+	_tmp1_ = ((PropertyItem*) _tmp0_)->name;
+	_tmp2_ = source;
+	_tmp3_ = ((PropertyItem*) _tmp2_)->description;
+	self = (PropertyItemString*) property_item_construct (object_type, _tmp1_, _tmp3_);
+	_tmp4_ = source;
+	_tmp5_ = _tmp4_->data;
+	_tmp6_ = g_strdup (_tmp5_);
+	_g_free0 (self->data);
+	self->data = _tmp6_;
+	return self;
+}
+
+
+PropertyItemString* property_item_string_new_copy (PropertyItemString* source) {
+	return property_item_string_construct_copy (TYPE_PROPERTY_ITEM_STRING, source);
 }
 
 

@@ -69,6 +69,11 @@ public class PropertyItemString : PropertyItem {
 		this.data = data;
 	}
 	
+	public PropertyItemString.copy (PropertyItemString source) {
+		base (source.name, source.description);
+		this.data = source.data;
+	}
+	
 	public override Gtk.Widget create_widget () {
 		Gtk.Entry stringEntry = new Gtk.Entry ();
 		stringEntry.text = data;

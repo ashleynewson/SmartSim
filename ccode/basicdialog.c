@@ -9,11 +9,13 @@
 #include <string.h>
 
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
+#define _g_free0(var) (var = (g_free (var), NULL))
 
 
 
 gint basic_dialog_ask_overwrite (GtkWindow* window, const gchar* filename);
 gint basic_dialog_ask_proceed (GtkWindow* window, const gchar* text, const gchar* buttonOK, const gchar* buttonCancel);
+gint basic_dialog_ask_generic (GtkWindow* window, GtkMessageType messageType, const gchar* text, gchar** options, int options_length1);
 void basic_dialog_information (GtkWindow* window, const gchar* text);
 void basic_dialog_warning (GtkWindow* window, const gchar* text);
 void basic_dialog_error (GtkWindow* window, const gchar* text);
@@ -67,6 +69,82 @@ gint basic_dialog_ask_proceed (GtkWindow* window, const gchar* text, const gchar
 	_tmp5_ = gtk_dialog_run ((GtkDialog*) messageDialog);
 	_result_ = _tmp5_;
 	gtk_widget_destroy ((GtkWidget*) messageDialog);
+	result = _result_;
+	_g_object_unref0 (messageDialog);
+	return result;
+}
+
+
+gint basic_dialog_ask_generic (GtkWindow* window, GtkMessageType messageType, const gchar* text, gchar** options, int options_length1) {
+	gint result = 0;
+	GtkWindow* _tmp0_;
+	GtkMessageType _tmp1_;
+	const gchar* _tmp2_;
+	GtkMessageDialog* _tmp3_;
+	GtkMessageDialog* messageDialog;
+	GtkMessageDialog* _tmp16_;
+	gint _tmp17_ = 0;
+	gint _result_;
+	GtkMessageDialog* _tmp18_;
+	g_return_val_if_fail (text != NULL, 0);
+	_tmp0_ = window;
+	_tmp1_ = messageType;
+	_tmp2_ = text;
+	_tmp3_ = (GtkMessageDialog*) gtk_message_dialog_new (_tmp0_, GTK_DIALOG_MODAL, _tmp1_, GTK_BUTTONS_NONE, "%s", _tmp2_);
+	g_object_ref_sink (_tmp3_);
+	messageDialog = _tmp3_;
+	{
+		gint i;
+		i = 0;
+		{
+			gboolean _tmp4_;
+			_tmp4_ = TRUE;
+			while (TRUE) {
+				gboolean _tmp5_;
+				gint _tmp7_;
+				gchar** _tmp8_;
+				gint _tmp8__length1;
+				gchar** _tmp9_;
+				gint _tmp9__length1;
+				gint _tmp10_;
+				const gchar* _tmp11_;
+				gchar* _tmp12_;
+				gchar* option;
+				GtkMessageDialog* _tmp13_;
+				const gchar* _tmp14_;
+				gint _tmp15_;
+				_tmp5_ = _tmp4_;
+				if (!_tmp5_) {
+					gint _tmp6_;
+					_tmp6_ = i;
+					i = _tmp6_ + 1;
+				}
+				_tmp4_ = FALSE;
+				_tmp7_ = i;
+				_tmp8_ = options;
+				_tmp8__length1 = options_length1;
+				if (!(_tmp7_ < _tmp8__length1)) {
+					break;
+				}
+				_tmp9_ = options;
+				_tmp9__length1 = options_length1;
+				_tmp10_ = i;
+				_tmp11_ = _tmp9_[_tmp10_];
+				_tmp12_ = g_strdup (_tmp11_);
+				option = _tmp12_;
+				_tmp13_ = messageDialog;
+				_tmp14_ = option;
+				_tmp15_ = i;
+				gtk_dialog_add_button ((GtkDialog*) _tmp13_, _tmp14_, _tmp15_);
+				_g_free0 (option);
+			}
+		}
+	}
+	_tmp16_ = messageDialog;
+	_tmp17_ = gtk_dialog_run ((GtkDialog*) _tmp16_);
+	_result_ = _tmp17_;
+	_tmp18_ = messageDialog;
+	gtk_widget_destroy ((GtkWidget*) _tmp18_);
 	result = _result_;
 	_g_object_unref0 (messageDialog);
 	return result;

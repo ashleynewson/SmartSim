@@ -45,6 +45,15 @@ public enum Direction {
 	DIAGONAL
 }
 
+/**
+ * Stores a comparison of versions.
+ */
+public enum VersionComparison {
+	EQUAL,
+	LESS,
+	GREATER
+}
+
 
 /**
  * Contains the main function. Handles initial load up and contains
@@ -89,6 +98,29 @@ with SmartSim. If not, see:
   http://www.gnu.org/licenses/
 """;
 	public static string fullLicenseText = "";
+	
+	
+	private static bool _versionIgnored = false;
+	public static bool version_ignored (string extra = "") {
+		if (_versionIgnored == true) {
+			return true;
+		}
+		switch (BasicDialog.ask_generic (
+				null,
+				Gtk.MessageType.WARNING,
+				"Warning:\nThe version of SmartSim used to save a file being loaded is greater than the current version you are using.\nThis version might not be compatible with the saved file. It could behave unpredictably, or cause loss of data upon saving.\n" + extra,
+				{"Continue", "Continue For All Files", "Cancel Loading"})) {
+		case 0:
+			return true;
+		case 1:
+			_versionIgnored = true;
+			return true;
+		case 2:
+		default:
+			_versionIgnored = false;
+			return false;
+		}
+	}
 	
 	
 	/**
@@ -206,6 +238,69 @@ with SmartSim. If not, see:
 		}
 		string pwd = Environment.get_current_dir ();
 		return GLib.Path.build_filename (pwd, filename);
+	}
+	
+	/**
+	 * Compares version strings and returns a VersionComparison such that
+	 * If //whatVersion// is ahead of //withVersion//, GREATER is returned.
+	 */
+	public static VersionComparison compare_versions (string whatVersion, string withVersion = Core.shortVersionString) {
+		int[] whatNumbers = version_to_numbers (whatVersion);
+		int[] withNumbers = version_to_numbers (withVersion);
+		
+		for (int i = 0; i < whatNumbers.length && i < withNumbers.length; i++) {
+			if (whatNumbers[i] > withNumbers[i]) {
+				return VersionComparison.GREATER;
+			} else if (whatNumbers[i] < withNumbers[i]) {
+				return VersionComparison.LESS;
+			}
+		}
+		if (whatNumbers.length > withNumbers.length) {
+			return VersionComparison.GREATER;
+		} else if (whatNumbers.length < withNumbers.length) {
+			return VersionComparison.LESS;
+		}
+		return VersionComparison.EQUAL;
+	}
+	
+	/**
+	 * Translates a version string to an array of numbers.
+	 */
+	private static int[] version_to_numbers (string version) {
+		int[] numbers = {};
+		uint8[] data = version.data;
+		string number = "";
+		
+		foreach (uint8 datum in data) {
+			switch (datum) {
+			default: //Includes null character
+				if (number != "") {
+					numbers += int.parse (number);
+					stdout.printf ("%i\n", int.parse(number));
+					number = "";
+				}
+				break;
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				number = "%s%c".printf(number, datum);
+				break;
+			}
+		}
+		if (number != "") {
+			numbers += int.parse (number);
+			stdout.printf ("%i\n", int.parse(number));
+			number = "";
+		}
+		
+		return numbers;
 	}
 }
 

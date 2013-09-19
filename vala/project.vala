@@ -52,28 +52,29 @@ public class Project {
 	private static Project[] projects;
 	private static int projectCount = 0;
 	private bool _pluginsAllowed = false;
-	public bool pluginsAllowed {
-		set {
-			_pluginsAllowed = value;
+	public bool plugins_allowed (string extra = "") {
+		if (_pluginsAllowed == true) {
+			return true;
 		}
-		get {
-			if (_pluginsAllowed == true) {
-				return true;
-			}
-			if (Module.supported() == false) {
-				BasicDialog.error (
-					null, "Error: Plugin components are not supported on your host system, and cannot be loaded.");
-				_pluginsAllowed = false;
-			}
-			if (BasicDialog.ask_proceed (
-					null,
-					"Warning:\nYou are about to load one or more plugin components. Plugin components can expand the capabilities of SmartSim, but allow the execution of arbitrary code. Plugins may contain viruses or other malware, so only open projects and plugins that you fully trust. SmartSim and its developers are not responsible for any damage which results from the use of third party plugins. Allow plugins at your own risk.",
-					"Allow Plugins", "Cancel Loading") == Gtk.ResponseType.OK) {
-				_pluginsAllowed = true;
-			} else {
-				_pluginsAllowed = false;
-			}
-			return _pluginsAllowed;
+		if (Module.supported() == false) {
+			BasicDialog.error (
+				null, "Error: Plugin components are not supported on your host system, and cannot be loaded.");
+			_pluginsAllowed = false;
+		}
+		switch (BasicDialog.ask_generic (
+				null,
+				Gtk.MessageType.WARNING,
+				"Warning:\nYou are about to load one or more plugin components. Plugin components can expand the capabilities of SmartSim, but allow the execution of arbitrary code. Plugins may contain viruses or other malware, so only open projects and plugins that you fully trust. SmartSim and its developers are not responsible for any damage which results from the use of third party plugins. Allow plugins at your own risk.\n" + extra,
+				{"Allow Plugin", "Allow All Plugins", "Cancel Loading"})) {
+		case 0:
+			return true;
+		case 1:
+			_pluginsAllowed = true;
+			return true;
+		case 2:
+		default:
+			_pluginsAllowed = false;
+			return false;
 		}
 	}
 	
@@ -201,7 +202,7 @@ public class Project {
 		xmlroot = xmldoc->get_root_element ();
 		
 		if (xmlroot == null) {
-			stdout.printf ("Error loading info xml file \"%s\".\n",filename);
+			stdout.printf ("Error loading info xml file \"%s\".\n", filename);
 			stdout.printf ("File is empty.\n");
 			throw new ProjectLoadError.FILE ("File empty");
 		}
@@ -218,6 +219,34 @@ public class Project {
 			}
 			
 			switch (xmlnode->name) {
+			case "metadata":
+			{
+				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
+					if (xmldata->type != Xml.ElementType.ELEMENT_NODE) {
+						continue;
+					}
+					
+					switch (xmldata->name) {
+					case "version":
+					{
+						for (Xml.Attr* xmlattr = xmldata->properties; xmlattr != null; xmlattr = xmlattr->next) {
+							switch (xmlattr->name) {
+							case "smartsim":
+								stdout.printf ("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA %s\n", xmlattr->children->content);
+								if (Core.compare_versions(xmlattr->children->content) == VersionComparison.GREATER) {
+									if (Core.version_ignored("Project File: \"" + filename + "\"") == false) {
+										throw new ProjectLoadError.CANCEL ("SmartSim version of project is higher than running version.");
+									}
+								}
+								break;
+							}
+						}
+					}
+					break;
+					}
+				}
+			}
+			break;
 			case "name":
 			{
 				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
@@ -267,16 +296,16 @@ public class Project {
 			break;
 			case "plugin":
 			{
-				if (pluginsAllowed == false) {
-					throw new ProjectLoadError.CANCEL ("User disallowed plugins.");
-				}
-				
 				for (Xml.Node* xmldata = xmlnode->children; xmldata != null; xmldata = xmldata->next) {
 					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
 						continue;
 					}
 					
 					string componentFilename = xmldata->content;
+					
+					if (plugins_allowed("File: \"" + componentFilename + "\"") == false) {
+						throw new ProjectLoadError.CANCEL ("Plugins are disabled.");
+					}
 					
 					stdout.printf ("Absolute path of file \"%s\" is \"%s\"\n", componentFilename, absolute_filename(componentFilename));
 					

@@ -84,6 +84,7 @@ struct _PropertyItemClass {
 struct _PropertyItemInt {
 	PropertyItem parent_instance;
 	PropertyItemIntPrivate * priv;
+	gint data;
 };
 
 struct _PropertyItemIntClass {
@@ -91,7 +92,6 @@ struct _PropertyItemIntClass {
 };
 
 struct _PropertyItemIntPrivate {
-	gint data;
 	gint min;
 	gint max;
 };
@@ -125,6 +125,8 @@ void property_item_int_set_data (PropertySet* propertySet, const gchar* name, gi
 PropertyItemInt* property_item_int_new (const gchar* name, const gchar* description, gint data, gint min, gint max);
 PropertyItemInt* property_item_int_construct (GType object_type, const gchar* name, const gchar* description, gint data, gint min, gint max);
 PropertyItem* property_item_construct (GType object_type, const gchar* name, const gchar* description);
+PropertyItemInt* property_item_int_new_copy (PropertyItemInt* source);
+PropertyItemInt* property_item_int_construct_copy (GType object_type, PropertyItemInt* source);
 static GtkWidget* property_item_int_real_create_widget (PropertyItem* base);
 static void property_item_int_real_read_widget (PropertyItem* base, GtkWidget* propertyWidget);
 static void property_item_int_finalize (PropertyItem* obj);
@@ -165,7 +167,7 @@ gint property_item_int_get_data_throw (PropertySet* propertySet, const gchar* na
 			PropertyItem* _tmp5_;
 			gint _tmp6_;
 			_tmp5_ = propertyItem;
-			_tmp6_ = (G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_INT) ? ((PropertyItemInt*) _tmp5_) : NULL)->priv->data;
+			_tmp6_ = (G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_INT) ? ((PropertyItemInt*) _tmp5_) : NULL)->data;
 			result = _tmp6_;
 			_property_item_unref0 (propertyItem);
 			return result;
@@ -238,7 +240,7 @@ void property_item_int_set_data_throw (PropertySet* propertySet, const gchar* na
 			gint _tmp6_;
 			_tmp5_ = propertyItem;
 			_tmp6_ = data;
-			(G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_INT) ? ((PropertyItemInt*) _tmp5_) : NULL)->priv->data = _tmp6_;
+			(G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_INT) ? ((PropertyItemInt*) _tmp5_) : NULL)->data = _tmp6_;
 			_property_item_unref0 (propertyItem);
 			return;
 		}
@@ -354,7 +356,7 @@ PropertyItemInt* property_item_int_construct (GType object_type, const gchar* na
 	_tmp1_ = description;
 	self = (PropertyItemInt*) property_item_construct (object_type, _tmp0_, _tmp1_);
 	_tmp2_ = data;
-	self->priv->data = _tmp2_;
+	self->data = _tmp2_;
 	_tmp3_ = min;
 	self->priv->min = _tmp3_;
 	_tmp4_ = max;
@@ -365,6 +367,42 @@ PropertyItemInt* property_item_int_construct (GType object_type, const gchar* na
 
 PropertyItemInt* property_item_int_new (const gchar* name, const gchar* description, gint data, gint min, gint max) {
 	return property_item_int_construct (TYPE_PROPERTY_ITEM_INT, name, description, data, min, max);
+}
+
+
+PropertyItemInt* property_item_int_construct_copy (GType object_type, PropertyItemInt* source) {
+	PropertyItemInt* self = NULL;
+	PropertyItemInt* _tmp0_;
+	const gchar* _tmp1_;
+	PropertyItemInt* _tmp2_;
+	const gchar* _tmp3_;
+	PropertyItemInt* _tmp4_;
+	gint _tmp5_;
+	PropertyItemInt* _tmp6_;
+	gint _tmp7_;
+	PropertyItemInt* _tmp8_;
+	gint _tmp9_;
+	g_return_val_if_fail (source != NULL, NULL);
+	_tmp0_ = source;
+	_tmp1_ = ((PropertyItem*) _tmp0_)->name;
+	_tmp2_ = source;
+	_tmp3_ = ((PropertyItem*) _tmp2_)->description;
+	self = (PropertyItemInt*) property_item_construct (object_type, _tmp1_, _tmp3_);
+	_tmp4_ = source;
+	_tmp5_ = _tmp4_->data;
+	self->data = _tmp5_;
+	_tmp6_ = source;
+	_tmp7_ = _tmp6_->priv->min;
+	self->priv->min = _tmp7_;
+	_tmp8_ = source;
+	_tmp9_ = _tmp8_->priv->max;
+	self->priv->max = _tmp9_;
+	return self;
+}
+
+
+PropertyItemInt* property_item_int_new_copy (PropertyItemInt* source) {
+	return property_item_int_construct_copy (TYPE_PROPERTY_ITEM_INT, source);
 }
 
 
@@ -382,7 +420,7 @@ static GtkWidget* property_item_int_real_create_widget (PropertyItem* base) {
 	_tmp2_ = (GtkSpinButton*) gtk_spin_button_new_with_range ((gdouble) _tmp0_, (gdouble) _tmp1_, (gdouble) 1);
 	g_object_ref_sink (_tmp2_);
 	intSpinButton = _tmp2_;
-	_tmp3_ = self->priv->data;
+	_tmp3_ = self->data;
 	gtk_spin_button_set_value (intSpinButton, (gdouble) _tmp3_);
 	gtk_spin_button_set_snap_to_ticks (intSpinButton, TRUE);
 	result = (GtkWidget*) intSpinButton;
@@ -404,7 +442,7 @@ static void property_item_int_real_read_widget (PropertyItem* base, GtkWidget* p
 			gint _tmp3_ = 0;
 			_tmp2_ = propertyWidget;
 			_tmp3_ = gtk_spin_button_get_value_as_int (G_TYPE_CHECK_INSTANCE_TYPE (_tmp2_, GTK_TYPE_SPIN_BUTTON) ? ((GtkSpinButton*) _tmp2_) : NULL);
-			self->priv->data = _tmp3_;
+			self->data = _tmp3_;
 		}
 	}
 }

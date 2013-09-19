@@ -37,6 +37,8 @@
 
 #define TYPE_DIRECTION (direction_get_type ())
 
+#define TYPE_VERSION_COMPARISON (version_comparison_get_type ())
+
 #define TYPE_CORE (core_get_type ())
 #define CORE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_CORE, Core))
 #define CORE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_CORE, CoreClass))
@@ -242,6 +244,12 @@ typedef enum  {
 	DIRECTION_DIAGONAL
 } Direction;
 
+typedef enum  {
+	VERSION_COMPARISON_EQUAL,
+	VERSION_COMPARISON_LESS,
+	VERSION_COMPARISON_GREATER
+} VersionComparison;
+
 struct _Core {
 	GTypeInstance parent_instance;
 	volatile int ref_count;
@@ -256,7 +264,8 @@ struct _CoreClass {
 typedef enum  {
 	COMPONENT_DEF_LOAD_ERROR_NOT_COMPONENT,
 	COMPONENT_DEF_LOAD_ERROR_FILE,
-	COMPONENT_DEF_LOAD_ERROR_LOAD
+	COMPONENT_DEF_LOAD_ERROR_LOAD,
+	COMPONENT_DEF_LOAD_ERROR_CANCEL
 } ComponentDefLoadError;
 #define COMPONENT_DEF_LOAD_ERROR component_def_load_error_quark ()
 struct _ParamSpecCore {
@@ -271,10 +280,13 @@ ComponentDef** core_standardComponentDefs = NULL;
 gint core_standardComponentDefs_length1 = 0;
 extern gchar* core_fullLicenseText;
 gchar* core_fullLicenseText = NULL;
+static gboolean core__versionIgnored;
+static gboolean core__versionIgnored = FALSE;
 extern Graphic* graphic_placeHolder;
 
 GType flow_get_type (void) G_GNUC_CONST;
 GType direction_get_type (void) G_GNUC_CONST;
+GType version_comparison_get_type (void) G_GNUC_CONST;
 gpointer core_ref (gpointer instance);
 void core_unref (gpointer instance);
 GParamSpec* param_spec_core (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
@@ -326,6 +338,8 @@ GType component_def_get_type (void) G_GNUC_CONST;
 "g\n" \
 "with SmartSim. If not, see:\n" \
 "  http://www.gnu.org/licenses/\n"
+gboolean core_version_ignored (const gchar* extra);
+gint basic_dialog_ask_generic (GtkWindow* window, GtkMessageType messageType, const gchar* text, gchar** options, int options_length1);
 gint core_main (gchar** args, int args_length1);
 static gchar* core_load_string_from_file (const gchar* filename);
 Graphic* graphic_new_from_file (const gchar* filename);
@@ -403,6 +417,11 @@ static ComponentDef** _vala_array_dup1 (ComponentDef** self, int length);
 ComponentDef** core_get_standard_defs (int* result_length1);
 static ComponentDef** _vala_array_dup2 (ComponentDef** self, int length);
 gchar* core_absolute_filename (const gchar* filename);
+VersionComparison core_compare_versions (const gchar* whatVersion, const gchar* withVersion);
+static gint* core_version_to_numbers (const gchar* version, int* result_length1);
+static guint8* _vala_array_dup3 (guint8* self, int length);
+static void _vala_array_add15 (gint** array, int* length, int* size, gint value);
+static void _vala_array_add16 (gint** array, int* length, int* size, gint value);
 Core* core_new (void);
 Core* core_construct (GType object_type);
 static void core_finalize (Core* obj);
@@ -438,6 +457,84 @@ GType direction_get_type (void) {
 		g_once_init_leave (&direction_type_id__volatile, direction_type_id);
 	}
 	return direction_type_id__volatile;
+}
+
+
+/**
+ * Stores a comparison of versions.
+ */
+GType version_comparison_get_type (void) {
+	static volatile gsize version_comparison_type_id__volatile = 0;
+	if (g_once_init_enter (&version_comparison_type_id__volatile)) {
+		static const GEnumValue values[] = {{VERSION_COMPARISON_EQUAL, "VERSION_COMPARISON_EQUAL", "equal"}, {VERSION_COMPARISON_LESS, "VERSION_COMPARISON_LESS", "less"}, {VERSION_COMPARISON_GREATER, "VERSION_COMPARISON_GREATER", "greater"}, {0, NULL, NULL}};
+		GType version_comparison_type_id;
+		version_comparison_type_id = g_enum_register_static ("VersionComparison", values);
+		g_once_init_leave (&version_comparison_type_id__volatile, version_comparison_type_id);
+	}
+	return version_comparison_type_id__volatile;
+}
+
+
+gboolean core_version_ignored (const gchar* extra) {
+	gboolean result = FALSE;
+	gboolean _tmp0_;
+	const gchar* _tmp1_;
+	gchar* _tmp2_;
+	gchar* _tmp3_;
+	gchar* _tmp4_;
+	gchar* _tmp5_;
+	gchar* _tmp6_;
+	gchar** _tmp7_ = NULL;
+	gchar** _tmp8_;
+	gint _tmp8__length1;
+	gint _tmp9_ = 0;
+	gint _tmp10_;
+	g_return_val_if_fail (extra != NULL, FALSE);
+	_tmp0_ = core__versionIgnored;
+	if (_tmp0_ == TRUE) {
+		result = TRUE;
+		return result;
+	}
+	_tmp1_ = extra;
+	_tmp2_ = g_strconcat ("Warning:\n" \
+"The version of SmartSim used to save a file being loaded is greater th" \
+"an the current version you are using.\n" \
+"This version might not be compatible with the saved file. It could beh" \
+"ave unpredictably, or cause loss of data upon saving.\n", _tmp1_, NULL);
+	_tmp3_ = _tmp2_;
+	_tmp4_ = g_strdup ("Continue");
+	_tmp5_ = g_strdup ("Continue For All Files");
+	_tmp6_ = g_strdup ("Cancel Loading");
+	_tmp7_ = g_new0 (gchar*, 3 + 1);
+	_tmp7_[0] = _tmp4_;
+	_tmp7_[1] = _tmp5_;
+	_tmp7_[2] = _tmp6_;
+	_tmp8_ = _tmp7_;
+	_tmp8__length1 = 3;
+	_tmp9_ = basic_dialog_ask_generic (NULL, GTK_MESSAGE_WARNING, _tmp3_, _tmp8_, 3);
+	_tmp10_ = _tmp9_;
+	_tmp8_ = (_vala_array_free (_tmp8_, _tmp8__length1, (GDestroyNotify) g_free), NULL);
+	_g_free0 (_tmp3_);
+	switch (_tmp10_) {
+		case 0:
+		{
+			result = TRUE;
+			return result;
+		}
+		case 1:
+		{
+			core__versionIgnored = TRUE;
+			result = TRUE;
+			return result;
+		}
+		default:
+		case 2:
+		{
+			core__versionIgnored = FALSE;
+			result = FALSE;
+			return result;
+		}
+	}
 }
 
 
@@ -1156,6 +1253,359 @@ gchar* core_absolute_filename (const gchar* filename) {
 	_tmp7_ = g_build_filename (_tmp5_, _tmp6_, NULL);
 	result = _tmp7_;
 	_g_free0 (pwd);
+	return result;
+}
+
+
+/**
+ * Compares version strings and returns a VersionComparison such that
+ * If //whatVersion// is ahead of //withVersion//, GREATER is returned.
+ */
+VersionComparison core_compare_versions (const gchar* whatVersion, const gchar* withVersion) {
+	VersionComparison result = 0;
+	const gchar* _tmp0_;
+	gint _tmp1_ = 0;
+	gint* _tmp2_ = NULL;
+	gint* whatNumbers;
+	gint whatNumbers_length1;
+	gint _whatNumbers_size_;
+	const gchar* _tmp3_;
+	gint _tmp4_ = 0;
+	gint* _tmp5_ = NULL;
+	gint* withNumbers;
+	gint withNumbers_length1;
+	gint _withNumbers_size_;
+	gint* _tmp27_;
+	gint _tmp27__length1;
+	gint* _tmp28_;
+	gint _tmp28__length1;
+	g_return_val_if_fail (whatVersion != NULL, 0);
+	g_return_val_if_fail (withVersion != NULL, 0);
+	_tmp0_ = whatVersion;
+	_tmp2_ = core_version_to_numbers (_tmp0_, &_tmp1_);
+	whatNumbers = _tmp2_;
+	whatNumbers_length1 = _tmp1_;
+	_whatNumbers_size_ = whatNumbers_length1;
+	_tmp3_ = withVersion;
+	_tmp5_ = core_version_to_numbers (_tmp3_, &_tmp4_);
+	withNumbers = _tmp5_;
+	withNumbers_length1 = _tmp4_;
+	_withNumbers_size_ = withNumbers_length1;
+	{
+		gint i;
+		i = 0;
+		{
+			gboolean _tmp6_;
+			_tmp6_ = TRUE;
+			while (TRUE) {
+				gboolean _tmp7_;
+				gboolean _tmp9_ = FALSE;
+				gint _tmp10_;
+				gint* _tmp11_;
+				gint _tmp11__length1;
+				gboolean _tmp14_;
+				gint* _tmp15_;
+				gint _tmp15__length1;
+				gint _tmp16_;
+				gint _tmp17_;
+				gint* _tmp18_;
+				gint _tmp18__length1;
+				gint _tmp19_;
+				gint _tmp20_;
+				_tmp7_ = _tmp6_;
+				if (!_tmp7_) {
+					gint _tmp8_;
+					_tmp8_ = i;
+					i = _tmp8_ + 1;
+				}
+				_tmp6_ = FALSE;
+				_tmp10_ = i;
+				_tmp11_ = whatNumbers;
+				_tmp11__length1 = whatNumbers_length1;
+				if (_tmp10_ < _tmp11__length1) {
+					gint _tmp12_;
+					gint* _tmp13_;
+					gint _tmp13__length1;
+					_tmp12_ = i;
+					_tmp13_ = withNumbers;
+					_tmp13__length1 = withNumbers_length1;
+					_tmp9_ = _tmp12_ < _tmp13__length1;
+				} else {
+					_tmp9_ = FALSE;
+				}
+				_tmp14_ = _tmp9_;
+				if (!_tmp14_) {
+					break;
+				}
+				_tmp15_ = whatNumbers;
+				_tmp15__length1 = whatNumbers_length1;
+				_tmp16_ = i;
+				_tmp17_ = _tmp15_[_tmp16_];
+				_tmp18_ = withNumbers;
+				_tmp18__length1 = withNumbers_length1;
+				_tmp19_ = i;
+				_tmp20_ = _tmp18_[_tmp19_];
+				if (_tmp17_ > _tmp20_) {
+					result = VERSION_COMPARISON_GREATER;
+					withNumbers = (g_free (withNumbers), NULL);
+					whatNumbers = (g_free (whatNumbers), NULL);
+					return result;
+				} else {
+					gint* _tmp21_;
+					gint _tmp21__length1;
+					gint _tmp22_;
+					gint _tmp23_;
+					gint* _tmp24_;
+					gint _tmp24__length1;
+					gint _tmp25_;
+					gint _tmp26_;
+					_tmp21_ = whatNumbers;
+					_tmp21__length1 = whatNumbers_length1;
+					_tmp22_ = i;
+					_tmp23_ = _tmp21_[_tmp22_];
+					_tmp24_ = withNumbers;
+					_tmp24__length1 = withNumbers_length1;
+					_tmp25_ = i;
+					_tmp26_ = _tmp24_[_tmp25_];
+					if (_tmp23_ < _tmp26_) {
+						result = VERSION_COMPARISON_LESS;
+						withNumbers = (g_free (withNumbers), NULL);
+						whatNumbers = (g_free (whatNumbers), NULL);
+						return result;
+					}
+				}
+			}
+		}
+	}
+	_tmp27_ = whatNumbers;
+	_tmp27__length1 = whatNumbers_length1;
+	_tmp28_ = withNumbers;
+	_tmp28__length1 = withNumbers_length1;
+	if (_tmp27__length1 > _tmp28__length1) {
+		result = VERSION_COMPARISON_GREATER;
+		withNumbers = (g_free (withNumbers), NULL);
+		whatNumbers = (g_free (whatNumbers), NULL);
+		return result;
+	} else {
+		gint* _tmp29_;
+		gint _tmp29__length1;
+		gint* _tmp30_;
+		gint _tmp30__length1;
+		_tmp29_ = whatNumbers;
+		_tmp29__length1 = whatNumbers_length1;
+		_tmp30_ = withNumbers;
+		_tmp30__length1 = withNumbers_length1;
+		if (_tmp29__length1 < _tmp30__length1) {
+			result = VERSION_COMPARISON_LESS;
+			withNumbers = (g_free (withNumbers), NULL);
+			whatNumbers = (g_free (whatNumbers), NULL);
+			return result;
+		}
+	}
+	result = VERSION_COMPARISON_EQUAL;
+	withNumbers = (g_free (withNumbers), NULL);
+	whatNumbers = (g_free (whatNumbers), NULL);
+	return result;
+}
+
+
+/**
+ * Translates a version string to an array of numbers.
+ */
+static guint8* string_get_data (const gchar* self, int* result_length1) {
+	guint8* result;
+	guint8* res;
+	gint res_length1;
+	gint _res_size_;
+	gint _tmp0_;
+	gint _tmp1_;
+	gint _tmp2_;
+	guint8* _tmp3_;
+	gint _tmp3__length1;
+	guint8* _tmp4_;
+	gint _tmp4__length1;
+	g_return_val_if_fail (self != NULL, NULL);
+	res = (guint8*) self;
+	res_length1 = -1;
+	_res_size_ = res_length1;
+	_tmp0_ = strlen (self);
+	_tmp1_ = _tmp0_;
+	res_length1 = (gint) _tmp1_;
+	_tmp2_ = res_length1;
+	_tmp3_ = res;
+	_tmp3__length1 = res_length1;
+	_tmp4_ = _tmp3_;
+	_tmp4__length1 = _tmp3__length1;
+	if (result_length1) {
+		*result_length1 = _tmp4__length1;
+	}
+	result = _tmp4_;
+	return result;
+}
+
+
+static guint8* _vala_array_dup3 (guint8* self, int length) {
+	return g_memdup (self, length * sizeof (guint8));
+}
+
+
+static void _vala_array_add15 (gint** array, int* length, int* size, gint value) {
+	if ((*length) == (*size)) {
+		*size = (*size) ? (2 * (*size)) : 4;
+		*array = g_renew (gint, *array, *size);
+	}
+	(*array)[(*length)++] = value;
+}
+
+
+static void _vala_array_add16 (gint** array, int* length, int* size, gint value) {
+	if ((*length) == (*size)) {
+		*size = (*size) ? (2 * (*size)) : 4;
+		*array = g_renew (gint, *array, *size);
+	}
+	(*array)[(*length)++] = value;
+}
+
+
+static gint* core_version_to_numbers (const gchar* version, int* result_length1) {
+	gint* result = NULL;
+	gint* _tmp0_ = NULL;
+	gint* numbers;
+	gint numbers_length1;
+	gint _numbers_size_;
+	const gchar* _tmp1_;
+	guint8* _tmp2_;
+	gint _tmp2__length1;
+	guint8* _tmp3_;
+	gint _tmp3__length1;
+	guint8* _tmp4_;
+	gint _tmp4__length1;
+	guint8* data;
+	gint data_length1;
+	gint _data_size_;
+	gchar* _tmp5_;
+	gchar* number;
+	guint8* _tmp6_;
+	gint _tmp6__length1;
+	const gchar* _tmp19_;
+	gint* _tmp27_;
+	gint _tmp27__length1;
+	g_return_val_if_fail (version != NULL, NULL);
+	_tmp0_ = g_new0 (gint, 0);
+	numbers = _tmp0_;
+	numbers_length1 = 0;
+	_numbers_size_ = numbers_length1;
+	_tmp1_ = version;
+	_tmp2_ = string_get_data (_tmp1_, &_tmp2__length1);
+	_tmp3_ = _tmp2_;
+	_tmp3__length1 = _tmp2__length1;
+	_tmp4_ = (_tmp3_ != NULL) ? _vala_array_dup3 (_tmp3_, _tmp3__length1) : ((gpointer) _tmp3_);
+	_tmp4__length1 = _tmp3__length1;
+	data = _tmp4_;
+	data_length1 = _tmp4__length1;
+	_data_size_ = data_length1;
+	_tmp5_ = g_strdup ("");
+	number = _tmp5_;
+	_tmp6_ = data;
+	_tmp6__length1 = data_length1;
+	{
+		guint8* datum_collection = NULL;
+		gint datum_collection_length1 = 0;
+		gint _datum_collection_size_ = 0;
+		gint datum_it = 0;
+		datum_collection = _tmp6_;
+		datum_collection_length1 = _tmp6__length1;
+		for (datum_it = 0; datum_it < _tmp6__length1; datum_it = datum_it + 1) {
+			guint8 datum = 0U;
+			datum = datum_collection[datum_it];
+			{
+				guint8 _tmp7_;
+				_tmp7_ = datum;
+				switch (_tmp7_) {
+					default:
+					{
+						const gchar* _tmp8_;
+						_tmp8_ = number;
+						if (g_strcmp0 (_tmp8_, "") != 0) {
+							gint* _tmp9_;
+							gint _tmp9__length1;
+							const gchar* _tmp10_;
+							gint _tmp11_ = 0;
+							FILE* _tmp12_;
+							const gchar* _tmp13_;
+							gint _tmp14_ = 0;
+							gchar* _tmp15_;
+							_tmp9_ = numbers;
+							_tmp9__length1 = numbers_length1;
+							_tmp10_ = number;
+							_tmp11_ = atoi (_tmp10_);
+							_vala_array_add15 (&numbers, &numbers_length1, &_numbers_size_, _tmp11_);
+							_tmp12_ = stdout;
+							_tmp13_ = number;
+							_tmp14_ = atoi (_tmp13_);
+							fprintf (_tmp12_, "%i\n", _tmp14_);
+							_tmp15_ = g_strdup ("");
+							_g_free0 (number);
+							number = _tmp15_;
+						}
+						break;
+					}
+					case '0':
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '5':
+					case '6':
+					case '7':
+					case '8':
+					case '9':
+					{
+						const gchar* _tmp16_;
+						guint8 _tmp17_;
+						gchar* _tmp18_ = NULL;
+						_tmp16_ = number;
+						_tmp17_ = datum;
+						_tmp18_ = g_strdup_printf ("%s%c", _tmp16_, (gint) _tmp17_);
+						_g_free0 (number);
+						number = _tmp18_;
+						break;
+					}
+				}
+			}
+		}
+	}
+	_tmp19_ = number;
+	if (g_strcmp0 (_tmp19_, "") != 0) {
+		gint* _tmp20_;
+		gint _tmp20__length1;
+		const gchar* _tmp21_;
+		gint _tmp22_ = 0;
+		FILE* _tmp23_;
+		const gchar* _tmp24_;
+		gint _tmp25_ = 0;
+		gchar* _tmp26_;
+		_tmp20_ = numbers;
+		_tmp20__length1 = numbers_length1;
+		_tmp21_ = number;
+		_tmp22_ = atoi (_tmp21_);
+		_vala_array_add16 (&numbers, &numbers_length1, &_numbers_size_, _tmp22_);
+		_tmp23_ = stdout;
+		_tmp24_ = number;
+		_tmp25_ = atoi (_tmp24_);
+		fprintf (_tmp23_, "%i\n", _tmp25_);
+		_tmp26_ = g_strdup ("");
+		_g_free0 (number);
+		number = _tmp26_;
+	}
+	_tmp27_ = numbers;
+	_tmp27__length1 = numbers_length1;
+	if (result_length1) {
+		*result_length1 = _tmp27__length1;
+	}
+	result = _tmp27_;
+	_g_free0 (number);
+	data = (g_free (data), NULL);
 	return result;
 }
 

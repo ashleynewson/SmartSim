@@ -302,7 +302,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);

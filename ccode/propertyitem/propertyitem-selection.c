@@ -51,6 +51,9 @@ typedef struct _PropertyItemSelection PropertyItemSelection;
 typedef struct _PropertyItemSelectionClass PropertyItemSelectionClass;
 typedef struct _PropertyItemSelectionPrivate PropertyItemSelectionPrivate;
 
+#define PROPERTY_ITEM_SELECTION_TYPE_OPTION (property_item_selection_option_get_type ())
+typedef struct _PropertyItemSelectionOption PropertyItemSelectionOption;
+
 #define TYPE_PROPERTY_SET (property_set_get_type ())
 #define PROPERTY_SET(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_PROPERTY_SET, PropertySet))
 #define PROPERTY_SET_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_PROPERTY_SET, PropertySetClass))
@@ -87,15 +90,21 @@ struct _PropertyItemClass {
 struct _PropertyItemSelection {
 	PropertyItem parent_instance;
 	PropertyItemSelectionPrivate * priv;
-	gchar** options;
-	gint options_length1;
 };
 
 struct _PropertyItemSelectionClass {
 	PropertyItemClass parent_class;
 };
 
+struct _PropertyItemSelectionOption {
+	gchar* value;
+	gchar* text;
+};
+
 struct _PropertyItemSelectionPrivate {
+	PropertyItemSelectionOption* options;
+	gint options_length1;
+	gint _options_size_;
 	gint _selected;
 };
 
@@ -115,30 +124,39 @@ void value_take_property_item (GValue* value, gpointer v_object);
 gpointer value_get_property_item (const GValue* value);
 GType property_item_get_type (void) G_GNUC_CONST;
 GType property_item_selection_get_type (void) G_GNUC_CONST;
+static GType property_item_selection_option_get_type (void) G_GNUC_CONST G_GNUC_UNUSED;
+static PropertyItemSelectionOption* property_item_selection_option_dup (const PropertyItemSelectionOption* self);
+static void property_item_selection_option_free (PropertyItemSelectionOption* self);
+static void property_item_selection_option_copy (const PropertyItemSelectionOption* self, PropertyItemSelectionOption* dest);
+static void property_item_selection_option_destroy (PropertyItemSelectionOption* self);
 #define PROPERTY_ITEM_SELECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_PROPERTY_ITEM_SELECTION, PropertyItemSelectionPrivate))
 enum  {
 	PROPERTY_ITEM_SELECTION_DUMMY_PROPERTY
 };
+static void _vala_PropertyItemSelectionOption_array_free (PropertyItemSelectionOption* array, gint array_length);
 GType property_set_get_type (void) G_GNUC_CONST;
 GQuark property_item_error_quark (void);
 gchar* property_item_selection_get_data_throw (PropertySet* propertySet, const gchar* name, GError** error);
 PropertyItem* property_set_get_item (PropertySet* self, const gchar* name);
 gchar* property_item_selection_get_option (PropertyItemSelection* self);
-void property_item_selection_set_data_throw (PropertySet* propertySet, const gchar* name, const gchar* option, GError** error);
-gint property_item_selection_set_option (PropertyItemSelection* self, const gchar* option);
+void property_item_selection_set_data_throw (PropertySet* propertySet, const gchar* name, const gchar* value, GError** error);
+gint property_item_selection_set_option (PropertyItemSelection* self, const gchar* value);
 gchar* property_item_selection_get_data (PropertySet* propertySet, const gchar* name);
-void property_item_selection_set_data (PropertySet* propertySet, const gchar* name, const gchar* option);
+void property_item_selection_set_data (PropertySet* propertySet, const gchar* name, const gchar* value);
 PropertyItemSelection* property_item_selection_new (const gchar* name, const gchar* description);
 PropertyItemSelection* property_item_selection_construct (GType object_type, const gchar* name, const gchar* description);
 PropertyItem* property_item_construct (GType object_type, const gchar* name, const gchar* description);
-void property_item_selection_add_option (PropertyItemSelection* self, const gchar* option);
-static gchar** _vala_array_dup75 (gchar** self, int length);
-static void _vala_array_add86 (gchar*** array, int* length, int* size, gchar* value);
-static gchar** _vala_array_dup76 (gchar** self, int length);
-static gint property_item_selection_get_selected (PropertyItemSelection* self);
-static void property_item_selection_set_selected (PropertyItemSelection* self, gint value);
+PropertyItemSelection* property_item_selection_new_copy (PropertyItemSelection* source);
+PropertyItemSelection* property_item_selection_construct_copy (GType object_type, PropertyItemSelection* source);
+static void _vala_array_add89 (PropertyItemSelectionOption** array, int* length, int* size, const PropertyItemSelectionOption* value);
+void property_item_selection_add_option (PropertyItemSelection* self, const gchar* value, const gchar* text);
+static void _vala_array_add90 (PropertyItemSelectionOption** array, int* length, int* size, const PropertyItemSelectionOption* value);
+gint property_item_selection_get_selected (PropertyItemSelection* self);
+gchar* property_item_selection_get_option_text (PropertyItemSelection* self);
+void property_item_selection_set_selected (PropertyItemSelection* self, gint value);
+gint property_item_selection_set_option_text (PropertyItemSelection* self, const gchar* text);
 static GtkWidget* property_item_selection_real_create_widget (PropertyItem* base);
-static void _vala_array_add87 (GtkRadioButton*** array, int* length, int* size, GtkRadioButton* value);
+static void _vala_array_add91 (GtkRadioButton*** array, int* length, int* size, GtkRadioButton* value);
 static void property_item_selection_real_read_widget (PropertyItem* base, GtkWidget* propertyWidget);
 static void property_item_selection_finalize (PropertyItem* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
@@ -147,6 +165,17 @@ static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify 
 
 GQuark property_item_string_error_quark (void) {
 	return g_quark_from_static_string ("property_item_string_error-quark");
+}
+
+
+static void _vala_PropertyItemSelectionOption_array_free (PropertyItemSelectionOption* array, gint array_length) {
+	if (array != NULL) {
+		int i;
+		for (i = 0; i < array_length; i = i + 1) {
+			property_item_selection_option_destroy (&array[i]);
+		}
+	}
+	g_free (array);
 }
 
 
@@ -223,7 +252,7 @@ gchar* property_item_selection_get_data_throw (PropertySet* propertySet, const g
 }
 
 
-void property_item_selection_set_data_throw (PropertySet* propertySet, const gchar* name, const gchar* option, GError** error) {
+void property_item_selection_set_data_throw (PropertySet* propertySet, const gchar* name, const gchar* value, GError** error) {
 	PropertySet* _tmp0_;
 	const gchar* _tmp1_;
 	PropertyItem* _tmp2_ = NULL;
@@ -245,7 +274,7 @@ void property_item_selection_set_data_throw (PropertySet* propertySet, const gch
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (propertySet != NULL);
 	g_return_if_fail (name != NULL);
-	g_return_if_fail (option != NULL);
+	g_return_if_fail (value != NULL);
 	_tmp0_ = propertySet;
 	_tmp1_ = name;
 	_tmp2_ = property_set_get_item (_tmp0_, _tmp1_);
@@ -259,7 +288,7 @@ void property_item_selection_set_data_throw (PropertySet* propertySet, const gch
 			const gchar* _tmp6_;
 			gint _tmp7_ = 0;
 			_tmp5_ = propertyItem;
-			_tmp6_ = option;
+			_tmp6_ = value;
 			_tmp7_ = property_item_selection_set_option (G_TYPE_CHECK_INSTANCE_TYPE (_tmp5_, TYPE_PROPERTY_ITEM_SELECTION) ? ((PropertyItemSelection*) _tmp5_) : NULL, _tmp6_);
 			if (_tmp7_ == 1) {
 				PropertySet* _tmp8_;
@@ -291,7 +320,7 @@ void property_item_selection_set_data_throw (PropertySet* propertySet, const gch
 				_tmp16_ = _tmp15_;
 				_tmp17_ = g_strconcat (_tmp16_, "\" does not contain option \"", NULL);
 				_tmp18_ = _tmp17_;
-				_tmp19_ = option;
+				_tmp19_ = value;
 				_tmp20_ = g_strconcat (_tmp18_, _tmp19_, NULL);
 				_tmp21_ = _tmp20_;
 				_tmp22_ = g_strconcat (_tmp21_, "\"", NULL);
@@ -389,18 +418,18 @@ gchar* property_item_selection_get_data (PropertySet* propertySet, const gchar* 
 }
 
 
-void property_item_selection_set_data (PropertySet* propertySet, const gchar* name, const gchar* option) {
+void property_item_selection_set_data (PropertySet* propertySet, const gchar* name, const gchar* value) {
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (propertySet != NULL);
 	g_return_if_fail (name != NULL);
-	g_return_if_fail (option != NULL);
+	g_return_if_fail (value != NULL);
 	{
 		PropertySet* _tmp0_;
 		const gchar* _tmp1_;
 		const gchar* _tmp2_;
 		_tmp0_ = propertySet;
 		_tmp1_ = name;
-		_tmp2_ = option;
+		_tmp2_ = value;
 		property_item_selection_set_data_throw (_tmp0_, _tmp1_, _tmp2_, &_inner_error_);
 		if (_inner_error_ != NULL) {
 			goto __catch64_g_error;
@@ -425,16 +454,17 @@ PropertyItemSelection* property_item_selection_construct (GType object_type, con
 	PropertyItemSelection* self = NULL;
 	const gchar* _tmp0_;
 	const gchar* _tmp1_;
-	gchar** _tmp2_ = NULL;
+	PropertyItemSelectionOption* _tmp2_ = NULL;
 	g_return_val_if_fail (name != NULL, NULL);
 	g_return_val_if_fail (description != NULL, NULL);
 	_tmp0_ = name;
 	_tmp1_ = description;
 	self = (PropertyItemSelection*) property_item_construct (object_type, _tmp0_, _tmp1_);
-	_tmp2_ = g_new0 (gchar*, 0 + 1);
-	self->options = (_vala_array_free (self->options, self->options_length1, (GDestroyNotify) g_free), NULL);
-	self->options = _tmp2_;
-	self->options_length1 = 0;
+	_tmp2_ = g_new0 (PropertyItemSelectionOption, 0);
+	self->priv->options = (_vala_PropertyItemSelectionOption_array_free (self->priv->options, self->priv->options_length1), NULL);
+	self->priv->options = _tmp2_;
+	self->priv->options_length1 = 0;
+	self->priv->_options_size_ = self->priv->options_length1;
 	self->priv->_selected = 0;
 	return self;
 }
@@ -445,117 +475,198 @@ PropertyItemSelection* property_item_selection_new (const gchar* name, const gch
 }
 
 
-static gchar** _vala_array_dup75 (gchar** self, int length) {
-	gchar** result;
-	int i;
-	result = g_new0 (gchar*, length + 1);
-	for (i = 0; i < length; i++) {
-		gchar* _tmp0_;
-		_tmp0_ = g_strdup (self[i]);
-		result[i] = _tmp0_;
-	}
-	return result;
-}
-
-
-static void _vala_array_add86 (gchar*** array, int* length, int* size, gchar* value) {
+static void _vala_array_add89 (PropertyItemSelectionOption** array, int* length, int* size, const PropertyItemSelectionOption* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
-		*array = g_renew (gchar*, *array, (*size) + 1);
+		*array = g_renew (PropertyItemSelectionOption, *array, *size);
 	}
-	(*array)[(*length)++] = value;
-	(*array)[*length] = NULL;
+	(*array)[(*length)++] = *value;
 }
 
 
-static gchar** _vala_array_dup76 (gchar** self, int length) {
-	gchar** result;
-	int i;
-	result = g_new0 (gchar*, length + 1);
-	for (i = 0; i < length; i++) {
-		gchar* _tmp0_;
-		_tmp0_ = g_strdup (self[i]);
-		result[i] = _tmp0_;
-	}
-	return result;
-}
-
-
-void property_item_selection_add_option (PropertyItemSelection* self, const gchar* option) {
-	gchar** _tmp0_;
-	gint _tmp0__length1;
-	gchar** _tmp1_;
-	gint _tmp1__length1;
-	gchar** newOptions;
-	gint newOptions_length1;
-	gint _newOptions_size_;
-	gchar** _tmp2_;
-	gint _tmp2__length1;
+PropertyItemSelection* property_item_selection_construct_copy (GType object_type, PropertyItemSelection* source) {
+	PropertyItemSelection* self = NULL;
+	PropertyItemSelection* _tmp0_;
+	const gchar* _tmp1_;
+	PropertyItemSelection* _tmp2_;
 	const gchar* _tmp3_;
-	gchar* _tmp4_;
-	gchar** _tmp5_;
-	gint _tmp5__length1;
-	gchar** _tmp6_;
+	PropertyItemSelectionOption* _tmp4_ = NULL;
+	PropertyItemSelection* _tmp5_;
+	PropertyItemSelectionOption* _tmp6_;
 	gint _tmp6__length1;
+	PropertyItemSelection* _tmp11_;
+	gint _tmp12_;
+	g_return_val_if_fail (source != NULL, NULL);
+	_tmp0_ = source;
+	_tmp1_ = ((PropertyItem*) _tmp0_)->name;
+	_tmp2_ = source;
+	_tmp3_ = ((PropertyItem*) _tmp2_)->description;
+	self = (PropertyItemSelection*) property_item_construct (object_type, _tmp1_, _tmp3_);
+	_tmp4_ = g_new0 (PropertyItemSelectionOption, 0);
+	self->priv->options = (_vala_PropertyItemSelectionOption_array_free (self->priv->options, self->priv->options_length1), NULL);
+	self->priv->options = _tmp4_;
+	self->priv->options_length1 = 0;
+	self->priv->_options_size_ = self->priv->options_length1;
+	_tmp5_ = source;
+	_tmp6_ = _tmp5_->priv->options;
+	_tmp6__length1 = _tmp5_->priv->options_length1;
+	{
+		PropertyItemSelectionOption* option_collection = NULL;
+		gint option_collection_length1 = 0;
+		gint _option_collection_size_ = 0;
+		gint option_it = 0;
+		option_collection = _tmp6_;
+		option_collection_length1 = _tmp6__length1;
+		for (option_it = 0; option_it < _tmp6__length1; option_it = option_it + 1) {
+			PropertyItemSelectionOption _tmp7_ = {0};
+			PropertyItemSelectionOption option = {0};
+			property_item_selection_option_copy (&option_collection[option_it], &_tmp7_);
+			option = _tmp7_;
+			{
+				PropertyItemSelectionOption* _tmp8_;
+				gint _tmp8__length1;
+				PropertyItemSelectionOption _tmp9_;
+				PropertyItemSelectionOption _tmp10_ = {0};
+				_tmp8_ = self->priv->options;
+				_tmp8__length1 = self->priv->options_length1;
+				_tmp9_ = option;
+				property_item_selection_option_copy (&_tmp9_, &_tmp10_);
+				_vala_array_add89 (&self->priv->options, &self->priv->options_length1, &self->priv->_options_size_, &_tmp10_);
+				property_item_selection_option_destroy (&option);
+			}
+		}
+	}
+	_tmp11_ = source;
+	_tmp12_ = _tmp11_->priv->_selected;
+	self->priv->_selected = _tmp12_;
+	return self;
+}
+
+
+PropertyItemSelection* property_item_selection_new_copy (PropertyItemSelection* source) {
+	return property_item_selection_construct_copy (TYPE_PROPERTY_ITEM_SELECTION, source);
+}
+
+
+static void _vala_array_add90 (PropertyItemSelectionOption** array, int* length, int* size, const PropertyItemSelectionOption* value) {
+	if ((*length) == (*size)) {
+		*size = (*size) ? (2 * (*size)) : 4;
+		*array = g_renew (PropertyItemSelectionOption, *array, *size);
+	}
+	(*array)[(*length)++] = *value;
+}
+
+
+void property_item_selection_add_option (PropertyItemSelection* self, const gchar* value, const gchar* text) {
+	PropertyItemSelectionOption option = {0};
+	const gchar* _tmp0_;
+	gchar* _tmp1_;
+	const gchar* _tmp2_ = NULL;
+	const gchar* _tmp3_;
+	const gchar* _tmp6_;
+	gchar* _tmp7_;
+	PropertyItemSelectionOption* _tmp8_;
+	gint _tmp8__length1;
+	PropertyItemSelectionOption _tmp9_;
+	PropertyItemSelectionOption _tmp10_ = {0};
 	g_return_if_fail (self != NULL);
-	g_return_if_fail (option != NULL);
-	_tmp0_ = self->options;
-	_tmp0__length1 = self->options_length1;
-	_tmp1_ = (_tmp0_ != NULL) ? _vala_array_dup75 (_tmp0_, _tmp0__length1) : ((gpointer) _tmp0_);
-	_tmp1__length1 = _tmp0__length1;
-	newOptions = _tmp1_;
-	newOptions_length1 = _tmp1__length1;
-	_newOptions_size_ = newOptions_length1;
-	_tmp2_ = newOptions;
-	_tmp2__length1 = newOptions_length1;
-	_tmp3_ = option;
-	_tmp4_ = g_strdup (_tmp3_);
-	_vala_array_add86 (&newOptions, &newOptions_length1, &_newOptions_size_, _tmp4_);
-	_tmp5_ = newOptions;
-	_tmp5__length1 = newOptions_length1;
-	_tmp6_ = (_tmp5_ != NULL) ? _vala_array_dup76 (_tmp5_, _tmp5__length1) : ((gpointer) _tmp5_);
-	_tmp6__length1 = _tmp5__length1;
-	self->options = (_vala_array_free (self->options, self->options_length1, (GDestroyNotify) g_free), NULL);
-	self->options = _tmp6_;
-	self->options_length1 = _tmp6__length1;
-	newOptions = (_vala_array_free (newOptions, newOptions_length1, (GDestroyNotify) g_free), NULL);
+	g_return_if_fail (value != NULL);
+	memset (&option, 0, sizeof (PropertyItemSelectionOption));
+	_tmp0_ = value;
+	_tmp1_ = g_strdup (_tmp0_);
+	_g_free0 (option.value);
+	option.value = _tmp1_;
+	_tmp3_ = text;
+	if (_tmp3_ != NULL) {
+		const gchar* _tmp4_;
+		_tmp4_ = text;
+		_tmp2_ = _tmp4_;
+	} else {
+		const gchar* _tmp5_;
+		_tmp5_ = value;
+		_tmp2_ = _tmp5_;
+	}
+	_tmp6_ = _tmp2_;
+	_tmp7_ = g_strdup (_tmp6_);
+	_g_free0 (option.text);
+	option.text = _tmp7_;
+	_tmp8_ = self->priv->options;
+	_tmp8__length1 = self->priv->options_length1;
+	_tmp9_ = option;
+	property_item_selection_option_copy (&_tmp9_, &_tmp10_);
+	_vala_array_add90 (&self->priv->options, &self->priv->options_length1, &self->priv->_options_size_, &_tmp10_);
+	property_item_selection_option_destroy (&option);
 }
 
 
 gchar* property_item_selection_get_option (PropertyItemSelection* self) {
 	gchar* result = NULL;
-	gchar** _tmp0_;
+	PropertyItemSelectionOption* _tmp0_;
 	gint _tmp0__length1;
-	gchar** _tmp2_;
+	PropertyItemSelectionOption* _tmp2_;
 	gint _tmp2__length1;
 	gint _tmp3_;
 	gint _tmp4_;
-	const gchar* _tmp5_;
-	gchar* _tmp6_;
+	PropertyItemSelectionOption _tmp5_;
+	const gchar* _tmp6_;
+	gchar* _tmp7_;
 	g_return_val_if_fail (self != NULL, NULL);
-	_tmp0_ = self->options;
-	_tmp0__length1 = self->options_length1;
+	_tmp0_ = self->priv->options;
+	_tmp0__length1 = self->priv->options_length1;
 	if (_tmp0__length1 == 0) {
 		gchar* _tmp1_;
 		_tmp1_ = g_strdup ("");
 		result = _tmp1_;
 		return result;
 	}
-	_tmp2_ = self->options;
-	_tmp2__length1 = self->options_length1;
+	_tmp2_ = self->priv->options;
+	_tmp2__length1 = self->priv->options_length1;
 	_tmp3_ = property_item_selection_get_selected (self);
 	_tmp4_ = _tmp3_;
 	_tmp5_ = _tmp2_[_tmp4_];
-	_tmp6_ = g_strdup (_tmp5_);
-	result = _tmp6_;
+	_tmp6_ = _tmp5_.value;
+	_tmp7_ = g_strdup (_tmp6_);
+	result = _tmp7_;
 	return result;
 }
 
 
-gint property_item_selection_set_option (PropertyItemSelection* self, const gchar* option) {
+gchar* property_item_selection_get_option_text (PropertyItemSelection* self) {
+	gchar* result = NULL;
+	PropertyItemSelectionOption* _tmp0_;
+	gint _tmp0__length1;
+	PropertyItemSelectionOption* _tmp2_;
+	gint _tmp2__length1;
+	gint _tmp3_;
+	gint _tmp4_;
+	PropertyItemSelectionOption _tmp5_;
+	const gchar* _tmp6_;
+	gchar* _tmp7_;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = self->priv->options;
+	_tmp0__length1 = self->priv->options_length1;
+	if (_tmp0__length1 == 0) {
+		gchar* _tmp1_;
+		_tmp1_ = g_strdup ("");
+		result = _tmp1_;
+		return result;
+	}
+	_tmp2_ = self->priv->options;
+	_tmp2__length1 = self->priv->options_length1;
+	_tmp3_ = property_item_selection_get_selected (self);
+	_tmp4_ = _tmp3_;
+	_tmp5_ = _tmp2_[_tmp4_];
+	_tmp6_ = _tmp5_.text;
+	_tmp7_ = g_strdup (_tmp6_);
+	result = _tmp7_;
+	return result;
+}
+
+
+gint property_item_selection_set_option (PropertyItemSelection* self, const gchar* value) {
 	gint result = 0;
 	g_return_val_if_fail (self != NULL, 0);
-	g_return_val_if_fail (option != NULL, 0);
+	g_return_val_if_fail (value != NULL, 0);
 	{
 		gint i;
 		i = 0;
@@ -565,13 +676,14 @@ gint property_item_selection_set_option (PropertyItemSelection* self, const gcha
 			while (TRUE) {
 				gboolean _tmp1_;
 				gint _tmp3_;
-				gchar** _tmp4_;
+				PropertyItemSelectionOption* _tmp4_;
 				gint _tmp4__length1;
 				const gchar* _tmp5_;
-				gchar** _tmp6_;
+				PropertyItemSelectionOption* _tmp6_;
 				gint _tmp6__length1;
 				gint _tmp7_;
-				const gchar* _tmp8_;
+				PropertyItemSelectionOption _tmp8_;
+				const gchar* _tmp9_;
 				_tmp1_ = _tmp0_;
 				if (!_tmp1_) {
 					gint _tmp2_;
@@ -580,20 +692,76 @@ gint property_item_selection_set_option (PropertyItemSelection* self, const gcha
 				}
 				_tmp0_ = FALSE;
 				_tmp3_ = i;
-				_tmp4_ = self->options;
-				_tmp4__length1 = self->options_length1;
+				_tmp4_ = self->priv->options;
+				_tmp4__length1 = self->priv->options_length1;
 				if (!(_tmp3_ < _tmp4__length1)) {
 					break;
 				}
-				_tmp5_ = option;
-				_tmp6_ = self->options;
-				_tmp6__length1 = self->options_length1;
+				_tmp5_ = value;
+				_tmp6_ = self->priv->options;
+				_tmp6__length1 = self->priv->options_length1;
 				_tmp7_ = i;
 				_tmp8_ = _tmp6_[_tmp7_];
-				if (g_strcmp0 (_tmp5_, _tmp8_) == 0) {
-					gint _tmp9_;
-					_tmp9_ = i;
-					property_item_selection_set_selected (self, _tmp9_);
+				_tmp9_ = _tmp8_.value;
+				if (g_strcmp0 (_tmp5_, _tmp9_) == 0) {
+					gint _tmp10_;
+					_tmp10_ = i;
+					property_item_selection_set_selected (self, _tmp10_);
+					result = 0;
+					return result;
+				}
+			}
+		}
+	}
+	result = 1;
+	return result;
+}
+
+
+gint property_item_selection_set_option_text (PropertyItemSelection* self, const gchar* text) {
+	gint result = 0;
+	g_return_val_if_fail (self != NULL, 0);
+	g_return_val_if_fail (text != NULL, 0);
+	{
+		gint i;
+		i = 0;
+		{
+			gboolean _tmp0_;
+			_tmp0_ = TRUE;
+			while (TRUE) {
+				gboolean _tmp1_;
+				gint _tmp3_;
+				PropertyItemSelectionOption* _tmp4_;
+				gint _tmp4__length1;
+				const gchar* _tmp5_;
+				PropertyItemSelectionOption* _tmp6_;
+				gint _tmp6__length1;
+				gint _tmp7_;
+				PropertyItemSelectionOption _tmp8_;
+				const gchar* _tmp9_;
+				_tmp1_ = _tmp0_;
+				if (!_tmp1_) {
+					gint _tmp2_;
+					_tmp2_ = i;
+					i = _tmp2_ + 1;
+				}
+				_tmp0_ = FALSE;
+				_tmp3_ = i;
+				_tmp4_ = self->priv->options;
+				_tmp4__length1 = self->priv->options_length1;
+				if (!(_tmp3_ < _tmp4__length1)) {
+					break;
+				}
+				_tmp5_ = text;
+				_tmp6_ = self->priv->options;
+				_tmp6__length1 = self->priv->options_length1;
+				_tmp7_ = i;
+				_tmp8_ = _tmp6_[_tmp7_];
+				_tmp9_ = _tmp8_.text;
+				if (g_strcmp0 (_tmp5_, _tmp9_) == 0) {
+					gint _tmp10_;
+					_tmp10_ = i;
+					property_item_selection_set_selected (self, _tmp10_);
 					result = 0;
 					return result;
 				}
@@ -610,7 +778,7 @@ static gpointer _g_object_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add87 (GtkRadioButton*** array, int* length, int* size, GtkRadioButton* value) {
+static void _vala_array_add91 (GtkRadioButton*** array, int* length, int* size, GtkRadioButton* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkRadioButton*, *array, (*size) + 1);
@@ -623,7 +791,7 @@ static void _vala_array_add87 (GtkRadioButton*** array, int* length, int* size, 
 static GtkWidget* property_item_selection_real_create_widget (PropertyItem* base) {
 	PropertyItemSelection * self;
 	GtkWidget* result = NULL;
-	gchar** _tmp0_;
+	PropertyItemSelectionOption* _tmp0_;
 	gint _tmp0__length1;
 	gint numberOfOptions;
 	GtkBox* _tmp1_;
@@ -632,10 +800,10 @@ static GtkWidget* property_item_selection_real_create_widget (PropertyItem* base
 	GtkRadioButton** radioButtons;
 	gint radioButtons_length1;
 	gint _radioButtons_size_;
-	gint _tmp24_;
+	gint _tmp26_;
 	self = (PropertyItemSelection*) base;
-	_tmp0_ = self->options;
-	_tmp0__length1 = self->options_length1;
+	_tmp0_ = self->priv->options;
+	_tmp0__length1 = self->priv->options_length1;
 	numberOfOptions = _tmp0__length1;
 	_tmp1_ = (GtkBox*) gtk_box_new (GTK_ORIENTATION_VERTICAL, 1);
 	g_object_ref_sink (_tmp1_);
@@ -656,12 +824,12 @@ static GtkWidget* property_item_selection_real_create_widget (PropertyItem* base
 				gint _tmp7_;
 				GtkRadioButton* radioButton = NULL;
 				gint _tmp8_;
-				GtkRadioButton** _tmp19_;
-				gint _tmp19__length1;
-				GtkRadioButton* _tmp20_;
-				GtkRadioButton* _tmp21_;
-				GtkBox* _tmp22_;
+				GtkRadioButton** _tmp21_;
+				gint _tmp21__length1;
+				GtkRadioButton* _tmp22_;
 				GtkRadioButton* _tmp23_;
+				GtkBox* _tmp24_;
+				GtkRadioButton* _tmp25_;
 				_tmp4_ = _tmp3_;
 				if (!_tmp4_) {
 					gint _tmp5_;
@@ -676,65 +844,69 @@ static GtkWidget* property_item_selection_real_create_widget (PropertyItem* base
 				}
 				_tmp8_ = i;
 				if (_tmp8_ == 0) {
-					gchar** _tmp9_;
+					PropertyItemSelectionOption* _tmp9_;
 					gint _tmp9__length1;
 					gint _tmp10_;
-					const gchar* _tmp11_;
-					GtkRadioButton* _tmp12_;
-					_tmp9_ = self->options;
-					_tmp9__length1 = self->options_length1;
+					PropertyItemSelectionOption _tmp11_;
+					const gchar* _tmp12_;
+					GtkRadioButton* _tmp13_;
+					_tmp9_ = self->priv->options;
+					_tmp9__length1 = self->priv->options_length1;
 					_tmp10_ = i;
 					_tmp11_ = _tmp9_[_tmp10_];
-					_tmp12_ = (GtkRadioButton*) gtk_radio_button_new_with_label (NULL, _tmp11_);
-					g_object_ref_sink (_tmp12_);
+					_tmp12_ = _tmp11_.text;
+					_tmp13_ = (GtkRadioButton*) gtk_radio_button_new_with_label (NULL, _tmp12_);
+					g_object_ref_sink (_tmp13_);
 					_g_object_unref0 (radioButton);
-					radioButton = _tmp12_;
+					radioButton = _tmp13_;
 				} else {
-					GtkRadioButton** _tmp13_;
-					gint _tmp13__length1;
-					GtkRadioButton* _tmp14_;
-					gchar** _tmp15_;
-					gint _tmp15__length1;
-					gint _tmp16_;
-					const gchar* _tmp17_;
-					GtkRadioButton* _tmp18_;
-					_tmp13_ = radioButtons;
-					_tmp13__length1 = radioButtons_length1;
-					_tmp14_ = _tmp13_[0];
-					_tmp15_ = self->options;
-					_tmp15__length1 = self->options_length1;
-					_tmp16_ = i;
-					_tmp17_ = _tmp15_[_tmp16_];
-					_tmp18_ = (GtkRadioButton*) gtk_radio_button_new_with_label_from_widget (_tmp14_, _tmp17_);
-					g_object_ref_sink (_tmp18_);
+					GtkRadioButton** _tmp14_;
+					gint _tmp14__length1;
+					GtkRadioButton* _tmp15_;
+					PropertyItemSelectionOption* _tmp16_;
+					gint _tmp16__length1;
+					gint _tmp17_;
+					PropertyItemSelectionOption _tmp18_;
+					const gchar* _tmp19_;
+					GtkRadioButton* _tmp20_;
+					_tmp14_ = radioButtons;
+					_tmp14__length1 = radioButtons_length1;
+					_tmp15_ = _tmp14_[0];
+					_tmp16_ = self->priv->options;
+					_tmp16__length1 = self->priv->options_length1;
+					_tmp17_ = i;
+					_tmp18_ = _tmp16_[_tmp17_];
+					_tmp19_ = _tmp18_.text;
+					_tmp20_ = (GtkRadioButton*) gtk_radio_button_new_with_label_from_widget (_tmp15_, _tmp19_);
+					g_object_ref_sink (_tmp20_);
 					_g_object_unref0 (radioButton);
-					radioButton = _tmp18_;
+					radioButton = _tmp20_;
 				}
-				_tmp19_ = radioButtons;
-				_tmp19__length1 = radioButtons_length1;
-				_tmp20_ = radioButton;
-				_tmp21_ = _g_object_ref0 (_tmp20_);
-				_vala_array_add87 (&radioButtons, &radioButtons_length1, &_radioButtons_size_, _tmp21_);
-				_tmp22_ = vBox;
-				_tmp23_ = radioButton;
-				gtk_box_pack_start (_tmp22_, (GtkWidget*) _tmp23_, FALSE, TRUE, (guint) 1);
+				_tmp21_ = radioButtons;
+				_tmp21__length1 = radioButtons_length1;
+				_tmp22_ = radioButton;
+				_tmp23_ = _g_object_ref0 (_tmp22_);
+				_vala_array_add91 (&radioButtons, &radioButtons_length1, &_radioButtons_size_, _tmp23_);
+				_tmp24_ = vBox;
+				_tmp25_ = radioButton;
+				gtk_box_pack_start (_tmp24_, (GtkWidget*) _tmp25_, FALSE, TRUE, (guint) 1);
 				_g_object_unref0 (radioButton);
 			}
 		}
 	}
-	_tmp24_ = numberOfOptions;
-	if (_tmp24_ > 0) {
-		GtkRadioButton** _tmp25_;
-		gint _tmp25__length1;
-		gint _tmp26_;
-		gint _tmp27_;
-		GtkRadioButton* _tmp28_;
-		_tmp25_ = radioButtons;
-		_tmp25__length1 = radioButtons_length1;
-		_tmp26_ = property_item_selection_get_selected (self);
-		_tmp27_ = _tmp26_;
-		_tmp28_ = _tmp25_[_tmp27_];
-		gtk_toggle_button_set_active ((GtkToggleButton*) _tmp28_, TRUE);
+	_tmp26_ = numberOfOptions;
+	if (_tmp26_ > 0) {
+		GtkRadioButton** _tmp27_;
+		gint _tmp27__length1;
+		gint _tmp28_;
+		gint _tmp29_;
+		GtkRadioButton* _tmp30_;
+		_tmp27_ = radioButtons;
+		_tmp27__length1 = radioButtons_length1;
+		_tmp28_ = property_item_selection_get_selected (self);
+		_tmp29_ = _tmp28_;
+		_tmp30_ = _tmp27_[_tmp29_];
+		gtk_toggle_button_set_active ((GtkToggleButton*) _tmp30_, TRUE);
 	}
 	result = (GtkWidget*) vBox;
 	radioButtons = (_vala_array_free (radioButtons, radioButtons_length1, (GDestroyNotify) g_object_unref), NULL);
@@ -751,27 +923,27 @@ static void property_item_selection_real_read_widget (PropertyItem* base, GtkWid
 	if (_tmp0_ != NULL) {
 		GtkWidget* _tmp1_;
 		_tmp1_ = propertyWidget;
-		if (G_TYPE_CHECK_INSTANCE_TYPE (_tmp1_, GTK_TYPE_VBOX)) {
+		if (G_TYPE_CHECK_INSTANCE_TYPE (_tmp1_, GTK_TYPE_BOX)) {
 			GtkWidget* _tmp2_;
-			GtkVBox* _tmp3_;
-			GtkVBox* vBox;
-			GtkVBox* _tmp4_;
+			GtkBox* _tmp3_;
+			GtkBox* vBox;
+			GtkBox* _tmp4_;
 			GList* _tmp5_ = NULL;
 			GList* radioButtons;
 			GList* _tmp6_;
 			guint _tmp7_ = 0U;
-			gchar** _tmp8_;
+			PropertyItemSelectionOption* _tmp8_;
 			gint _tmp8__length1;
 			_tmp2_ = propertyWidget;
-			_tmp3_ = _g_object_ref0 (G_TYPE_CHECK_INSTANCE_TYPE (_tmp2_, GTK_TYPE_VBOX) ? ((GtkVBox*) _tmp2_) : NULL);
+			_tmp3_ = _g_object_ref0 (G_TYPE_CHECK_INSTANCE_TYPE (_tmp2_, GTK_TYPE_BOX) ? ((GtkBox*) _tmp2_) : NULL);
 			vBox = _tmp3_;
 			_tmp4_ = vBox;
 			_tmp5_ = gtk_container_get_children ((GtkContainer*) _tmp4_);
 			radioButtons = _tmp5_;
 			_tmp6_ = radioButtons;
 			_tmp7_ = g_list_length (_tmp6_);
-			_tmp8_ = self->options;
-			_tmp8__length1 = self->options_length1;
+			_tmp8_ = self->priv->options;
+			_tmp8__length1 = self->priv->options_length1;
 			if (_tmp7_ == ((guint) _tmp8__length1)) {
 				{
 					gint i;
@@ -782,7 +954,7 @@ static void property_item_selection_real_read_widget (PropertyItem* base, GtkWid
 						while (TRUE) {
 							gboolean _tmp10_;
 							gint _tmp12_;
-							gchar** _tmp13_;
+							PropertyItemSelectionOption* _tmp13_;
 							gint _tmp13__length1;
 							GList* _tmp14_;
 							gint _tmp15_;
@@ -798,8 +970,8 @@ static void property_item_selection_real_read_widget (PropertyItem* base, GtkWid
 							}
 							_tmp9_ = FALSE;
 							_tmp12_ = i;
-							_tmp13_ = self->options;
-							_tmp13__length1 = self->options_length1;
+							_tmp13_ = self->priv->options;
+							_tmp13__length1 = self->priv->options_length1;
 							if (!(_tmp12_ < _tmp13__length1)) {
 								break;
 							}
@@ -838,7 +1010,7 @@ static void property_item_selection_real_read_widget (PropertyItem* base, GtkWid
 }
 
 
-static gint property_item_selection_get_selected (PropertyItemSelection* self) {
+gint property_item_selection_get_selected (PropertyItemSelection* self) {
 	gint result;
 	gint _tmp0_;
 	g_return_val_if_fail (self != NULL, 0);
@@ -848,7 +1020,7 @@ static gint property_item_selection_get_selected (PropertyItemSelection* self) {
 }
 
 
-static void property_item_selection_set_selected (PropertyItemSelection* self, gint value) {
+void property_item_selection_set_selected (PropertyItemSelection* self, gint value) {
 	gboolean _tmp0_ = FALSE;
 	gint _tmp1_;
 	gboolean _tmp4_;
@@ -856,11 +1028,11 @@ static void property_item_selection_set_selected (PropertyItemSelection* self, g
 	_tmp1_ = value;
 	if (_tmp1_ >= 0) {
 		gint _tmp2_;
-		gchar** _tmp3_;
+		PropertyItemSelectionOption* _tmp3_;
 		gint _tmp3__length1;
 		_tmp2_ = value;
-		_tmp3_ = self->options;
-		_tmp3__length1 = self->options_length1;
+		_tmp3_ = self->priv->options;
+		_tmp3__length1 = self->priv->options_length1;
 		_tmp0_ = _tmp2_ < _tmp3__length1;
 	} else {
 		_tmp0_ = FALSE;
@@ -871,6 +1043,53 @@ static void property_item_selection_set_selected (PropertyItemSelection* self, g
 		_tmp5_ = value;
 		self->priv->_selected = _tmp5_;
 	}
+}
+
+
+static void property_item_selection_option_copy (const PropertyItemSelectionOption* self, PropertyItemSelectionOption* dest) {
+	const gchar* _tmp0_;
+	gchar* _tmp1_;
+	const gchar* _tmp2_;
+	gchar* _tmp3_;
+	_tmp0_ = (*self).value;
+	_tmp1_ = g_strdup (_tmp0_);
+	_g_free0 ((*dest).value);
+	(*dest).value = _tmp1_;
+	_tmp2_ = (*self).text;
+	_tmp3_ = g_strdup (_tmp2_);
+	_g_free0 ((*dest).text);
+	(*dest).text = _tmp3_;
+}
+
+
+static void property_item_selection_option_destroy (PropertyItemSelectionOption* self) {
+	_g_free0 ((*self).value);
+	_g_free0 ((*self).text);
+}
+
+
+static PropertyItemSelectionOption* property_item_selection_option_dup (const PropertyItemSelectionOption* self) {
+	PropertyItemSelectionOption* dup;
+	dup = g_new0 (PropertyItemSelectionOption, 1);
+	property_item_selection_option_copy (self, dup);
+	return dup;
+}
+
+
+static void property_item_selection_option_free (PropertyItemSelectionOption* self) {
+	property_item_selection_option_destroy (self);
+	g_free (self);
+}
+
+
+static GType property_item_selection_option_get_type (void) {
+	static volatile gsize property_item_selection_option_type_id__volatile = 0;
+	if (g_once_init_enter (&property_item_selection_option_type_id__volatile)) {
+		GType property_item_selection_option_type_id;
+		property_item_selection_option_type_id = g_boxed_type_register_static ("PropertyItemSelectionOption", (GBoxedCopyFunc) property_item_selection_option_dup, (GBoxedFreeFunc) property_item_selection_option_free);
+		g_once_init_leave (&property_item_selection_option_type_id__volatile, property_item_selection_option_type_id);
+	}
+	return property_item_selection_option_type_id__volatile;
 }
 
 
@@ -891,7 +1110,7 @@ static void property_item_selection_instance_init (PropertyItemSelection * self)
 static void property_item_selection_finalize (PropertyItem* obj) {
 	PropertyItemSelection * self;
 	self = G_TYPE_CHECK_INSTANCE_CAST (obj, TYPE_PROPERTY_ITEM_SELECTION, PropertyItemSelection);
-	self->options = (_vala_array_free (self->options, self->options_length1, (GDestroyNotify) g_free), NULL);
+	self->priv->options = (_vala_PropertyItemSelectionOption_array_free (self->priv->options, self->priv->options_length1), NULL);
 	PROPERTY_ITEM_CLASS (property_item_selection_parent_class)->finalize (obj);
 }
 

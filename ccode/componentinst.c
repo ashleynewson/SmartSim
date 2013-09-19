@@ -90,6 +90,16 @@ typedef struct _PinInstClass PinInstClass;
 #define _property_item_unref0(var) ((var == NULL) ? NULL : (var = (property_item_unref (var), NULL)))
 typedef struct _ComponentDefPrivate ComponentDefPrivate;
 
+#define TYPE_PROJECT (project_get_type ())
+#define PROJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_PROJECT, Project))
+#define PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_PROJECT, ProjectClass))
+#define IS_PROJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_PROJECT))
+#define IS_PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_PROJECT))
+#define PROJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_PROJECT, ProjectClass))
+
+typedef struct _Project Project;
+typedef struct _ProjectClass ProjectClass;
+
 #define TYPE_CUSTOM_COMPONENT_DEF (custom_component_def_get_type ())
 #define CUSTOM_COMPONENT_DEF(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDef))
 #define CUSTOM_COMPONENT_DEF_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDefClass))
@@ -157,16 +167,6 @@ typedef struct _PinDefPrivate PinDefPrivate;
 #define _pin_inst_unref0(var) ((var == NULL) ? NULL : (var = (pin_inst_unref (var), NULL)))
 #define _pin_def_unref0(var) ((var == NULL) ? NULL : (var = (pin_def_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
-
-#define TYPE_PROJECT (project_get_type ())
-#define PROJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_PROJECT, Project))
-#define PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_PROJECT, ProjectClass))
-#define IS_PROJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_PROJECT))
-#define IS_PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_PROJECT))
-#define PROJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_PROJECT, ProjectClass))
-
-typedef struct _Project Project;
-typedef struct _ProjectClass ProjectClass;
 
 #define TYPE_WIRE_INST (wire_inst_get_type ())
 #define WIRE_INST(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_WIRE_INST, WireInst))
@@ -300,7 +300,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
@@ -487,6 +487,13 @@ enum  {
 };
 ComponentInst* component_inst_new (ComponentDef* componentDef, gint xPosition, gint yPosition, Direction direction, gboolean flipped);
 ComponentInst* component_inst_construct (GType object_type, ComponentDef* componentDef, gint xPosition, gint yPosition, Direction direction, gboolean flipped);
+gpointer project_ref (gpointer instance);
+void project_unref (gpointer instance);
+GParamSpec* param_spec_project (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
+void value_set_project (GValue* value, gpointer v_object);
+void value_take_project (GValue* value, gpointer v_object);
+gpointer value_get_project (const GValue* value);
+GType project_get_type (void) G_GNUC_CONST;
 GType custom_component_def_get_type (void) G_GNUC_CONST;
 gpointer compiled_circuit_ref (gpointer instance);
 void compiled_circuit_unref (gpointer instance);
@@ -527,18 +534,11 @@ GType flow_get_type (void) G_GNUC_CONST;
 GType pin_def_label_type_get_type (void) G_GNUC_CONST;
 PinInst* pin_inst_new (PinDef* pinDef, gint arraySize);
 PinInst* pin_inst_construct (GType object_type, PinDef* pinDef, gint arraySize);
-static void _vala_array_add39 (PinInst*** array, int* length, int* size, PinInst* value);
-static PinInst** _vala_array_dup40 (PinInst** self, int length);
+static void _vala_array_add41 (PinInst*** array, int* length, int* size, PinInst* value);
+static PinInst** _vala_array_dup41 (PinInst** self, int length);
 PropertySet* property_set_new (const gchar* name, const gchar* description);
 PropertySet* property_set_construct (GType object_type, const gchar* name, const gchar* description);
 void component_def_configure_inst (ComponentDef* self, ComponentInst* componentInst, gboolean firstLoad);
-gpointer project_ref (gpointer instance);
-void project_unref (gpointer instance);
-GParamSpec* param_spec_project (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
-void value_set_project (GValue* value, gpointer v_object);
-void value_take_project (GValue* value, gpointer v_object);
-gpointer value_get_project (const GValue* value);
-GType project_get_type (void) G_GNUC_CONST;
 gpointer wire_inst_ref (gpointer instance);
 void wire_inst_unref (gpointer instance);
 GParamSpec* param_spec_wire_inst (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
@@ -549,8 +549,8 @@ GType wire_inst_get_type (void) G_GNUC_CONST;
 ComponentInst* component_inst_new_load (xmlNode* xmlnode, Project* project, WireInst** newWireInsts, int newWireInsts_length1, GError** error);
 ComponentInst* component_inst_construct_load (GType object_type, xmlNode* xmlnode, Project* project, WireInst** newWireInsts, int newWireInsts_length1, GError** error);
 ComponentDef* project_resolve_def_name (Project* self, const gchar* name);
-static void _vala_array_add40 (PinInst*** array, int* length, int* size, PinInst* value);
-static PinInst** _vala_array_dup41 (PinInst** self, int length);
+static void _vala_array_add42 (PinInst*** array, int* length, int* size, PinInst* value);
+static PinInst** _vala_array_dup42 (PinInst** self, int length);
 void component_def_load_properties (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
 gint pin_inst_append (PinInst* self);
 static WireInst* component_inst_resolve_wire_id (ComponentInst* self, WireInst** anyWireInsts, int anyWireInsts_length1, gint wireid);
@@ -604,10 +604,10 @@ GType wire_state_get_type (void) G_GNUC_CONST;
 void component_inst_compile_component (ComponentInst* self, CompiledCircuit* compiledCircuit, WireState** localWireStates, int localWireStates_length1, ComponentInst** ancestry, int ancestry_length1);
 Connection* connection_new_fake (void);
 Connection* connection_construct_fake (GType object_type);
-static void _vala_array_add41 (Connection*** array, int* length, int* size, Connection* value);
+static void _vala_array_add43 (Connection*** array, int* length, int* size, Connection* value);
 Connection* connection_new (WireState* wireState, gboolean invert);
 Connection* connection_construct (GType object_type, WireState* wireState, gboolean invert);
-static void _vala_array_add42 (Connection*** array, int* length, int* size, Connection* value);
+static void _vala_array_add44 (Connection*** array, int* length, int* size, Connection* value);
 void component_def_compile_component (ComponentDef* self, CompiledCircuit* compiledCircuit, ComponentInst* componentInst, Connection** connections, int connections_length1, ComponentInst** ancestry, int ancestry_length1);
 void component_inst_save (ComponentInst* self, xmlTextWriter* xmlWriter);
 void component_def_save_properties (ComponentDef* self, xmlTextWriter* xmlWriter, PropertySet* configurationProperty);
@@ -638,7 +638,7 @@ static gpointer _pin_inst_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add39 (PinInst*** array, int* length, int* size, PinInst* value) {
+static void _vala_array_add41 (PinInst*** array, int* length, int* size, PinInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PinInst*, *array, (*size) + 1);
@@ -648,7 +648,7 @@ static void _vala_array_add39 (PinInst*** array, int* length, int* size, PinInst
 }
 
 
-static PinInst** _vala_array_dup40 (PinInst** self, int length) {
+static PinInst** _vala_array_dup41 (PinInst** self, int length) {
 	PinInst** result;
 	int i;
 	result = g_new0 (PinInst*, length + 1);
@@ -769,7 +769,7 @@ ComponentInst* component_inst_construct (GType object_type, ComponentDef* compon
 				_tmp25__length1 = newPinInsts_length1;
 				_tmp26_ = newPinInst;
 				_tmp27_ = _pin_inst_ref0 (_tmp26_);
-				_vala_array_add39 (&newPinInsts, &newPinInsts_length1, &_newPinInsts_size_, _tmp27_);
+				_vala_array_add41 (&newPinInsts, &newPinInsts_length1, &_newPinInsts_size_, _tmp27_);
 				_pin_inst_unref0 (newPinInst);
 				_pin_def_unref0 (pinDef);
 			}
@@ -777,7 +777,7 @@ ComponentInst* component_inst_construct (GType object_type, ComponentDef* compon
 	}
 	_tmp28_ = newPinInsts;
 	_tmp28__length1 = newPinInsts_length1;
-	_tmp29_ = (_tmp28_ != NULL) ? _vala_array_dup40 (_tmp28_, _tmp28__length1) : ((gpointer) _tmp28_);
+	_tmp29_ = (_tmp28_ != NULL) ? _vala_array_dup41 (_tmp28_, _tmp28__length1) : ((gpointer) _tmp28_);
 	_tmp29__length1 = _tmp28__length1;
 	self->pinInsts = (_vala_array_free (self->pinInsts, self->pinInsts_length1, (GDestroyNotify) pin_inst_unref), NULL);
 	self->pinInsts = _tmp29_;
@@ -805,7 +805,7 @@ ComponentInst* component_inst_new (ComponentDef* componentDef, gint xPosition, g
 /**
  * Load a component instance from a file using libxml.
  */
-static void _vala_array_add40 (PinInst*** array, int* length, int* size, PinInst* value) {
+static void _vala_array_add42 (PinInst*** array, int* length, int* size, PinInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PinInst*, *array, (*size) + 1);
@@ -815,7 +815,7 @@ static void _vala_array_add40 (PinInst*** array, int* length, int* size, PinInst
 }
 
 
-static PinInst** _vala_array_dup41 (PinInst** self, int length) {
+static PinInst** _vala_array_dup42 (PinInst** self, int length) {
 	PinInst** result;
 	int i;
 	result = g_new0 (PinInst*, length + 1);
@@ -1126,7 +1126,7 @@ ComponentInst* component_inst_construct_load (GType object_type, xmlNode* xmlnod
 					_tmp58__length1 = newPinInsts_length1;
 					_tmp59_ = newPinInst;
 					_tmp60_ = _pin_inst_ref0 (_tmp59_);
-					_vala_array_add40 (&newPinInsts, &newPinInsts_length1, &_newPinInsts_size_, _tmp60_);
+					_vala_array_add42 (&newPinInsts, &newPinInsts_length1, &_newPinInsts_size_, _tmp60_);
 					_pin_inst_unref0 (newPinInst);
 					_pin_def_unref0 (pinDef);
 				}
@@ -1134,7 +1134,7 @@ ComponentInst* component_inst_construct_load (GType object_type, xmlNode* xmlnod
 		}
 		_tmp61_ = newPinInsts;
 		_tmp61__length1 = newPinInsts_length1;
-		_tmp62_ = (_tmp61_ != NULL) ? _vala_array_dup41 (_tmp61_, _tmp61__length1) : ((gpointer) _tmp61_);
+		_tmp62_ = (_tmp61_ != NULL) ? _vala_array_dup42 (_tmp61_, _tmp61__length1) : ((gpointer) _tmp61_);
 		_tmp62__length1 = _tmp61__length1;
 		self->pinInsts = (_vala_array_free (self->pinInsts, self->pinInsts_length1, (GDestroyNotify) pin_inst_unref), NULL);
 		self->pinInsts = _tmp62_;
@@ -3140,7 +3140,7 @@ gint component_inst_find (ComponentInst* self, gint x, gint y) {
  * Compiles a component instance by creating and passing connections
  * to //componentDef//'s compile method.
  */
-static void _vala_array_add41 (Connection*** array, int* length, int* size, Connection* value) {
+static void _vala_array_add43 (Connection*** array, int* length, int* size, Connection* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Connection*, *array, (*size) + 1);
@@ -3155,7 +3155,7 @@ static gpointer _wire_state_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add42 (Connection*** array, int* length, int* size, Connection* value) {
+static void _vala_array_add44 (Connection*** array, int* length, int* size, Connection* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Connection*, *array, (*size) + 1);
@@ -3248,7 +3248,7 @@ void component_inst_compile_component (ComponentInst* self, CompiledCircuit* com
 								_tmp15_ = connections;
 								_tmp15__length1 = connections_length1;
 								_tmp16_ = connection_new_fake ();
-								_vala_array_add41 (&connections, &connections_length1, &_connections_size_, _tmp16_);
+								_vala_array_add43 (&connections, &connections_length1, &_connections_size_, _tmp16_);
 								_wire_inst_unref0 (wireInst);
 								continue;
 							}
@@ -3292,7 +3292,7 @@ void component_inst_compile_component (ComponentInst* self, CompiledCircuit* com
 											_tmp26_ = i;
 											_tmp27_ = _tmp25_[_tmp26_];
 											_tmp28_ = connection_new (_tmp23_, _tmp27_);
-											_vala_array_add42 (&connections, &connections_length1, &_connections_size_, _tmp28_);
+											_vala_array_add44 (&connections, &connections_length1, &_connections_size_, _tmp28_);
 										}
 										_wire_state_unref0 (wireState);
 									}

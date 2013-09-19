@@ -199,7 +199,8 @@ struct _PluginComponentManagerClass {
 typedef enum  {
 	COMPONENT_DEF_LOAD_ERROR_NOT_COMPONENT,
 	COMPONENT_DEF_LOAD_ERROR_FILE,
-	COMPONENT_DEF_LOAD_ERROR_LOAD
+	COMPONENT_DEF_LOAD_ERROR_LOAD,
+	COMPONENT_DEF_LOAD_ERROR_CANCEL
 } ComponentDefLoadError;
 #define COMPONENT_DEF_LOAD_ERROR component_def_load_error_quark ()
 typedef enum  {
@@ -253,7 +254,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
@@ -313,7 +314,7 @@ enum  {
 	PLUGIN_COMPONENT_MANAGER_DUMMY_PROPERTY
 };
 static void plugin_component_manager_register (PluginComponentManager* pluginComponentManager);
-static void _vala_array_add59 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value);
+static void _vala_array_add61 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value);
 void plugin_component_manager_unregister_all (void);
 static void plugin_component_manager_unload (PluginComponentManager* self);
 PluginComponentManager* plugin_component_manager_from_name (const gchar* name);
@@ -395,7 +396,7 @@ static gpointer _plugin_component_manager_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add59 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value) {
+static void _vala_array_add61 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PluginComponentManager*, *array, (*size) + 1);
@@ -424,7 +425,7 @@ static void plugin_component_manager_register (PluginComponentManager* pluginCom
 	_tmp1__length1 = plugin_component_manager_pluginComponentManagers_length1;
 	_tmp2_ = pluginComponentManager;
 	_tmp3_ = _plugin_component_manager_ref0 (_tmp2_);
-	_vala_array_add59 (&plugin_component_manager_pluginComponentManagers, &plugin_component_manager_pluginComponentManagers_length1, &_plugin_component_manager_pluginComponentManagers_size_, _tmp3_);
+	_vala_array_add61 (&plugin_component_manager_pluginComponentManagers, &plugin_component_manager_pluginComponentManagers_length1, &_plugin_component_manager_pluginComponentManagers_size_, _tmp3_);
 	_tmp4_ = stdout;
 	_tmp5_ = pluginComponentManager;
 	_tmp6_ = _tmp5_->name;

@@ -38,6 +38,15 @@ public class PropertySet : PropertyItem {
 		propertyItems = {};
 	}
 	
+	public PropertySet.copy (PropertySet source) {
+		base (source.name, source.description);
+		PropertyItem[] newPropertyItems = {};
+		foreach (PropertyItem propertyItem in source.propertyItems) {
+			newPropertyItems += propertyItem;
+		}
+		this.propertyItems = newPropertyItems;
+	}
+	
 	/**
 	 * Returns the ID of the property with name //name//. Returns -1 if
 	 * there is no property with that name.

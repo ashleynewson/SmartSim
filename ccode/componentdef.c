@@ -60,6 +60,16 @@ typedef struct _ComponentDefPrivate ComponentDefPrivate;
 typedef struct _ComponentInst ComponentInst;
 typedef struct _ComponentInstClass ComponentInstClass;
 
+#define TYPE_PROJECT (project_get_type ())
+#define PROJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_PROJECT, Project))
+#define PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_PROJECT, ProjectClass))
+#define IS_PROJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_PROJECT))
+#define IS_PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_PROJECT))
+#define PROJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_PROJECT, ProjectClass))
+
+typedef struct _Project Project;
+typedef struct _ProjectClass ProjectClass;
+
 #define TYPE_CUSTOM_COMPONENT_DEF (custom_component_def_get_type ())
 #define CUSTOM_COMPONENT_DEF(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDef))
 #define CUSTOM_COMPONENT_DEF_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDefClass))
@@ -151,6 +161,8 @@ typedef struct _PinDefClass PinDefClass;
 
 typedef struct _PluginComponentDef PluginComponentDef;
 typedef struct _PluginComponentDefClass PluginComponentDefClass;
+
+#define TYPE_VERSION_COMPARISON (version_comparison_get_type ())
 #define _pin_def_unref0(var) ((var == NULL) ? NULL : (var = (pin_def_unref (var), NULL)))
 typedef struct _ComponentInstPrivate ComponentInstPrivate;
 
@@ -188,7 +200,8 @@ typedef struct _ParamSpecComponentDef ParamSpecComponentDef;
 typedef enum  {
 	COMPONENT_DEF_LOAD_ERROR_NOT_COMPONENT,
 	COMPONENT_DEF_LOAD_ERROR_FILE,
-	COMPONENT_DEF_LOAD_ERROR_LOAD
+	COMPONENT_DEF_LOAD_ERROR_LOAD,
+	COMPONENT_DEF_LOAD_ERROR_CANCEL
 } ComponentDefLoadError;
 #define COMPONENT_DEF_LOAD_ERROR component_def_load_error_quark ()
 typedef enum  {
@@ -233,7 +246,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
@@ -259,6 +272,12 @@ typedef enum  {
 	PLUGIN_COMPONENT_DEF_LOAD_ERROR_INVALID
 } PluginComponentDefLoadError;
 #define PLUGIN_COMPONENT_DEF_LOAD_ERROR plugin_component_def_load_error_quark ()
+typedef enum  {
+	VERSION_COMPARISON_EQUAL,
+	VERSION_COMPARISON_LESS,
+	VERSION_COMPARISON_GREATER
+} VersionComparison;
+
 struct _ComponentInst {
 	GTypeInstance parent_instance;
 	volatile int ref_count;
@@ -383,6 +402,13 @@ void value_set_component_inst (GValue* value, gpointer v_object);
 void value_take_component_inst (GValue* value, gpointer v_object);
 gpointer value_get_component_inst (const GValue* value);
 GType component_inst_get_type (void) G_GNUC_CONST;
+gpointer project_ref (gpointer instance);
+void project_unref (gpointer instance);
+GParamSpec* param_spec_project (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
+void value_set_project (GValue* value, gpointer v_object);
+void value_take_project (GValue* value, gpointer v_object);
+gpointer value_get_project (const GValue* value);
+GType project_get_type (void) G_GNUC_CONST;
 GType custom_component_def_get_type (void) G_GNUC_CONST;
 gpointer property_item_ref (gpointer instance);
 void property_item_unref (gpointer instance);
@@ -434,12 +460,16 @@ GQuark custom_component_def_load_error_quark (void);
 GQuark plugin_component_def_load_error_quark (void);
 void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename, GError** error);
 GType plugin_component_def_get_type (void) G_GNUC_CONST;
+GType version_comparison_get_type (void) G_GNUC_CONST;
+VersionComparison core_compare_versions (const gchar* whatVersion, const gchar* withVersion);
+#define CORE_shortVersionString PACKAGE_VERSION
+gboolean core_version_ignored (const gchar* extra);
 Graphic* graphic_new_from_file (const gchar* filename);
 Graphic* graphic_construct_from_file (GType object_type, const gchar* filename);
 PinDef* pin_def_new_load (xmlNode* xmlnode);
 PinDef* pin_def_construct_load (GType object_type, xmlNode* xmlnode);
-static void _vala_array_add24 (PinDef*** array, int* length, int* size, PinDef* value);
-static PinDef** _vala_array_dup4 (PinDef** self, int length);
+static void _vala_array_add26 (PinDef*** array, int* length, int* size, PinDef* value);
+static PinDef** _vala_array_dup5 (PinDef** self, int length);
 void component_def_render (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst, gboolean colourBackground);
 void graphic_render (Graphic* self, cairo_t* context);
 void component_def_render_box (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, gboolean colourBackground, ComponentInst* componentInst);
@@ -461,8 +491,8 @@ GType wire_inst_get_type (void) G_GNUC_CONST;
 GType flow_get_type (void) G_GNUC_CONST;
 GType pin_def_label_type_get_type (void) G_GNUC_CONST;
 static void component_def_real_extra_render (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-void component_def_extra_validate (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
-static void component_def_real_extra_validate (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+void component_def_extra_validate (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+static void component_def_real_extra_validate (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 void component_def_add_properties (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 static void component_def_real_add_properties (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 void component_def_get_properties (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
@@ -514,7 +544,7 @@ static gpointer _pin_def_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add24 (PinDef*** array, int* length, int* size, PinDef* value) {
+static void _vala_array_add26 (PinDef*** array, int* length, int* size, PinDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PinDef*, *array, (*size) + 1);
@@ -524,7 +554,7 @@ static void _vala_array_add24 (PinDef*** array, int* length, int* size, PinDef* 
 }
 
 
-static PinDef** _vala_array_dup4 (PinDef** self, int length) {
+static PinDef** _vala_array_dup5 (PinDef** self, int length) {
 	PinDef** result;
 	int i;
 	result = g_new0 (PinDef*, length + 1);
@@ -554,11 +584,11 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 	PinDef** pinDefs;
 	gint pinDefs_length1;
 	gint _pinDefs_size_;
-	xmlDoc* _tmp209_;
-	PinDef** _tmp210_;
-	gint _tmp210__length1;
-	PinDef** _tmp211_;
-	gint _tmp211__length1;
+	xmlDoc* _tmp247_;
+	PinDef** _tmp248_;
+	gint _tmp248__length1;
+	PinDef** _tmp249_;
+	gint _tmp249__length1;
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (infoFilename != NULL);
@@ -793,6 +823,7 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 			static GQuark _tmp76_label6 = 0;
 			static GQuark _tmp76_label7 = 0;
 			static GQuark _tmp76_label8 = 0;
+			static GQuark _tmp76_label9 = 0;
 			_tmp67_ = _tmp66_;
 			if (!_tmp67_) {
 				xmlNode* _tmp68_;
@@ -815,7 +846,7 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 			_tmp74_ = _tmp73_->name;
 			_tmp75_ = _tmp74_;
 			_tmp77_ = (NULL == _tmp75_) ? 0 : g_quark_from_string (_tmp75_);
-			if (_tmp77_ == ((0 != _tmp76_label0) ? _tmp76_label0 : (_tmp76_label0 = g_quark_from_static_string ("name")))) {
+			if (_tmp77_ == ((0 != _tmp76_label0) ? _tmp76_label0 : (_tmp76_label0 = g_quark_from_static_string ("metadata")))) {
 				switch (0) {
 					default:
 					{
@@ -837,7 +868,9 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 										xmlElementType _tmp86_;
 										xmlNode* _tmp87_;
 										const gchar* _tmp88_;
-										gchar* _tmp89_;
+										const gchar* _tmp89_;
+										GQuark _tmp91_ = 0U;
+										static GQuark _tmp90_label0 = 0;
 										_tmp81_ = _tmp80_;
 										if (!_tmp81_) {
 											xmlNode* _tmp82_;
@@ -851,16 +884,112 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 										if (!(_tmp84_ != NULL)) {
 											break;
 										}
-										_tmp85_ = xmlnode;
+										_tmp85_ = xmldata;
 										_tmp86_ = _tmp85_->type;
 										if (_tmp86_ != XML_ELEMENT_NODE) {
 											continue;
 										}
 										_tmp87_ = xmldata;
-										_tmp88_ = _tmp87_->content;
-										_tmp89_ = g_strdup (_tmp88_);
-										_g_free0 (self->name);
-										self->name = _tmp89_;
+										_tmp88_ = _tmp87_->name;
+										_tmp89_ = _tmp88_;
+										_tmp91_ = (NULL == _tmp89_) ? 0 : g_quark_from_string (_tmp89_);
+										if (_tmp91_ == ((0 != _tmp90_label0) ? _tmp90_label0 : (_tmp90_label0 = g_quark_from_static_string ("version")))) {
+											switch (0) {
+												default:
+												{
+													{
+														{
+															xmlNode* _tmp92_;
+															xmlAttr* _tmp93_;
+															xmlAttr* xmlattr;
+															_tmp92_ = xmldata;
+															_tmp93_ = _tmp92_->properties;
+															xmlattr = _tmp93_;
+															{
+																gboolean _tmp94_;
+																_tmp94_ = TRUE;
+																while (TRUE) {
+																	gboolean _tmp95_;
+																	xmlAttr* _tmp98_;
+																	xmlAttr* _tmp99_;
+																	const gchar* _tmp100_;
+																	const gchar* _tmp101_;
+																	GQuark _tmp103_ = 0U;
+																	static GQuark _tmp102_label0 = 0;
+																	_tmp95_ = _tmp94_;
+																	if (!_tmp95_) {
+																		xmlAttr* _tmp96_;
+																		xmlAttr* _tmp97_;
+																		_tmp96_ = xmlattr;
+																		_tmp97_ = _tmp96_->next;
+																		xmlattr = _tmp97_;
+																	}
+																	_tmp94_ = FALSE;
+																	_tmp98_ = xmlattr;
+																	if (!(_tmp98_ != NULL)) {
+																		break;
+																	}
+																	_tmp99_ = xmlattr;
+																	_tmp100_ = _tmp99_->name;
+																	_tmp101_ = _tmp100_;
+																	_tmp103_ = (NULL == _tmp101_) ? 0 : g_quark_from_string (_tmp101_);
+																	if (_tmp103_ == ((0 != _tmp102_label0) ? _tmp102_label0 : (_tmp102_label0 = g_quark_from_static_string ("smartsim")))) {
+																		switch (0) {
+																			default:
+																			{
+																				xmlAttr* _tmp104_;
+																				xmlNode* _tmp105_;
+																				const gchar* _tmp106_;
+																				VersionComparison _tmp107_ = 0;
+																				_tmp104_ = xmlattr;
+																				_tmp105_ = _tmp104_->children;
+																				_tmp106_ = _tmp105_->content;
+																				_tmp107_ = core_compare_versions (_tmp106_, CORE_shortVersionString);
+																				if (_tmp107_ == VERSION_COMPARISON_GREATER) {
+																					const gchar* _tmp108_;
+																					gchar* _tmp109_;
+																					gchar* _tmp110_;
+																					gchar* _tmp111_;
+																					gchar* _tmp112_;
+																					gboolean _tmp113_ = FALSE;
+																					gboolean _tmp114_;
+																					_tmp108_ = infoFilename;
+																					_tmp109_ = g_strconcat ("Component File: \"", _tmp108_, NULL);
+																					_tmp110_ = _tmp109_;
+																					_tmp111_ = g_strconcat (_tmp110_, "\"", NULL);
+																					_tmp112_ = _tmp111_;
+																					_tmp113_ = core_version_ignored (_tmp112_);
+																					_tmp114_ = _tmp113_ == FALSE;
+																					_g_free0 (_tmp112_);
+																					_g_free0 (_tmp110_);
+																					if (_tmp114_) {
+																						GError* _tmp115_;
+																						_tmp115_ = g_error_new_literal (COMPONENT_DEF_LOAD_ERROR, COMPONENT_DEF_LOAD_ERROR_CANCEL, "SmartSim version of component is higher than running version.");
+																						_inner_error_ = _tmp115_;
+																						if (((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == CUSTOM_COMPONENT_DEF_LOAD_ERROR)) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
+																							g_propagate_error (error, _inner_error_);
+																							pinDefs = (_vala_array_free (pinDefs, pinDefs_length1, (GDestroyNotify) pin_def_unref), NULL);
+																							return;
+																						} else {
+																							pinDefs = (_vala_array_free (pinDefs, pinDefs_length1, (GDestroyNotify) pin_def_unref), NULL);
+																							g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+																							g_clear_error (&_inner_error_);
+																							return;
+																						}
+																					}
+																				}
+																				break;
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+													break;
+												}
+											}
+										}
 									}
 								}
 							}
@@ -868,163 +997,52 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 						break;
 					}
 				}
-			} else if (_tmp77_ == ((0 != _tmp76_label1) ? _tmp76_label1 : (_tmp76_label1 = g_quark_from_static_string ("description")))) {
+			} else if (_tmp77_ == ((0 != _tmp76_label1) ? _tmp76_label1 : (_tmp76_label1 = g_quark_from_static_string ("name")))) {
 				switch (0) {
 					default:
 					{
 						{
 							{
-								xmlNode* _tmp90_;
-								xmlNode* _tmp91_;
+								xmlNode* _tmp116_;
+								xmlNode* _tmp117_;
 								xmlNode* xmldata;
-								_tmp90_ = xmlnode;
-								_tmp91_ = _tmp90_->children;
-								xmldata = _tmp91_;
+								_tmp116_ = xmlnode;
+								_tmp117_ = _tmp116_->children;
+								xmldata = _tmp117_;
 								{
-									gboolean _tmp92_;
-									_tmp92_ = TRUE;
+									gboolean _tmp118_;
+									_tmp118_ = TRUE;
 									while (TRUE) {
-										gboolean _tmp93_;
-										xmlNode* _tmp96_;
-										xmlNode* _tmp97_;
-										xmlElementType _tmp98_;
-										xmlNode* _tmp99_;
-										const gchar* _tmp100_;
-										gchar* _tmp101_;
-										_tmp93_ = _tmp92_;
-										if (!_tmp93_) {
-											xmlNode* _tmp94_;
-											xmlNode* _tmp95_;
-											_tmp94_ = xmldata;
-											_tmp95_ = _tmp94_->next;
-											xmldata = _tmp95_;
-										}
-										_tmp92_ = FALSE;
-										_tmp96_ = xmldata;
-										if (!(_tmp96_ != NULL)) {
-											break;
-										}
-										_tmp97_ = xmlnode;
-										_tmp98_ = _tmp97_->type;
-										if (_tmp98_ != XML_ELEMENT_NODE) {
-											continue;
-										}
-										_tmp99_ = xmldata;
-										_tmp100_ = _tmp99_->content;
-										_tmp101_ = g_strdup (_tmp100_);
-										_g_free0 (self->description);
-										self->description = _tmp101_;
-									}
-								}
-							}
-						}
-						break;
-					}
-				}
-			} else if (_tmp77_ == ((0 != _tmp76_label2) ? _tmp76_label2 : (_tmp76_label2 = g_quark_from_static_string ("icon")))) {
-				switch (0) {
-					default:
-					{
-						{
-							{
-								xmlNode* _tmp102_;
-								xmlNode* _tmp103_;
-								xmlNode* xmldata;
-								_tmp102_ = xmlnode;
-								_tmp103_ = _tmp102_->children;
-								xmldata = _tmp103_;
-								{
-									gboolean _tmp104_;
-									_tmp104_ = TRUE;
-									while (TRUE) {
-										gboolean _tmp105_;
-										xmlNode* _tmp108_;
-										xmlNode* _tmp109_;
-										xmlElementType _tmp110_;
-										xmlNode* _tmp111_;
-										const gchar* _tmp112_;
-										gchar* _tmp113_;
-										_tmp105_ = _tmp104_;
-										if (!_tmp105_) {
-											xmlNode* _tmp106_;
-											xmlNode* _tmp107_;
-											_tmp106_ = xmldata;
-											_tmp107_ = _tmp106_->next;
-											xmldata = _tmp107_;
-										}
-										_tmp104_ = FALSE;
-										_tmp108_ = xmldata;
-										if (!(_tmp108_ != NULL)) {
-											break;
-										}
-										_tmp109_ = xmlnode;
-										_tmp110_ = _tmp109_->type;
-										if (_tmp110_ != XML_ELEMENT_NODE) {
-											continue;
-										}
-										_tmp111_ = xmldata;
-										_tmp112_ = _tmp111_->content;
-										_tmp113_ = g_strdup (_tmp112_);
-										_g_free0 (self->iconFilename);
-										self->iconFilename = _tmp113_;
-									}
-								}
-							}
-						}
-						break;
-					}
-				}
-			} else if (_tmp77_ == ((0 != _tmp76_label3) ? _tmp76_label3 : (_tmp76_label3 = g_quark_from_static_string ("graphic")))) {
-				switch (0) {
-					default:
-					{
-						{
-							{
-								xmlNode* _tmp114_;
-								xmlNode* _tmp115_;
-								xmlNode* xmldata;
-								_tmp114_ = xmlnode;
-								_tmp115_ = _tmp114_->children;
-								xmldata = _tmp115_;
-								{
-									gboolean _tmp116_;
-									_tmp116_ = TRUE;
-									while (TRUE) {
-										gboolean _tmp117_;
-										xmlNode* _tmp120_;
-										xmlNode* _tmp121_;
-										xmlElementType _tmp122_;
+										gboolean _tmp119_;
+										xmlNode* _tmp122_;
 										xmlNode* _tmp123_;
-										const gchar* _tmp124_;
-										gchar* _tmp125_;
-										gchar* _tmp126_;
-										Graphic* _tmp127_;
-										_tmp117_ = _tmp116_;
-										if (!_tmp117_) {
-											xmlNode* _tmp118_;
-											xmlNode* _tmp119_;
-											_tmp118_ = xmldata;
-											_tmp119_ = _tmp118_->next;
-											xmldata = _tmp119_;
+										xmlElementType _tmp124_;
+										xmlNode* _tmp125_;
+										const gchar* _tmp126_;
+										gchar* _tmp127_;
+										_tmp119_ = _tmp118_;
+										if (!_tmp119_) {
+											xmlNode* _tmp120_;
+											xmlNode* _tmp121_;
+											_tmp120_ = xmldata;
+											_tmp121_ = _tmp120_->next;
+											xmldata = _tmp121_;
 										}
-										_tmp116_ = FALSE;
-										_tmp120_ = xmldata;
-										if (!(_tmp120_ != NULL)) {
+										_tmp118_ = FALSE;
+										_tmp122_ = xmldata;
+										if (!(_tmp122_ != NULL)) {
 											break;
 										}
-										_tmp121_ = xmlnode;
-										_tmp122_ = _tmp121_->type;
-										if (_tmp122_ != XML_ELEMENT_NODE) {
+										_tmp123_ = xmlnode;
+										_tmp124_ = _tmp123_->type;
+										if (_tmp124_ != XML_ELEMENT_NODE) {
 											continue;
 										}
-										_tmp123_ = xmldata;
-										_tmp124_ = _tmp123_->content;
-										_tmp125_ = g_strconcat (PACKAGE_DATADIR "components/graphics/", _tmp124_, NULL);
-										_tmp126_ = _tmp125_;
-										_tmp127_ = graphic_new_from_file (_tmp126_);
-										_graphic_unref0 (self->graphic);
-										self->graphic = _tmp127_;
-										_g_free0 (_tmp126_);
+										_tmp125_ = xmldata;
+										_tmp126_ = _tmp125_->content;
+										_tmp127_ = g_strdup (_tmp126_);
+										_g_free0 (self->name);
+										self->name = _tmp127_;
 									}
 								}
 							}
@@ -1032,7 +1050,7 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 						break;
 					}
 				}
-			} else if (_tmp77_ == ((0 != _tmp76_label4) ? _tmp76_label4 : (_tmp76_label4 = g_quark_from_static_string ("label")))) {
+			} else if (_tmp77_ == ((0 != _tmp76_label2) ? _tmp76_label2 : (_tmp76_label2 = g_quark_from_static_string ("description")))) {
 				switch (0) {
 					default:
 					{
@@ -1076,8 +1094,8 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 										_tmp137_ = xmldata;
 										_tmp138_ = _tmp137_->content;
 										_tmp139_ = g_strdup (_tmp138_);
-										_g_free0 (self->label);
-										self->label = _tmp139_;
+										_g_free0 (self->description);
+										self->description = _tmp139_;
 									}
 								}
 							}
@@ -1085,131 +1103,52 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 						break;
 					}
 				}
-			} else if (_tmp77_ == ((0 != _tmp76_label5) ? _tmp76_label5 : (_tmp76_label5 = g_quark_from_static_string ("bound")))) {
+			} else if (_tmp77_ == ((0 != _tmp76_label3) ? _tmp76_label3 : (_tmp76_label3 = g_quark_from_static_string ("icon")))) {
 				switch (0) {
 					default:
 					{
 						{
 							{
 								xmlNode* _tmp140_;
-								xmlAttr* _tmp141_;
-								xmlAttr* xmlattr;
+								xmlNode* _tmp141_;
+								xmlNode* xmldata;
 								_tmp140_ = xmlnode;
-								_tmp141_ = _tmp140_->properties;
-								xmlattr = _tmp141_;
+								_tmp141_ = _tmp140_->children;
+								xmldata = _tmp141_;
 								{
 									gboolean _tmp142_;
 									_tmp142_ = TRUE;
 									while (TRUE) {
 										gboolean _tmp143_;
-										xmlAttr* _tmp146_;
-										xmlAttr* _tmp147_;
-										const gchar* _tmp148_;
-										const gchar* _tmp149_;
-										GQuark _tmp151_ = 0U;
-										static GQuark _tmp150_label0 = 0;
-										static GQuark _tmp150_label1 = 0;
-										static GQuark _tmp150_label2 = 0;
-										static GQuark _tmp150_label3 = 0;
-										static GQuark _tmp150_label4 = 0;
+										xmlNode* _tmp146_;
+										xmlNode* _tmp147_;
+										xmlElementType _tmp148_;
+										xmlNode* _tmp149_;
+										const gchar* _tmp150_;
+										gchar* _tmp151_;
 										_tmp143_ = _tmp142_;
 										if (!_tmp143_) {
-											xmlAttr* _tmp144_;
-											xmlAttr* _tmp145_;
-											_tmp144_ = xmlattr;
+											xmlNode* _tmp144_;
+											xmlNode* _tmp145_;
+											_tmp144_ = xmldata;
 											_tmp145_ = _tmp144_->next;
-											xmlattr = _tmp145_;
+											xmldata = _tmp145_;
 										}
 										_tmp142_ = FALSE;
-										_tmp146_ = xmlattr;
+										_tmp146_ = xmldata;
 										if (!(_tmp146_ != NULL)) {
 											break;
 										}
-										_tmp147_ = xmlattr;
-										_tmp148_ = _tmp147_->name;
-										_tmp149_ = _tmp148_;
-										_tmp151_ = (NULL == _tmp149_) ? 0 : g_quark_from_string (_tmp149_);
-										if (_tmp151_ == ((0 != _tmp150_label0) ? _tmp150_label0 : (_tmp150_label0 = g_quark_from_static_string ("right")))) {
-											switch (0) {
-												default:
-												{
-													xmlAttr* _tmp152_;
-													xmlNode* _tmp153_;
-													const gchar* _tmp154_;
-													gint _tmp155_ = 0;
-													_tmp152_ = xmlattr;
-													_tmp153_ = _tmp152_->children;
-													_tmp154_ = _tmp153_->content;
-													_tmp155_ = atoi (_tmp154_);
-													self->rightBound = _tmp155_;
-													break;
-												}
-											}
-										} else if (_tmp151_ == ((0 != _tmp150_label1) ? _tmp150_label1 : (_tmp150_label1 = g_quark_from_static_string ("down")))) {
-											switch (0) {
-												default:
-												{
-													xmlAttr* _tmp156_;
-													xmlNode* _tmp157_;
-													const gchar* _tmp158_;
-													gint _tmp159_ = 0;
-													_tmp156_ = xmlattr;
-													_tmp157_ = _tmp156_->children;
-													_tmp158_ = _tmp157_->content;
-													_tmp159_ = atoi (_tmp158_);
-													self->downBound = _tmp159_;
-													break;
-												}
-											}
-										} else if (_tmp151_ == ((0 != _tmp150_label2) ? _tmp150_label2 : (_tmp150_label2 = g_quark_from_static_string ("left")))) {
-											switch (0) {
-												default:
-												{
-													xmlAttr* _tmp160_;
-													xmlNode* _tmp161_;
-													const gchar* _tmp162_;
-													gint _tmp163_ = 0;
-													_tmp160_ = xmlattr;
-													_tmp161_ = _tmp160_->children;
-													_tmp162_ = _tmp161_->content;
-													_tmp163_ = atoi (_tmp162_);
-													self->leftBound = _tmp163_;
-													break;
-												}
-											}
-										} else if (_tmp151_ == ((0 != _tmp150_label3) ? _tmp150_label3 : (_tmp150_label3 = g_quark_from_static_string ("up")))) {
-											switch (0) {
-												default:
-												{
-													xmlAttr* _tmp164_;
-													xmlNode* _tmp165_;
-													const gchar* _tmp166_;
-													gint _tmp167_ = 0;
-													_tmp164_ = xmlattr;
-													_tmp165_ = _tmp164_->children;
-													_tmp166_ = _tmp165_->content;
-													_tmp167_ = atoi (_tmp166_);
-													self->upBound = _tmp167_;
-													break;
-												}
-											}
-										} else if (_tmp151_ == ((0 != _tmp150_label4) ? _tmp150_label4 : (_tmp150_label4 = g_quark_from_static_string ("drawbox")))) {
-											switch (0) {
-												default:
-												{
-													xmlAttr* _tmp168_;
-													xmlNode* _tmp169_;
-													const gchar* _tmp170_;
-													gboolean _tmp171_ = FALSE;
-													_tmp168_ = xmlattr;
-													_tmp169_ = _tmp168_->children;
-													_tmp170_ = _tmp169_->content;
-													_tmp171_ = bool_parse (_tmp170_);
-													self->drawBox = _tmp171_;
-													break;
-												}
-											}
+										_tmp147_ = xmlnode;
+										_tmp148_ = _tmp147_->type;
+										if (_tmp148_ != XML_ELEMENT_NODE) {
+											continue;
 										}
+										_tmp149_ = xmldata;
+										_tmp150_ = _tmp149_->content;
+										_tmp151_ = g_strdup (_tmp150_);
+										_g_free0 (self->iconFilename);
+										self->iconFilename = _tmp151_;
 									}
 								}
 							}
@@ -1217,88 +1156,178 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 						break;
 					}
 				}
-			} else if ((_tmp77_ == ((0 != _tmp76_label6) ? _tmp76_label6 : (_tmp76_label6 = g_quark_from_static_string ("color")))) || (_tmp77_ == ((0 != _tmp76_label7) ? _tmp76_label7 : (_tmp76_label7 = g_quark_from_static_string ("colour"))))) {
+			} else if (_tmp77_ == ((0 != _tmp76_label4) ? _tmp76_label4 : (_tmp76_label4 = g_quark_from_static_string ("graphic")))) {
 				switch (0) {
 					default:
 					{
 						{
 							{
-								xmlNode* _tmp172_;
-								xmlAttr* _tmp173_;
-								xmlAttr* xmlattr;
-								_tmp172_ = xmlnode;
-								_tmp173_ = _tmp172_->properties;
-								xmlattr = _tmp173_;
+								xmlNode* _tmp152_;
+								xmlNode* _tmp153_;
+								xmlNode* xmldata;
+								_tmp152_ = xmlnode;
+								_tmp153_ = _tmp152_->children;
+								xmldata = _tmp153_;
 								{
-									gboolean _tmp174_;
-									_tmp174_ = TRUE;
+									gboolean _tmp154_;
+									_tmp154_ = TRUE;
 									while (TRUE) {
-										gboolean _tmp175_;
-										xmlAttr* _tmp178_;
-										xmlAttr* _tmp179_;
-										const gchar* _tmp180_;
-										const gchar* _tmp181_;
-										GQuark _tmp183_ = 0U;
-										static GQuark _tmp182_label0 = 0;
-										static GQuark _tmp182_label1 = 0;
-										static GQuark _tmp182_label2 = 0;
-										static GQuark _tmp182_label3 = 0;
-										_tmp175_ = _tmp174_;
-										if (!_tmp175_) {
-											xmlAttr* _tmp176_;
-											xmlAttr* _tmp177_;
-											_tmp176_ = xmlattr;
-											_tmp177_ = _tmp176_->next;
-											xmlattr = _tmp177_;
+										gboolean _tmp155_;
+										xmlNode* _tmp158_;
+										xmlNode* _tmp159_;
+										xmlElementType _tmp160_;
+										xmlNode* _tmp161_;
+										const gchar* _tmp162_;
+										gchar* _tmp163_;
+										gchar* _tmp164_;
+										Graphic* _tmp165_;
+										_tmp155_ = _tmp154_;
+										if (!_tmp155_) {
+											xmlNode* _tmp156_;
+											xmlNode* _tmp157_;
+											_tmp156_ = xmldata;
+											_tmp157_ = _tmp156_->next;
+											xmldata = _tmp157_;
 										}
-										_tmp174_ = FALSE;
-										_tmp178_ = xmlattr;
-										if (!(_tmp178_ != NULL)) {
+										_tmp154_ = FALSE;
+										_tmp158_ = xmldata;
+										if (!(_tmp158_ != NULL)) {
 											break;
 										}
-										_tmp179_ = xmlattr;
-										_tmp180_ = _tmp179_->name;
+										_tmp159_ = xmlnode;
+										_tmp160_ = _tmp159_->type;
+										if (_tmp160_ != XML_ELEMENT_NODE) {
+											continue;
+										}
+										_tmp161_ = xmldata;
+										_tmp162_ = _tmp161_->content;
+										_tmp163_ = g_strconcat (PACKAGE_DATADIR "components/graphics/", _tmp162_, NULL);
+										_tmp164_ = _tmp163_;
+										_tmp165_ = graphic_new_from_file (_tmp164_);
+										_graphic_unref0 (self->graphic);
+										self->graphic = _tmp165_;
+										_g_free0 (_tmp164_);
+									}
+								}
+							}
+						}
+						break;
+					}
+				}
+			} else if (_tmp77_ == ((0 != _tmp76_label5) ? _tmp76_label5 : (_tmp76_label5 = g_quark_from_static_string ("label")))) {
+				switch (0) {
+					default:
+					{
+						{
+							{
+								xmlNode* _tmp166_;
+								xmlNode* _tmp167_;
+								xmlNode* xmldata;
+								_tmp166_ = xmlnode;
+								_tmp167_ = _tmp166_->children;
+								xmldata = _tmp167_;
+								{
+									gboolean _tmp168_;
+									_tmp168_ = TRUE;
+									while (TRUE) {
+										gboolean _tmp169_;
+										xmlNode* _tmp172_;
+										xmlNode* _tmp173_;
+										xmlElementType _tmp174_;
+										xmlNode* _tmp175_;
+										const gchar* _tmp176_;
+										gchar* _tmp177_;
+										_tmp169_ = _tmp168_;
+										if (!_tmp169_) {
+											xmlNode* _tmp170_;
+											xmlNode* _tmp171_;
+											_tmp170_ = xmldata;
+											_tmp171_ = _tmp170_->next;
+											xmldata = _tmp171_;
+										}
+										_tmp168_ = FALSE;
+										_tmp172_ = xmldata;
+										if (!(_tmp172_ != NULL)) {
+											break;
+										}
+										_tmp173_ = xmlnode;
+										_tmp174_ = _tmp173_->type;
+										if (_tmp174_ != XML_ELEMENT_NODE) {
+											continue;
+										}
+										_tmp175_ = xmldata;
+										_tmp176_ = _tmp175_->content;
+										_tmp177_ = g_strdup (_tmp176_);
+										_g_free0 (self->label);
+										self->label = _tmp177_;
+									}
+								}
+							}
+						}
+						break;
+					}
+				}
+			} else if (_tmp77_ == ((0 != _tmp76_label6) ? _tmp76_label6 : (_tmp76_label6 = g_quark_from_static_string ("bound")))) {
+				switch (0) {
+					default:
+					{
+						{
+							{
+								xmlNode* _tmp178_;
+								xmlAttr* _tmp179_;
+								xmlAttr* xmlattr;
+								_tmp178_ = xmlnode;
+								_tmp179_ = _tmp178_->properties;
+								xmlattr = _tmp179_;
+								{
+									gboolean _tmp180_;
+									_tmp180_ = TRUE;
+									while (TRUE) {
+										gboolean _tmp181_;
+										xmlAttr* _tmp184_;
+										xmlAttr* _tmp185_;
+										const gchar* _tmp186_;
+										const gchar* _tmp187_;
+										GQuark _tmp189_ = 0U;
+										static GQuark _tmp188_label0 = 0;
+										static GQuark _tmp188_label1 = 0;
+										static GQuark _tmp188_label2 = 0;
+										static GQuark _tmp188_label3 = 0;
+										static GQuark _tmp188_label4 = 0;
 										_tmp181_ = _tmp180_;
-										_tmp183_ = (NULL == _tmp181_) ? 0 : g_quark_from_string (_tmp181_);
-										if (_tmp183_ == ((0 != _tmp182_label0) ? _tmp182_label0 : (_tmp182_label0 = g_quark_from_static_string ("a")))) {
+										if (!_tmp181_) {
+											xmlAttr* _tmp182_;
+											xmlAttr* _tmp183_;
+											_tmp182_ = xmlattr;
+											_tmp183_ = _tmp182_->next;
+											xmlattr = _tmp183_;
+										}
+										_tmp180_ = FALSE;
+										_tmp184_ = xmlattr;
+										if (!(_tmp184_ != NULL)) {
+											break;
+										}
+										_tmp185_ = xmlattr;
+										_tmp186_ = _tmp185_->name;
+										_tmp187_ = _tmp186_;
+										_tmp189_ = (NULL == _tmp187_) ? 0 : g_quark_from_string (_tmp187_);
+										if (_tmp189_ == ((0 != _tmp188_label0) ? _tmp188_label0 : (_tmp188_label0 = g_quark_from_static_string ("right")))) {
 											switch (0) {
 												default:
 												{
-													xmlAttr* _tmp184_;
-													xmlNode* _tmp185_;
-													const gchar* _tmp186_;
-													gint _tmp187_ = 0;
-													gint _tmp188_;
-													_tmp184_ = xmlattr;
-													_tmp185_ = _tmp184_->children;
-													_tmp186_ = _tmp185_->content;
-													_tmp187_ = atoi (_tmp186_);
-													self->backgroundAlpha = _tmp187_;
-													_tmp188_ = self->backgroundAlpha;
-													self->backgroundAlphaF = ((gdouble) _tmp188_) / 255.0;
+													xmlAttr* _tmp190_;
+													xmlNode* _tmp191_;
+													const gchar* _tmp192_;
+													gint _tmp193_ = 0;
+													_tmp190_ = xmlattr;
+													_tmp191_ = _tmp190_->children;
+													_tmp192_ = _tmp191_->content;
+													_tmp193_ = atoi (_tmp192_);
+													self->rightBound = _tmp193_;
 													break;
 												}
 											}
-										} else if (_tmp183_ == ((0 != _tmp182_label1) ? _tmp182_label1 : (_tmp182_label1 = g_quark_from_static_string ("r")))) {
-											switch (0) {
-												default:
-												{
-													xmlAttr* _tmp189_;
-													xmlNode* _tmp190_;
-													const gchar* _tmp191_;
-													gint _tmp192_ = 0;
-													gint _tmp193_;
-													_tmp189_ = xmlattr;
-													_tmp190_ = _tmp189_->children;
-													_tmp191_ = _tmp190_->content;
-													_tmp192_ = atoi (_tmp191_);
-													self->backgroundRed = _tmp192_;
-													_tmp193_ = self->backgroundRed;
-													self->backgroundRedF = ((gdouble) _tmp193_) / 255.0;
-													break;
-												}
-											}
-										} else if (_tmp183_ == ((0 != _tmp182_label2) ? _tmp182_label2 : (_tmp182_label2 = g_quark_from_static_string ("g")))) {
+										} else if (_tmp189_ == ((0 != _tmp188_label1) ? _tmp188_label1 : (_tmp188_label1 = g_quark_from_static_string ("down")))) {
 											switch (0) {
 												default:
 												{
@@ -1306,33 +1335,59 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 													xmlNode* _tmp195_;
 													const gchar* _tmp196_;
 													gint _tmp197_ = 0;
-													gint _tmp198_;
 													_tmp194_ = xmlattr;
 													_tmp195_ = _tmp194_->children;
 													_tmp196_ = _tmp195_->content;
 													_tmp197_ = atoi (_tmp196_);
-													self->backgroundGreen = _tmp197_;
-													_tmp198_ = self->backgroundGreen;
-													self->backgroundGreenF = ((gdouble) _tmp198_) / 255.0;
+													self->downBound = _tmp197_;
 													break;
 												}
 											}
-										} else if (_tmp183_ == ((0 != _tmp182_label3) ? _tmp182_label3 : (_tmp182_label3 = g_quark_from_static_string ("b")))) {
+										} else if (_tmp189_ == ((0 != _tmp188_label2) ? _tmp188_label2 : (_tmp188_label2 = g_quark_from_static_string ("left")))) {
 											switch (0) {
 												default:
 												{
-													xmlAttr* _tmp199_;
-													xmlNode* _tmp200_;
-													const gchar* _tmp201_;
-													gint _tmp202_ = 0;
-													gint _tmp203_;
-													_tmp199_ = xmlattr;
-													_tmp200_ = _tmp199_->children;
-													_tmp201_ = _tmp200_->content;
-													_tmp202_ = atoi (_tmp201_);
-													self->backgroundBlue = _tmp202_;
-													_tmp203_ = self->backgroundBlue;
-													self->backgroundBlueF = ((gdouble) _tmp203_) / 255.0;
+													xmlAttr* _tmp198_;
+													xmlNode* _tmp199_;
+													const gchar* _tmp200_;
+													gint _tmp201_ = 0;
+													_tmp198_ = xmlattr;
+													_tmp199_ = _tmp198_->children;
+													_tmp200_ = _tmp199_->content;
+													_tmp201_ = atoi (_tmp200_);
+													self->leftBound = _tmp201_;
+													break;
+												}
+											}
+										} else if (_tmp189_ == ((0 != _tmp188_label3) ? _tmp188_label3 : (_tmp188_label3 = g_quark_from_static_string ("up")))) {
+											switch (0) {
+												default:
+												{
+													xmlAttr* _tmp202_;
+													xmlNode* _tmp203_;
+													const gchar* _tmp204_;
+													gint _tmp205_ = 0;
+													_tmp202_ = xmlattr;
+													_tmp203_ = _tmp202_->children;
+													_tmp204_ = _tmp203_->content;
+													_tmp205_ = atoi (_tmp204_);
+													self->upBound = _tmp205_;
+													break;
+												}
+											}
+										} else if (_tmp189_ == ((0 != _tmp188_label4) ? _tmp188_label4 : (_tmp188_label4 = g_quark_from_static_string ("drawbox")))) {
+											switch (0) {
+												default:
+												{
+													xmlAttr* _tmp206_;
+													xmlNode* _tmp207_;
+													const gchar* _tmp208_;
+													gboolean _tmp209_ = FALSE;
+													_tmp206_ = xmlattr;
+													_tmp207_ = _tmp206_->children;
+													_tmp208_ = _tmp207_->content;
+													_tmp209_ = bool_parse (_tmp208_);
+													self->drawBox = _tmp209_;
 													break;
 												}
 											}
@@ -1344,26 +1399,153 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 						break;
 					}
 				}
-			} else if (_tmp77_ == ((0 != _tmp76_label8) ? _tmp76_label8 : (_tmp76_label8 = g_quark_from_static_string ("pin")))) {
+			} else if ((_tmp77_ == ((0 != _tmp76_label7) ? _tmp76_label7 : (_tmp76_label7 = g_quark_from_static_string ("color")))) || (_tmp77_ == ((0 != _tmp76_label8) ? _tmp76_label8 : (_tmp76_label8 = g_quark_from_static_string ("colour"))))) {
 				switch (0) {
 					default:
 					{
 						{
-							xmlNode* _tmp204_;
-							PinDef* _tmp205_;
+							{
+								xmlNode* _tmp210_;
+								xmlAttr* _tmp211_;
+								xmlAttr* xmlattr;
+								_tmp210_ = xmlnode;
+								_tmp211_ = _tmp210_->properties;
+								xmlattr = _tmp211_;
+								{
+									gboolean _tmp212_;
+									_tmp212_ = TRUE;
+									while (TRUE) {
+										gboolean _tmp213_;
+										xmlAttr* _tmp216_;
+										xmlAttr* _tmp217_;
+										const gchar* _tmp218_;
+										const gchar* _tmp219_;
+										GQuark _tmp221_ = 0U;
+										static GQuark _tmp220_label0 = 0;
+										static GQuark _tmp220_label1 = 0;
+										static GQuark _tmp220_label2 = 0;
+										static GQuark _tmp220_label3 = 0;
+										_tmp213_ = _tmp212_;
+										if (!_tmp213_) {
+											xmlAttr* _tmp214_;
+											xmlAttr* _tmp215_;
+											_tmp214_ = xmlattr;
+											_tmp215_ = _tmp214_->next;
+											xmlattr = _tmp215_;
+										}
+										_tmp212_ = FALSE;
+										_tmp216_ = xmlattr;
+										if (!(_tmp216_ != NULL)) {
+											break;
+										}
+										_tmp217_ = xmlattr;
+										_tmp218_ = _tmp217_->name;
+										_tmp219_ = _tmp218_;
+										_tmp221_ = (NULL == _tmp219_) ? 0 : g_quark_from_string (_tmp219_);
+										if (_tmp221_ == ((0 != _tmp220_label0) ? _tmp220_label0 : (_tmp220_label0 = g_quark_from_static_string ("a")))) {
+											switch (0) {
+												default:
+												{
+													xmlAttr* _tmp222_;
+													xmlNode* _tmp223_;
+													const gchar* _tmp224_;
+													gint _tmp225_ = 0;
+													gint _tmp226_;
+													_tmp222_ = xmlattr;
+													_tmp223_ = _tmp222_->children;
+													_tmp224_ = _tmp223_->content;
+													_tmp225_ = atoi (_tmp224_);
+													self->backgroundAlpha = _tmp225_;
+													_tmp226_ = self->backgroundAlpha;
+													self->backgroundAlphaF = ((gdouble) _tmp226_) / 255.0;
+													break;
+												}
+											}
+										} else if (_tmp221_ == ((0 != _tmp220_label1) ? _tmp220_label1 : (_tmp220_label1 = g_quark_from_static_string ("r")))) {
+											switch (0) {
+												default:
+												{
+													xmlAttr* _tmp227_;
+													xmlNode* _tmp228_;
+													const gchar* _tmp229_;
+													gint _tmp230_ = 0;
+													gint _tmp231_;
+													_tmp227_ = xmlattr;
+													_tmp228_ = _tmp227_->children;
+													_tmp229_ = _tmp228_->content;
+													_tmp230_ = atoi (_tmp229_);
+													self->backgroundRed = _tmp230_;
+													_tmp231_ = self->backgroundRed;
+													self->backgroundRedF = ((gdouble) _tmp231_) / 255.0;
+													break;
+												}
+											}
+										} else if (_tmp221_ == ((0 != _tmp220_label2) ? _tmp220_label2 : (_tmp220_label2 = g_quark_from_static_string ("g")))) {
+											switch (0) {
+												default:
+												{
+													xmlAttr* _tmp232_;
+													xmlNode* _tmp233_;
+													const gchar* _tmp234_;
+													gint _tmp235_ = 0;
+													gint _tmp236_;
+													_tmp232_ = xmlattr;
+													_tmp233_ = _tmp232_->children;
+													_tmp234_ = _tmp233_->content;
+													_tmp235_ = atoi (_tmp234_);
+													self->backgroundGreen = _tmp235_;
+													_tmp236_ = self->backgroundGreen;
+													self->backgroundGreenF = ((gdouble) _tmp236_) / 255.0;
+													break;
+												}
+											}
+										} else if (_tmp221_ == ((0 != _tmp220_label3) ? _tmp220_label3 : (_tmp220_label3 = g_quark_from_static_string ("b")))) {
+											switch (0) {
+												default:
+												{
+													xmlAttr* _tmp237_;
+													xmlNode* _tmp238_;
+													const gchar* _tmp239_;
+													gint _tmp240_ = 0;
+													gint _tmp241_;
+													_tmp237_ = xmlattr;
+													_tmp238_ = _tmp237_->children;
+													_tmp239_ = _tmp238_->content;
+													_tmp240_ = atoi (_tmp239_);
+													self->backgroundBlue = _tmp240_;
+													_tmp241_ = self->backgroundBlue;
+													self->backgroundBlueF = ((gdouble) _tmp241_) / 255.0;
+													break;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+						break;
+					}
+				}
+			} else if (_tmp77_ == ((0 != _tmp76_label9) ? _tmp76_label9 : (_tmp76_label9 = g_quark_from_static_string ("pin")))) {
+				switch (0) {
+					default:
+					{
+						{
+							xmlNode* _tmp242_;
+							PinDef* _tmp243_;
 							PinDef* pinDef;
-							PinDef** _tmp206_;
-							gint _tmp206__length1;
-							PinDef* _tmp207_;
-							PinDef* _tmp208_;
-							_tmp204_ = xmlnode;
-							_tmp205_ = pin_def_new_load (_tmp204_);
-							pinDef = _tmp205_;
-							_tmp206_ = pinDefs;
-							_tmp206__length1 = pinDefs_length1;
-							_tmp207_ = pinDef;
-							_tmp208_ = _pin_def_ref0 (_tmp207_);
-							_vala_array_add24 (&pinDefs, &pinDefs_length1, &_pinDefs_size_, _tmp208_);
+							PinDef** _tmp244_;
+							gint _tmp244__length1;
+							PinDef* _tmp245_;
+							PinDef* _tmp246_;
+							_tmp242_ = xmlnode;
+							_tmp243_ = pin_def_new_load (_tmp242_);
+							pinDef = _tmp243_;
+							_tmp244_ = pinDefs;
+							_tmp244__length1 = pinDefs_length1;
+							_tmp245_ = pinDef;
+							_tmp246_ = _pin_def_ref0 (_tmp245_);
+							_vala_array_add26 (&pinDefs, &pinDefs_length1, &_pinDefs_size_, _tmp246_);
 							_pin_def_unref0 (pinDef);
 						}
 						break;
@@ -1372,15 +1554,15 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 			}
 		}
 	}
-	_tmp209_ = xmldoc;
-	xmlFreeDoc (_tmp209_);
-	_tmp210_ = pinDefs;
-	_tmp210__length1 = pinDefs_length1;
-	_tmp211_ = (_tmp210_ != NULL) ? _vala_array_dup4 (_tmp210_, _tmp210__length1) : ((gpointer) _tmp210_);
-	_tmp211__length1 = _tmp210__length1;
+	_tmp247_ = xmldoc;
+	xmlFreeDoc (_tmp247_);
+	_tmp248_ = pinDefs;
+	_tmp248__length1 = pinDefs_length1;
+	_tmp249_ = (_tmp248_ != NULL) ? _vala_array_dup5 (_tmp248_, _tmp248__length1) : ((gpointer) _tmp248_);
+	_tmp249__length1 = _tmp248__length1;
 	self->pinDefs = (_vala_array_free (self->pinDefs, self->pinDefs_length1, (GDestroyNotify) pin_def_unref), NULL);
-	self->pinDefs = _tmp211_;
-	self->pinDefs_length1 = _tmp211__length1;
+	self->pinDefs = _tmp249_;
+	self->pinDefs_length1 = _tmp249__length1;
 	pinDefs = (_vala_array_free (pinDefs, pinDefs_length1, (GDestroyNotify) pin_def_unref), NULL);
 	return;
 }
@@ -2083,15 +2265,16 @@ void component_def_extra_render (ComponentDef* self, cairo_t* context, Direction
 
 
 /**
- * Some ComponentDefs do extra validation.
+ * Some ComponentDefs do extra validation. CURRENTLY UNUSED.
  */
-static void component_def_real_extra_validate (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst) {
+static void component_def_real_extra_validate (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst) {
+	g_return_if_fail (project != NULL);
 }
 
 
-void component_def_extra_validate (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst) {
+void component_def_extra_validate (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst) {
 	g_return_if_fail (self != NULL);
-	COMPONENT_DEF_GET_CLASS (self)->extra_validate (self, componentChain, componentChain_length1, componentInst);
+	COMPONENT_DEF_GET_CLASS (self)->extra_validate (self, project, componentChain, componentChain_length1, componentInst);
 }
 
 

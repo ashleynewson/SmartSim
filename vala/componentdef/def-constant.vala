@@ -39,12 +39,12 @@ public class ConstantComponentDef : ComponentDef {
 		try {
 			constantString = PropertyItemSelection.get_data_throw (configurationProperty, "Value");
 		} catch {
-			constantString = "0 (False)";
+			constantString = "0";
 		}
 		
 		PropertyItemSelection selection = new PropertyItemSelection ("Value", "The constant value to output");
-		selection.add_option ("0 (False)");
-		selection.add_option ("1 (True)");
+		selection.add_option ("0", "0 (False)");
+		selection.add_option ("1", "1 (True)");
 		selection.set_option (constantString);
 		queryProperty.add_item (selection);
 	}
@@ -55,20 +55,20 @@ public class ConstantComponentDef : ComponentDef {
 		try {
 			constantString = PropertyItemSelection.get_data_throw (queryProperty, "Value");
 		} catch {
-			constantString = "0 (False)";
+			constantString = "0";
 		}
 		
 		configurationProperty = new PropertySet (name + " configuration");
 		
 		PropertyItemSelection selection = new PropertyItemSelection ("Value", "");
-		selection.add_option ("0 (False)");
-		selection.add_option ("1 (True)");
+		selection.add_option ("0", "0 (False)");
+		selection.add_option ("1", "1 (True)");
 		selection.set_option (constantString);
 		configurationProperty.add_item (selection);
 	}
 	
 	public override void load_properties (Xml.Node* xmlnode, out PropertySet configurationProperty) {
-		string constantString = "0 (False)";
+		string constantString = "0";
 		
 		configurationProperty = new PropertySet (name + " configuration");
 		
@@ -81,9 +81,18 @@ public class ConstantComponentDef : ComponentDef {
 		}
 		
 		PropertyItemSelection selection = new PropertyItemSelection ("Value", "");
-		selection.add_option ("0 (False)");
-		selection.add_option ("1 (True)");
-		selection.set_option (constantString);
+		selection.add_option ("0", "0 (False)");
+		selection.add_option ("1", "1 (True)");
+		switch (constantString) {
+		case "0":
+		case "0 (False)":
+			selection.set_option ("0");
+			break;
+		case "1":
+		case "1 (True)":
+			selection.set_option ("1");
+			break;
+		}
 		configurationProperty.add_item (selection);
 	}
 	
@@ -93,7 +102,7 @@ public class ConstantComponentDef : ComponentDef {
 		try {
 			constantString = PropertyItemSelection.get_data_throw (configurationProperty, "Value");
 		} catch {
-			constantString = "0 (False)";
+			constantString = "0";
 		}
 		
 		xmlWriter.write_attribute ("value", constantString);
@@ -114,10 +123,10 @@ public class ConstantComponentDef : ComponentDef {
 		try {
 			constantString = PropertyItemSelection.get_data_throw (componentInst.configuration, "Value");
 		} catch {
-			constantString = "0 (False)";
+			constantString = "0";
 		}
 		
-		if (constantString == "1 (True)") {
+		if (constantString == "1") {
 			constantValue = true;
 		}
 		
@@ -139,10 +148,10 @@ public class ConstantComponentDef : ComponentDef {
 		try {
 			constantString = PropertyItemSelection.get_data_throw (componentInst.configuration, "Value");
 		} catch {
-			constantString = "0 (False)";
+			constantString = "0";
 		}
 		
-		if (constantString == "1 (True)") {
+		if (constantString == "1") {
 			text = "1";
 		} else {
 			text = "0";

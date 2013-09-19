@@ -58,6 +58,16 @@ typedef struct _ComponentDefPrivate ComponentDefPrivate;
 typedef struct _ComponentInst ComponentInst;
 typedef struct _ComponentInstClass ComponentInstClass;
 
+#define TYPE_PROJECT (project_get_type ())
+#define PROJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_PROJECT, Project))
+#define PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_PROJECT, ProjectClass))
+#define IS_PROJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_PROJECT))
+#define IS_PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_PROJECT))
+#define PROJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_PROJECT, ProjectClass))
+
+typedef struct _Project Project;
+typedef struct _ProjectClass ProjectClass;
+
 #define TYPE_CUSTOM_COMPONENT_DEF (custom_component_def_get_type ())
 #define CUSTOM_COMPONENT_DEF(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDef))
 #define CUSTOM_COMPONENT_DEF_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDefClass))
@@ -248,7 +258,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
@@ -270,7 +280,8 @@ struct _BasicSsDisplayComponentDefClass {
 typedef enum  {
 	COMPONENT_DEF_LOAD_ERROR_NOT_COMPONENT,
 	COMPONENT_DEF_LOAD_ERROR_FILE,
-	COMPONENT_DEF_LOAD_ERROR_LOAD
+	COMPONENT_DEF_LOAD_ERROR_LOAD,
+	COMPONENT_DEF_LOAD_ERROR_CANCEL
 } ComponentDefLoadError;
 #define COMPONENT_DEF_LOAD_ERROR component_def_load_error_quark ()
 typedef enum  {
@@ -369,6 +380,13 @@ void value_set_component_inst (GValue* value, gpointer v_object);
 void value_take_component_inst (GValue* value, gpointer v_object);
 gpointer value_get_component_inst (const GValue* value);
 GType component_inst_get_type (void) G_GNUC_CONST;
+gpointer project_ref (gpointer instance);
+void project_unref (gpointer instance);
+GParamSpec* param_spec_project (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
+void value_set_project (GValue* value, gpointer v_object);
+void value_take_project (GValue* value, gpointer v_object);
+gpointer value_get_project (const GValue* value);
+GType project_get_type (void) G_GNUC_CONST;
 GType custom_component_def_get_type (void) G_GNUC_CONST;
 gpointer property_item_ref (gpointer instance);
 void property_item_unref (gpointer instance);
@@ -431,8 +449,8 @@ gchar* property_item_selection_get_data_throw (PropertySet* propertySet, const g
 PropertyItemSelection* property_item_selection_new (const gchar* name, const gchar* description);
 PropertyItemSelection* property_item_selection_construct (GType object_type, const gchar* name, const gchar* description);
 GType property_item_selection_get_type (void) G_GNUC_CONST;
-void property_item_selection_add_option (PropertyItemSelection* self, const gchar* option);
-gint property_item_selection_set_option (PropertyItemSelection* self, const gchar* option);
+void property_item_selection_add_option (PropertyItemSelection* self, const gchar* value, const gchar* text);
+gint property_item_selection_set_option (PropertyItemSelection* self, const gchar* value);
 gint property_set_add_item (PropertySet* self, PropertyItem* propertyItem);
 static void basic_ss_display_component_def_real_get_properties (ComponentDef* base, PropertySet* queryProperty, PropertySet** configurationProperty);
 PropertySet* property_set_new (const gchar* name, const gchar* description);
@@ -560,8 +578,8 @@ static void basic_ss_display_component_def_real_add_properties (ComponentDef* ba
 	}
 	_tmp4_ = property_item_selection_new ("Type", "The type of seven segment display.");
 	selection = _tmp4_;
-	property_item_selection_add_option (selection, "Hexadecimal");
-	property_item_selection_add_option (selection, "Hexadecimal with point");
+	property_item_selection_add_option (selection, "Hexadecimal", NULL);
+	property_item_selection_add_option (selection, "Hexadecimal with point", NULL);
 	_tmp5_ = typeString;
 	property_item_selection_set_option (selection, _tmp5_);
 	_tmp6_ = queryProperty;
@@ -624,8 +642,8 @@ static void basic_ss_display_component_def_real_get_properties (ComponentDef* ba
 	_g_free0 (_tmp6_);
 	_tmp8_ = property_item_selection_new ("Type", "");
 	selection = _tmp8_;
-	property_item_selection_add_option (selection, "Hexadecimal");
-	property_item_selection_add_option (selection, "Hexadecimal with point");
+	property_item_selection_add_option (selection, "Hexadecimal", NULL);
+	property_item_selection_add_option (selection, "Hexadecimal with point", NULL);
 	_tmp9_ = typeString;
 	property_item_selection_set_option (selection, _tmp9_);
 	property_set_add_item (_vala_configurationProperty, (PropertyItem*) selection);
@@ -720,8 +738,8 @@ static void basic_ss_display_component_def_real_load_properties (ComponentDef* b
 	}
 	_tmp21_ = property_item_selection_new ("Type", "");
 	selection = _tmp21_;
-	property_item_selection_add_option (selection, "Hexadecimal");
-	property_item_selection_add_option (selection, "Hexadecimal with point");
+	property_item_selection_add_option (selection, "Hexadecimal", NULL);
+	property_item_selection_add_option (selection, "Hexadecimal with point", NULL);
 	_tmp22_ = typeString;
 	property_item_selection_set_option (selection, _tmp22_);
 	_tmp23_ = _vala_configurationProperty;

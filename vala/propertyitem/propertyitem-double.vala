@@ -21,7 +21,7 @@
 
 
 public class PropertyItemDouble : PropertyItem {
-	private double data;
+	public double data;
 	private double min;
 	private double max;
 	
@@ -70,6 +70,13 @@ public class PropertyItemDouble : PropertyItem {
 		this.data = data;
 		this.min = min;
 		this.max = max;
+	}
+	
+	public PropertyItemDouble.copy (PropertyItemDouble source) {
+		base (source.name, source.description);
+		this.data = source.data;
+		this.min = source.min;
+		this.max = source.max;
 	}
 	
 	public override Gtk.Widget create_widget () {

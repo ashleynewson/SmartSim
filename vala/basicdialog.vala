@@ -32,6 +32,26 @@ namespace BasicDialog {
 		return result;
 	}
 	
+	public int ask_generic (Gtk.Window? window, Gtk.MessageType messageType, string text, string[] options) {
+		Gtk.MessageDialog messageDialog = new Gtk.MessageDialog (
+			window,
+			Gtk.DialogFlags.MODAL,
+			messageType,
+			Gtk.ButtonsType.NONE,
+			"%s", text);
+		
+		for (int i = 0; i < options.length; i++) {
+			string option = options[i];
+			messageDialog.add_button (option, i);
+		}
+		
+		int result = messageDialog.run ();
+		
+		messageDialog.destroy ();
+		
+		return result;
+	}
+	
 	public void information (Gtk.Window? window, string text) {
 		Gtk.MessageDialog messageDialog = new Gtk.MessageDialog (
 			window,

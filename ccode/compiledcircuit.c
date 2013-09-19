@@ -380,7 +380,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
@@ -719,7 +719,7 @@ gint compiled_circuit_compile (CompiledCircuit* self);
 void component_def_compile_component (ComponentDef* self, CompiledCircuit* compiledCircuit, ComponentInst* componentInst, Connection** connections, int connections_length1, ComponentInst** ancestry, int ancestry_length1);
 void compiled_circuit_update_displayed (CompiledCircuit* self);
 gboolean component_state_get_alwaysUpdate (ComponentState* self);
-static void _vala_array_add16 (ComponentState*** array, int* length, int* size, ComponentState* value);
+static void _vala_array_add18 (ComponentState*** array, int* length, int* size, ComponentState* value);
 UpdateQueue* update_queue_new (GType elementtype_type, GBoxedCopyFunc elementtype_dup_func, GDestroyNotify elementtype_destroy_func, gpointer* elements, int elements_length1, gpointer* permanentElements, int permanentElements_length1);
 UpdateQueue* update_queue_construct (GType object_type, GType elementtype_type, GBoxedCopyFunc elementtype_dup_func, GDestroyNotify elementtype_destroy_func, gpointer* elements, int elements_length1, gpointer* permanentElements, int permanentElements_length1);
 void update_queue_full_update (UpdateQueue* self);
@@ -751,15 +751,15 @@ GType flow_get_type (void) G_GNUC_CONST;
 void wire_state_add_interface (WireState* self, Connection* connection);
 Connection* connection_new (WireState* wireState, gboolean invert);
 Connection* connection_construct (GType object_type, WireState* wireState, gboolean invert);
-static void _vala_array_add17 (WireState*** array, int* length, int* size, WireState* value);
+static void _vala_array_add19 (WireState*** array, int* length, int* size, WireState* value);
 void compiled_circuit_add_component (CompiledCircuit* self, ComponentState* componentState);
-static void _vala_array_add18 (ComponentState*** array, int* length, int* size, ComponentState* value);
+static void _vala_array_add20 (ComponentState*** array, int* length, int* size, ComponentState* value);
 void compiled_circuit_add_watch (CompiledCircuit* self, WireState* wireState);
 static gboolean _vala_wire_state_array_contains (WireState** stack, int stack_length, WireState* needle);
-static void _vala_array_add19 (WireState*** array, int* length, int* size, WireState* value);
+static void _vala_array_add21 (WireState*** array, int* length, int* size, WireState* value);
 void compiled_circuit_remove_watch (CompiledCircuit* self, WireState* wireState);
-static void _vala_array_add20 (WireState*** array, int* length, int* size, WireState* value);
-static WireState** _vala_array_dup3 (WireState** self, int length);
+static void _vala_array_add22 (WireState*** array, int* length, int* size, WireState* value);
+static WireState** _vala_array_dup4 (WireState** self, int length);
 gint compiled_circuit_update_cycle (CompiledCircuit* self);
 void update_queue_swap (UpdateQueue* self, gint newTime);
 gpointer update_queue_get_next_element (UpdateQueue* self);
@@ -769,10 +769,10 @@ void wire_state_record (WireState* self);
 void compiled_circuit_shrink_component (CompiledCircuit* self);
 gint compiled_circuit_expand_component (CompiledCircuit* self, gint x, gint y);
 ComponentInst* custom_component_def_find_inst (CustomComponentDef* self, gint x, gint y);
-static void _vala_array_add21 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
+static void _vala_array_add23 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
 static gint compiled_circuit_check_ancestry (CompiledCircuit* self, ComponentInst** ancestry, int ancestry_length1);
-static void _vala_array_add22 (ComponentState*** array, int* length, int* size, ComponentState* value);
-static void _vala_array_add23 (WireState*** array, int* length, int* size, WireState* value);
+static void _vala_array_add24 (ComponentState*** array, int* length, int* size, ComponentState* value);
+static void _vala_array_add25 (WireState*** array, int* length, int* size, WireState* value);
 void compiled_circuit_interact_components (CompiledCircuit* self, gint xInteract, gint yInteract);
 gint component_inst_find (ComponentInst* self, gint x, gint y);
 void component_state_click (ComponentState* self);
@@ -1276,7 +1276,7 @@ static gpointer _component_state_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add16 (ComponentState*** array, int* length, int* size, ComponentState* value) {
+static void _vala_array_add18 (ComponentState*** array, int* length, int* size, ComponentState* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (ComponentState*, *array, (*size) + 1);
@@ -1358,7 +1358,7 @@ gint compiled_circuit_compile (CompiledCircuit* self) {
 					_tmp11__length1 = permanentComponentStates_length1;
 					_tmp12_ = componentState;
 					_tmp13_ = _component_state_ref0 (_tmp12_);
-					_vala_array_add16 (&permanentComponentStates, &permanentComponentStates_length1, &_permanentComponentStates_size_, _tmp13_);
+					_vala_array_add18 (&permanentComponentStates, &permanentComponentStates_length1, &_permanentComponentStates_size_, _tmp13_);
 				}
 				_component_state_unref0 (componentState);
 			}
@@ -1400,7 +1400,7 @@ static gpointer _wire_state_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add17 (WireState*** array, int* length, int* size, WireState* value) {
+static void _vala_array_add19 (WireState*** array, int* length, int* size, WireState* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireState*, *array, (*size) + 1);
@@ -1566,13 +1566,13 @@ WireState* compiled_circuit_compile_wire (CompiledCircuit* self, WireInst* wireI
 	_tmp50__length1 = self->priv->wireStates_length1;
 	_tmp51_ = wireState;
 	_tmp52_ = _wire_state_ref0 (_tmp51_);
-	_vala_array_add17 (&self->priv->wireStates, &self->priv->wireStates_length1, &self->priv->_wireStates_size_, _tmp52_);
+	_vala_array_add19 (&self->priv->wireStates, &self->priv->wireStates_length1, &self->priv->_wireStates_size_, _tmp52_);
 	result = wireState;
 	return result;
 }
 
 
-static void _vala_array_add18 (ComponentState*** array, int* length, int* size, ComponentState* value) {
+static void _vala_array_add20 (ComponentState*** array, int* length, int* size, ComponentState* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (ComponentState*, *array, (*size) + 1);
@@ -1603,7 +1603,7 @@ void compiled_circuit_add_component (CompiledCircuit* self, ComponentState* comp
 	_tmp3__length1 = self->priv->componentStates_length1;
 	_tmp4_ = componentState;
 	_tmp5_ = _component_state_ref0 (_tmp4_);
-	_vala_array_add18 (&self->priv->componentStates, &self->priv->componentStates_length1, &self->priv->_componentStates_size_, _tmp5_);
+	_vala_array_add20 (&self->priv->componentStates, &self->priv->componentStates_length1, &self->priv->_componentStates_size_, _tmp5_);
 }
 
 
@@ -1618,7 +1618,7 @@ static gboolean _vala_wire_state_array_contains (WireState** stack, int stack_le
 }
 
 
-static void _vala_array_add19 (WireState*** array, int* length, int* size, WireState* value) {
+static void _vala_array_add21 (WireState*** array, int* length, int* size, WireState* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireState*, *array, (*size) + 1);
@@ -1646,12 +1646,12 @@ void compiled_circuit_add_watch (CompiledCircuit* self, WireState* wireState) {
 		_tmp2__length1 = self->priv->watchedWireStates_length1;
 		_tmp3_ = wireState;
 		_tmp4_ = _wire_state_ref0 (_tmp3_);
-		_vala_array_add19 (&self->priv->watchedWireStates, &self->priv->watchedWireStates_length1, &self->priv->_watchedWireStates_size_, _tmp4_);
+		_vala_array_add21 (&self->priv->watchedWireStates, &self->priv->watchedWireStates_length1, &self->priv->_watchedWireStates_size_, _tmp4_);
 	}
 }
 
 
-static void _vala_array_add20 (WireState*** array, int* length, int* size, WireState* value) {
+static void _vala_array_add22 (WireState*** array, int* length, int* size, WireState* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireState*, *array, (*size) + 1);
@@ -1661,7 +1661,7 @@ static void _vala_array_add20 (WireState*** array, int* length, int* size, WireS
 }
 
 
-static WireState** _vala_array_dup3 (WireState** self, int length) {
+static WireState** _vala_array_dup4 (WireState** self, int length) {
 	WireState** result;
 	int i;
 	result = g_new0 (WireState*, length + 1);
@@ -1719,7 +1719,7 @@ void compiled_circuit_remove_watch (CompiledCircuit* self, WireState* wireState)
 					_tmp5__length1 = newWatchedWireStates_length1;
 					_tmp6_ = watchedWireState;
 					_tmp7_ = _wire_state_ref0 (_tmp6_);
-					_vala_array_add20 (&newWatchedWireStates, &newWatchedWireStates_length1, &_newWatchedWireStates_size_, _tmp7_);
+					_vala_array_add22 (&newWatchedWireStates, &newWatchedWireStates_length1, &_newWatchedWireStates_size_, _tmp7_);
 				}
 				_wire_state_unref0 (watchedWireState);
 			}
@@ -1727,7 +1727,7 @@ void compiled_circuit_remove_watch (CompiledCircuit* self, WireState* wireState)
 	}
 	_tmp8_ = newWatchedWireStates;
 	_tmp8__length1 = newWatchedWireStates_length1;
-	_tmp9_ = (_tmp8_ != NULL) ? _vala_array_dup3 (_tmp8_, _tmp8__length1) : ((gpointer) _tmp8_);
+	_tmp9_ = (_tmp8_ != NULL) ? _vala_array_dup4 (_tmp8_, _tmp8__length1) : ((gpointer) _tmp8_);
 	_tmp9__length1 = _tmp8__length1;
 	self->priv->watchedWireStates = (_vala_array_free (self->priv->watchedWireStates, self->priv->watchedWireStates_length1, (GDestroyNotify) wire_state_unref), NULL);
 	self->priv->watchedWireStates = _tmp9_;
@@ -1873,7 +1873,7 @@ void compiled_circuit_shrink_component (CompiledCircuit* self) {
 /**
  * Change the view to look at what is going on inside a subcomponent.
  */
-static void _vala_array_add21 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
+static void _vala_array_add23 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (ComponentInst*, *array, (*size) + 1);
@@ -1912,7 +1912,7 @@ gint compiled_circuit_expand_component (CompiledCircuit* self, gint x, gint y) {
 			_tmp7__length1 = self->priv->viewedAncestry_length1;
 			_tmp8_ = foundComponentInst;
 			_tmp9_ = _component_inst_ref0 (_tmp8_);
-			_vala_array_add21 (&self->priv->viewedAncestry, &self->priv->viewedAncestry_length1, &self->priv->_viewedAncestry_size_, _tmp9_);
+			_vala_array_add23 (&self->priv->viewedAncestry, &self->priv->viewedAncestry_length1, &self->priv->_viewedAncestry_size_, _tmp9_);
 			compiled_circuit_update_displayed (self);
 			result = 0;
 			_component_inst_unref0 (foundComponentInst);
@@ -1932,7 +1932,7 @@ gint compiled_circuit_expand_component (CompiledCircuit* self, gint x, gint y) {
  * Figure out what components need to be displayed.
  * Used After changing which custom component is being viewed.
  */
-static void _vala_array_add22 (ComponentState*** array, int* length, int* size, ComponentState* value) {
+static void _vala_array_add24 (ComponentState*** array, int* length, int* size, ComponentState* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (ComponentState*, *array, (*size) + 1);
@@ -1942,7 +1942,7 @@ static void _vala_array_add22 (ComponentState*** array, int* length, int* size, 
 }
 
 
-static void _vala_array_add23 (WireState*** array, int* length, int* size, WireState* value) {
+static void _vala_array_add25 (WireState*** array, int* length, int* size, WireState* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireState*, *array, (*size) + 1);
@@ -2051,7 +2051,7 @@ void compiled_circuit_update_displayed (CompiledCircuit* self) {
 						_tmp18__length1 = displayedComponentStates_length1;
 						_tmp19_ = componentState;
 						_tmp20_ = _component_state_ref0 (_tmp19_);
-						_vala_array_add22 (&displayedComponentStates, &displayedComponentStates_length1, &_displayedComponentStates_size_, _tmp20_);
+						_vala_array_add24 (&displayedComponentStates, &displayedComponentStates_length1, &_displayedComponentStates_size_, _tmp20_);
 					} else {
 						ComponentState* _tmp21_;
 						_tmp21_ = componentState;
@@ -2108,7 +2108,7 @@ void compiled_circuit_update_displayed (CompiledCircuit* self) {
 						_tmp30__length1 = displayedWireStates_length1;
 						_tmp31_ = wireState;
 						_tmp32_ = _wire_state_ref0 (_tmp31_);
-						_vala_array_add23 (&displayedWireStates, &displayedWireStates_length1, &_displayedWireStates_size_, _tmp32_);
+						_vala_array_add25 (&displayedWireStates, &displayedWireStates_length1, &_displayedWireStates_size_, _tmp32_);
 					} else {
 						WireState* _tmp33_;
 						_tmp33_ = wireState;

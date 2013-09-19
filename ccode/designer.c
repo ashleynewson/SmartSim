@@ -394,7 +394,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
@@ -756,16 +756,16 @@ WireInst* wire_inst_new (void);
 WireInst* wire_inst_construct (GType object_type);
 Path* wire_inst_find (WireInst* self, gint x, gint y);
 void wire_inst_merge (WireInst* self, WireInst* sourceWireInst);
-static void _vala_array_add43 (WireInst*** array, int* length, int* size, WireInst* value);
+static void _vala_array_add45 (WireInst*** array, int* length, int* size, WireInst* value);
 gint wire_inst_count_find (WireInst* self, gint x, gint y);
 void wire_inst_mark (WireInst* self, gint x, gint y);
-static void _vala_array_add44 (WireInst*** array, int* length, int* size, WireInst* value);
-static WireInst** _vala_array_dup42 (WireInst** self, int length);
-gint designer_unbind_wire (Designer* self, gint x, gint y);
-WireInst** wire_inst_unmerge (WireInst* self, gint x, gint y, int* result_length1);
-static void _vala_array_add45 (WireInst*** array, int* length, int* size, WireInst* value);
 static void _vala_array_add46 (WireInst*** array, int* length, int* size, WireInst* value);
 static WireInst** _vala_array_dup43 (WireInst** self, int length);
+gint designer_unbind_wire (Designer* self, gint x, gint y);
+WireInst** wire_inst_unmerge (WireInst* self, gint x, gint y, int* result_length1);
+static void _vala_array_add47 (WireInst*** array, int* length, int* size, WireInst* value);
+static void _vala_array_add48 (WireInst*** array, int* length, int* size, WireInst* value);
+static WireInst** _vala_array_dup44 (WireInst** self, int length);
 void designer_tag_wire (Designer* self, gint x1, gint y1, gint x2, gint y2, gboolean oldDirection);
 gint custom_component_def_new_tag_id (CustomComponentDef* self);
 GType flow_get_type (void) G_GNUC_CONST;
@@ -793,8 +793,8 @@ GType property_item_string_get_type (void) G_GNUC_CONST;
 PropertyItemSelection* property_item_selection_new (const gchar* name, const gchar* description);
 PropertyItemSelection* property_item_selection_construct (GType object_type, const gchar* name, const gchar* description);
 GType property_item_selection_get_type (void) G_GNUC_CONST;
-void property_item_selection_add_option (PropertyItemSelection* self, const gchar* option);
-gint property_item_selection_set_option (PropertyItemSelection* self, const gchar* option);
+void property_item_selection_add_option (PropertyItemSelection* self, const gchar* value, const gchar* text);
+gint property_item_selection_set_option (PropertyItemSelection* self, const gchar* value);
 PropertyItemInt* property_item_int_new (const gchar* name, const gchar* description, gint data, gint min, gint max);
 PropertyItemInt* property_item_int_construct (GType object_type, const gchar* name, const gchar* description, gint data, gint min, gint max);
 GType property_item_int_get_type (void) G_GNUC_CONST;
@@ -1222,7 +1222,7 @@ static gpointer _wire_inst_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add43 (WireInst*** array, int* length, int* size, WireInst* value) {
+static void _vala_array_add45 (WireInst*** array, int* length, int* size, WireInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInst*, *array, (*size) + 1);
@@ -1232,7 +1232,7 @@ static void _vala_array_add43 (WireInst*** array, int* length, int* size, WireIn
 }
 
 
-static void _vala_array_add44 (WireInst*** array, int* length, int* size, WireInst* value) {
+static void _vala_array_add46 (WireInst*** array, int* length, int* size, WireInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInst*, *array, (*size) + 1);
@@ -1242,7 +1242,7 @@ static void _vala_array_add44 (WireInst*** array, int* length, int* size, WireIn
 }
 
 
-static WireInst** _vala_array_dup42 (WireInst** self, int length) {
+static WireInst** _vala_array_dup43 (WireInst** self, int length) {
 	WireInst** result;
 	int i;
 	result = g_new0 (WireInst*, length + 1);
@@ -1335,7 +1335,7 @@ gint designer_bind_wire (Designer* self, gint x, gint y) {
 					_tmp14__length1 = wireInsts_length1;
 					_tmp15_ = wireInst;
 					_tmp16_ = _wire_inst_ref0 (_tmp15_);
-					_vala_array_add43 (&wireInsts, &wireInsts_length1, &_wireInsts_size_, _tmp16_);
+					_vala_array_add45 (&wireInsts, &wireInsts_length1, &_wireInsts_size_, _tmp16_);
 				}
 				_wire_inst_unref0 (wireInst);
 			}
@@ -1364,12 +1364,12 @@ gint designer_bind_wire (Designer* self, gint x, gint y) {
 		_tmp25__length1 = wireInsts_length1;
 		_tmp26_ = compositeWireInst;
 		_tmp27_ = _wire_inst_ref0 (_tmp26_);
-		_vala_array_add44 (&wireInsts, &wireInsts_length1, &_wireInsts_size_, _tmp27_);
+		_vala_array_add46 (&wireInsts, &wireInsts_length1, &_wireInsts_size_, _tmp27_);
 	}
 	_tmp28_ = self->customComponentDef;
 	_tmp29_ = wireInsts;
 	_tmp29__length1 = wireInsts_length1;
-	_tmp30_ = (_tmp29_ != NULL) ? _vala_array_dup42 (_tmp29_, _tmp29__length1) : ((gpointer) _tmp29_);
+	_tmp30_ = (_tmp29_ != NULL) ? _vala_array_dup43 (_tmp29_, _tmp29__length1) : ((gpointer) _tmp29_);
 	_tmp30__length1 = _tmp29__length1;
 	_tmp28_->wireInsts = (_vala_array_free (_tmp28_->wireInsts, _tmp28_->wireInsts_length1, (GDestroyNotify) wire_inst_unref), NULL);
 	_tmp28_->wireInsts = _tmp30_;
@@ -1386,7 +1386,7 @@ gint designer_bind_wire (Designer* self, gint x, gint y) {
  * (//x//, //y//). This only seperates wires that were joined with
  * //bind_wire// - it does not break up paths.
  */
-static void _vala_array_add45 (WireInst*** array, int* length, int* size, WireInst* value) {
+static void _vala_array_add47 (WireInst*** array, int* length, int* size, WireInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInst*, *array, (*size) + 1);
@@ -1396,7 +1396,7 @@ static void _vala_array_add45 (WireInst*** array, int* length, int* size, WireIn
 }
 
 
-static void _vala_array_add46 (WireInst*** array, int* length, int* size, WireInst* value) {
+static void _vala_array_add48 (WireInst*** array, int* length, int* size, WireInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInst*, *array, (*size) + 1);
@@ -1406,7 +1406,7 @@ static void _vala_array_add46 (WireInst*** array, int* length, int* size, WireIn
 }
 
 
-static WireInst** _vala_array_dup43 (WireInst** self, int length) {
+static WireInst** _vala_array_dup44 (WireInst** self, int length) {
 	WireInst** result;
 	int i;
 	result = g_new0 (WireInst*, length + 1);
@@ -1511,7 +1511,7 @@ gint designer_unbind_wire (Designer* self, gint x, gint y) {
 								_tmp17__length1 = wireInsts_length1;
 								_tmp18_ = addWireInst;
 								_tmp19_ = _wire_inst_ref0 (_tmp18_);
-								_vala_array_add45 (&wireInsts, &wireInsts_length1, &_wireInsts_size_, _tmp19_);
+								_vala_array_add47 (&wireInsts, &wireInsts_length1, &_wireInsts_size_, _tmp19_);
 								_wire_inst_unref0 (addWireInst);
 							}
 						}
@@ -1526,7 +1526,7 @@ gint designer_unbind_wire (Designer* self, gint x, gint y) {
 					_tmp20__length1 = wireInsts_length1;
 					_tmp21_ = wireInst;
 					_tmp22_ = _wire_inst_ref0 (_tmp21_);
-					_vala_array_add46 (&wireInsts, &wireInsts_length1, &_wireInsts_size_, _tmp22_);
+					_vala_array_add48 (&wireInsts, &wireInsts_length1, &_wireInsts_size_, _tmp22_);
 				}
 				_wire_inst_unref0 (wireInst);
 			}
@@ -1535,7 +1535,7 @@ gint designer_unbind_wire (Designer* self, gint x, gint y) {
 	_tmp23_ = self->customComponentDef;
 	_tmp24_ = wireInsts;
 	_tmp24__length1 = wireInsts_length1;
-	_tmp25_ = (_tmp24_ != NULL) ? _vala_array_dup43 (_tmp24_, _tmp24__length1) : ((gpointer) _tmp24_);
+	_tmp25_ = (_tmp24_ != NULL) ? _vala_array_dup44 (_tmp24_, _tmp24__length1) : ((gpointer) _tmp24_);
 	_tmp25__length1 = _tmp24__length1;
 	_tmp23_->wireInsts = (_vala_array_free (_tmp23_->wireInsts, _tmp23_->wireInsts_length1, (GDestroyNotify) wire_inst_unref), NULL);
 	_tmp23_->wireInsts = _tmp25_;
@@ -1707,11 +1707,11 @@ void designer_tag_wire (Designer* self, gint x1, gint y1, gint x2, gint y2, gboo
 						_tmp43_ = property_item_selection_new ("Flow", "Type of pin (from this component's view).");
 						selection = _tmp43_;
 						_tmp44_ = selection;
-						property_item_selection_add_option (_tmp44_, "Input");
+						property_item_selection_add_option (_tmp44_, "Input", NULL);
 						_tmp45_ = selection;
-						property_item_selection_add_option (_tmp45_, "Output");
+						property_item_selection_add_option (_tmp45_, "Output", NULL);
 						_tmp46_ = selection;
-						property_item_selection_add_option (_tmp46_, "Bidirectional");
+						property_item_selection_add_option (_tmp46_, "Bidirectional", NULL);
 						_tmp47_ = tag;
 						_tmp48_ = _tmp47_->flow;
 						switch (_tmp48_) {
@@ -3345,11 +3345,11 @@ void designer_adjust_wires (Designer* self, gint x, gint y) {
 					_tmp10_ = property_item_selection_new ("Initial Signal", "Wire's preset signal at the start of simulation");
 					selection = _tmp10_;
 					_tmp11_ = selection;
-					property_item_selection_add_option (_tmp11_, "Default");
+					property_item_selection_add_option (_tmp11_, "Default", NULL);
 					_tmp12_ = selection;
-					property_item_selection_add_option (_tmp12_, "0 (False)");
+					property_item_selection_add_option (_tmp12_, "0 (False)", NULL);
 					_tmp13_ = selection;
-					property_item_selection_add_option (_tmp13_, "1 (True)");
+					property_item_selection_add_option (_tmp13_, "1 (True)", NULL);
 					_tmp14_ = wireInst;
 					_tmp15_ = _tmp14_->presetSignal;
 					switch (_tmp15_) {

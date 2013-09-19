@@ -59,6 +59,16 @@ typedef struct _ComponentDefPrivate ComponentDefPrivate;
 typedef struct _ComponentInst ComponentInst;
 typedef struct _ComponentInstClass ComponentInstClass;
 
+#define TYPE_PROJECT (project_get_type ())
+#define PROJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_PROJECT, Project))
+#define PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_PROJECT, ProjectClass))
+#define IS_PROJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_PROJECT))
+#define IS_PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_PROJECT))
+#define PROJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_PROJECT, ProjectClass))
+
+typedef struct _Project Project;
+typedef struct _ProjectClass ProjectClass;
+
 #define TYPE_CUSTOM_COMPONENT_DEF (custom_component_def_get_type ())
 #define CUSTOM_COMPONENT_DEF(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDef))
 #define CUSTOM_COMPONENT_DEF_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDefClass))
@@ -159,16 +169,6 @@ typedef struct _WireInstClass WireInstClass;
 
 typedef struct _Annotation Annotation;
 typedef struct _AnnotationClass AnnotationClass;
-
-#define TYPE_PROJECT (project_get_type ())
-#define PROJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_PROJECT, Project))
-#define PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_PROJECT, ProjectClass))
-#define IS_PROJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_PROJECT))
-#define IS_PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_PROJECT))
-#define PROJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_PROJECT, ProjectClass))
-
-typedef struct _Project Project;
-typedef struct _ProjectClass ProjectClass;
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _component_def_unref0(var) ((var == NULL) ? NULL : (var = (component_def_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
@@ -301,7 +301,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
@@ -335,7 +335,8 @@ struct _CustomComponentDefPrivate {
 typedef enum  {
 	COMPONENT_DEF_LOAD_ERROR_NOT_COMPONENT,
 	COMPONENT_DEF_LOAD_ERROR_FILE,
-	COMPONENT_DEF_LOAD_ERROR_LOAD
+	COMPONENT_DEF_LOAD_ERROR_LOAD,
+	COMPONENT_DEF_LOAD_ERROR_CANCEL
 } ComponentDefLoadError;
 #define COMPONENT_DEF_LOAD_ERROR component_def_load_error_quark ()
 typedef enum  {
@@ -514,6 +515,13 @@ void value_set_component_inst (GValue* value, gpointer v_object);
 void value_take_component_inst (GValue* value, gpointer v_object);
 gpointer value_get_component_inst (const GValue* value);
 GType component_inst_get_type (void) G_GNUC_CONST;
+gpointer project_ref (gpointer instance);
+void project_unref (gpointer instance);
+GParamSpec* param_spec_project (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
+void value_set_project (GValue* value, gpointer v_object);
+void value_take_project (GValue* value, gpointer v_object);
+gpointer value_get_project (const GValue* value);
+GType project_get_type (void) G_GNUC_CONST;
 GType custom_component_def_get_type (void) G_GNUC_CONST;
 gpointer property_item_ref (gpointer instance);
 void property_item_unref (gpointer instance);
@@ -572,13 +580,6 @@ void value_set_annotation (GValue* value, gpointer v_object);
 void value_take_annotation (GValue* value, gpointer v_object);
 gpointer value_get_annotation (const GValue* value);
 GType annotation_get_type (void) G_GNUC_CONST;
-gpointer project_ref (gpointer instance);
-void project_unref (gpointer instance);
-GParamSpec* param_spec_project (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
-void value_set_project (GValue* value, gpointer v_object);
-void value_take_project (GValue* value, gpointer v_object);
-gpointer value_get_project (const GValue* value);
-GType project_get_type (void) G_GNUC_CONST;
 #define CUSTOM_COMPONENT_DEF_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDefPrivate))
 enum  {
 	CUSTOM_COMPONENT_DEF_DUMMY_PROPERTY
@@ -627,21 +628,21 @@ void wire_inst_render (WireInst* self, cairo_t* context, gboolean showHints, gbo
 ComponentInst* custom_component_def_add_componentInst (CustomComponentDef* self, ComponentDef* componentDef, gint x, gint y, Direction direction);
 ComponentInst* component_inst_new (ComponentDef* componentDef, gint xPosition, gint yPosition, Direction direction, gboolean flipped);
 ComponentInst* component_inst_construct (GType object_type, ComponentDef* componentDef, gint xPosition, gint yPosition, Direction direction, gboolean flipped);
-static ComponentInst** _vala_array_dup5 (ComponentInst** self, int length);
-static void _vala_array_add25 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
 static ComponentInst** _vala_array_dup6 (ComponentInst** self, int length);
+static void _vala_array_add27 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
+static ComponentInst** _vala_array_dup7 (ComponentInst** self, int length);
 void custom_component_def_add_annotation (CustomComponentDef* self, gint x, gint y, const gchar* text, gdouble fontSize);
 Annotation* annotation_new (gint x, gint y, const gchar* text, gdouble fontSize);
 Annotation* annotation_construct (GType object_type, gint x, gint y, const gchar* text, gdouble fontSize);
-static Annotation** _vala_array_dup7 (Annotation** self, int length);
-static void _vala_array_add26 (Annotation*** array, int* length, int* size, Annotation* value);
 static Annotation** _vala_array_dup8 (Annotation** self, int length);
+static void _vala_array_add28 (Annotation*** array, int* length, int* size, Annotation* value);
+static Annotation** _vala_array_dup9 (Annotation** self, int length);
 WireInst* custom_component_def_add_wire (CustomComponentDef* self);
 WireInst* wire_inst_new (void);
 WireInst* wire_inst_construct (GType object_type);
-static WireInst** _vala_array_dup9 (WireInst** self, int length);
-static void _vala_array_add27 (WireInst*** array, int* length, int* size, WireInst* value);
 static WireInst** _vala_array_dup10 (WireInst** self, int length);
+static void _vala_array_add29 (WireInst*** array, int* length, int* size, WireInst* value);
+static WireInst** _vala_array_dup11 (WireInst** self, int length);
 void custom_component_def_delete_selected_components (CustomComponentDef* self);
 gpointer pin_inst_ref (gpointer instance);
 void pin_inst_unref (gpointer instance);
@@ -651,15 +652,15 @@ void value_take_pin_inst (GValue* value, gpointer v_object);
 gpointer value_get_pin_inst (const GValue* value);
 GType pin_inst_get_type (void) G_GNUC_CONST;
 void component_inst_detatch_all (ComponentInst* self);
-static void _vala_array_add28 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
-static ComponentInst** _vala_array_dup11 (ComponentInst** self, int length);
+static void _vala_array_add30 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
+static ComponentInst** _vala_array_dup12 (ComponentInst** self, int length);
 void custom_component_def_delete_selected_wires (CustomComponentDef* self);
 void wire_inst_disconnect_components (WireInst* self);
-static void _vala_array_add29 (WireInst*** array, int* length, int* size, WireInst* value);
-static WireInst** _vala_array_dup12 (WireInst** self, int length);
+static void _vala_array_add31 (WireInst*** array, int* length, int* size, WireInst* value);
+static WireInst** _vala_array_dup13 (WireInst** self, int length);
 void custom_component_def_delete_selected_annotations (CustomComponentDef* self);
-static void _vala_array_add30 (Annotation*** array, int* length, int* size, Annotation* value);
-static Annotation** _vala_array_dup13 (Annotation** self, int length);
+static void _vala_array_add32 (Annotation*** array, int* length, int* size, Annotation* value);
+static Annotation** _vala_array_dup14 (Annotation** self, int length);
 void custom_component_def_update_ids (CustomComponentDef* self);
 CustomComponentDef** custom_component_def_validate_dependencies (CustomComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, int* result_length1);
 gint custom_component_def_validate_pins (CustomComponentDef* self);
@@ -669,18 +670,18 @@ Tag* custom_component_def_resolve_tag_id (CustomComponentDef* self, gint tagID);
 gint custom_component_def_validate_overlaps (CustomComponentDef* self);
 WireInst* wire_inst_new_load (xmlNode* xmlnode);
 WireInst* wire_inst_construct_load (GType object_type, xmlNode* xmlnode);
-static void _vala_array_add31 (WireInst*** array, int* length, int* size, WireInst* value);
+static void _vala_array_add33 (WireInst*** array, int* length, int* size, WireInst* value);
 GQuark component_inst_load_error_quark (void);
 ComponentInst* component_inst_new_load (xmlNode* xmlnode, Project* project, WireInst** newWireInsts, int newWireInsts_length1, GError** error);
 ComponentInst* component_inst_construct_load (GType object_type, xmlNode* xmlnode, Project* project, WireInst** newWireInsts, int newWireInsts_length1, GError** error);
-static void _vala_array_add32 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
+static void _vala_array_add34 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
 GQuark annotation_load_error_quark (void);
 Annotation* annotation_new_load (xmlNode* xmlnode, GError** error);
 Annotation* annotation_construct_load (GType object_type, xmlNode* xmlnode, GError** error);
-static void _vala_array_add33 (Annotation*** array, int* length, int* size, Annotation* value);
-static WireInst** _vala_array_dup14 (WireInst** self, int length);
-static ComponentInst** _vala_array_dup15 (ComponentInst** self, int length);
-static Annotation** _vala_array_dup16 (Annotation** self, int length);
+static void _vala_array_add35 (Annotation*** array, int* length, int* size, Annotation* value);
+static WireInst** _vala_array_dup15 (WireInst** self, int length);
+static ComponentInst** _vala_array_dup16 (ComponentInst** self, int length);
+static Annotation** _vala_array_dup17 (Annotation** self, int length);
 gint custom_component_def_save (CustomComponentDef* self, const gchar* fileName);
 #define CORE_shortVersionString PACKAGE_VERSION
 void pin_def_save (PinDef* self, xmlTextWriter* xmlWriter, gint id);
@@ -695,10 +696,10 @@ void value_set_wire_state (GValue* value, gpointer v_object);
 void value_take_wire_state (GValue* value, gpointer v_object);
 gpointer value_get_wire_state (const GValue* value);
 GType wire_state_get_type (void) G_GNUC_CONST;
-static void _vala_array_add34 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
-static void _vala_array_add35 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
+static void _vala_array_add36 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
+static void _vala_array_add37 (ComponentInst*** array, int* length, int* size, ComponentInst* value);
 WireState* compiled_circuit_compile_wire (CompiledCircuit* self, WireInst* wireInst, Connection** connections, int connections_length1, ComponentInst** ancestry, int ancestry_length1);
-static void _vala_array_add36 (WireState*** array, int* length, int* size, WireState* value);
+static void _vala_array_add38 (WireState*** array, int* length, int* size, WireState* value);
 void component_inst_compile_component (ComponentInst* self, CompiledCircuit* compiledCircuit, WireState** localWireStates, int localWireStates_length1, ComponentInst** ancestry, int ancestry_length1);
 ComponentInst* custom_component_def_find_inst (CustomComponentDef* self, gint x, gint y);
 gint component_inst_find (ComponentInst* self, gint x, gint y);
@@ -710,11 +711,11 @@ void component_def_create_information (ComponentDef* self, CircuitInformation* c
 void custom_component_def_update_immediate_dependencies (CustomComponentDef* self, gboolean includePlugins);
 GType plugin_component_def_get_type (void) G_GNUC_CONST;
 static gboolean _vala_component_def_array_contains (ComponentDef** stack, int stack_length, ComponentDef* needle);
-static void _vala_array_add37 (ComponentDef*** array, int* length, int* size, ComponentDef* value);
-static ComponentDef** _vala_array_dup17 (ComponentDef** self, int length);
-void custom_component_def_remove_immediate_dependency (CustomComponentDef* self, ComponentDef* removeComponent);
-static void _vala_array_add38 (ComponentDef*** array, int* length, int* size, ComponentDef* value);
+static void _vala_array_add39 (ComponentDef*** array, int* length, int* size, ComponentDef* value);
 static ComponentDef** _vala_array_dup18 (ComponentDef** self, int length);
+void custom_component_def_remove_immediate_dependency (CustomComponentDef* self, ComponentDef* removeComponent);
+static void _vala_array_add40 (ComponentDef*** array, int* length, int* size, ComponentDef* value);
+static ComponentDef** _vala_array_dup19 (ComponentDef** self, int length);
 static void custom_component_def_finalize (ComponentDef* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
@@ -1566,7 +1567,7 @@ void custom_component_def_render_insts (CustomComponentDef* self, cairo_t* conte
  * Add a new ComponentInst of type //componentDef//, at
  * (//x//, //y//), facing //direction// to the design.
  */
-static ComponentInst** _vala_array_dup5 (ComponentInst** self, int length) {
+static ComponentInst** _vala_array_dup6 (ComponentInst** self, int length) {
 	ComponentInst** result;
 	int i;
 	result = g_new0 (ComponentInst*, length + 1);
@@ -1579,7 +1580,7 @@ static ComponentInst** _vala_array_dup5 (ComponentInst** self, int length) {
 }
 
 
-static void _vala_array_add25 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
+static void _vala_array_add27 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (ComponentInst*, *array, (*size) + 1);
@@ -1589,7 +1590,7 @@ static void _vala_array_add25 (ComponentInst*** array, int* length, int* size, C
 }
 
 
-static ComponentInst** _vala_array_dup6 (ComponentInst** self, int length) {
+static ComponentInst** _vala_array_dup7 (ComponentInst** self, int length) {
 	ComponentInst** result;
 	int i;
 	result = g_new0 (ComponentInst*, length + 1);
@@ -1635,7 +1636,7 @@ ComponentInst* custom_component_def_add_componentInst (CustomComponentDef* self,
 	componentInst = _tmp4_;
 	_tmp5_ = self->componentInsts;
 	_tmp5__length1 = self->componentInsts_length1;
-	_tmp6_ = (_tmp5_ != NULL) ? _vala_array_dup5 (_tmp5_, _tmp5__length1) : ((gpointer) _tmp5_);
+	_tmp6_ = (_tmp5_ != NULL) ? _vala_array_dup6 (_tmp5_, _tmp5__length1) : ((gpointer) _tmp5_);
 	_tmp6__length1 = _tmp5__length1;
 	newComponentInsts = _tmp6_;
 	newComponentInsts_length1 = _tmp6__length1;
@@ -1643,10 +1644,10 @@ ComponentInst* custom_component_def_add_componentInst (CustomComponentDef* self,
 	_tmp7_ = newComponentInsts;
 	_tmp7__length1 = newComponentInsts_length1;
 	_tmp8_ = _component_inst_ref0 (componentInst);
-	_vala_array_add25 (&newComponentInsts, &newComponentInsts_length1, &_newComponentInsts_size_, _tmp8_);
+	_vala_array_add27 (&newComponentInsts, &newComponentInsts_length1, &_newComponentInsts_size_, _tmp8_);
 	_tmp9_ = newComponentInsts;
 	_tmp9__length1 = newComponentInsts_length1;
-	_tmp10_ = (_tmp9_ != NULL) ? _vala_array_dup6 (_tmp9_, _tmp9__length1) : ((gpointer) _tmp9_);
+	_tmp10_ = (_tmp9_ != NULL) ? _vala_array_dup7 (_tmp9_, _tmp9__length1) : ((gpointer) _tmp9_);
 	_tmp10__length1 = _tmp9__length1;
 	self->componentInsts = (_vala_array_free (self->componentInsts, self->componentInsts_length1, (GDestroyNotify) component_inst_unref), NULL);
 	self->componentInsts = _tmp10_;
@@ -1663,7 +1664,7 @@ ComponentInst* custom_component_def_add_componentInst (CustomComponentDef* self,
  * Add a new Annotation at (//x//, //y//), with text //text// of
  * font size //fontSize// to the design.
  */
-static Annotation** _vala_array_dup7 (Annotation** self, int length) {
+static Annotation** _vala_array_dup8 (Annotation** self, int length) {
 	Annotation** result;
 	int i;
 	result = g_new0 (Annotation*, length + 1);
@@ -1676,7 +1677,7 @@ static Annotation** _vala_array_dup7 (Annotation** self, int length) {
 }
 
 
-static void _vala_array_add26 (Annotation*** array, int* length, int* size, Annotation* value) {
+static void _vala_array_add28 (Annotation*** array, int* length, int* size, Annotation* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Annotation*, *array, (*size) + 1);
@@ -1686,7 +1687,7 @@ static void _vala_array_add26 (Annotation*** array, int* length, int* size, Anno
 }
 
 
-static Annotation** _vala_array_dup8 (Annotation** self, int length) {
+static Annotation** _vala_array_dup9 (Annotation** self, int length) {
 	Annotation** result;
 	int i;
 	result = g_new0 (Annotation*, length + 1);
@@ -1731,7 +1732,7 @@ void custom_component_def_add_annotation (CustomComponentDef* self, gint x, gint
 	annotation = _tmp4_;
 	_tmp5_ = self->annotations;
 	_tmp5__length1 = self->annotations_length1;
-	_tmp6_ = (_tmp5_ != NULL) ? _vala_array_dup7 (_tmp5_, _tmp5__length1) : ((gpointer) _tmp5_);
+	_tmp6_ = (_tmp5_ != NULL) ? _vala_array_dup8 (_tmp5_, _tmp5__length1) : ((gpointer) _tmp5_);
 	_tmp6__length1 = _tmp5__length1;
 	newAnnotations = _tmp6_;
 	newAnnotations_length1 = _tmp6__length1;
@@ -1739,10 +1740,10 @@ void custom_component_def_add_annotation (CustomComponentDef* self, gint x, gint
 	_tmp7_ = newAnnotations;
 	_tmp7__length1 = newAnnotations_length1;
 	_tmp8_ = _annotation_ref0 (annotation);
-	_vala_array_add26 (&newAnnotations, &newAnnotations_length1, &_newAnnotations_size_, _tmp8_);
+	_vala_array_add28 (&newAnnotations, &newAnnotations_length1, &_newAnnotations_size_, _tmp8_);
 	_tmp9_ = newAnnotations;
 	_tmp9__length1 = newAnnotations_length1;
-	_tmp10_ = (_tmp9_ != NULL) ? _vala_array_dup8 (_tmp9_, _tmp9__length1) : ((gpointer) _tmp9_);
+	_tmp10_ = (_tmp9_ != NULL) ? _vala_array_dup9 (_tmp9_, _tmp9__length1) : ((gpointer) _tmp9_);
 	_tmp10__length1 = _tmp9__length1;
 	self->annotations = (_vala_array_free (self->annotations, self->annotations_length1, (GDestroyNotify) annotation_unref), NULL);
 	self->annotations = _tmp10_;
@@ -1757,7 +1758,7 @@ void custom_component_def_add_annotation (CustomComponentDef* self, gint x, gint
 /**
  * Adds a new wire to the design and returns it.
  */
-static WireInst** _vala_array_dup9 (WireInst** self, int length) {
+static WireInst** _vala_array_dup10 (WireInst** self, int length) {
 	WireInst** result;
 	int i;
 	result = g_new0 (WireInst*, length + 1);
@@ -1770,7 +1771,7 @@ static WireInst** _vala_array_dup9 (WireInst** self, int length) {
 }
 
 
-static void _vala_array_add27 (WireInst*** array, int* length, int* size, WireInst* value) {
+static void _vala_array_add29 (WireInst*** array, int* length, int* size, WireInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInst*, *array, (*size) + 1);
@@ -1780,7 +1781,7 @@ static void _vala_array_add27 (WireInst*** array, int* length, int* size, WireIn
 }
 
 
-static WireInst** _vala_array_dup10 (WireInst** self, int length) {
+static WireInst** _vala_array_dup11 (WireInst** self, int length) {
 	WireInst** result;
 	int i;
 	result = g_new0 (WireInst*, length + 1);
@@ -1817,7 +1818,7 @@ WireInst* custom_component_def_add_wire (CustomComponentDef* self) {
 	wireInst = _tmp0_;
 	_tmp1_ = self->wireInsts;
 	_tmp1__length1 = self->wireInsts_length1;
-	_tmp2_ = (_tmp1_ != NULL) ? _vala_array_dup9 (_tmp1_, _tmp1__length1) : ((gpointer) _tmp1_);
+	_tmp2_ = (_tmp1_ != NULL) ? _vala_array_dup10 (_tmp1_, _tmp1__length1) : ((gpointer) _tmp1_);
 	_tmp2__length1 = _tmp1__length1;
 	newWireInsts = _tmp2_;
 	newWireInsts_length1 = _tmp2__length1;
@@ -1825,10 +1826,10 @@ WireInst* custom_component_def_add_wire (CustomComponentDef* self) {
 	_tmp3_ = newWireInsts;
 	_tmp3__length1 = newWireInsts_length1;
 	_tmp4_ = _wire_inst_ref0 (wireInst);
-	_vala_array_add27 (&newWireInsts, &newWireInsts_length1, &_newWireInsts_size_, _tmp4_);
+	_vala_array_add29 (&newWireInsts, &newWireInsts_length1, &_newWireInsts_size_, _tmp4_);
 	_tmp5_ = newWireInsts;
 	_tmp5__length1 = newWireInsts_length1;
-	_tmp6_ = (_tmp5_ != NULL) ? _vala_array_dup10 (_tmp5_, _tmp5__length1) : ((gpointer) _tmp5_);
+	_tmp6_ = (_tmp5_ != NULL) ? _vala_array_dup11 (_tmp5_, _tmp5__length1) : ((gpointer) _tmp5_);
 	_tmp6__length1 = _tmp5__length1;
 	self->wireInsts = (_vala_array_free (self->wireInsts, self->wireInsts_length1, (GDestroyNotify) wire_inst_unref), NULL);
 	self->wireInsts = _tmp6_;
@@ -1844,7 +1845,7 @@ WireInst* custom_component_def_add_wire (CustomComponentDef* self) {
 /**
  * Deletes any selected components.
  */
-static void _vala_array_add28 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
+static void _vala_array_add30 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (ComponentInst*, *array, (*size) + 1);
@@ -1854,7 +1855,7 @@ static void _vala_array_add28 (ComponentInst*** array, int* length, int* size, C
 }
 
 
-static ComponentInst** _vala_array_dup11 (ComponentInst** self, int length) {
+static ComponentInst** _vala_array_dup12 (ComponentInst** self, int length) {
 	ComponentInst** result;
 	int i;
 	result = g_new0 (ComponentInst*, length + 1);
@@ -1918,7 +1919,7 @@ void custom_component_def_delete_selected_components (CustomComponentDef* self) 
 					_tmp7__length1 = newComponentInsts_length1;
 					_tmp8_ = componentInst;
 					_tmp9_ = _component_inst_ref0 (_tmp8_);
-					_vala_array_add28 (&newComponentInsts, &newComponentInsts_length1, &_newComponentInsts_size_, _tmp9_);
+					_vala_array_add30 (&newComponentInsts, &newComponentInsts_length1, &_newComponentInsts_size_, _tmp9_);
 				}
 				_component_inst_unref0 (componentInst);
 			}
@@ -1926,7 +1927,7 @@ void custom_component_def_delete_selected_components (CustomComponentDef* self) 
 	}
 	_tmp10_ = newComponentInsts;
 	_tmp10__length1 = newComponentInsts_length1;
-	_tmp11_ = (_tmp10_ != NULL) ? _vala_array_dup11 (_tmp10_, _tmp10__length1) : ((gpointer) _tmp10_);
+	_tmp11_ = (_tmp10_ != NULL) ? _vala_array_dup12 (_tmp10_, _tmp10__length1) : ((gpointer) _tmp10_);
 	_tmp11__length1 = _tmp10__length1;
 	self->componentInsts = (_vala_array_free (self->componentInsts, self->componentInsts_length1, (GDestroyNotify) component_inst_unref), NULL);
 	self->componentInsts = _tmp11_;
@@ -1938,7 +1939,7 @@ void custom_component_def_delete_selected_components (CustomComponentDef* self) 
 /**
  * Deletes any selected wires.
  */
-static void _vala_array_add29 (WireInst*** array, int* length, int* size, WireInst* value) {
+static void _vala_array_add31 (WireInst*** array, int* length, int* size, WireInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInst*, *array, (*size) + 1);
@@ -1948,7 +1949,7 @@ static void _vala_array_add29 (WireInst*** array, int* length, int* size, WireIn
 }
 
 
-static WireInst** _vala_array_dup12 (WireInst** self, int length) {
+static WireInst** _vala_array_dup13 (WireInst** self, int length) {
 	WireInst** result;
 	int i;
 	result = g_new0 (WireInst*, length + 1);
@@ -2012,7 +2013,7 @@ void custom_component_def_delete_selected_wires (CustomComponentDef* self) {
 					_tmp7__length1 = newWireInsts_length1;
 					_tmp8_ = wireInst;
 					_tmp9_ = _wire_inst_ref0 (_tmp8_);
-					_vala_array_add29 (&newWireInsts, &newWireInsts_length1, &_newWireInsts_size_, _tmp9_);
+					_vala_array_add31 (&newWireInsts, &newWireInsts_length1, &_newWireInsts_size_, _tmp9_);
 				}
 				_wire_inst_unref0 (wireInst);
 			}
@@ -2020,7 +2021,7 @@ void custom_component_def_delete_selected_wires (CustomComponentDef* self) {
 	}
 	_tmp10_ = newWireInsts;
 	_tmp10__length1 = newWireInsts_length1;
-	_tmp11_ = (_tmp10_ != NULL) ? _vala_array_dup12 (_tmp10_, _tmp10__length1) : ((gpointer) _tmp10_);
+	_tmp11_ = (_tmp10_ != NULL) ? _vala_array_dup13 (_tmp10_, _tmp10__length1) : ((gpointer) _tmp10_);
 	_tmp11__length1 = _tmp10__length1;
 	self->wireInsts = (_vala_array_free (self->wireInsts, self->wireInsts_length1, (GDestroyNotify) wire_inst_unref), NULL);
 	self->wireInsts = _tmp11_;
@@ -2032,7 +2033,7 @@ void custom_component_def_delete_selected_wires (CustomComponentDef* self) {
 /**
  * Deletes any selected annotations.
  */
-static void _vala_array_add30 (Annotation*** array, int* length, int* size, Annotation* value) {
+static void _vala_array_add32 (Annotation*** array, int* length, int* size, Annotation* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Annotation*, *array, (*size) + 1);
@@ -2042,7 +2043,7 @@ static void _vala_array_add30 (Annotation*** array, int* length, int* size, Anno
 }
 
 
-static Annotation** _vala_array_dup13 (Annotation** self, int length) {
+static Annotation** _vala_array_dup14 (Annotation** self, int length) {
 	Annotation** result;
 	int i;
 	result = g_new0 (Annotation*, length + 1);
@@ -2103,7 +2104,7 @@ void custom_component_def_delete_selected_annotations (CustomComponentDef* self)
 					_tmp6__length1 = newAnnotations_length1;
 					_tmp7_ = annotation;
 					_tmp8_ = _annotation_ref0 (_tmp7_);
-					_vala_array_add30 (&newAnnotations, &newAnnotations_length1, &_newAnnotations_size_, _tmp8_);
+					_vala_array_add32 (&newAnnotations, &newAnnotations_length1, &_newAnnotations_size_, _tmp8_);
 				}
 				_annotation_unref0 (annotation);
 			}
@@ -2111,7 +2112,7 @@ void custom_component_def_delete_selected_annotations (CustomComponentDef* self)
 	}
 	_tmp9_ = newAnnotations;
 	_tmp9__length1 = newAnnotations_length1;
-	_tmp10_ = (_tmp9_ != NULL) ? _vala_array_dup13 (_tmp9_, _tmp9__length1) : ((gpointer) _tmp9_);
+	_tmp10_ = (_tmp9_ != NULL) ? _vala_array_dup14 (_tmp9_, _tmp9__length1) : ((gpointer) _tmp9_);
 	_tmp10__length1 = _tmp9__length1;
 	self->annotations = (_vala_array_free (self->annotations, self->annotations_length1, (GDestroyNotify) annotation_unref), NULL);
 	self->annotations = _tmp10_;
@@ -2673,7 +2674,7 @@ gint custom_component_def_validate_overlaps (CustomComponentDef* self) {
 /**
  * Loads a component from the file //infoFilename//, using libxml.
  */
-static void _vala_array_add31 (WireInst*** array, int* length, int* size, WireInst* value) {
+static void _vala_array_add33 (WireInst*** array, int* length, int* size, WireInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInst*, *array, (*size) + 1);
@@ -2683,7 +2684,7 @@ static void _vala_array_add31 (WireInst*** array, int* length, int* size, WireIn
 }
 
 
-static void _vala_array_add32 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
+static void _vala_array_add34 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (ComponentInst*, *array, (*size) + 1);
@@ -2693,7 +2694,7 @@ static void _vala_array_add32 (ComponentInst*** array, int* length, int* size, C
 }
 
 
-static void _vala_array_add33 (Annotation*** array, int* length, int* size, Annotation* value) {
+static void _vala_array_add35 (Annotation*** array, int* length, int* size, Annotation* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Annotation*, *array, (*size) + 1);
@@ -2703,7 +2704,7 @@ static void _vala_array_add33 (Annotation*** array, int* length, int* size, Anno
 }
 
 
-static WireInst** _vala_array_dup14 (WireInst** self, int length) {
+static WireInst** _vala_array_dup15 (WireInst** self, int length) {
 	WireInst** result;
 	int i;
 	result = g_new0 (WireInst*, length + 1);
@@ -2716,7 +2717,7 @@ static WireInst** _vala_array_dup14 (WireInst** self, int length) {
 }
 
 
-static ComponentInst** _vala_array_dup15 (ComponentInst** self, int length) {
+static ComponentInst** _vala_array_dup16 (ComponentInst** self, int length) {
 	ComponentInst** result;
 	int i;
 	result = g_new0 (ComponentInst*, length + 1);
@@ -2729,7 +2730,7 @@ static ComponentInst** _vala_array_dup15 (ComponentInst** self, int length) {
 }
 
 
-static Annotation** _vala_array_dup16 (Annotation** self, int length) {
+static Annotation** _vala_array_dup17 (Annotation** self, int length) {
 	Annotation** result;
 	int i;
 	result = g_new0 (Annotation*, length + 1);
@@ -2920,7 +2921,7 @@ gint custom_component_def_load (CustomComponentDef* self, const gchar* infoFilen
 							_tmp42__length1 = newWireInsts_length1;
 							_tmp43_ = newWireInst;
 							_tmp44_ = _wire_inst_ref0 (_tmp43_);
-							_vala_array_add31 (&newWireInsts, &newWireInsts_length1, &_newWireInsts_size_, _tmp44_);
+							_vala_array_add33 (&newWireInsts, &newWireInsts_length1, &_newWireInsts_size_, _tmp44_);
 							_wire_inst_unref0 (newWireInst);
 						}
 						break;
@@ -2970,7 +2971,7 @@ gint custom_component_def_load (CustomComponentDef* self, const gchar* infoFilen
 								_tmp50__length1 = newComponentInsts_length1;
 								_tmp51_ = newComponentInst;
 								_tmp52_ = _component_inst_ref0 (_tmp51_);
-								_vala_array_add32 (&newComponentInsts, &newComponentInsts_length1, &_newComponentInsts_size_, _tmp52_);
+								_vala_array_add34 (&newComponentInsts, &newComponentInsts_length1, &_newComponentInsts_size_, _tmp52_);
 							}
 							goto __finally24;
 							__catch24_component_inst_load_error_invalid:
@@ -3077,7 +3078,7 @@ gint custom_component_def_load (CustomComponentDef* self, const gchar* infoFilen
 								_tmp68__length1 = newAnnotations_length1;
 								_tmp69_ = newAnnotation;
 								_tmp70_ = _annotation_ref0 (_tmp69_);
-								_vala_array_add33 (&newAnnotations, &newAnnotations_length1, &_newAnnotations_size_, _tmp70_);
+								_vala_array_add35 (&newAnnotations, &newAnnotations_length1, &_newAnnotations_size_, _tmp70_);
 							}
 							goto __finally25;
 							__catch25_annotation_load_error_empty:
@@ -3125,21 +3126,21 @@ gint custom_component_def_load (CustomComponentDef* self, const gchar* infoFilen
 	xmlFreeDoc (_tmp74_);
 	_tmp75_ = newWireInsts;
 	_tmp75__length1 = newWireInsts_length1;
-	_tmp76_ = (_tmp75_ != NULL) ? _vala_array_dup14 (_tmp75_, _tmp75__length1) : ((gpointer) _tmp75_);
+	_tmp76_ = (_tmp75_ != NULL) ? _vala_array_dup15 (_tmp75_, _tmp75__length1) : ((gpointer) _tmp75_);
 	_tmp76__length1 = _tmp75__length1;
 	self->wireInsts = (_vala_array_free (self->wireInsts, self->wireInsts_length1, (GDestroyNotify) wire_inst_unref), NULL);
 	self->wireInsts = _tmp76_;
 	self->wireInsts_length1 = _tmp76__length1;
 	_tmp77_ = newComponentInsts;
 	_tmp77__length1 = newComponentInsts_length1;
-	_tmp78_ = (_tmp77_ != NULL) ? _vala_array_dup15 (_tmp77_, _tmp77__length1) : ((gpointer) _tmp77_);
+	_tmp78_ = (_tmp77_ != NULL) ? _vala_array_dup16 (_tmp77_, _tmp77__length1) : ((gpointer) _tmp77_);
 	_tmp78__length1 = _tmp77__length1;
 	self->componentInsts = (_vala_array_free (self->componentInsts, self->componentInsts_length1, (GDestroyNotify) component_inst_unref), NULL);
 	self->componentInsts = _tmp78_;
 	self->componentInsts_length1 = _tmp78__length1;
 	_tmp79_ = newAnnotations;
 	_tmp79__length1 = newAnnotations_length1;
-	_tmp80_ = (_tmp79_ != NULL) ? _vala_array_dup16 (_tmp79_, _tmp79__length1) : ((gpointer) _tmp79_);
+	_tmp80_ = (_tmp79_ != NULL) ? _vala_array_dup17 (_tmp79_, _tmp79__length1) : ((gpointer) _tmp79_);
 	_tmp80__length1 = _tmp79__length1;
 	self->annotations = (_vala_array_free (self->annotations, self->annotations_length1, (GDestroyNotify) annotation_unref), NULL);
 	self->annotations = _tmp80_;
@@ -3511,7 +3512,7 @@ gint custom_component_def_save (CustomComponentDef* self, const gchar* fileName)
  * //connections//. The sub-components are part of the ancestry
  * //ancestry//.
  */
-static void _vala_array_add34 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
+static void _vala_array_add36 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (ComponentInst*, *array, (*size) + 1);
@@ -3521,7 +3522,7 @@ static void _vala_array_add34 (ComponentInst*** array, int* length, int* size, C
 }
 
 
-static void _vala_array_add35 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
+static void _vala_array_add37 (ComponentInst*** array, int* length, int* size, ComponentInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (ComponentInst*, *array, (*size) + 1);
@@ -3536,7 +3537,7 @@ static gpointer _wire_state_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add36 (WireState*** array, int* length, int* size, WireState* value) {
+static void _vala_array_add38 (WireState*** array, int* length, int* size, WireState* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireState*, *array, (*size) + 1);
@@ -3602,7 +3603,7 @@ static void custom_component_def_real_compile_component (ComponentDef* base, Com
 					_tmp5__length1 = newAncestry_length1;
 					_tmp6_ = prevComponentInst;
 					_tmp7_ = _component_inst_ref0 (_tmp6_);
-					_vala_array_add34 (&newAncestry, &newAncestry_length1, &_newAncestry_size_, _tmp7_);
+					_vala_array_add36 (&newAncestry, &newAncestry_length1, &_newAncestry_size_, _tmp7_);
 					_component_inst_unref0 (prevComponentInst);
 				}
 			}
@@ -3611,7 +3612,7 @@ static void custom_component_def_real_compile_component (ComponentDef* base, Com
 		_tmp8__length1 = newAncestry_length1;
 		_tmp9_ = componentInst;
 		_tmp10_ = _component_inst_ref0 (_tmp9_);
-		_vala_array_add35 (&newAncestry, &newAncestry_length1, &_newAncestry_size_, _tmp10_);
+		_vala_array_add37 (&newAncestry, &newAncestry_length1, &_newAncestry_size_, _tmp10_);
 	}
 	_tmp11_ = self->wireInsts;
 	_tmp11__length1 = self->wireInsts_length1;
@@ -3652,7 +3653,7 @@ static void custom_component_def_real_compile_component (ComponentDef* base, Com
 				_tmp18__length1 = localWireStates_length1;
 				_tmp19_ = wireState;
 				_tmp20_ = _wire_state_ref0 (_tmp19_);
-				_vala_array_add36 (&localWireStates, &localWireStates_length1, &_localWireStates_size_, _tmp20_);
+				_vala_array_add38 (&localWireStates, &localWireStates_length1, &_localWireStates_size_, _tmp20_);
 				_wire_state_unref0 (wireState);
 				_wire_inst_unref0 (wireInst);
 			}
@@ -3959,7 +3960,7 @@ static gboolean _vala_component_def_array_contains (ComponentDef** stack, int st
 }
 
 
-static void _vala_array_add37 (ComponentDef*** array, int* length, int* size, ComponentDef* value) {
+static void _vala_array_add39 (ComponentDef*** array, int* length, int* size, ComponentDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (ComponentDef*, *array, (*size) + 1);
@@ -3969,7 +3970,7 @@ static void _vala_array_add37 (ComponentDef*** array, int* length, int* size, Co
 }
 
 
-static ComponentDef** _vala_array_dup17 (ComponentDef** self, int length) {
+static ComponentDef** _vala_array_dup18 (ComponentDef** self, int length) {
 	ComponentDef** result;
 	int i;
 	result = g_new0 (ComponentDef*, length + 1);
@@ -4063,7 +4064,7 @@ void custom_component_def_update_immediate_dependencies (CustomComponentDef* sel
 						_tmp17__length1 = newImmediateDependencies_length1;
 						_tmp18_ = componentDef;
 						_tmp19_ = _component_def_ref0 (_tmp18_);
-						_vala_array_add37 (&newImmediateDependencies, &newImmediateDependencies_length1, &_newImmediateDependencies_size_, _tmp19_);
+						_vala_array_add39 (&newImmediateDependencies, &newImmediateDependencies_length1, &_newImmediateDependencies_size_, _tmp19_);
 					}
 					_component_def_unref0 (componentDef);
 				}
@@ -4073,7 +4074,7 @@ void custom_component_def_update_immediate_dependencies (CustomComponentDef* sel
 	}
 	_tmp20_ = newImmediateDependencies;
 	_tmp20__length1 = newImmediateDependencies_length1;
-	_tmp21_ = (_tmp20_ != NULL) ? _vala_array_dup17 (_tmp20_, _tmp20__length1) : ((gpointer) _tmp20_);
+	_tmp21_ = (_tmp20_ != NULL) ? _vala_array_dup18 (_tmp20_, _tmp20__length1) : ((gpointer) _tmp20_);
 	_tmp21__length1 = _tmp20__length1;
 	self->immediateDependencies = (_vala_array_free (self->immediateDependencies, self->immediateDependencies_length1, (GDestroyNotify) component_def_unref), NULL);
 	self->immediateDependencies = _tmp21_;
@@ -4082,7 +4083,7 @@ void custom_component_def_update_immediate_dependencies (CustomComponentDef* sel
 }
 
 
-static void _vala_array_add38 (ComponentDef*** array, int* length, int* size, ComponentDef* value) {
+static void _vala_array_add40 (ComponentDef*** array, int* length, int* size, ComponentDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (ComponentDef*, *array, (*size) + 1);
@@ -4092,7 +4093,7 @@ static void _vala_array_add38 (ComponentDef*** array, int* length, int* size, Co
 }
 
 
-static ComponentDef** _vala_array_dup18 (ComponentDef** self, int length) {
+static ComponentDef** _vala_array_dup19 (ComponentDef** self, int length) {
 	ComponentDef** result;
 	int i;
 	result = g_new0 (ComponentDef*, length + 1);
@@ -4150,7 +4151,7 @@ void custom_component_def_remove_immediate_dependency (CustomComponentDef* self,
 					_tmp5__length1 = newImmediateDependencies_length1;
 					_tmp6_ = componentDef;
 					_tmp7_ = _component_def_ref0 (_tmp6_);
-					_vala_array_add38 (&newImmediateDependencies, &newImmediateDependencies_length1, &_newImmediateDependencies_size_, _tmp7_);
+					_vala_array_add40 (&newImmediateDependencies, &newImmediateDependencies_length1, &_newImmediateDependencies_size_, _tmp7_);
 				}
 				_component_def_unref0 (componentDef);
 			}
@@ -4158,7 +4159,7 @@ void custom_component_def_remove_immediate_dependency (CustomComponentDef* self,
 	}
 	_tmp8_ = newImmediateDependencies;
 	_tmp8__length1 = newImmediateDependencies_length1;
-	_tmp9_ = (_tmp8_ != NULL) ? _vala_array_dup18 (_tmp8_, _tmp8__length1) : ((gpointer) _tmp8_);
+	_tmp9_ = (_tmp8_ != NULL) ? _vala_array_dup19 (_tmp8_, _tmp8__length1) : ((gpointer) _tmp8_);
 	_tmp9__length1 = _tmp8__length1;
 	self->immediateDependencies = (_vala_array_free (self->immediateDependencies, self->immediateDependencies_length1, (GDestroyNotify) component_def_unref), NULL);
 	self->immediateDependencies = _tmp9_;

@@ -184,6 +184,8 @@ PLUGIN_COMMON_LIBS= \
 PLUGIN_OUTPUT_PREFIX= "plugincomponents/lib"
 PLUGIN_OUTPUT_SUFFIX= ".so"
 
+# Plugin AltAnd
+
 PLUGIN_ALTAND_C_FILES= \
 	plugincomponents/plugin-def-altand.c \
 	plugincomponents/plugin-state-altand.c \
@@ -199,6 +201,25 @@ PLUGIN_ALTAND_LIBS=
 
 PLUGIN_ALTAND_OUTPUT_NAME= $(PLUGIN_OUTPUT_PREFIX)"altand"$(PLUGIN_OUTPUT_SUFFIX)
 
+# Plugin GPIO
+
+PLUGIN_GPIOPIN_C_FILES= \
+	plugincomponents/plugin-def-gpiopin.c \
+	plugincomponents/plugin-state-gpiopin.c \
+	$(NOTHING)
+
+PLUGIN_GPIOPIN_SOURCE_FILES= \
+	plugincomponents/plugin-def-gpiopin.vala \
+	plugincomponents/plugin-state-gpiopin.vala \
+	$(NOTHING)
+
+PLUGIN_GPIOPIN_CFLAGS=
+PLUGIN_GPIOPIN_LIBS=
+
+PLUGIN_GPIOPIN_OUTPUT_NAME= $(PLUGIN_OUTPUT_PREFIX)"gpiopin"$(PLUGIN_OUTPUT_SUFFIX)
+
+# End plugins
+
 CONFIG_FILES= \
 	--vapidir ./ \
 	--pkg config \
@@ -213,16 +234,20 @@ VALA_PACKAGES= \
 	$(NOTHING)
 
 
-all: linux plugins
+all: native plugins
 
 native:
 	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -o smartsim --verbose $(VALA_PACKAGES)
 
-plugins: plugin_altand
+plugins: plugin_altand plugin_gpiopin
 
 plugin_altand:
 	$(VALAC) $(SOURCE_FILES) $(PLUGIN_ALTAND_SOURCE_FILES) $(CONFIG_FILES) -C --verbose $(VALA_PACKAGES)
 	$(CC) -shared -fPIC $(PLUGIN_COMMON_CFLAGS) $(PLUGIN_COMMON_LIBS) $(PLUGIN_ALTAND_CFLAGS) $(PLUGIN_ALTAND_LIBS) -o $(PLUGIN_ALTAND_OUTPUT_NAME) $(PLUGIN_ALTAND_C_FILES)
+
+plugin_gpiopin:
+	$(VALAC) $(SOURCE_FILES) $(PLUGIN_GPIOPIN_SOURCE_FILES) $(CONFIG_FILES) -C --verbose $(VALA_PACKAGES)
+	$(CC) -shared -fPIC $(PLUGIN_COMMON_CFLAGS) $(PLUGIN_COMMON_LIBS) $(PLUGIN_GPIOPIN_CFLAGS) $(PLUGIN_GPIOPIN_LIBS) -o $(PLUGIN_GPIOPIN_OUTPUT_NAME) $(PLUGIN_GPIOPIN_C_FILES)
 
 
 nativeO3:

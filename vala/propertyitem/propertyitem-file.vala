@@ -88,6 +88,11 @@ public class PropertyItemFile : PropertyItem {
 		this.filename = filename;
 	}
 	
+	public PropertyItemFile.copy (PropertyItemFile source) {
+		base (source.name, source.description);
+		this.filename = source.filename;
+	}
+	
 /*	public override Gtk.Widget create_widget () {
 		Gtk.Entry stringEntry = new Gtk.Entry ();
 		stringEntry.text = filename;

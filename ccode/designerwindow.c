@@ -461,7 +461,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
@@ -603,15 +603,15 @@ enum  {
 	DESIGNER_WINDOW_DUMMY_PROPERTY
 };
 void designer_window_register (DesignerWindow* window);
-static void _vala_array_add47 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
+static void _vala_array_add49 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
 void designer_window_unregister (DesignerWindow* window);
-static void _vala_array_add48 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
-static DesignerWindow** _vala_array_dup44 (DesignerWindow** self, int length);
+static void _vala_array_add50 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
+static DesignerWindow** _vala_array_dup45 (DesignerWindow** self, int length);
 void project_clean_up (void);
 gboolean designer_window_project_has_windows (Project* project);
 gint designer_window_count_project_windows (Project* project);
 DesignerWindow** designer_window_get_project_windows (Project* project, int* result_length1);
-static void _vala_array_add49 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
+static void _vala_array_add51 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
 DesignerWindow* designer_window_new (void);
 DesignerWindow* designer_window_construct (GType object_type);
 void designer_window_populate (DesignerWindow* self);
@@ -744,7 +744,7 @@ static void ___lambda74__gtk_tool_button_clicked (GtkToolButton* _sender, gpoint
 static void __lambda75_ (DesignerWindow* self);
 gboolean designer_set_insert_last_plugin (Designer* self);
 static void ___lambda75__gtk_tool_button_clicked (GtkToolButton* _sender, gpointer self);
-static ComponentDef** _vala_array_dup45 (ComponentDef** self, int length);
+static ComponentDef** _vala_array_dup46 (ComponentDef** self, int length);
 static Block1Data* block1_data_ref (Block1Data* _data1_);
 static void block1_data_unref (void * _userdata_);
 GType direction_get_type (void) G_GNUC_CONST;
@@ -801,8 +801,8 @@ GType pin_def_get_type (void) G_GNUC_CONST;
 static void _____lambda76_ (Block1Data* _data1_);
 void designer_set_insert_component (Designer* self, ComponentDef* insertComponentDef);
 static void ______lambda76__gtk_tool_button_clicked (GtkToolButton* _sender, gpointer self);
-static void _vala_array_add50 (GtkRadioToolButton*** array, int* length, int* size, GtkRadioToolButton* value);
-static void _vala_array_add51 (GtkImage*** array, int* length, int* size, GtkImage* value);
+static void _vala_array_add52 (GtkRadioToolButton*** array, int* length, int* size, GtkRadioToolButton* value);
+static void _vala_array_add53 (GtkImage*** array, int* length, int* size, GtkImage* value);
 static gboolean designer_window_mouse_down (DesignerWindow* self, GdkEventButton* event);
 static gboolean _designer_window_mouse_down_gtk_widget_button_press_event (GtkWidget* _sender, GdkEventButton* event, gpointer self);
 static gboolean designer_window_mouse_move (DesignerWindow* self, GdkEventMotion* event);
@@ -828,20 +828,20 @@ gpointer value_get_plugin_component_manager (const GValue* value);
 GType plugin_component_manager_get_type (void) G_GNUC_CONST;
 static void ______lambda2_ (Block2Data* _data2_);
 static void _______lambda2__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void _vala_array_add52 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
+static void _vala_array_add54 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
 static void ______lambda3_ (Block2Data* _data2_);
 gint project_reopen_window_from_component (Project* self, CustomComponentDef* customComponentDef);
 static void _______lambda3__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void _vala_array_add53 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
+static void _vala_array_add55 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
 static Block3Data* block3_data_ref (Block3Data* _data3_);
 static void block3_data_unref (void * _userdata_);
 static void ______lambda4_ (Block3Data* _data3_);
 static void _______lambda4__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void _vala_array_add54 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
+static void _vala_array_add56 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
 static void ______lambda5_ (Block3Data* _data3_);
 static gboolean designer_window_remove_plugin_component (DesignerWindow* self, PluginComponentDef* pluginComponentDef);
 static void _______lambda5__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void _vala_array_add55 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
+static void _vala_array_add57 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
 void designer_window_update_error_mode (DesignerWindow* self, gboolean _error_);
 gboolean designer_get_hasComponent (Designer* self);
 void custom_component_def_get_design_bounds (CustomComponentDef* self, gint* right, gint* down, gint* left, gint* up);
@@ -889,7 +889,7 @@ const gchar* project_get_name (Project* self);
 const gchar* designer_get_designerName (Designer* self);
 static void designer_window_add_filefilters (DesignerWindow* self, GtkFileChooser* fileChooser);
 gint project_reopen_window_from_file (Project* self, const gchar* filename);
-gboolean project_get_pluginsAllowed (Project* self);
+gboolean project_plugins_allowed (Project* self, const gchar* extra);
 PluginComponentDef* project_load_plugin_component (Project* self, const gchar* filename, const gchar* altFilename);
 void project_update_plugin_menus (Project* self);
 gint basic_dialog_ask_overwrite (GtkWindow* window, const gchar* filename);
@@ -993,7 +993,7 @@ static gpointer _g_object_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add47 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
+static void _vala_array_add49 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (DesignerWindow*, *array, (*size) + 1);
@@ -1021,7 +1021,7 @@ void designer_window_register (DesignerWindow* window) {
 	_tmp1__length1 = designer_window_designerWindows_length1;
 	_tmp2_ = window;
 	_tmp3_ = _g_object_ref0 (_tmp2_);
-	_vala_array_add47 (&designer_window_designerWindows, &designer_window_designerWindows_length1, &_designer_window_designerWindows_size_, _tmp3_);
+	_vala_array_add49 (&designer_window_designerWindows, &designer_window_designerWindows_length1, &_designer_window_designerWindows_size_, _tmp3_);
 	_tmp4_ = window;
 	_tmp4_->myID = position;
 	_tmp5_ = stdout;
@@ -1033,7 +1033,7 @@ void designer_window_register (DesignerWindow* window) {
  * Removes //window// from the list of visible DesignerWindows.
  * When there are no more visible windows, the application quits.
  */
-static void _vala_array_add48 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
+static void _vala_array_add50 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (DesignerWindow*, *array, (*size) + 1);
@@ -1043,7 +1043,7 @@ static void _vala_array_add48 (DesignerWindow*** array, int* length, int* size, 
 }
 
 
-static DesignerWindow** _vala_array_dup44 (DesignerWindow** self, int length) {
+static DesignerWindow** _vala_array_dup45 (DesignerWindow** self, int length) {
 	DesignerWindow** result;
 	int i;
 	result = g_new0 (DesignerWindow*, length + 1);
@@ -1155,7 +1155,7 @@ void designer_window_unregister (DesignerWindow* window) {
 					_tmp21_ = i;
 					_tmp22_ = _tmp20_[_tmp21_];
 					_tmp23_ = _g_object_ref0 (_tmp22_);
-					_vala_array_add48 (&tempArray, &tempArray_length1, &_tempArray_size_, _tmp23_);
+					_vala_array_add50 (&tempArray, &tempArray_length1, &_tempArray_size_, _tmp23_);
 					_tmp24_ = newID;
 					newID = _tmp24_ + 1;
 				}
@@ -1164,7 +1164,7 @@ void designer_window_unregister (DesignerWindow* window) {
 	}
 	_tmp25_ = tempArray;
 	_tmp25__length1 = tempArray_length1;
-	_tmp26_ = (_tmp25_ != NULL) ? _vala_array_dup44 (_tmp25_, _tmp25__length1) : ((gpointer) _tmp25_);
+	_tmp26_ = (_tmp25_ != NULL) ? _vala_array_dup45 (_tmp25_, _tmp25__length1) : ((gpointer) _tmp25_);
 	_tmp26__length1 = _tmp25__length1;
 	designer_window_designerWindows = (_vala_array_free (designer_window_designerWindows, designer_window_designerWindows_length1, (GDestroyNotify) g_object_unref), NULL);
 	designer_window_designerWindows = _tmp26_;
@@ -1268,7 +1268,7 @@ gint designer_window_count_project_windows (Project* project) {
 }
 
 
-static void _vala_array_add49 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
+static void _vala_array_add51 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (DesignerWindow*, *array, (*size) + 1);
@@ -1323,7 +1323,7 @@ DesignerWindow** designer_window_get_project_windows (Project* project, int* res
 					_tmp6__length1 = projectDesignerWindows_length1;
 					_tmp7_ = designerWindow;
 					_tmp8_ = _g_object_ref0 (_tmp7_);
-					_vala_array_add49 (&projectDesignerWindows, &projectDesignerWindows_length1, &_projectDesignerWindows_size_, _tmp8_);
+					_vala_array_add51 (&projectDesignerWindows, &projectDesignerWindows_length1, &_projectDesignerWindows_size_, _tmp8_);
 				}
 				_g_object_unref0 (designerWindow);
 			}
@@ -2051,7 +2051,7 @@ static gpointer _component_def_ref0 (gpointer self) {
 }
 
 
-static ComponentDef** _vala_array_dup45 (ComponentDef** self, int length) {
+static ComponentDef** _vala_array_dup46 (ComponentDef** self, int length) {
 	ComponentDef** result;
 	int i;
 	result = g_new0 (ComponentDef*, length + 1);
@@ -2107,7 +2107,7 @@ static void ______lambda76__gtk_tool_button_clicked (GtkToolButton* _sender, gpo
 }
 
 
-static void _vala_array_add50 (GtkRadioToolButton*** array, int* length, int* size, GtkRadioToolButton* value) {
+static void _vala_array_add52 (GtkRadioToolButton*** array, int* length, int* size, GtkRadioToolButton* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkRadioToolButton*, *array, (*size) + 1);
@@ -2117,7 +2117,7 @@ static void _vala_array_add50 (GtkRadioToolButton*** array, int* length, int* si
 }
 
 
-static void _vala_array_add51 (GtkImage*** array, int* length, int* size, GtkImage* value) {
+static void _vala_array_add53 (GtkImage*** array, int* length, int* size, GtkImage* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkImage*, *array, (*size) + 1);
@@ -3528,7 +3528,7 @@ void designer_window_populate (DesignerWindow* self) {
 	gtk_toolbar_insert (_tmp393_, (GtkToolItem*) _tmp394_, -1);
 	_tmp395_ = core_standardComponentDefs;
 	_tmp395__length1 = core_standardComponentDefs_length1;
-	_tmp396_ = (_tmp395_ != NULL) ? _vala_array_dup45 (_tmp395_, _tmp395__length1) : ((gpointer) _tmp395_);
+	_tmp396_ = (_tmp395_ != NULL) ? _vala_array_dup46 (_tmp395_, _tmp395__length1) : ((gpointer) _tmp395_);
 	_tmp396__length1 = _tmp395__length1;
 	self->priv->standardComponentDefs = (_vala_array_free (self->priv->standardComponentDefs, self->priv->standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 	self->priv->standardComponentDefs = _tmp396_;
@@ -3639,12 +3639,12 @@ void designer_window_populate (DesignerWindow* self) {
 				_tmp420__length1 = self->priv->toolStandards_length1;
 				_tmp421_ = toolStandard;
 				_tmp422_ = _g_object_ref0 (_tmp421_);
-				_vala_array_add50 (&self->priv->toolStandards, &self->priv->toolStandards_length1, &self->priv->_toolStandards_size_, _tmp422_);
+				_vala_array_add52 (&self->priv->toolStandards, &self->priv->toolStandards_length1, &self->priv->_toolStandards_size_, _tmp422_);
 				_tmp423_ = self->priv->toolStandardImages;
 				_tmp423__length1 = self->priv->toolStandardImages_length1;
 				_tmp424_ = toolStandardImage;
 				_tmp425_ = _g_object_ref0 (_tmp424_);
-				_vala_array_add51 (&self->priv->toolStandardImages, &self->priv->toolStandardImages_length1, &self->priv->_toolStandardImages_size_, _tmp425_);
+				_vala_array_add53 (&self->priv->toolStandardImages, &self->priv->toolStandardImages_length1, &self->priv->_toolStandardImages_size_, _tmp425_);
 				_tmp426_ = self->priv->toolbar;
 				_tmp427_ = toolStandard;
 				gtk_toolbar_insert (_tmp426_, (GtkToolItem*) _tmp427_, -1);
@@ -3814,7 +3814,7 @@ static void _______lambda2__gtk_menu_item_activate (GtkMenuItem* _sender, gpoint
 }
 
 
-static void _vala_array_add52 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
+static void _vala_array_add54 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkMenuItem*, *array, (*size) + 1);
@@ -3840,7 +3840,7 @@ static void _______lambda3__gtk_menu_item_activate (GtkMenuItem* _sender, gpoint
 }
 
 
-static void _vala_array_add53 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
+static void _vala_array_add55 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkMenuItem*, *array, (*size) + 1);
@@ -3995,7 +3995,7 @@ void designer_window_update_custom_menu (DesignerWindow* self) {
 					_tmp32__length1 = self->priv->toolCustomsMenuComponents_length1;
 					_tmp33_ = toolMenuItem;
 					_tmp34_ = _g_object_ref0 (_tmp33_);
-					_vala_array_add52 (&self->priv->toolCustomsMenuComponents, &self->priv->toolCustomsMenuComponents_length1, &self->priv->_toolCustomsMenuComponents_size_, _tmp34_);
+					_vala_array_add54 (&self->priv->toolCustomsMenuComponents, &self->priv->toolCustomsMenuComponents_length1, &self->priv->_toolCustomsMenuComponents_size_, _tmp34_);
 					_tmp35_ = _data2_->customComponentDef;
 					_tmp36_ = ((ComponentDef*) _tmp35_)->name;
 					_tmp37_ = (GtkMenuItem*) gtk_menu_item_new_with_label (_tmp36_);
@@ -4010,7 +4010,7 @@ void designer_window_update_custom_menu (DesignerWindow* self) {
 					_tmp41__length1 = self->priv->menuWindowsComponents_length1;
 					_tmp42_ = windowMenuItem;
 					_tmp43_ = _g_object_ref0 (_tmp42_);
-					_vala_array_add53 (&self->priv->menuWindowsComponents, &self->priv->menuWindowsComponents_length1, &self->priv->_menuWindowsComponents_size_, _tmp43_);
+					_vala_array_add55 (&self->priv->menuWindowsComponents, &self->priv->menuWindowsComponents_length1, &self->priv->_menuWindowsComponents_size_, _tmp43_);
 					_g_object_unref0 (windowMenuItem);
 					_g_object_unref0 (toolMenuItem);
 					block2_data_unref (_data2_);
@@ -4079,7 +4079,7 @@ static void _______lambda4__gtk_menu_item_activate (GtkMenuItem* _sender, gpoint
 }
 
 
-static void _vala_array_add54 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
+static void _vala_array_add56 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkMenuItem*, *array, (*size) + 1);
@@ -4103,7 +4103,7 @@ static void _______lambda5__gtk_menu_item_activate (GtkMenuItem* _sender, gpoint
 }
 
 
-static void _vala_array_add55 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
+static void _vala_array_add57 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkMenuItem*, *array, (*size) + 1);
@@ -4245,7 +4245,7 @@ void designer_window_update_plugin_menu (DesignerWindow* self) {
 					_tmp27__length1 = self->priv->toolPluginsMenuComponents_length1;
 					_tmp28_ = toolMenuItem;
 					_tmp29_ = _g_object_ref0 (_tmp28_);
-					_vala_array_add54 (&self->priv->toolPluginsMenuComponents, &self->priv->toolPluginsMenuComponents_length1, &self->priv->_toolPluginsMenuComponents_size_, _tmp29_);
+					_vala_array_add56 (&self->priv->toolPluginsMenuComponents, &self->priv->toolPluginsMenuComponents_length1, &self->priv->_toolPluginsMenuComponents_size_, _tmp29_);
 					_tmp30_ = _data3_->pluginComponentDef;
 					_tmp31_ = ((ComponentDef*) _tmp30_)->name;
 					_tmp32_ = (GtkMenuItem*) gtk_menu_item_new_with_label (_tmp31_);
@@ -4260,7 +4260,7 @@ void designer_window_update_plugin_menu (DesignerWindow* self) {
 					_tmp36__length1 = self->priv->menuFileRemoveplugincomponentComponents_length1;
 					_tmp37_ = removeplugincomponentMenuItem;
 					_tmp38_ = _g_object_ref0 (_tmp37_);
-					_vala_array_add55 (&self->priv->menuFileRemoveplugincomponentComponents, &self->priv->menuFileRemoveplugincomponentComponents_length1, &self->priv->_menuFileRemoveplugincomponentComponents_size_, _tmp38_);
+					_vala_array_add57 (&self->priv->menuFileRemoveplugincomponentComponents, &self->priv->menuFileRemoveplugincomponentComponents_length1, &self->priv->_menuFileRemoveplugincomponentComponents_size_, _tmp38_);
 					_tmp39_ = self->priv->menuFileRemoveplugincomponent;
 					gtk_widget_set_sensitive ((GtkWidget*) _tmp39_, TRUE);
 					_g_object_unref0 (removeplugincomponentMenuItem);
@@ -6233,62 +6233,60 @@ static gboolean designer_window_open_component (DesignerWindow* self) {
 static gboolean designer_window_open_plugin_component (DesignerWindow* self) {
 	gboolean result = FALSE;
 	Project* _tmp0_;
-	gboolean _tmp1_;
-	gboolean _tmp2_;
-	GtkFileChooserDialog* _tmp3_;
+	gboolean _tmp1_ = FALSE;
+	GtkFileChooserDialog* _tmp2_;
 	GtkFileChooserDialog* fileChooser;
-	GtkFileChooserDialog* _tmp4_;
-	GtkFileFilter* _tmp5_;
-	GtkFileChooserDialog* _tmp6_;
-	gint _tmp7_ = 0;
-	GtkFileChooserDialog* _tmp19_;
+	GtkFileChooserDialog* _tmp3_;
+	GtkFileFilter* _tmp4_;
+	GtkFileChooserDialog* _tmp5_;
+	gint _tmp6_ = 0;
+	GtkFileChooserDialog* _tmp18_;
 	g_return_val_if_fail (self != NULL, FALSE);
 	_tmp0_ = self->priv->project;
-	_tmp1_ = project_get_pluginsAllowed (_tmp0_);
-	_tmp2_ = _tmp1_;
-	if (_tmp2_ == FALSE) {
+	_tmp1_ = project_plugins_allowed (_tmp0_, "");
+	if (_tmp1_ == FALSE) {
 		result = FALSE;
 		return result;
 	}
-	_tmp3_ = (GtkFileChooserDialog*) gtk_file_chooser_dialog_new ("Load Component", (GtkWindow*) self, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-	g_object_ref_sink (_tmp3_);
-	fileChooser = _tmp3_;
-	_tmp4_ = fileChooser;
-	_tmp5_ = self->priv->anyssxFileFilter;
-	gtk_file_chooser_add_filter ((GtkFileChooser*) _tmp4_, _tmp5_);
-	_tmp6_ = fileChooser;
-	_tmp7_ = gtk_dialog_run ((GtkDialog*) _tmp6_);
-	if (_tmp7_ == ((gint) GTK_RESPONSE_ACCEPT)) {
-		FILE* _tmp8_;
-		GtkFileChooserDialog* _tmp9_;
-		gchar* _tmp10_ = NULL;
-		gchar* _tmp11_;
-		Project* _tmp12_;
-		GtkFileChooserDialog* _tmp13_;
-		gchar* _tmp14_ = NULL;
-		gchar* _tmp15_;
-		PluginComponentDef* _tmp16_ = NULL;
-		PluginComponentDef* _tmp17_;
-		Project* _tmp18_;
-		_tmp8_ = stdout;
-		_tmp9_ = fileChooser;
-		_tmp10_ = gtk_file_chooser_get_filename ((GtkFileChooser*) _tmp9_);
-		_tmp11_ = _tmp10_;
-		fprintf (_tmp8_, "Load Plugin Component From: %s\n", _tmp11_);
-		_g_free0 (_tmp11_);
-		_tmp12_ = self->priv->project;
-		_tmp13_ = fileChooser;
-		_tmp14_ = gtk_file_chooser_get_filename ((GtkFileChooser*) _tmp13_);
-		_tmp15_ = _tmp14_;
-		_tmp16_ = project_load_plugin_component (_tmp12_, _tmp15_, NULL);
-		_tmp17_ = _tmp16_;
-		_component_def_unref0 (_tmp17_);
-		_g_free0 (_tmp15_);
-		_tmp18_ = self->priv->project;
-		project_update_plugin_menus (_tmp18_);
+	_tmp2_ = (GtkFileChooserDialog*) gtk_file_chooser_dialog_new ("Load Component", (GtkWindow*) self, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+	g_object_ref_sink (_tmp2_);
+	fileChooser = _tmp2_;
+	_tmp3_ = fileChooser;
+	_tmp4_ = self->priv->anyssxFileFilter;
+	gtk_file_chooser_add_filter ((GtkFileChooser*) _tmp3_, _tmp4_);
+	_tmp5_ = fileChooser;
+	_tmp6_ = gtk_dialog_run ((GtkDialog*) _tmp5_);
+	if (_tmp6_ == ((gint) GTK_RESPONSE_ACCEPT)) {
+		FILE* _tmp7_;
+		GtkFileChooserDialog* _tmp8_;
+		gchar* _tmp9_ = NULL;
+		gchar* _tmp10_;
+		Project* _tmp11_;
+		GtkFileChooserDialog* _tmp12_;
+		gchar* _tmp13_ = NULL;
+		gchar* _tmp14_;
+		PluginComponentDef* _tmp15_ = NULL;
+		PluginComponentDef* _tmp16_;
+		Project* _tmp17_;
+		_tmp7_ = stdout;
+		_tmp8_ = fileChooser;
+		_tmp9_ = gtk_file_chooser_get_filename ((GtkFileChooser*) _tmp8_);
+		_tmp10_ = _tmp9_;
+		fprintf (_tmp7_, "Load Plugin Component From: %s\n", _tmp10_);
+		_g_free0 (_tmp10_);
+		_tmp11_ = self->priv->project;
+		_tmp12_ = fileChooser;
+		_tmp13_ = gtk_file_chooser_get_filename ((GtkFileChooser*) _tmp12_);
+		_tmp14_ = _tmp13_;
+		_tmp15_ = project_load_plugin_component (_tmp11_, _tmp14_, NULL);
+		_tmp16_ = _tmp15_;
+		_component_def_unref0 (_tmp16_);
+		_g_free0 (_tmp14_);
+		_tmp17_ = self->priv->project;
+		project_update_plugin_menus (_tmp17_);
 	}
-	_tmp19_ = fileChooser;
-	gtk_widget_destroy ((GtkWidget*) _tmp19_);
+	_tmp18_ = fileChooser;
+	gtk_widget_destroy ((GtkWidget*) _tmp18_);
 	result = FALSE;
 	_g_object_unref0 (fileChooser);
 	return result;

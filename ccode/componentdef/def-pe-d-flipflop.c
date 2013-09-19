@@ -58,6 +58,16 @@ typedef struct _ComponentDefPrivate ComponentDefPrivate;
 typedef struct _ComponentInst ComponentInst;
 typedef struct _ComponentInstClass ComponentInstClass;
 
+#define TYPE_PROJECT (project_get_type ())
+#define PROJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_PROJECT, Project))
+#define PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_PROJECT, ProjectClass))
+#define IS_PROJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_PROJECT))
+#define IS_PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_PROJECT))
+#define PROJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_PROJECT, ProjectClass))
+
+typedef struct _Project Project;
+typedef struct _ProjectClass ProjectClass;
+
 #define TYPE_CUSTOM_COMPONENT_DEF (custom_component_def_get_type ())
 #define CUSTOM_COMPONENT_DEF(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDef))
 #define CUSTOM_COMPONENT_DEF_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDefClass))
@@ -236,7 +246,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
@@ -258,7 +268,8 @@ struct _PeDFlipflopComponentDefClass {
 typedef enum  {
 	COMPONENT_DEF_LOAD_ERROR_NOT_COMPONENT,
 	COMPONENT_DEF_LOAD_ERROR_FILE,
-	COMPONENT_DEF_LOAD_ERROR_LOAD
+	COMPONENT_DEF_LOAD_ERROR_LOAD,
+	COMPONENT_DEF_LOAD_ERROR_CANCEL
 } ComponentDefLoadError;
 #define COMPONENT_DEF_LOAD_ERROR component_def_load_error_quark ()
 typedef enum  {
@@ -353,6 +364,13 @@ void value_set_component_inst (GValue* value, gpointer v_object);
 void value_take_component_inst (GValue* value, gpointer v_object);
 gpointer value_get_component_inst (const GValue* value);
 GType component_inst_get_type (void) G_GNUC_CONST;
+gpointer project_ref (gpointer instance);
+void project_unref (gpointer instance);
+GParamSpec* param_spec_project (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
+void value_set_project (GValue* value, gpointer v_object);
+void value_take_project (GValue* value, gpointer v_object);
+gpointer value_get_project (const GValue* value);
+GType project_get_type (void) G_GNUC_CONST;
 GType custom_component_def_get_type (void) G_GNUC_CONST;
 gpointer property_item_ref (gpointer instance);
 void property_item_unref (gpointer instance);

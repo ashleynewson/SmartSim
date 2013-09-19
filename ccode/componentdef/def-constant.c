@@ -58,6 +58,16 @@ typedef struct _ComponentDefPrivate ComponentDefPrivate;
 typedef struct _ComponentInst ComponentInst;
 typedef struct _ComponentInstClass ComponentInstClass;
 
+#define TYPE_PROJECT (project_get_type ())
+#define PROJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_PROJECT, Project))
+#define PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_PROJECT, ProjectClass))
+#define IS_PROJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_PROJECT))
+#define IS_PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), TYPE_PROJECT))
+#define PROJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), TYPE_PROJECT, ProjectClass))
+
+typedef struct _Project Project;
+typedef struct _ProjectClass ProjectClass;
+
 #define TYPE_CUSTOM_COMPONENT_DEF (custom_component_def_get_type ())
 #define CUSTOM_COMPONENT_DEF(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDef))
 #define CUSTOM_COMPONENT_DEF_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), TYPE_CUSTOM_COMPONENT_DEF, CustomComponentDefClass))
@@ -248,7 +258,7 @@ struct _ComponentDefClass {
 	GTypeClass parent_class;
 	void (*finalize) (ComponentDef *self);
 	void (*extra_render) (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst);
-	void (*extra_validate) (ComponentDef* self, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
+	void (*extra_validate) (ComponentDef* self, Project* project, CustomComponentDef** componentChain, int componentChain_length1, ComponentInst* componentInst);
 	void (*add_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet* configurationProperty);
 	void (*get_properties) (ComponentDef* self, PropertySet* queryProperty, PropertySet** configurationProperty);
 	void (*load_properties) (ComponentDef* self, xmlNode* xmlnode, PropertySet** configurationProperty);
@@ -270,7 +280,8 @@ struct _ConstantComponentDefClass {
 typedef enum  {
 	COMPONENT_DEF_LOAD_ERROR_NOT_COMPONENT,
 	COMPONENT_DEF_LOAD_ERROR_FILE,
-	COMPONENT_DEF_LOAD_ERROR_LOAD
+	COMPONENT_DEF_LOAD_ERROR_LOAD,
+	COMPONENT_DEF_LOAD_ERROR_CANCEL
 } ComponentDefLoadError;
 #define COMPONENT_DEF_LOAD_ERROR component_def_load_error_quark ()
 typedef enum  {
@@ -369,6 +380,13 @@ void value_set_component_inst (GValue* value, gpointer v_object);
 void value_take_component_inst (GValue* value, gpointer v_object);
 gpointer value_get_component_inst (const GValue* value);
 GType component_inst_get_type (void) G_GNUC_CONST;
+gpointer project_ref (gpointer instance);
+void project_unref (gpointer instance);
+GParamSpec* param_spec_project (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
+void value_set_project (GValue* value, gpointer v_object);
+void value_take_project (GValue* value, gpointer v_object);
+gpointer value_get_project (const GValue* value);
+GType project_get_type (void) G_GNUC_CONST;
 GType custom_component_def_get_type (void) G_GNUC_CONST;
 gpointer property_item_ref (gpointer instance);
 void property_item_unref (gpointer instance);
@@ -431,8 +449,8 @@ gchar* property_item_selection_get_data_throw (PropertySet* propertySet, const g
 PropertyItemSelection* property_item_selection_new (const gchar* name, const gchar* description);
 PropertyItemSelection* property_item_selection_construct (GType object_type, const gchar* name, const gchar* description);
 GType property_item_selection_get_type (void) G_GNUC_CONST;
-void property_item_selection_add_option (PropertyItemSelection* self, const gchar* option);
-gint property_item_selection_set_option (PropertyItemSelection* self, const gchar* option);
+void property_item_selection_add_option (PropertyItemSelection* self, const gchar* value, const gchar* text);
+gint property_item_selection_set_option (PropertyItemSelection* self, const gchar* value);
 gint property_set_add_item (PropertySet* self, PropertyItem* propertyItem);
 static void constant_component_def_real_get_properties (ComponentDef* base, PropertySet* queryProperty, PropertySet** configurationProperty);
 PropertySet* property_set_new (const gchar* name, const gchar* description);
@@ -545,7 +563,7 @@ static void constant_component_def_real_add_properties (ComponentDef* base, Prop
 		gchar* _tmp3_;
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
-		_tmp3_ = g_strdup ("0 (False)");
+		_tmp3_ = g_strdup ("0");
 		_g_free0 (constantString);
 		constantString = _tmp3_;
 	}
@@ -558,8 +576,8 @@ static void constant_component_def_real_add_properties (ComponentDef* base, Prop
 	}
 	_tmp4_ = property_item_selection_new ("Value", "The constant value to output");
 	selection = _tmp4_;
-	property_item_selection_add_option (selection, "0 (False)");
-	property_item_selection_add_option (selection, "1 (True)");
+	property_item_selection_add_option (selection, "0", "0 (False)");
+	property_item_selection_add_option (selection, "1", "1 (True)");
 	_tmp5_ = constantString;
 	property_item_selection_set_option (selection, _tmp5_);
 	_tmp6_ = queryProperty;
@@ -602,7 +620,7 @@ static void constant_component_def_real_get_properties (ComponentDef* base, Prop
 		gchar* _tmp3_;
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
-		_tmp3_ = g_strdup ("0 (False)");
+		_tmp3_ = g_strdup ("0");
 		_g_free0 (constantString);
 		constantString = _tmp3_;
 	}
@@ -622,8 +640,8 @@ static void constant_component_def_real_get_properties (ComponentDef* base, Prop
 	_g_free0 (_tmp6_);
 	_tmp8_ = property_item_selection_new ("Value", "");
 	selection = _tmp8_;
-	property_item_selection_add_option (selection, "0 (False)");
-	property_item_selection_add_option (selection, "1 (True)");
+	property_item_selection_add_option (selection, "0", "0 (False)");
+	property_item_selection_add_option (selection, "1", "1 (True)");
 	_tmp9_ = constantString;
 	property_item_selection_set_option (selection, _tmp9_);
 	property_set_add_item (_vala_configurationProperty, (PropertyItem*) selection);
@@ -648,10 +666,19 @@ static void constant_component_def_real_load_properties (ComponentDef* base, xml
 	PropertySet* _tmp4_;
 	PropertyItemSelection* _tmp21_;
 	PropertyItemSelection* selection;
-	const gchar* _tmp22_;
-	PropertySet* _tmp23_;
+	PropertyItemSelection* _tmp22_;
+	PropertyItemSelection* _tmp23_;
+	const gchar* _tmp24_;
+	const gchar* _tmp25_;
+	GQuark _tmp27_ = 0U;
+	static GQuark _tmp26_label0 = 0;
+	static GQuark _tmp26_label1 = 0;
+	static GQuark _tmp26_label2 = 0;
+	static GQuark _tmp26_label3 = 0;
+	PropertySet* _tmp30_;
+	PropertyItemSelection* _tmp31_;
 	self = (ConstantComponentDef*) base;
-	_tmp0_ = g_strdup ("0 (False)");
+	_tmp0_ = g_strdup ("0");
 	constantString = _tmp0_;
 	_tmp1_ = ((ComponentDef*) self)->name;
 	_tmp2_ = g_strconcat (_tmp1_, " configuration", NULL);
@@ -718,12 +745,37 @@ static void constant_component_def_real_load_properties (ComponentDef* base, xml
 	}
 	_tmp21_ = property_item_selection_new ("Value", "");
 	selection = _tmp21_;
-	property_item_selection_add_option (selection, "0 (False)");
-	property_item_selection_add_option (selection, "1 (True)");
-	_tmp22_ = constantString;
-	property_item_selection_set_option (selection, _tmp22_);
-	_tmp23_ = _vala_configurationProperty;
-	property_set_add_item (_tmp23_, (PropertyItem*) selection);
+	_tmp22_ = selection;
+	property_item_selection_add_option (_tmp22_, "0", "0 (False)");
+	_tmp23_ = selection;
+	property_item_selection_add_option (_tmp23_, "1", "1 (True)");
+	_tmp24_ = constantString;
+	_tmp25_ = _tmp24_;
+	_tmp27_ = (NULL == _tmp25_) ? 0 : g_quark_from_string (_tmp25_);
+	if ((_tmp27_ == ((0 != _tmp26_label0) ? _tmp26_label0 : (_tmp26_label0 = g_quark_from_static_string ("0")))) || (_tmp27_ == ((0 != _tmp26_label1) ? _tmp26_label1 : (_tmp26_label1 = g_quark_from_static_string ("0 (False)"))))) {
+		switch (0) {
+			default:
+			{
+				PropertyItemSelection* _tmp28_;
+				_tmp28_ = selection;
+				property_item_selection_set_option (_tmp28_, "0");
+				break;
+			}
+		}
+	} else if ((_tmp27_ == ((0 != _tmp26_label2) ? _tmp26_label2 : (_tmp26_label2 = g_quark_from_static_string ("1")))) || (_tmp27_ == ((0 != _tmp26_label3) ? _tmp26_label3 : (_tmp26_label3 = g_quark_from_static_string ("1 (True)"))))) {
+		switch (0) {
+			default:
+			{
+				PropertyItemSelection* _tmp29_;
+				_tmp29_ = selection;
+				property_item_selection_set_option (_tmp29_, "1");
+				break;
+			}
+		}
+	}
+	_tmp30_ = _vala_configurationProperty;
+	_tmp31_ = selection;
+	property_set_add_item (_tmp30_, (PropertyItem*) _tmp31_);
 	_property_item_unref0 (selection);
 	_g_free0 (constantString);
 	if (configurationProperty) {
@@ -762,7 +814,7 @@ static void constant_component_def_real_save_properties (ComponentDef* base, xml
 		gchar* _tmp3_;
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
-		_tmp3_ = g_strdup ("0 (False)");
+		_tmp3_ = g_strdup ("0");
 		_g_free0 (constantString);
 		constantString = _tmp3_;
 	}
@@ -876,7 +928,7 @@ static void constant_component_def_real_compile_component (ComponentDef* base, C
 		gchar* _tmp17_;
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
-		_tmp17_ = g_strdup ("0 (False)");
+		_tmp17_ = g_strdup ("0");
 		_g_free0 (constantString);
 		constantString = _tmp17_;
 	}
@@ -889,7 +941,7 @@ static void constant_component_def_real_compile_component (ComponentDef* base, C
 		return;
 	}
 	_tmp18_ = constantString;
-	if (g_strcmp0 (_tmp18_, "1 (True)") == 0) {
+	if (g_strcmp0 (_tmp18_, "1") == 0) {
 		constantValue = TRUE;
 	}
 	_tmp19_ = outputWire;
@@ -958,7 +1010,7 @@ static void constant_component_def_real_extra_render (ComponentDef* base, cairo_
 		gchar* _tmp6_;
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
-		_tmp6_ = g_strdup ("0 (False)");
+		_tmp6_ = g_strdup ("0");
 		_g_free0 (constantString);
 		constantString = _tmp6_;
 	}
@@ -971,7 +1023,7 @@ static void constant_component_def_real_extra_render (ComponentDef* base, cairo_
 		return;
 	}
 	_tmp7_ = constantString;
-	if (g_strcmp0 (_tmp7_, "1 (True)") == 0) {
+	if (g_strcmp0 (_tmp7_, "1") == 0) {
 		gchar* _tmp8_;
 		_tmp8_ = g_strdup ("1");
 		_g_free0 (text);

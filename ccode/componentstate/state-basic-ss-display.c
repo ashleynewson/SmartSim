@@ -312,7 +312,7 @@ BasicSsDisplayComponentState* basic_ss_display_component_state_new (Connection* 
 BasicSsDisplayComponentState* basic_ss_display_component_state_construct (GType object_type, Connection* input1Wire, Connection* input2Wire, Connection* input4Wire, Connection* input8Wire, Connection* inputPWire, gboolean displayPoint, ComponentInst** ancestry, int ancestry_length1, ComponentInst* componentInst);
 ComponentState* component_state_construct (GType object_type);
 void connection_set_affects (Connection* self, ComponentState* componentState);
-static ComponentInst** _vala_array_dup21 (ComponentInst** self, int length);
+static ComponentInst** _vala_array_dup22 (ComponentInst** self, int length);
 static void basic_ss_display_component_state_real_render (ComponentState* base, cairo_t* context);
 gpointer component_def_ref (gpointer instance);
 void component_def_unref (gpointer instance);
@@ -377,7 +377,7 @@ static gpointer _component_inst_ref0 (gpointer self) {
 }
 
 
-static ComponentInst** _vala_array_dup21 (ComponentInst** self, int length) {
+static ComponentInst** _vala_array_dup22 (ComponentInst** self, int length) {
 	ComponentInst** result;
 	int i;
 	result = g_new0 (ComponentInst*, length + 1);
@@ -456,7 +456,7 @@ BasicSsDisplayComponentState* basic_ss_display_component_state_construct (GType 
 	self->priv->input = (gint8) (-1);
 	_tmp16_ = ancestry;
 	_tmp16__length1 = ancestry_length1;
-	_tmp17_ = (_tmp16_ != NULL) ? _vala_array_dup21 (_tmp16_, _tmp16__length1) : ((gpointer) _tmp16_);
+	_tmp17_ = (_tmp16_ != NULL) ? _vala_array_dup22 (_tmp16_, _tmp16__length1) : ((gpointer) _tmp16_);
 	_tmp17__length1 = _tmp16__length1;
 	((ComponentState*) self)->ancestry = (_vala_array_free (((ComponentState*) self)->ancestry, ((ComponentState*) self)->ancestry_length1, (GDestroyNotify) component_inst_unref), NULL);
 	((ComponentState*) self)->ancestry = _tmp17_;

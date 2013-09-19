@@ -301,7 +301,7 @@ enum  {
 ToggleComponentState* toggle_component_state_new (Connection* outputWire, ComponentInst** ancestry, int ancestry_length1, ComponentInst* componentInst);
 ToggleComponentState* toggle_component_state_construct (GType object_type, Connection* outputWire, ComponentInst** ancestry, int ancestry_length1, ComponentInst* componentInst);
 ComponentState* component_state_construct (GType object_type);
-static ComponentInst** _vala_array_dup36 (ComponentInst** self, int length);
+static ComponentInst** _vala_array_dup37 (ComponentInst** self, int length);
 static void toggle_component_state_real_click (ComponentState* base);
 gpointer component_def_ref (gpointer instance);
 void component_def_unref (gpointer instance);
@@ -367,7 +367,7 @@ static gpointer _component_inst_ref0 (gpointer self) {
 }
 
 
-static ComponentInst** _vala_array_dup36 (ComponentInst** self, int length) {
+static ComponentInst** _vala_array_dup37 (ComponentInst** self, int length) {
 	ComponentInst** result;
 	int i;
 	result = g_new0 (ComponentInst*, length + 1);
@@ -400,7 +400,7 @@ ToggleComponentState* toggle_component_state_construct (GType object_type, Conne
 	self->priv->output = FALSE;
 	_tmp2_ = ancestry;
 	_tmp2__length1 = ancestry_length1;
-	_tmp3_ = (_tmp2_ != NULL) ? _vala_array_dup36 (_tmp2_, _tmp2__length1) : ((gpointer) _tmp2_);
+	_tmp3_ = (_tmp2_ != NULL) ? _vala_array_dup37 (_tmp2_, _tmp2__length1) : ((gpointer) _tmp2_);
 	_tmp3__length1 = _tmp2__length1;
 	((ComponentState*) self)->ancestry = (_vala_array_free (((ComponentState*) self)->ancestry, ((ComponentState*) self)->ancestry_length1, (GDestroyNotify) component_inst_unref), NULL);
 	((ComponentState*) self)->ancestry = _tmp3_;

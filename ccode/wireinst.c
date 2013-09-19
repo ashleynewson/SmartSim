@@ -264,18 +264,18 @@ Tag* tag_construct (GType object_type, gint xWire, gint yWire, gint xTag, gint y
 GType flow_get_type (void) G_GNUC_CONST;
 GType direction_get_type (void) G_GNUC_CONST;
 static Path** _vala_array_dup77 (Path** self, int length);
-static void _vala_array_add88 (Path*** array, int* length, int* size, Path* value);
+static void _vala_array_add92 (Path*** array, int* length, int* size, Path* value);
 static Path** _vala_array_dup78 (Path** self, int length);
 void wire_inst_register_component (WireInst* self, ComponentInst* newComponentInst, gint x, gint y);
 static WireInstRegisteredComponent* _vala_array_dup79 (WireInstRegisteredComponent* self, int length);
 gint path_find (Path* self, gint x, gint y);
-static void _vala_array_add89 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value);
+static void _vala_array_add93 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value);
 static WireInstRegisteredComponent* _vala_array_dup80 (WireInstRegisteredComponent* self, int length);
 void wire_inst_unregister_component (WireInst* self, ComponentInst* oldComponentInst);
-static void _vala_array_add90 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value);
+static void _vala_array_add94 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value);
 static WireInstRegisteredComponent* _vala_array_dup81 (WireInstRegisteredComponent* self, int length);
 void wire_inst_unregister_component_xy (WireInst* self, ComponentInst* oldComponentInst, gint x, gint y);
-static void _vala_array_add91 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value);
+static void _vala_array_add95 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value);
 static WireInstRegisteredComponent* _vala_array_dup82 (WireInstRegisteredComponent* self, int length);
 void wire_inst_disconnect_components (WireInst* self);
 void component_inst_disconnect_wire (ComponentInst* self, WireInst* wireInst, gboolean callWire);
@@ -284,25 +284,25 @@ static Path** _vala_array_dup83 (Path** self, int length);
 static WireInstMarker* _vala_array_dup84 (WireInstMarker* self, int length);
 static WireInstRegisteredComponent* _vala_array_dup85 (WireInstRegisteredComponent* self, int length);
 gboolean wire_inst_try_merge_paths (WireInst* self, Path* checkPath);
-static void _vala_array_add92 (Path*** array, int* length, int* size, Path* value);
-static void _vala_array_add93 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value);
+static void _vala_array_add96 (Path*** array, int* length, int* size, Path* value);
+static void _vala_array_add97 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value);
 void component_inst_change_wire (ComponentInst* self, WireInst* replaceWhat, WireInst* replaceWith);
-static void _vala_array_add94 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value);
+static void _vala_array_add98 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value);
 static Path** _vala_array_dup86 (Path** self, int length);
 static WireInstMarker* _vala_array_dup87 (WireInstMarker* self, int length);
 static WireInstRegisteredComponent* _vala_array_dup88 (WireInstRegisteredComponent* self, int length);
 WireInst** wire_inst_unmerge (WireInst* self, gint x, gint y, int* result_length1);
-static void _vala_array_add95 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value);
-static void _vala_array_add96 (WireInst*** array, int* length, int* size, WireInst* value);
-static void _vala_array_add97 (Path*** array, int* length, int* size, Path* value);
-Path* wire_inst_find (WireInst* self, gint x, gint y);
-static void _vala_array_add98 (Path*** array, int* length, int* size, Path* value);
-static Path** _vala_array_dup89 (Path** self, int length);
 static void _vala_array_add99 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value);
+static void _vala_array_add100 (WireInst*** array, int* length, int* size, WireInst* value);
+static void _vala_array_add101 (Path*** array, int* length, int* size, Path* value);
+Path* wire_inst_find (WireInst* self, gint x, gint y);
+static void _vala_array_add102 (Path*** array, int* length, int* size, Path* value);
+static Path** _vala_array_dup89 (Path** self, int length);
+static void _vala_array_add103 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value);
 static WireInstMarker* _vala_array_dup90 (WireInstMarker* self, int length);
 gboolean component_inst_try_connect (ComponentInst* self, gint x, gint y, WireInst* wireInst);
 static WireInstMarker* _vala_array_dup91 (WireInstMarker* self, int length);
-static void _vala_array_add100 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value);
+static void _vala_array_add104 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value);
 static WireInstMarker* _vala_array_dup92 (WireInstMarker* self, int length);
 gint wire_inst_find_tag (WireInst* self, gint x, gint y);
 gint wire_inst_count_find (WireInst* self, gint x, gint y);
@@ -1109,7 +1109,7 @@ static Path** _vala_array_dup77 (Path** self, int length) {
 }
 
 
-static void _vala_array_add88 (Path*** array, int* length, int* size, Path* value) {
+static void _vala_array_add92 (Path*** array, int* length, int* size, Path* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Path*, *array, (*size) + 1);
@@ -1161,7 +1161,7 @@ void wire_inst_import_path (WireInst* self, Path* path) {
 	_tmp2__length1 = newPaths_length1;
 	_tmp3_ = path;
 	_tmp4_ = _path_ref0 (_tmp3_);
-	_vala_array_add88 (&newPaths, &newPaths_length1, &_newPaths_size_, _tmp4_);
+	_vala_array_add92 (&newPaths, &newPaths_length1, &_newPaths_size_, _tmp4_);
 	_tmp5_ = newPaths;
 	_tmp5__length1 = newPaths_length1;
 	_tmp6_ = (_tmp5_ != NULL) ? _vala_array_dup78 (_tmp5_, _tmp5__length1) : ((gpointer) _tmp5_);
@@ -1182,7 +1182,7 @@ static WireInstRegisteredComponent* _vala_array_dup79 (WireInstRegisteredCompone
 }
 
 
-static void _vala_array_add89 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value) {
+static void _vala_array_add93 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInstRegisteredComponent, *array, *size);
@@ -1331,7 +1331,7 @@ void wire_inst_register_component (WireInst* self, ComponentInst* newComponentIn
 	_tmp27_ = newRegisteredComponents;
 	_tmp27__length1 = newRegisteredComponents_length1;
 	_tmp28_ = newRegisteredComponent;
-	_vala_array_add89 (&newRegisteredComponents, &newRegisteredComponents_length1, &_newRegisteredComponents_size_, &_tmp28_);
+	_vala_array_add93 (&newRegisteredComponents, &newRegisteredComponents_length1, &_newRegisteredComponents_size_, &_tmp28_);
 	_tmp29_ = newRegisteredComponents;
 	_tmp29__length1 = newRegisteredComponents_length1;
 	_tmp30_ = (_tmp29_ != NULL) ? _vala_array_dup80 (_tmp29_, _tmp29__length1) : ((gpointer) _tmp29_);
@@ -1346,7 +1346,7 @@ void wire_inst_register_component (WireInst* self, ComponentInst* newComponentIn
 /**
  * Unregisters all connections to component //oldComponentInst//.
  */
-static void _vala_array_add90 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value) {
+static void _vala_array_add94 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInstRegisteredComponent, *array, *size);
@@ -1403,7 +1403,7 @@ void wire_inst_unregister_component (WireInst* self, ComponentInst* oldComponent
 					_tmp5_ = newRegisteredComponents;
 					_tmp5__length1 = newRegisteredComponents_length1;
 					_tmp6_ = registeredComponent;
-					_vala_array_add90 (&newRegisteredComponents, &newRegisteredComponents_length1, &_newRegisteredComponents_size_, &_tmp6_);
+					_vala_array_add94 (&newRegisteredComponents, &newRegisteredComponents_length1, &_newRegisteredComponents_size_, &_tmp6_);
 				}
 			}
 		}
@@ -1423,7 +1423,7 @@ void wire_inst_unregister_component (WireInst* self, ComponentInst* oldComponent
  * Unregisters the connection to the component //oldComponentInst//
  * which is at (//x//, //y//).
  */
-static void _vala_array_add91 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value) {
+static void _vala_array_add95 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInstRegisteredComponent, *array, *size);
@@ -1514,7 +1514,7 @@ void wire_inst_unregister_component_xy (WireInst* self, ComponentInst* oldCompon
 					_tmp17_ = newRegisteredComponents;
 					_tmp17__length1 = newRegisteredComponents_length1;
 					_tmp18_ = registeredComponent;
-					_vala_array_add91 (&newRegisteredComponents, &newRegisteredComponents_length1, &_newRegisteredComponents_size_, &_tmp18_);
+					_vala_array_add95 (&newRegisteredComponents, &newRegisteredComponents_length1, &_newRegisteredComponents_size_, &_tmp18_);
 				}
 			}
 		}
@@ -1595,7 +1595,7 @@ static WireInstRegisteredComponent* _vala_array_dup85 (WireInstRegisteredCompone
 }
 
 
-static void _vala_array_add92 (Path*** array, int* length, int* size, Path* value) {
+static void _vala_array_add96 (Path*** array, int* length, int* size, Path* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Path*, *array, (*size) + 1);
@@ -1605,7 +1605,7 @@ static void _vala_array_add92 (Path*** array, int* length, int* size, Path* valu
 }
 
 
-static void _vala_array_add93 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value) {
+static void _vala_array_add97 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInstMarker, *array, *size);
@@ -1614,7 +1614,7 @@ static void _vala_array_add93 (WireInstMarker** array, int* length, int* size, c
 }
 
 
-static void _vala_array_add94 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value) {
+static void _vala_array_add98 (WireInstRegisteredComponent** array, int* length, int* size, const WireInstRegisteredComponent* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInstRegisteredComponent, *array, *size);
@@ -1742,7 +1742,7 @@ void wire_inst_merge (WireInst* self, WireInst* sourceWireInst) {
 					_tmp11__length1 = newPaths_length1;
 					_tmp12_ = path;
 					_tmp13_ = _path_ref0 (_tmp12_);
-					_vala_array_add92 (&newPaths, &newPaths_length1, &_newPaths_size_, _tmp13_);
+					_vala_array_add96 (&newPaths, &newPaths_length1, &_newPaths_size_, _tmp13_);
 				} else {
 					FILE* _tmp14_;
 					_tmp14_ = stdout;
@@ -1772,7 +1772,7 @@ void wire_inst_merge (WireInst* self, WireInst* sourceWireInst) {
 				_tmp17_ = newMarkers;
 				_tmp17__length1 = newMarkers_length1;
 				_tmp18_ = marker;
-				_vala_array_add93 (&newMarkers, &newMarkers_length1, &_newMarkers_size_, &_tmp18_);
+				_vala_array_add97 (&newMarkers, &newMarkers_length1, &_newMarkers_size_, &_tmp18_);
 			}
 		}
 	}
@@ -1803,7 +1803,7 @@ void wire_inst_merge (WireInst* self, WireInst* sourceWireInst) {
 				_tmp24_ = newRegisteredComponents;
 				_tmp24__length1 = newRegisteredComponents_length1;
 				_tmp25_ = registeredComponent;
-				_vala_array_add94 (&newRegisteredComponents, &newRegisteredComponents_length1, &_newRegisteredComponents_size_, &_tmp25_);
+				_vala_array_add98 (&newRegisteredComponents, &newRegisteredComponents_length1, &_newRegisteredComponents_size_, &_tmp25_);
 			}
 		}
 	}
@@ -1851,7 +1851,7 @@ void wire_inst_merge (WireInst* self, WireInst* sourceWireInst) {
  * Paths and connections are reassigned based on where they are.
  * Components are updated to reference the new wires.
  */
-static void _vala_array_add95 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value) {
+static void _vala_array_add99 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInstMarker, *array, *size);
@@ -1865,7 +1865,7 @@ static gpointer _wire_inst_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add96 (WireInst*** array, int* length, int* size, WireInst* value) {
+static void _vala_array_add100 (WireInst*** array, int* length, int* size, WireInst* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInst*, *array, (*size) + 1);
@@ -1875,7 +1875,7 @@ static void _vala_array_add96 (WireInst*** array, int* length, int* size, WireIn
 }
 
 
-static void _vala_array_add97 (Path*** array, int* length, int* size, Path* value) {
+static void _vala_array_add101 (Path*** array, int* length, int* size, Path* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Path*, *array, (*size) + 1);
@@ -1885,7 +1885,7 @@ static void _vala_array_add97 (Path*** array, int* length, int* size, Path* valu
 }
 
 
-static void _vala_array_add98 (Path*** array, int* length, int* size, Path* value) {
+static void _vala_array_add102 (Path*** array, int* length, int* size, Path* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Path*, *array, (*size) + 1);
@@ -1908,7 +1908,7 @@ static Path** _vala_array_dup89 (Path** self, int length) {
 }
 
 
-static void _vala_array_add99 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value) {
+static void _vala_array_add103 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInstMarker, *array, *size);
@@ -2014,7 +2014,7 @@ WireInst** wire_inst_unmerge (WireInst* self, gint x, gint y, int* result_length
 					_tmp13_ = availableMarkers;
 					_tmp13__length1 = availableMarkers_length1;
 					_tmp14_ = marker;
-					_vala_array_add95 (&availableMarkers, &availableMarkers_length1, &_availableMarkers_size_, &_tmp14_);
+					_vala_array_add99 (&availableMarkers, &availableMarkers_length1, &_availableMarkers_size_, &_tmp14_);
 				}
 			}
 		}
@@ -2084,7 +2084,7 @@ WireInst** wire_inst_unmerge (WireInst* self, gint x, gint y, int* result_length
 					_tmp30__length1 = wireInsts_length1;
 					_tmp31_ = wireInst;
 					_tmp32_ = _wire_inst_ref0 (_tmp31_);
-					_vala_array_add96 (&wireInsts, &wireInsts_length1, &_wireInsts_size_, _tmp32_);
+					_vala_array_add100 (&wireInsts, &wireInsts_length1, &_wireInsts_size_, _tmp32_);
 					_wire_inst_unref0 (wireInst);
 				} else {
 					Path** _tmp33_;
@@ -2095,7 +2095,7 @@ WireInst** wire_inst_unmerge (WireInst* self, gint x, gint y, int* result_length
 					_tmp33__length1 = availablePaths_length1;
 					_tmp34_ = path;
 					_tmp35_ = _path_ref0 (_tmp34_);
-					_vala_array_add97 (&availablePaths, &availablePaths_length1, &_availablePaths_size_, _tmp35_);
+					_vala_array_add101 (&availablePaths, &availablePaths_length1, &_availablePaths_size_, _tmp35_);
 				}
 				_path_unref0 (path);
 			}
@@ -2233,7 +2233,7 @@ WireInst** wire_inst_unmerge (WireInst* self, gint x, gint y, int* result_length
 													_tmp60__length1 = newAvailablePaths_length1;
 													_tmp61_ = path;
 													_tmp62_ = _path_ref0 (_tmp61_);
-													_vala_array_add98 (&newAvailablePaths, &newAvailablePaths_length1, &_newAvailablePaths_size_, _tmp62_);
+													_vala_array_add102 (&newAvailablePaths, &newAvailablePaths_length1, &_newAvailablePaths_size_, _tmp62_);
 												}
 												_path_unref0 (path);
 											}
@@ -2261,7 +2261,7 @@ WireInst** wire_inst_unmerge (WireInst* self, gint x, gint y, int* result_length
 									_tmp70_ = newAvailableMarkers;
 									_tmp70__length1 = newAvailableMarkers_length1;
 									_tmp71_ = marker;
-									_vala_array_add99 (&newAvailableMarkers, &newAvailableMarkers_length1, &_newAvailableMarkers_size_, &_tmp71_);
+									_vala_array_add103 (&newAvailableMarkers, &newAvailableMarkers_length1, &_newAvailableMarkers_size_, &_tmp71_);
 								}
 							}
 						}
@@ -2440,7 +2440,7 @@ static WireInstMarker* _vala_array_dup91 (WireInstMarker* self, int length) {
 }
 
 
-static void _vala_array_add100 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value) {
+static void _vala_array_add104 (WireInstMarker** array, int* length, int* size, const WireInstMarker* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (WireInstMarker, *array, *size);
@@ -2489,7 +2489,7 @@ void wire_inst_mark (WireInst* self, gint x, gint y) {
 	_tmp4_ = newMarkers;
 	_tmp4__length1 = newMarkers_length1;
 	_tmp5_ = marker;
-	_vala_array_add100 (&newMarkers, &newMarkers_length1, &_newMarkers_size_, &_tmp5_);
+	_vala_array_add104 (&newMarkers, &newMarkers_length1, &_newMarkers_size_, &_tmp5_);
 	_tmp6_ = newMarkers;
 	_tmp6__length1 = newMarkers_length1;
 	_tmp7_ = (_tmp6_ != NULL) ? _vala_array_dup92 (_tmp6_, _tmp6__length1) : ((gpointer) _tmp6_);

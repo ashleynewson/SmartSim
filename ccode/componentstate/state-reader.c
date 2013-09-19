@@ -303,7 +303,7 @@ ReaderComponentState* reader_component_state_new (Connection* inputWire, Compone
 ReaderComponentState* reader_component_state_construct (GType object_type, Connection* inputWire, ComponentInst** ancestry, int ancestry_length1, ComponentInst* componentInst);
 ComponentState* component_state_construct (GType object_type);
 void connection_set_affects (Connection* self, ComponentState* componentState);
-static ComponentInst** _vala_array_dup34 (ComponentInst** self, int length);
+static ComponentInst** _vala_array_dup35 (ComponentInst** self, int length);
 static void reader_component_state_real_render (ComponentState* base, cairo_t* context);
 gpointer component_def_ref (gpointer instance);
 void component_def_unref (gpointer instance);
@@ -369,7 +369,7 @@ static gpointer _component_inst_ref0 (gpointer self) {
 }
 
 
-static ComponentInst** _vala_array_dup34 (ComponentInst** self, int length) {
+static ComponentInst** _vala_array_dup35 (ComponentInst** self, int length) {
 	ComponentInst** result;
 	int i;
 	result = g_new0 (ComponentInst*, length + 1);
@@ -406,7 +406,7 @@ ReaderComponentState* reader_component_state_construct (GType object_type, Conne
 	self->priv->zState = TRUE;
 	_tmp3_ = ancestry;
 	_tmp3__length1 = ancestry_length1;
-	_tmp4_ = (_tmp3_ != NULL) ? _vala_array_dup34 (_tmp3_, _tmp3__length1) : ((gpointer) _tmp3_);
+	_tmp4_ = (_tmp3_ != NULL) ? _vala_array_dup35 (_tmp3_, _tmp3__length1) : ((gpointer) _tmp3_);
 	_tmp4__length1 = _tmp3__length1;
 	((ComponentState*) self)->ancestry = (_vala_array_free (((ComponentState*) self)->ancestry, ((ComponentState*) self)->ancestry_length1, (GDestroyNotify) component_inst_unref), NULL);
 	((ComponentState*) self)->ancestry = _tmp4_;

@@ -194,12 +194,12 @@ GQuark component_state_error_quark (void);
 MemoryComponentState* memory_component_state_new (Connection** addressWires, int addressWires_length1, Connection** dataWires, int dataWires_length1, Connection* selectWire, Connection* readEnableWire, Connection* writeEnableWire, Connection* clockWire, gboolean readWrite, const gchar* readFilename, const gchar* writeFilename, ComponentInst** ancestry, int ancestry_length1, ComponentInst* componentInst, GError** error);
 MemoryComponentState* memory_component_state_construct (GType object_type, Connection** addressWires, int addressWires_length1, Connection** dataWires, int dataWires_length1, Connection* selectWire, Connection* readEnableWire, Connection* writeEnableWire, Connection* clockWire, gboolean readWrite, const gchar* readFilename, const gchar* writeFilename, ComponentInst** ancestry, int ancestry_length1, ComponentInst* componentInst, GError** error);
 ComponentState* component_state_construct (GType object_type);
-static Connection** _vala_array_dup25 (Connection** self, int length);
-void connection_set_affects (Connection* self, ComponentState* componentState);
 static Connection** _vala_array_dup26 (Connection** self, int length);
+void connection_set_affects (Connection* self, ComponentState* componentState);
+static Connection** _vala_array_dup27 (Connection** self, int length);
 static gint memory_component_state_allocate_memory (MemoryComponentState* self);
 static void memory_component_state_read_file (MemoryComponentState* self);
-static ComponentInst** _vala_array_dup27 (ComponentInst** self, int length);
+static ComponentInst** _vala_array_dup28 (ComponentInst** self, int length);
 static gboolean memory_component_state_get_memory (MemoryComponentState* self, guint address, guint bit);
 static void memory_component_state_set_memory (MemoryComponentState* self, guint address, guint bit, gboolean bitValue);
 static void memory_component_state_real_update (ComponentState* base);
@@ -228,7 +228,7 @@ static gpointer _connection_ref0 (gpointer self) {
 }
 
 
-static Connection** _vala_array_dup25 (Connection** self, int length) {
+static Connection** _vala_array_dup26 (Connection** self, int length) {
 	Connection** result;
 	int i;
 	result = g_new0 (Connection*, length + 1);
@@ -241,7 +241,7 @@ static Connection** _vala_array_dup25 (Connection** self, int length) {
 }
 
 
-static Connection** _vala_array_dup26 (Connection** self, int length) {
+static Connection** _vala_array_dup27 (Connection** self, int length) {
 	Connection** result;
 	int i;
 	result = g_new0 (Connection*, length + 1);
@@ -259,7 +259,7 @@ static gpointer _component_inst_ref0 (gpointer self) {
 }
 
 
-static ComponentInst** _vala_array_dup27 (ComponentInst** self, int length) {
+static ComponentInst** _vala_array_dup28 (ComponentInst** self, int length) {
 	ComponentInst** result;
 	int i;
 	result = g_new0 (ComponentInst*, length + 1);
@@ -340,7 +340,7 @@ MemoryComponentState* memory_component_state_construct (GType object_type, Conne
 	self = (MemoryComponentState*) component_state_construct (object_type);
 	_tmp0_ = addressWires;
 	_tmp0__length1 = addressWires_length1;
-	_tmp1_ = (_tmp0_ != NULL) ? _vala_array_dup25 (_tmp0_, _tmp0__length1) : ((gpointer) _tmp0_);
+	_tmp1_ = (_tmp0_ != NULL) ? _vala_array_dup26 (_tmp0_, _tmp0__length1) : ((gpointer) _tmp0_);
 	_tmp1__length1 = _tmp0__length1;
 	self->priv->addressWires = (_vala_array_free (self->priv->addressWires, self->priv->addressWires_length1, (GDestroyNotify) connection_unref), NULL);
 	self->priv->addressWires = _tmp1_;
@@ -370,7 +370,7 @@ MemoryComponentState* memory_component_state_construct (GType object_type, Conne
 	}
 	_tmp5_ = dataWires;
 	_tmp5__length1 = dataWires_length1;
-	_tmp6_ = (_tmp5_ != NULL) ? _vala_array_dup26 (_tmp5_, _tmp5__length1) : ((gpointer) _tmp5_);
+	_tmp6_ = (_tmp5_ != NULL) ? _vala_array_dup27 (_tmp5_, _tmp5__length1) : ((gpointer) _tmp5_);
 	_tmp6__length1 = _tmp5__length1;
 	self->priv->dataWires = (_vala_array_free (self->priv->dataWires, self->priv->dataWires_length1, (GDestroyNotify) connection_unref), NULL);
 	self->priv->dataWires = _tmp6_;
@@ -612,7 +612,7 @@ MemoryComponentState* memory_component_state_construct (GType object_type, Conne
 	memory_component_state_read_file (self);
 	_tmp75_ = ancestry;
 	_tmp75__length1 = ancestry_length1;
-	_tmp76_ = (_tmp75_ != NULL) ? _vala_array_dup27 (_tmp75_, _tmp75__length1) : ((gpointer) _tmp75_);
+	_tmp76_ = (_tmp75_ != NULL) ? _vala_array_dup28 (_tmp75_, _tmp75__length1) : ((gpointer) _tmp75_);
 	_tmp76__length1 = _tmp75__length1;
 	((ComponentState*) self)->ancestry = (_vala_array_free (((ComponentState*) self)->ancestry, ((ComponentState*) self)->ancestry_length1, (GDestroyNotify) component_inst_unref), NULL);
 	((ComponentState*) self)->ancestry = _tmp76_;
