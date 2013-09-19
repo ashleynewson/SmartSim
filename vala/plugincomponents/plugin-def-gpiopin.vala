@@ -113,8 +113,8 @@ public class GpioPinPluginComponentDef : PluginComponentDef {
 		}
 		{
 			PropertyItemSelection selection = new PropertyItemSelection ("Active State", "Whether a high or low voltage represents 1 (true).");
-			selection.add_option ("low", "Active High - High voltage = 1");
-			selection.add_option ("high", "Active Low - Low voltage = 1");
+			selection.add_option ("high", "Active High - High voltage = 1");
+			selection.add_option ("low", "Active Low - Low voltage = 1");
 			selection.set_option (activeState);
 			configurationProperty.add_item (selection);
 		}
