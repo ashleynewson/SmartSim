@@ -1487,9 +1487,9 @@ static gint* core_version_to_numbers (const gchar* version, int* result_length1)
 	gchar* number;
 	guint8* _tmp6_;
 	gint _tmp6__length1;
-	const gchar* _tmp19_;
-	gint* _tmp27_;
-	gint _tmp27__length1;
+	const gchar* _tmp16_;
+	gint* _tmp21_;
+	gint _tmp21__length1;
 	g_return_val_if_fail (version != NULL, NULL);
 	_tmp0_ = g_new0 (gint, 0);
 	numbers = _tmp0_;
@@ -1531,22 +1531,15 @@ static gint* core_version_to_numbers (const gchar* version, int* result_length1)
 							gint _tmp9__length1;
 							const gchar* _tmp10_;
 							gint _tmp11_ = 0;
-							FILE* _tmp12_;
-							const gchar* _tmp13_;
-							gint _tmp14_ = 0;
-							gchar* _tmp15_;
+							gchar* _tmp12_;
 							_tmp9_ = numbers;
 							_tmp9__length1 = numbers_length1;
 							_tmp10_ = number;
 							_tmp11_ = atoi (_tmp10_);
 							_vala_array_add15 (&numbers, &numbers_length1, &_numbers_size_, _tmp11_);
-							_tmp12_ = stdout;
-							_tmp13_ = number;
-							_tmp14_ = atoi (_tmp13_);
-							fprintf (_tmp12_, "%i\n", _tmp14_);
-							_tmp15_ = g_strdup ("");
+							_tmp12_ = g_strdup ("");
 							_g_free0 (number);
-							number = _tmp15_;
+							number = _tmp12_;
 						}
 						break;
 					}
@@ -1561,49 +1554,42 @@ static gint* core_version_to_numbers (const gchar* version, int* result_length1)
 					case '8':
 					case '9':
 					{
-						const gchar* _tmp16_;
-						guint8 _tmp17_;
-						gchar* _tmp18_ = NULL;
-						_tmp16_ = number;
-						_tmp17_ = datum;
-						_tmp18_ = g_strdup_printf ("%s%c", _tmp16_, (gint) _tmp17_);
+						const gchar* _tmp13_;
+						guint8 _tmp14_;
+						gchar* _tmp15_ = NULL;
+						_tmp13_ = number;
+						_tmp14_ = datum;
+						_tmp15_ = g_strdup_printf ("%s%c", _tmp13_, (gint) _tmp14_);
 						_g_free0 (number);
-						number = _tmp18_;
+						number = _tmp15_;
 						break;
 					}
 				}
 			}
 		}
 	}
-	_tmp19_ = number;
-	if (g_strcmp0 (_tmp19_, "") != 0) {
-		gint* _tmp20_;
-		gint _tmp20__length1;
-		const gchar* _tmp21_;
-		gint _tmp22_ = 0;
-		FILE* _tmp23_;
-		const gchar* _tmp24_;
-		gint _tmp25_ = 0;
-		gchar* _tmp26_;
-		_tmp20_ = numbers;
-		_tmp20__length1 = numbers_length1;
-		_tmp21_ = number;
-		_tmp22_ = atoi (_tmp21_);
-		_vala_array_add16 (&numbers, &numbers_length1, &_numbers_size_, _tmp22_);
-		_tmp23_ = stdout;
-		_tmp24_ = number;
-		_tmp25_ = atoi (_tmp24_);
-		fprintf (_tmp23_, "%i\n", _tmp25_);
-		_tmp26_ = g_strdup ("");
+	_tmp16_ = number;
+	if (g_strcmp0 (_tmp16_, "") != 0) {
+		gint* _tmp17_;
+		gint _tmp17__length1;
+		const gchar* _tmp18_;
+		gint _tmp19_ = 0;
+		gchar* _tmp20_;
+		_tmp17_ = numbers;
+		_tmp17__length1 = numbers_length1;
+		_tmp18_ = number;
+		_tmp19_ = atoi (_tmp18_);
+		_vala_array_add16 (&numbers, &numbers_length1, &_numbers_size_, _tmp19_);
+		_tmp20_ = g_strdup ("");
 		_g_free0 (number);
-		number = _tmp26_;
+		number = _tmp20_;
 	}
-	_tmp27_ = numbers;
-	_tmp27__length1 = numbers_length1;
+	_tmp21_ = numbers;
+	_tmp21__length1 = numbers_length1;
 	if (result_length1) {
-		*result_length1 = _tmp27__length1;
+		*result_length1 = _tmp21__length1;
 	}
-	result = _tmp27_;
+	result = _tmp21_;
 	_g_free0 (number);
 	data = (g_free (data), NULL);
 	return result;

@@ -3345,11 +3345,11 @@ void designer_adjust_wires (Designer* self, gint x, gint y) {
 					_tmp10_ = property_item_selection_new ("Initial Signal", "Wire's preset signal at the start of simulation");
 					selection = _tmp10_;
 					_tmp11_ = selection;
-					property_item_selection_add_option (_tmp11_, "Default", NULL);
+					property_item_selection_add_option (_tmp11_, "default", "Default");
 					_tmp12_ = selection;
-					property_item_selection_add_option (_tmp12_, "0 (False)", NULL);
+					property_item_selection_add_option (_tmp12_, "0", "0 (False)");
 					_tmp13_ = selection;
-					property_item_selection_add_option (_tmp13_, "1 (True)", NULL);
+					property_item_selection_add_option (_tmp13_, "1", "1 (True)");
 					_tmp14_ = wireInst;
 					_tmp15_ = _tmp14_->presetSignal;
 					switch (_tmp15_) {
@@ -3357,21 +3357,21 @@ void designer_adjust_wires (Designer* self, gint x, gint y) {
 						{
 							PropertyItemSelection* _tmp16_;
 							_tmp16_ = selection;
-							property_item_selection_set_option (_tmp16_, "Default");
+							property_item_selection_set_option (_tmp16_, "default");
 							break;
 						}
 						case WIRE_INST_PRESET_SIGNAL_FALSE:
 						{
 							PropertyItemSelection* _tmp17_;
 							_tmp17_ = selection;
-							property_item_selection_set_option (_tmp17_, "0 (False)");
+							property_item_selection_set_option (_tmp17_, "0");
 							break;
 						}
 						case WIRE_INST_PRESET_SIGNAL_TRUE:
 						{
 							PropertyItemSelection* _tmp18_;
 							_tmp18_ = selection;
-							property_item_selection_set_option (_tmp18_, "1 (True)");
+							property_item_selection_set_option (_tmp18_, "1");
 							break;
 						}
 						default:
@@ -3399,7 +3399,7 @@ void designer_adjust_wires (Designer* self, gint x, gint y) {
 						_tmp28_ = _tmp27_;
 						_tmp30_ = (NULL == _tmp28_) ? 0 : g_quark_from_string (_tmp28_);
 						g_free (_tmp28_);
-						if (_tmp30_ == ((0 != _tmp29_label0) ? _tmp29_label0 : (_tmp29_label0 = g_quark_from_static_string ("Default")))) {
+						if (_tmp30_ == ((0 != _tmp29_label0) ? _tmp29_label0 : (_tmp29_label0 = g_quark_from_static_string ("default")))) {
 							switch (0) {
 								default:
 								{
@@ -3409,7 +3409,7 @@ void designer_adjust_wires (Designer* self, gint x, gint y) {
 									break;
 								}
 							}
-						} else if (_tmp30_ == ((0 != _tmp29_label1) ? _tmp29_label1 : (_tmp29_label1 = g_quark_from_static_string ("0 (False)")))) {
+						} else if (_tmp30_ == ((0 != _tmp29_label1) ? _tmp29_label1 : (_tmp29_label1 = g_quark_from_static_string ("0")))) {
 							switch (0) {
 								default:
 								{
@@ -3419,7 +3419,7 @@ void designer_adjust_wires (Designer* self, gint x, gint y) {
 									break;
 								}
 							}
-						} else if (_tmp30_ == ((0 != _tmp29_label2) ? _tmp29_label2 : (_tmp29_label2 = g_quark_from_static_string ("1 (True)")))) {
+						} else if (_tmp30_ == ((0 != _tmp29_label2) ? _tmp29_label2 : (_tmp29_label2 = g_quark_from_static_string ("1")))) {
 							switch (0) {
 								default:
 								{

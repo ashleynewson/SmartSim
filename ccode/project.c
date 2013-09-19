@@ -1410,44 +1410,35 @@ Project* project_construct_load (GType object_type, const gchar* filename, GErro
 																		switch (0) {
 																			default:
 																			{
-																				FILE* _tmp79_;
-																				xmlAttr* _tmp80_;
-																				xmlNode* _tmp81_;
-																				const gchar* _tmp82_;
-																				xmlAttr* _tmp83_;
-																				xmlNode* _tmp84_;
-																				const gchar* _tmp85_;
-																				VersionComparison _tmp86_ = 0;
-																				_tmp79_ = stdout;
-																				_tmp80_ = xmlattr;
-																				_tmp81_ = _tmp80_->children;
-																				_tmp82_ = _tmp81_->content;
-																				fprintf (_tmp79_, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA %s\n", _tmp82_);
-																				_tmp83_ = xmlattr;
-																				_tmp84_ = _tmp83_->children;
-																				_tmp85_ = _tmp84_->content;
-																				_tmp86_ = core_compare_versions (_tmp85_, CORE_shortVersionString);
-																				if (_tmp86_ == VERSION_COMPARISON_GREATER) {
-																					const gchar* _tmp87_;
-																					gchar* _tmp88_;
-																					gchar* _tmp89_;
-																					gchar* _tmp90_;
-																					gchar* _tmp91_;
-																					gboolean _tmp92_ = FALSE;
-																					gboolean _tmp93_;
-																					_tmp87_ = filename;
-																					_tmp88_ = g_strconcat ("Project File: \"", _tmp87_, NULL);
-																					_tmp89_ = _tmp88_;
-																					_tmp90_ = g_strconcat (_tmp89_, "\"", NULL);
-																					_tmp91_ = _tmp90_;
-																					_tmp92_ = core_version_ignored (_tmp91_);
-																					_tmp93_ = _tmp92_ == FALSE;
-																					_g_free0 (_tmp91_);
-																					_g_free0 (_tmp89_);
-																					if (_tmp93_) {
-																						GError* _tmp94_;
-																						_tmp94_ = g_error_new_literal (PROJECT_LOAD_ERROR, PROJECT_LOAD_ERROR_CANCEL, "SmartSim version of project is higher than running version.");
-																						_inner_error_ = _tmp94_;
+																				xmlAttr* _tmp79_;
+																				xmlNode* _tmp80_;
+																				const gchar* _tmp81_;
+																				VersionComparison _tmp82_ = 0;
+																				_tmp79_ = xmlattr;
+																				_tmp80_ = _tmp79_->children;
+																				_tmp81_ = _tmp80_->content;
+																				_tmp82_ = core_compare_versions (_tmp81_, CORE_shortVersionString);
+																				if (_tmp82_ == VERSION_COMPARISON_GREATER) {
+																					const gchar* _tmp83_;
+																					gchar* _tmp84_;
+																					gchar* _tmp85_;
+																					gchar* _tmp86_;
+																					gchar* _tmp87_;
+																					gboolean _tmp88_ = FALSE;
+																					gboolean _tmp89_;
+																					_tmp83_ = filename;
+																					_tmp84_ = g_strconcat ("Project File: \"", _tmp83_, NULL);
+																					_tmp85_ = _tmp84_;
+																					_tmp86_ = g_strconcat (_tmp85_, "\"", NULL);
+																					_tmp87_ = _tmp86_;
+																					_tmp88_ = core_version_ignored (_tmp87_);
+																					_tmp89_ = _tmp88_ == FALSE;
+																					_g_free0 (_tmp87_);
+																					_g_free0 (_tmp85_);
+																					if (_tmp89_) {
+																						GError* _tmp90_;
+																						_tmp90_ = g_error_new_literal (PROJECT_LOAD_ERROR, PROJECT_LOAD_ERROR_CANCEL, "SmartSim version of project is higher than running version.");
+																						_inner_error_ = _tmp90_;
 																						if (_inner_error_->domain == PROJECT_LOAD_ERROR) {
 																							g_propagate_error (error, _inner_error_);
 																							_project_unref0 (self);
@@ -1484,43 +1475,43 @@ Project* project_construct_load (GType object_type, const gchar* filename, GErro
 					{
 						{
 							{
-								xmlNode* _tmp95_;
-								xmlNode* _tmp96_;
+								xmlNode* _tmp91_;
+								xmlNode* _tmp92_;
 								xmlNode* xmldata;
-								_tmp95_ = xmlnode;
-								_tmp96_ = _tmp95_->children;
-								xmldata = _tmp96_;
+								_tmp91_ = xmlnode;
+								_tmp92_ = _tmp91_->children;
+								xmldata = _tmp92_;
 								{
-									gboolean _tmp97_;
-									_tmp97_ = TRUE;
+									gboolean _tmp93_;
+									_tmp93_ = TRUE;
 									while (TRUE) {
-										gboolean _tmp98_;
-										xmlNode* _tmp101_;
-										xmlNode* _tmp102_;
-										xmlElementType _tmp103_;
-										xmlNode* _tmp104_;
-										const gchar* _tmp105_;
-										_tmp98_ = _tmp97_;
-										if (!_tmp98_) {
-											xmlNode* _tmp99_;
-											xmlNode* _tmp100_;
-											_tmp99_ = xmldata;
-											_tmp100_ = _tmp99_->next;
-											xmldata = _tmp100_;
+										gboolean _tmp94_;
+										xmlNode* _tmp97_;
+										xmlNode* _tmp98_;
+										xmlElementType _tmp99_;
+										xmlNode* _tmp100_;
+										const gchar* _tmp101_;
+										_tmp94_ = _tmp93_;
+										if (!_tmp94_) {
+											xmlNode* _tmp95_;
+											xmlNode* _tmp96_;
+											_tmp95_ = xmldata;
+											_tmp96_ = _tmp95_->next;
+											xmldata = _tmp96_;
 										}
-										_tmp97_ = FALSE;
-										_tmp101_ = xmldata;
-										if (!(_tmp101_ != NULL)) {
+										_tmp93_ = FALSE;
+										_tmp97_ = xmldata;
+										if (!(_tmp97_ != NULL)) {
 											break;
 										}
-										_tmp102_ = xmlnode;
-										_tmp103_ = _tmp102_->type;
-										if (_tmp103_ != XML_ELEMENT_NODE) {
+										_tmp98_ = xmlnode;
+										_tmp99_ = _tmp98_->type;
+										if (_tmp99_ != XML_ELEMENT_NODE) {
 											continue;
 										}
-										_tmp104_ = xmldata;
-										_tmp105_ = _tmp104_->content;
-										project_set_name (self, _tmp105_);
+										_tmp100_ = xmldata;
+										_tmp101_ = _tmp100_->content;
+										project_set_name (self, _tmp101_);
 									}
 								}
 							}
@@ -1534,46 +1525,46 @@ Project* project_construct_load (GType object_type, const gchar* filename, GErro
 					{
 						{
 							{
-								xmlNode* _tmp106_;
-								xmlNode* _tmp107_;
+								xmlNode* _tmp102_;
+								xmlNode* _tmp103_;
 								xmlNode* xmldata;
-								_tmp106_ = xmlnode;
-								_tmp107_ = _tmp106_->children;
-								xmldata = _tmp107_;
+								_tmp102_ = xmlnode;
+								_tmp103_ = _tmp102_->children;
+								xmldata = _tmp103_;
 								{
-									gboolean _tmp108_;
-									_tmp108_ = TRUE;
+									gboolean _tmp104_;
+									_tmp104_ = TRUE;
 									while (TRUE) {
-										gboolean _tmp109_;
-										xmlNode* _tmp112_;
-										xmlNode* _tmp113_;
-										xmlElementType _tmp114_;
-										xmlNode* _tmp115_;
-										const gchar* _tmp116_;
-										gchar* _tmp117_;
-										_tmp109_ = _tmp108_;
-										if (!_tmp109_) {
-											xmlNode* _tmp110_;
-											xmlNode* _tmp111_;
-											_tmp110_ = xmldata;
-											_tmp111_ = _tmp110_->next;
-											xmldata = _tmp111_;
+										gboolean _tmp105_;
+										xmlNode* _tmp108_;
+										xmlNode* _tmp109_;
+										xmlElementType _tmp110_;
+										xmlNode* _tmp111_;
+										const gchar* _tmp112_;
+										gchar* _tmp113_;
+										_tmp105_ = _tmp104_;
+										if (!_tmp105_) {
+											xmlNode* _tmp106_;
+											xmlNode* _tmp107_;
+											_tmp106_ = xmldata;
+											_tmp107_ = _tmp106_->next;
+											xmldata = _tmp107_;
 										}
-										_tmp108_ = FALSE;
-										_tmp112_ = xmldata;
-										if (!(_tmp112_ != NULL)) {
+										_tmp104_ = FALSE;
+										_tmp108_ = xmldata;
+										if (!(_tmp108_ != NULL)) {
 											break;
 										}
-										_tmp113_ = xmlnode;
-										_tmp114_ = _tmp113_->type;
-										if (_tmp114_ != XML_ELEMENT_NODE) {
+										_tmp109_ = xmlnode;
+										_tmp110_ = _tmp109_->type;
+										if (_tmp110_ != XML_ELEMENT_NODE) {
 											continue;
 										}
-										_tmp115_ = xmldata;
-										_tmp116_ = _tmp115_->content;
-										_tmp117_ = g_strdup (_tmp116_);
+										_tmp111_ = xmldata;
+										_tmp112_ = _tmp111_->content;
+										_tmp113_ = g_strdup (_tmp112_);
 										_g_free0 (self->description);
-										self->description = _tmp117_;
+										self->description = _tmp113_;
 									}
 								}
 							}
@@ -1587,125 +1578,125 @@ Project* project_construct_load (GType object_type, const gchar* filename, GErro
 					{
 						{
 							{
-								xmlNode* _tmp118_;
-								xmlNode* _tmp119_;
+								xmlNode* _tmp114_;
+								xmlNode* _tmp115_;
 								xmlNode* xmldata;
-								_tmp118_ = xmlnode;
-								_tmp119_ = _tmp118_->children;
-								xmldata = _tmp119_;
+								_tmp114_ = xmlnode;
+								_tmp115_ = _tmp114_->children;
+								xmldata = _tmp115_;
 								{
-									gboolean _tmp120_;
-									_tmp120_ = TRUE;
+									gboolean _tmp116_;
+									_tmp116_ = TRUE;
 									while (TRUE) {
-										gboolean _tmp121_;
-										xmlNode* _tmp124_;
-										xmlNode* _tmp125_;
-										xmlElementType _tmp126_;
-										xmlNode* _tmp127_;
-										const gchar* _tmp128_;
-										gchar* _tmp129_;
+										gboolean _tmp117_;
+										xmlNode* _tmp120_;
+										xmlNode* _tmp121_;
+										xmlElementType _tmp122_;
+										xmlNode* _tmp123_;
+										const gchar* _tmp124_;
+										gchar* _tmp125_;
 										gchar* componentFilename;
-										FILE* _tmp130_;
+										FILE* _tmp126_;
+										const gchar* _tmp127_;
+										const gchar* _tmp128_;
+										gchar* _tmp129_ = NULL;
+										gchar* _tmp130_;
 										const gchar* _tmp131_;
-										const gchar* _tmp132_;
-										gchar* _tmp133_ = NULL;
-										gchar* _tmp134_;
-										const gchar* _tmp135_;
-										gchar* _tmp136_ = NULL;
-										gchar* _tmp137_;
-										CustomComponentDef* _tmp138_ = NULL;
-										CustomComponentDef* _tmp139_;
+										gchar* _tmp132_ = NULL;
+										gchar* _tmp133_;
+										CustomComponentDef* _tmp134_ = NULL;
+										CustomComponentDef* _tmp135_;
 										CustomComponentDef* component;
-										CustomComponentDef* _tmp140_;
-										_tmp121_ = _tmp120_;
-										if (!_tmp121_) {
-											xmlNode* _tmp122_;
-											xmlNode* _tmp123_;
-											_tmp122_ = xmldata;
-											_tmp123_ = _tmp122_->next;
-											xmldata = _tmp123_;
+										CustomComponentDef* _tmp136_;
+										_tmp117_ = _tmp116_;
+										if (!_tmp117_) {
+											xmlNode* _tmp118_;
+											xmlNode* _tmp119_;
+											_tmp118_ = xmldata;
+											_tmp119_ = _tmp118_->next;
+											xmldata = _tmp119_;
 										}
-										_tmp120_ = FALSE;
-										_tmp124_ = xmldata;
-										if (!(_tmp124_ != NULL)) {
+										_tmp116_ = FALSE;
+										_tmp120_ = xmldata;
+										if (!(_tmp120_ != NULL)) {
 											break;
 										}
-										_tmp125_ = xmlnode;
-										_tmp126_ = _tmp125_->type;
-										if (_tmp126_ != XML_ELEMENT_NODE) {
+										_tmp121_ = xmlnode;
+										_tmp122_ = _tmp121_->type;
+										if (_tmp122_ != XML_ELEMENT_NODE) {
 											continue;
 										}
-										_tmp127_ = xmldata;
-										_tmp128_ = _tmp127_->content;
-										_tmp129_ = g_strdup (_tmp128_);
-										componentFilename = _tmp129_;
-										_tmp130_ = stdout;
+										_tmp123_ = xmldata;
+										_tmp124_ = _tmp123_->content;
+										_tmp125_ = g_strdup (_tmp124_);
+										componentFilename = _tmp125_;
+										_tmp126_ = stdout;
+										_tmp127_ = componentFilename;
+										_tmp128_ = componentFilename;
+										_tmp129_ = project_absolute_filename (self, _tmp128_);
+										_tmp130_ = _tmp129_;
+										fprintf (_tmp126_, "Absolute path of file \"%s\" is \"%s\"\n", _tmp127_, _tmp130_);
+										_g_free0 (_tmp130_);
 										_tmp131_ = componentFilename;
-										_tmp132_ = componentFilename;
-										_tmp133_ = project_absolute_filename (self, _tmp132_);
-										_tmp134_ = _tmp133_;
-										fprintf (_tmp130_, "Absolute path of file \"%s\" is \"%s\"\n", _tmp131_, _tmp134_);
-										_g_free0 (_tmp134_);
-										_tmp135_ = componentFilename;
-										_tmp136_ = project_absolute_filename (self, _tmp135_);
-										_tmp137_ = _tmp136_;
-										_tmp138_ = project_load_component (self, _tmp137_);
-										_tmp139_ = _tmp138_;
-										_g_free0 (_tmp137_);
-										component = _tmp139_;
-										_tmp140_ = component;
-										if (_tmp140_ != NULL) {
+										_tmp132_ = project_absolute_filename (self, _tmp131_);
+										_tmp133_ = _tmp132_;
+										_tmp134_ = project_load_component (self, _tmp133_);
+										_tmp135_ = _tmp134_;
+										_g_free0 (_tmp133_);
+										component = _tmp135_;
+										_tmp136_ = component;
+										if (_tmp136_ != NULL) {
 											{
-												xmlNode* _tmp141_;
-												xmlAttr* _tmp142_;
+												xmlNode* _tmp137_;
+												xmlAttr* _tmp138_;
 												xmlAttr* xmlattr;
-												_tmp141_ = xmlnode;
-												_tmp142_ = _tmp141_->properties;
-												xmlattr = _tmp142_;
+												_tmp137_ = xmlnode;
+												_tmp138_ = _tmp137_->properties;
+												xmlattr = _tmp138_;
 												{
-													gboolean _tmp143_;
-													_tmp143_ = TRUE;
+													gboolean _tmp139_;
+													_tmp139_ = TRUE;
 													while (TRUE) {
-														gboolean _tmp144_;
-														xmlAttr* _tmp147_;
-														xmlAttr* _tmp148_;
-														const gchar* _tmp149_;
-														const gchar* _tmp150_;
-														GQuark _tmp152_ = 0U;
-														static GQuark _tmp151_label0 = 0;
-														_tmp144_ = _tmp143_;
-														if (!_tmp144_) {
-															xmlAttr* _tmp145_;
-															xmlAttr* _tmp146_;
-															_tmp145_ = xmlattr;
-															_tmp146_ = _tmp145_->next;
-															xmlattr = _tmp146_;
+														gboolean _tmp140_;
+														xmlAttr* _tmp143_;
+														xmlAttr* _tmp144_;
+														const gchar* _tmp145_;
+														const gchar* _tmp146_;
+														GQuark _tmp148_ = 0U;
+														static GQuark _tmp147_label0 = 0;
+														_tmp140_ = _tmp139_;
+														if (!_tmp140_) {
+															xmlAttr* _tmp141_;
+															xmlAttr* _tmp142_;
+															_tmp141_ = xmlattr;
+															_tmp142_ = _tmp141_->next;
+															xmlattr = _tmp142_;
 														}
-														_tmp143_ = FALSE;
-														_tmp147_ = xmlattr;
-														if (!(_tmp147_ != NULL)) {
+														_tmp139_ = FALSE;
+														_tmp143_ = xmlattr;
+														if (!(_tmp143_ != NULL)) {
 															break;
 														}
-														_tmp148_ = xmlattr;
-														_tmp149_ = _tmp148_->name;
-														_tmp150_ = _tmp149_;
-														_tmp152_ = (NULL == _tmp150_) ? 0 : g_quark_from_string (_tmp150_);
-														if (_tmp152_ == ((0 != _tmp151_label0) ? _tmp151_label0 : (_tmp151_label0 = g_quark_from_static_string ("root")))) {
+														_tmp144_ = xmlattr;
+														_tmp145_ = _tmp144_->name;
+														_tmp146_ = _tmp145_;
+														_tmp148_ = (NULL == _tmp146_) ? 0 : g_quark_from_string (_tmp146_);
+														if (_tmp148_ == ((0 != _tmp147_label0) ? _tmp147_label0 : (_tmp147_label0 = g_quark_from_static_string ("root")))) {
 															switch (0) {
 																default:
 																{
-																	xmlAttr* _tmp153_;
-																	xmlNode* _tmp154_;
-																	const gchar* _tmp155_;
-																	gboolean _tmp156_ = FALSE;
-																	_tmp153_ = xmlattr;
-																	_tmp154_ = _tmp153_->children;
-																	_tmp155_ = _tmp154_->content;
-																	_tmp156_ = bool_parse (_tmp155_);
-																	if (_tmp156_) {
-																		CustomComponentDef* _tmp157_;
-																		_tmp157_ = component;
-																		project_set_root_component (self, _tmp157_);
+																	xmlAttr* _tmp149_;
+																	xmlNode* _tmp150_;
+																	const gchar* _tmp151_;
+																	gboolean _tmp152_ = FALSE;
+																	_tmp149_ = xmlattr;
+																	_tmp150_ = _tmp149_->children;
+																	_tmp151_ = _tmp150_->content;
+																	_tmp152_ = bool_parse (_tmp151_);
+																	if (_tmp152_) {
+																		CustomComponentDef* _tmp153_;
+																		_tmp153_ = component;
+																		project_set_root_component (self, _tmp153_);
 																	}
 																	break;
 																}
@@ -1730,81 +1721,81 @@ Project* project_construct_load (GType object_type, const gchar* filename, GErro
 					{
 						{
 							{
-								xmlNode* _tmp158_;
-								xmlNode* _tmp159_;
+								xmlNode* _tmp154_;
+								xmlNode* _tmp155_;
 								xmlNode* xmldata;
-								_tmp158_ = xmlnode;
-								_tmp159_ = _tmp158_->children;
-								xmldata = _tmp159_;
+								_tmp154_ = xmlnode;
+								_tmp155_ = _tmp154_->children;
+								xmldata = _tmp155_;
 								{
-									gboolean _tmp160_;
-									_tmp160_ = TRUE;
+									gboolean _tmp156_;
+									_tmp156_ = TRUE;
 									while (TRUE) {
-										gboolean _tmp161_;
-										xmlNode* _tmp164_;
-										xmlNode* _tmp165_;
-										xmlElementType _tmp166_;
-										xmlNode* _tmp167_;
-										const gchar* _tmp168_;
-										gchar* _tmp169_;
+										gboolean _tmp157_;
+										xmlNode* _tmp160_;
+										xmlNode* _tmp161_;
+										xmlElementType _tmp162_;
+										xmlNode* _tmp163_;
+										const gchar* _tmp164_;
+										gchar* _tmp165_;
 										gchar* componentFilename;
-										const gchar* _tmp170_;
-										gchar* _tmp171_;
-										gchar* _tmp172_;
-										gchar* _tmp173_;
-										gchar* _tmp174_;
-										gboolean _tmp175_ = FALSE;
-										gboolean _tmp176_;
-										FILE* _tmp178_;
+										const gchar* _tmp166_;
+										gchar* _tmp167_;
+										gchar* _tmp168_;
+										gchar* _tmp169_;
+										gchar* _tmp170_;
+										gboolean _tmp171_ = FALSE;
+										gboolean _tmp172_;
+										FILE* _tmp174_;
+										const gchar* _tmp175_;
+										const gchar* _tmp176_;
+										gchar* _tmp177_ = NULL;
+										gchar* _tmp178_;
 										const gchar* _tmp179_;
-										const gchar* _tmp180_;
-										gchar* _tmp181_ = NULL;
-										gchar* _tmp182_;
-										const gchar* _tmp183_;
-										gchar* _tmp184_ = NULL;
-										gchar* _tmp185_;
-										const gchar* _tmp186_;
-										gchar* _tmp187_;
-										gchar* _tmp188_;
-										PluginComponentDef* _tmp189_ = NULL;
-										PluginComponentDef* _tmp190_;
+										gchar* _tmp180_ = NULL;
+										gchar* _tmp181_;
+										const gchar* _tmp182_;
+										gchar* _tmp183_;
+										gchar* _tmp184_;
+										PluginComponentDef* _tmp185_ = NULL;
+										PluginComponentDef* _tmp186_;
 										PluginComponentDef* component;
-										PluginComponentDef* _tmp191_;
-										_tmp161_ = _tmp160_;
-										if (!_tmp161_) {
-											xmlNode* _tmp162_;
-											xmlNode* _tmp163_;
-											_tmp162_ = xmldata;
-											_tmp163_ = _tmp162_->next;
-											xmldata = _tmp163_;
+										PluginComponentDef* _tmp187_;
+										_tmp157_ = _tmp156_;
+										if (!_tmp157_) {
+											xmlNode* _tmp158_;
+											xmlNode* _tmp159_;
+											_tmp158_ = xmldata;
+											_tmp159_ = _tmp158_->next;
+											xmldata = _tmp159_;
 										}
-										_tmp160_ = FALSE;
-										_tmp164_ = xmldata;
-										if (!(_tmp164_ != NULL)) {
+										_tmp156_ = FALSE;
+										_tmp160_ = xmldata;
+										if (!(_tmp160_ != NULL)) {
 											break;
 										}
-										_tmp165_ = xmlnode;
-										_tmp166_ = _tmp165_->type;
-										if (_tmp166_ != XML_ELEMENT_NODE) {
+										_tmp161_ = xmlnode;
+										_tmp162_ = _tmp161_->type;
+										if (_tmp162_ != XML_ELEMENT_NODE) {
 											continue;
 										}
-										_tmp167_ = xmldata;
-										_tmp168_ = _tmp167_->content;
-										_tmp169_ = g_strdup (_tmp168_);
-										componentFilename = _tmp169_;
-										_tmp170_ = componentFilename;
-										_tmp171_ = g_strconcat ("File: \"", _tmp170_, NULL);
-										_tmp172_ = _tmp171_;
-										_tmp173_ = g_strconcat (_tmp172_, "\"", NULL);
-										_tmp174_ = _tmp173_;
-										_tmp175_ = project_plugins_allowed (self, _tmp174_);
-										_tmp176_ = _tmp175_ == FALSE;
-										_g_free0 (_tmp174_);
-										_g_free0 (_tmp172_);
-										if (_tmp176_) {
-											GError* _tmp177_;
-											_tmp177_ = g_error_new_literal (PROJECT_LOAD_ERROR, PROJECT_LOAD_ERROR_CANCEL, "Plugins are disabled.");
-											_inner_error_ = _tmp177_;
+										_tmp163_ = xmldata;
+										_tmp164_ = _tmp163_->content;
+										_tmp165_ = g_strdup (_tmp164_);
+										componentFilename = _tmp165_;
+										_tmp166_ = componentFilename;
+										_tmp167_ = g_strconcat ("File: \"", _tmp166_, NULL);
+										_tmp168_ = _tmp167_;
+										_tmp169_ = g_strconcat (_tmp168_, "\"", NULL);
+										_tmp170_ = _tmp169_;
+										_tmp171_ = project_plugins_allowed (self, _tmp170_);
+										_tmp172_ = _tmp171_ == FALSE;
+										_g_free0 (_tmp170_);
+										_g_free0 (_tmp168_);
+										if (_tmp172_) {
+											GError* _tmp173_;
+											_tmp173_ = g_error_new_literal (PROJECT_LOAD_ERROR, PROJECT_LOAD_ERROR_CANCEL, "Plugins are disabled.");
+											_inner_error_ = _tmp173_;
 											if (_inner_error_->domain == PROJECT_LOAD_ERROR) {
 												g_propagate_error (error, _inner_error_);
 												_g_free0 (componentFilename);
@@ -1817,43 +1808,43 @@ Project* project_construct_load (GType object_type, const gchar* filename, GErro
 												return NULL;
 											}
 										}
-										_tmp178_ = stdout;
+										_tmp174_ = stdout;
+										_tmp175_ = componentFilename;
+										_tmp176_ = componentFilename;
+										_tmp177_ = project_absolute_filename (self, _tmp176_);
+										_tmp178_ = _tmp177_;
+										fprintf (_tmp174_, "Absolute path of file \"%s\" is \"%s\"\n", _tmp175_, _tmp178_);
+										_g_free0 (_tmp178_);
 										_tmp179_ = componentFilename;
-										_tmp180_ = componentFilename;
-										_tmp181_ = project_absolute_filename (self, _tmp180_);
-										_tmp182_ = _tmp181_;
-										fprintf (_tmp178_, "Absolute path of file \"%s\" is \"%s\"\n", _tmp179_, _tmp182_);
-										_g_free0 (_tmp182_);
-										_tmp183_ = componentFilename;
-										_tmp184_ = project_absolute_filename (self, _tmp183_);
-										_tmp185_ = _tmp184_;
-										_tmp186_ = componentFilename;
-										_tmp187_ = g_strconcat (PACKAGE_DATADIR "plugins/", _tmp186_, NULL);
-										_tmp188_ = _tmp187_;
-										_tmp189_ = project_load_plugin_component (self, _tmp185_, _tmp188_);
-										_tmp190_ = _tmp189_;
-										_g_free0 (_tmp188_);
-										_g_free0 (_tmp185_);
-										component = _tmp190_;
-										_tmp191_ = component;
-										if (_tmp191_ == NULL) {
-											const gchar* _tmp192_;
-											gchar* _tmp193_;
-											gchar* _tmp194_;
-											gchar* _tmp195_;
-											gchar* _tmp196_;
-											GError* _tmp197_;
-											GError* _tmp198_;
-											_tmp192_ = componentFilename;
-											_tmp193_ = g_strconcat ("Error loading plugin from file \"", _tmp192_, NULL);
+										_tmp180_ = project_absolute_filename (self, _tmp179_);
+										_tmp181_ = _tmp180_;
+										_tmp182_ = componentFilename;
+										_tmp183_ = g_strconcat (PACKAGE_DATADIR "plugins/", _tmp182_, NULL);
+										_tmp184_ = _tmp183_;
+										_tmp185_ = project_load_plugin_component (self, _tmp181_, _tmp184_);
+										_tmp186_ = _tmp185_;
+										_g_free0 (_tmp184_);
+										_g_free0 (_tmp181_);
+										component = _tmp186_;
+										_tmp187_ = component;
+										if (_tmp187_ == NULL) {
+											const gchar* _tmp188_;
+											gchar* _tmp189_;
+											gchar* _tmp190_;
+											gchar* _tmp191_;
+											gchar* _tmp192_;
+											GError* _tmp193_;
+											GError* _tmp194_;
+											_tmp188_ = componentFilename;
+											_tmp189_ = g_strconcat ("Error loading plugin from file \"", _tmp188_, NULL);
+											_tmp190_ = _tmp189_;
+											_tmp191_ = g_strconcat (_tmp190_, "\".", NULL);
+											_tmp192_ = _tmp191_;
+											_tmp193_ = g_error_new_literal (PROJECT_LOAD_ERROR, PROJECT_LOAD_ERROR_FILE, _tmp192_);
 											_tmp194_ = _tmp193_;
-											_tmp195_ = g_strconcat (_tmp194_, "\".", NULL);
-											_tmp196_ = _tmp195_;
-											_tmp197_ = g_error_new_literal (PROJECT_LOAD_ERROR, PROJECT_LOAD_ERROR_FILE, _tmp196_);
-											_tmp198_ = _tmp197_;
-											_g_free0 (_tmp196_);
-											_g_free0 (_tmp194_);
-											_inner_error_ = _tmp198_;
+											_g_free0 (_tmp192_);
+											_g_free0 (_tmp190_);
+											_inner_error_ = _tmp194_;
 											if (_inner_error_->domain == PROJECT_LOAD_ERROR) {
 												g_propagate_error (error, _inner_error_);
 												_component_def_unref0 (component);
