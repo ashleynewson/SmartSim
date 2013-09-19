@@ -49,8 +49,13 @@ typedef struct _GraphicClass GraphicClass;
 typedef struct _GraphicPrivate GraphicPrivate;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
 #define _g_free0(var) (var = (g_free (var), NULL))
+#define _graphic_unref0(var) ((var == NULL) ? NULL : (var = (graphic_unref (var), NULL)))
 typedef struct _ParamSpecGraphic ParamSpecGraphic;
 
+typedef enum  {
+	GRAPHIC_LOAD_ERROR_FILE
+} GraphicLoadError;
+#define GRAPHIC_LOAD_ERROR graphic_load_error_quark ()
 struct _Graphic {
 	GTypeInstance parent_instance;
 	volatile int ref_count;
@@ -82,6 +87,7 @@ static gpointer graphic_parent_class = NULL;
 extern Graphic* graphic_placeHolder;
 Graphic* graphic_placeHolder = NULL;
 
+GQuark graphic_load_error_quark (void);
 gpointer graphic_ref (gpointer instance);
 void graphic_unref (gpointer instance);
 GParamSpec* param_spec_graphic (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
@@ -93,8 +99,8 @@ GType graphic_get_type (void) G_GNUC_CONST;
 enum  {
 	GRAPHIC_DUMMY_PROPERTY
 };
-Graphic* graphic_new_from_file (const gchar* filename);
-Graphic* graphic_construct_from_file (GType object_type, const gchar* filename);
+Graphic* graphic_new_from_file (const gchar* filename, GError** error);
+Graphic* graphic_construct_from_file (GType object_type, const gchar* filename, GError** error);
 gint graphic_load_info (Graphic* self, const gchar* filename);
 gint graphic_load_svg (Graphic* self, const gchar* filename);
 void graphic_render (Graphic* self, cairo_t* context);
@@ -103,11 +109,16 @@ Graphic* graphic_construct (GType object_type);
 static void graphic_finalize (Graphic* obj);
 
 
+GQuark graphic_load_error_quark (void) {
+	return g_quark_from_static_string ("graphic_load_error-quark");
+}
+
+
 /**
  * Loads a graphic from the files //filename//.info and
  * //filename//.svg.
  */
-Graphic* graphic_construct_from_file (GType object_type, const gchar* filename) {
+Graphic* graphic_construct_from_file (GType object_type, const gchar* filename, GError** error) {
 	Graphic* self = NULL;
 	FILE* _tmp0_;
 	const gchar* _tmp1_;
@@ -116,9 +127,14 @@ Graphic* graphic_construct_from_file (GType object_type, const gchar* filename) 
 	const gchar* _tmp4_;
 	gchar* _tmp5_;
 	gchar* _tmp6_;
-	const gchar* _tmp7_;
-	gchar* _tmp8_;
-	gchar* _tmp9_;
+	gint _tmp7_ = 0;
+	gboolean _tmp8_;
+	const gchar* _tmp16_;
+	gchar* _tmp17_;
+	gchar* _tmp18_;
+	gint _tmp19_ = 0;
+	gboolean _tmp20_;
+	GError * _inner_error_ = NULL;
 	g_return_val_if_fail (filename != NULL, NULL);
 	self = (Graphic*) g_type_create_instance (object_type);
 	_tmp0_ = stdout;
@@ -131,19 +147,77 @@ Graphic* graphic_construct_from_file (GType object_type, const gchar* filename) 
 	_tmp4_ = filename;
 	_tmp5_ = g_strconcat (_tmp4_, ".info", NULL);
 	_tmp6_ = _tmp5_;
-	graphic_load_info (self, _tmp6_);
+	_tmp7_ = graphic_load_info (self, _tmp6_);
+	_tmp8_ = _tmp7_ != 0;
 	_g_free0 (_tmp6_);
-	_tmp7_ = filename;
-	_tmp8_ = g_strconcat (_tmp7_, ".svg", NULL);
-	_tmp9_ = _tmp8_;
-	graphic_load_svg (self, _tmp9_);
-	_g_free0 (_tmp9_);
+	if (_tmp8_) {
+		const gchar* _tmp9_;
+		gchar* _tmp10_;
+		gchar* _tmp11_;
+		gchar* _tmp12_;
+		gchar* _tmp13_;
+		GError* _tmp14_;
+		GError* _tmp15_;
+		_tmp9_ = filename;
+		_tmp10_ = g_strconcat ("Unable to open graphic file \"", _tmp9_, NULL);
+		_tmp11_ = _tmp10_;
+		_tmp12_ = g_strconcat (_tmp11_, ".info\".", NULL);
+		_tmp13_ = _tmp12_;
+		_tmp14_ = g_error_new_literal (GRAPHIC_LOAD_ERROR, GRAPHIC_LOAD_ERROR_FILE, _tmp13_);
+		_tmp15_ = _tmp14_;
+		_g_free0 (_tmp13_);
+		_g_free0 (_tmp11_);
+		_inner_error_ = _tmp15_;
+		if (_inner_error_->domain == GRAPHIC_LOAD_ERROR) {
+			g_propagate_error (error, _inner_error_);
+			_graphic_unref0 (self);
+			return NULL;
+		} else {
+			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+			g_clear_error (&_inner_error_);
+			return NULL;
+		}
+	}
+	_tmp16_ = filename;
+	_tmp17_ = g_strconcat (_tmp16_, ".svg", NULL);
+	_tmp18_ = _tmp17_;
+	_tmp19_ = graphic_load_svg (self, _tmp18_);
+	_tmp20_ = _tmp19_ != 0;
+	_g_free0 (_tmp18_);
+	if (_tmp20_) {
+		const gchar* _tmp21_;
+		gchar* _tmp22_;
+		gchar* _tmp23_;
+		gchar* _tmp24_;
+		gchar* _tmp25_;
+		GError* _tmp26_;
+		GError* _tmp27_;
+		_tmp21_ = filename;
+		_tmp22_ = g_strconcat ("Unable to open svg file \"", _tmp21_, NULL);
+		_tmp23_ = _tmp22_;
+		_tmp24_ = g_strconcat (_tmp23_, ".svg\".", NULL);
+		_tmp25_ = _tmp24_;
+		_tmp26_ = g_error_new_literal (GRAPHIC_LOAD_ERROR, GRAPHIC_LOAD_ERROR_FILE, _tmp25_);
+		_tmp27_ = _tmp26_;
+		_g_free0 (_tmp25_);
+		_g_free0 (_tmp23_);
+		_inner_error_ = _tmp27_;
+		if (_inner_error_->domain == GRAPHIC_LOAD_ERROR) {
+			g_propagate_error (error, _inner_error_);
+			_graphic_unref0 (self);
+			return NULL;
+		} else {
+			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+			g_clear_error (&_inner_error_);
+			return NULL;
+		}
+	}
 	return self;
 }
 
 
-Graphic* graphic_new_from_file (const gchar* filename) {
-	return graphic_construct_from_file (TYPE_GRAPHIC, filename);
+Graphic* graphic_new_from_file (const gchar* filename, GError** error) {
+	return graphic_construct_from_file (TYPE_GRAPHIC, filename, error);
 }
 
 
@@ -444,13 +518,13 @@ gint graphic_load_svg (Graphic* self, const gchar* filename) {
 		_tmp5_ = rsvg_handle_new_from_file (_tmp4_, &_inner_error_);
 		_tmp6_ = _tmp5_;
 		if (_inner_error_ != NULL) {
-			goto __catch49_g_error;
+			goto __catch53_g_error;
 		}
 		_g_object_unref0 (self->priv->svgHandle);
 		self->priv->svgHandle = _tmp6_;
 	}
-	goto __finally49;
-	__catch49_g_error:
+	goto __finally53;
+	__catch53_g_error:
 	{
 		FILE* _tmp7_;
 		const gchar* _tmp8_;
@@ -462,7 +536,7 @@ gint graphic_load_svg (Graphic* self, const gchar* filename) {
 		result = 1;
 		return result;
 	}
-	__finally49:
+	__finally53:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);

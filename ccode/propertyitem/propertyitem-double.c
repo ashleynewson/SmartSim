@@ -292,20 +292,20 @@ gdouble property_item_double_get_data (PropertySet* propertySet, const gchar* na
 		_tmp2_ = property_item_double_get_data_throw (_tmp0_, _tmp1_, &_inner_error_);
 		_tmp3_ = _tmp2_;
 		if (_inner_error_ != NULL) {
-			goto __catch57_g_error;
+			goto __catch60_g_error;
 		}
 		result = _tmp3_;
 		return result;
 	}
-	goto __finally57;
-	__catch57_g_error:
+	goto __finally60;
+	__catch60_g_error:
 	{
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
 		result = (gdouble) 0;
 		return result;
 	}
-	__finally57:
+	__finally60:
 	g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 	g_clear_error (&_inner_error_);
 	return 0.0;
@@ -325,16 +325,16 @@ void property_item_double_set_data (PropertySet* propertySet, const gchar* name,
 		_tmp2_ = data;
 		property_item_double_set_data_throw (_tmp0_, _tmp1_, _tmp2_, &_inner_error_);
 		if (_inner_error_ != NULL) {
-			goto __catch58_g_error;
+			goto __catch61_g_error;
 		}
 	}
-	goto __finally58;
-	__catch58_g_error:
+	goto __finally61;
+	__catch61_g_error:
 	{
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
 	}
-	__finally58:
+	__finally61:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);

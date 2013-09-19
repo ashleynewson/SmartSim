@@ -998,14 +998,14 @@ void simulator_window_populate (SimulatorWindow* self) {
 		_tmp1_ = gdk_pixbuf_new_from_file (PACKAGE_DATADIR "images/icons/smartsim64.png", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch67_g_error;
+			goto __catch70_g_error;
 		}
 		_tmp3_ = _tmp2_;
 		gtk_window_set_icon ((GtkWindow*) self, _tmp3_);
 		_g_object_unref0 (_tmp3_);
 	}
-	goto __finally67;
-	__catch67_g_error:
+	goto __finally70;
+	__catch70_g_error:
 	{
 		FILE* _tmp4_;
 		g_clear_error (&_inner_error_);
@@ -1013,7 +1013,7 @@ void simulator_window_populate (SimulatorWindow* self) {
 		_tmp4_ = stderr;
 		fprintf (_tmp4_, "Could not load window image.\n");
 	}
-	__finally67:
+	__finally70:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);

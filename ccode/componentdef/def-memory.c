@@ -249,6 +249,7 @@ struct _ComponentDef {
 	volatile int ref_count;
 	ComponentDefPrivate * priv;
 	Graphic* graphic;
+	gchar* graphicReferenceFilename;
 	gchar* name;
 	gchar* description;
 	gchar* iconFilename;
@@ -574,11 +575,11 @@ MemoryComponentDef* memory_component_def_construct (GType object_type, GError** 
 	{
 		component_def_load_from_file ((ComponentDef*) self, MEMORY_COMPONENT_DEF_infoFilename, &_inner_error_);
 		if (_inner_error_ != NULL) {
-			goto __catch26_g_error;
+			goto __catch30_g_error;
 		}
 	}
-	goto __finally26;
-	__catch26_g_error:
+	goto __finally30;
+	__catch30_g_error:
 	{
 		FILE* _tmp0_;
 		GError* _tmp1_;
@@ -588,9 +589,9 @@ MemoryComponentDef* memory_component_def_construct (GType object_type, GError** 
 		fprintf (_tmp0_, "Failed to load built in component \"%s\"\n", MEMORY_COMPONENT_DEF_infoFilename);
 		_tmp1_ = g_error_new_literal (COMPONENT_DEF_LOAD_ERROR, COMPONENT_DEF_LOAD_ERROR_LOAD, "Failed to load \"" MEMORY_COMPONENT_DEF_infoFilename "\"\n");
 		_inner_error_ = _tmp1_;
-		goto __finally26;
+		goto __finally30;
 	}
-	__finally26:
+	__finally30:
 	if (_inner_error_ != NULL) {
 		if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
 			g_propagate_error (error, _inner_error_);
@@ -640,13 +641,13 @@ static void memory_component_def_real_add_properties (ComponentDef* base, Proper
 		_tmp1_ = property_item_selection_get_data_throw (_tmp0_, "Chip Type", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch27_g_error;
+			goto __catch31_g_error;
 		}
 		_g_free0 (chipType);
 		chipType = _tmp2_;
 	}
-	goto __finally27;
-	__catch27_g_error:
+	goto __finally31;
+	__catch31_g_error:
 	{
 		gchar* _tmp3_;
 		g_clear_error (&_inner_error_);
@@ -655,7 +656,7 @@ static void memory_component_def_real_add_properties (ComponentDef* base, Proper
 		_g_free0 (chipType);
 		chipType = _tmp3_;
 	}
-	__finally27:
+	__finally31:
 	if (_inner_error_ != NULL) {
 		_g_free0 (writeFile);
 		_g_free0 (readFile);
@@ -680,13 +681,13 @@ static void memory_component_def_real_add_properties (ComponentDef* base, Proper
 		_tmp8_ = property_item_file_get_filename_throw (_tmp7_, "Read File", &_inner_error_);
 		_tmp9_ = _tmp8_;
 		if (_inner_error_ != NULL) {
-			goto __catch28_g_error;
+			goto __catch32_g_error;
 		}
 		_g_free0 (readFile);
 		readFile = _tmp9_;
 	}
-	goto __finally28;
-	__catch28_g_error:
+	goto __finally32;
+	__catch32_g_error:
 	{
 		gchar* _tmp10_;
 		g_clear_error (&_inner_error_);
@@ -695,7 +696,7 @@ static void memory_component_def_real_add_properties (ComponentDef* base, Proper
 		_g_free0 (readFile);
 		readFile = _tmp10_;
 	}
-	__finally28:
+	__finally32:
 	if (_inner_error_ != NULL) {
 		_property_item_unref0 (chipTypeSelection);
 		_g_free0 (writeFile);
@@ -719,13 +720,13 @@ static void memory_component_def_real_add_properties (ComponentDef* base, Proper
 		_tmp16_ = property_item_file_get_filename_throw (_tmp15_, "Write File", &_inner_error_);
 		_tmp17_ = _tmp16_;
 		if (_inner_error_ != NULL) {
-			goto __catch29_g_error;
+			goto __catch33_g_error;
 		}
 		_g_free0 (writeFile);
 		writeFile = _tmp17_;
 	}
-	goto __finally29;
-	__catch29_g_error:
+	goto __finally33;
+	__catch33_g_error:
 	{
 		gchar* _tmp18_;
 		g_clear_error (&_inner_error_);
@@ -734,7 +735,7 @@ static void memory_component_def_real_add_properties (ComponentDef* base, Proper
 		_g_free0 (writeFile);
 		writeFile = _tmp18_;
 	}
-	__finally29:
+	__finally33:
 	if (_inner_error_ != NULL) {
 		_property_item_unref0 (chipTypeSelection);
 		_g_free0 (writeFile);
@@ -803,13 +804,13 @@ static void memory_component_def_real_get_properties (ComponentDef* base, Proper
 		_tmp5_ = property_item_selection_get_data_throw (_tmp4_, "Chip Type", &_inner_error_);
 		_tmp6_ = _tmp5_;
 		if (_inner_error_ != NULL) {
-			goto __catch30_g_error;
+			goto __catch34_g_error;
 		}
 		_g_free0 (chipType);
 		chipType = _tmp6_;
 	}
-	goto __finally30;
-	__catch30_g_error:
+	goto __finally34;
+	__catch34_g_error:
 	{
 		gchar* _tmp7_;
 		g_clear_error (&_inner_error_);
@@ -818,7 +819,7 @@ static void memory_component_def_real_get_properties (ComponentDef* base, Proper
 		_g_free0 (chipType);
 		chipType = _tmp7_;
 	}
-	__finally30:
+	__finally34:
 	if (_inner_error_ != NULL) {
 		_g_free0 (writeFile);
 		_g_free0 (readFile);
@@ -982,13 +983,13 @@ static void memory_component_def_real_configure_inst (ComponentDef* base, Compon
 		_tmp3_ = property_item_selection_get_data_throw (_tmp2_, "Chip Type", &_inner_error_);
 		_tmp4_ = _tmp3_;
 		if (_inner_error_ != NULL) {
-			goto __catch31_g_error;
+			goto __catch35_g_error;
 		}
 		_g_free0 (chipType);
 		chipType = _tmp4_;
 	}
-	goto __finally31;
-	__catch31_g_error:
+	goto __finally35;
+	__catch35_g_error:
 	{
 		gchar* _tmp5_;
 		g_clear_error (&_inner_error_);
@@ -997,7 +998,7 @@ static void memory_component_def_real_configure_inst (ComponentDef* base, Compon
 		_g_free0 (chipType);
 		chipType = _tmp5_;
 	}
-	__finally31:
+	__finally35:
 	if (_inner_error_ != NULL) {
 		_g_free0 (chipType);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -1453,13 +1454,13 @@ static void memory_component_def_real_save_properties (ComponentDef* base, xmlTe
 		_tmp1_ = property_item_selection_get_data_throw (_tmp0_, "Chip Type", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch32_g_error;
+			goto __catch36_g_error;
 		}
 		_g_free0 (chipType);
 		chipType = _tmp2_;
 	}
-	goto __finally32;
-	__catch32_g_error:
+	goto __finally36;
+	__catch36_g_error:
 	{
 		gchar* _tmp3_;
 		g_clear_error (&_inner_error_);
@@ -1468,7 +1469,7 @@ static void memory_component_def_real_save_properties (ComponentDef* base, xmlTe
 		_g_free0 (chipType);
 		chipType = _tmp3_;
 	}
-	__finally32:
+	__finally36:
 	if (_inner_error_ != NULL) {
 		_g_free0 (writeFile);
 		_g_free0 (readFile);
@@ -1913,13 +1914,13 @@ static void memory_component_def_real_compile_component (ComponentDef* base, Com
 		_tmp106_ = property_item_selection_get_data_throw (_tmp105_, "Chip Type", &_inner_error_);
 		_tmp107_ = _tmp106_;
 		if (_inner_error_ != NULL) {
-			goto __catch33_g_error;
+			goto __catch37_g_error;
 		}
 		_g_free0 (chipType);
 		chipType = _tmp107_;
 	}
-	goto __finally33;
-	__catch33_g_error:
+	goto __finally37;
+	__catch37_g_error:
 	{
 		gchar* _tmp108_;
 		g_clear_error (&_inner_error_);
@@ -1928,7 +1929,7 @@ static void memory_component_def_real_compile_component (ComponentDef* base, Com
 		_g_free0 (chipType);
 		chipType = _tmp108_;
 	}
-	__finally33:
+	__finally37:
 	if (_inner_error_ != NULL) {
 		_g_free0 (writeFile);
 		_g_free0 (readFile);
@@ -1953,13 +1954,13 @@ static void memory_component_def_real_compile_component (ComponentDef* base, Com
 		_tmp111_ = property_item_file_get_filename_throw (_tmp110_, "Read File", &_inner_error_);
 		_tmp112_ = _tmp111_;
 		if (_inner_error_ != NULL) {
-			goto __catch34_g_error;
+			goto __catch38_g_error;
 		}
 		_g_free0 (readFile);
 		readFile = _tmp112_;
 	}
-	goto __finally34;
-	__catch34_g_error:
+	goto __finally38;
+	__catch38_g_error:
 	{
 		gchar* _tmp113_;
 		g_clear_error (&_inner_error_);
@@ -1968,7 +1969,7 @@ static void memory_component_def_real_compile_component (ComponentDef* base, Com
 		_g_free0 (readFile);
 		readFile = _tmp113_;
 	}
-	__finally34:
+	__finally38:
 	if (_inner_error_ != NULL) {
 		_g_free0 (writeFile);
 		_g_free0 (readFile);
@@ -1993,13 +1994,13 @@ static void memory_component_def_real_compile_component (ComponentDef* base, Com
 		_tmp116_ = property_item_file_get_filename_throw (_tmp115_, "Write File", &_inner_error_);
 		_tmp117_ = _tmp116_;
 		if (_inner_error_ != NULL) {
-			goto __catch35_g_error;
+			goto __catch39_g_error;
 		}
 		_g_free0 (writeFile);
 		writeFile = _tmp117_;
 	}
-	goto __finally35;
-	__catch35_g_error:
+	goto __finally39;
+	__catch39_g_error:
 	{
 		gchar* _tmp118_;
 		g_clear_error (&_inner_error_);
@@ -2008,7 +2009,7 @@ static void memory_component_def_real_compile_component (ComponentDef* base, Com
 		_g_free0 (writeFile);
 		writeFile = _tmp118_;
 	}
-	__finally35:
+	__finally39:
 	if (_inner_error_ != NULL) {
 		_g_free0 (writeFile);
 		_g_free0 (readFile);
@@ -2081,7 +2082,7 @@ static void memory_component_def_real_compile_component (ComponentDef* base, Com
 		_tmp135_ = _tmp134_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_STATE_ERROR) {
-				goto __catch36_component_state_error;
+				goto __catch40_component_state_error;
 			}
 			_component_state_unref0 (componentState);
 			_g_free0 (writeFile);
@@ -2103,8 +2104,8 @@ static void memory_component_def_real_compile_component (ComponentDef* base, Com
 		_tmp137_ = componentState;
 		compiled_circuit_add_component (_tmp136_, _tmp137_);
 	}
-	goto __finally36;
-	__catch36_component_state_error:
+	goto __finally40;
+	__catch40_component_state_error:
 	{
 		GError* _error_ = NULL;
 		CompiledCircuit* _tmp138_;
@@ -2121,7 +2122,7 @@ static void memory_component_def_real_compile_component (ComponentDef* base, Com
 		_tmp141_->errorMark = TRUE;
 		_g_error_free0 (_error_);
 	}
-	__finally36:
+	__finally40:
 	if (_inner_error_ != NULL) {
 		_component_state_unref0 (componentState);
 		_g_free0 (writeFile);

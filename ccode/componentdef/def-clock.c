@@ -232,6 +232,7 @@ struct _ComponentDef {
 	volatile int ref_count;
 	ComponentDefPrivate * priv;
 	Graphic* graphic;
+	gchar* graphicReferenceFilename;
 	gchar* name;
 	gchar* description;
 	gchar* iconFilename;
@@ -494,11 +495,11 @@ ClockComponentDef* clock_component_def_construct (GType object_type, GError** er
 	{
 		component_def_load_from_file ((ComponentDef*) self, CLOCK_COMPONENT_DEF_infoFilename, &_inner_error_);
 		if (_inner_error_ != NULL) {
-			goto __catch9_g_error;
+			goto __catch13_g_error;
 		}
 	}
-	goto __finally9;
-	__catch9_g_error:
+	goto __finally13;
+	__catch13_g_error:
 	{
 		FILE* _tmp0_;
 		GError* _tmp1_;
@@ -508,9 +509,9 @@ ClockComponentDef* clock_component_def_construct (GType object_type, GError** er
 		fprintf (_tmp0_, "Failed to load built in component \"%s\"\n", CLOCK_COMPONENT_DEF_infoFilename);
 		_tmp1_ = g_error_new_literal (COMPONENT_DEF_LOAD_ERROR, COMPONENT_DEF_LOAD_ERROR_LOAD, "Failed to load \"" CLOCK_COMPONENT_DEF_infoFilename "\"\n");
 		_inner_error_ = _tmp1_;
-		goto __finally9;
+		goto __finally13;
 	}
-	__finally9:
+	__finally13:
 	if (_inner_error_ != NULL) {
 		if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
 			g_propagate_error (error, _inner_error_);
@@ -557,18 +558,18 @@ static void clock_component_def_real_add_properties (ComponentDef* base, Propert
 		_tmp1_ = property_item_int_get_data_throw (_tmp0_, "On For", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch10_g_error;
+			goto __catch14_g_error;
 		}
 		onFor = _tmp2_;
 	}
-	goto __finally10;
-	__catch10_g_error:
+	goto __finally14;
+	__catch14_g_error:
 	{
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
 		onFor = 25;
 	}
-	__finally10:
+	__finally14:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
@@ -589,18 +590,18 @@ static void clock_component_def_real_add_properties (ComponentDef* base, Propert
 		_tmp9_ = property_item_int_get_data_throw (_tmp8_, "Off For", &_inner_error_);
 		_tmp10_ = _tmp9_;
 		if (_inner_error_ != NULL) {
-			goto __catch11_g_error;
+			goto __catch15_g_error;
 		}
 		offFor = _tmp10_;
 	}
-	goto __finally11;
-	__catch11_g_error:
+	goto __finally15;
+	__catch15_g_error:
 	{
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
 		offFor = 25;
 	}
-	__finally11:
+	__finally15:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
@@ -815,18 +816,18 @@ static void clock_component_def_real_save_properties (ComponentDef* base, xmlTex
 		_tmp1_ = property_item_int_get_data_throw (_tmp0_, "On For", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch12_g_error;
+			goto __catch16_g_error;
 		}
 		onFor = _tmp2_;
 	}
-	goto __finally12;
-	__catch12_g_error:
+	goto __finally16;
+	__catch16_g_error:
 	{
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
 		onFor = 25;
 	}
-	__finally12:
+	__finally16:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
@@ -840,18 +841,18 @@ static void clock_component_def_real_save_properties (ComponentDef* base, xmlTex
 		_tmp4_ = property_item_int_get_data_throw (_tmp3_, "Off For", &_inner_error_);
 		_tmp5_ = _tmp4_;
 		if (_inner_error_ != NULL) {
-			goto __catch13_g_error;
+			goto __catch17_g_error;
 		}
 		offFor = _tmp5_;
 	}
-	goto __finally13;
-	__catch13_g_error:
+	goto __finally17;
+	__catch17_g_error:
 	{
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
 		offFor = 25;
 	}
-	__finally13:
+	__finally17:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
@@ -958,18 +959,18 @@ static void clock_component_def_real_compile_component (ComponentDef* base, Comp
 		_tmp15_ = property_item_int_get_data_throw (_tmp14_, "On For", &_inner_error_);
 		_tmp16_ = _tmp15_;
 		if (_inner_error_ != NULL) {
-			goto __catch14_g_error;
+			goto __catch18_g_error;
 		}
 		onFor = _tmp16_;
 	}
-	goto __finally14;
-	__catch14_g_error:
+	goto __finally18;
+	__catch18_g_error:
 	{
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
 		onFor = 25;
 	}
-	__finally14:
+	__finally18:
 	if (_inner_error_ != NULL) {
 		_connection_unref0 (outputWire);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -986,18 +987,18 @@ static void clock_component_def_real_compile_component (ComponentDef* base, Comp
 		_tmp19_ = property_item_int_get_data_throw (_tmp18_, "Off For", &_inner_error_);
 		_tmp20_ = _tmp19_;
 		if (_inner_error_ != NULL) {
-			goto __catch15_g_error;
+			goto __catch19_g_error;
 		}
 		offFor = _tmp20_;
 	}
-	goto __finally15;
-	__catch15_g_error:
+	goto __finally19;
+	__catch19_g_error:
 	{
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
 		offFor = 25;
 	}
-	__finally15:
+	__finally19:
 	if (_inner_error_ != NULL) {
 		_connection_unref0 (outputWire);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);

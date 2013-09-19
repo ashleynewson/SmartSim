@@ -240,6 +240,7 @@ struct _ComponentDef {
 	volatile int ref_count;
 	ComponentDefPrivate * priv;
 	Graphic* graphic;
+	gchar* graphicReferenceFilename;
 	gchar* name;
 	gchar* description;
 	gchar* iconFilename;
@@ -374,7 +375,7 @@ GType pin_def_get_type (void) G_GNUC_CONST;
 void component_def_create_information (ComponentDef* self, CircuitInformation* circuitInformation);
 const gchar* circuit_information_get_summary (CircuitInformation* self);
 void circuit_information_count_component (CircuitInformation* self, ComponentDef* componentDef);
-static void _vala_array_add17 (CircuitInformationComponentCount** array, int* length, int* size, const CircuitInformationComponentCount* value);
+static void _vala_array_add19 (CircuitInformationComponentCount** array, int* length, int* size, const CircuitInformationComponentCount* value);
 static void circuit_information_finalize (CircuitInformation* obj);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
 static void _vala_array_free (gpointer array, gint array_length, GDestroyNotify destroy_func);
@@ -624,7 +625,7 @@ CircuitInformation* circuit_information_new (Project* project) {
 }
 
 
-static void _vala_array_add17 (CircuitInformationComponentCount** array, int* length, int* size, const CircuitInformationComponentCount* value) {
+static void _vala_array_add19 (CircuitInformationComponentCount** array, int* length, int* size, const CircuitInformationComponentCount* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (CircuitInformationComponentCount, *array, *size);
@@ -709,7 +710,7 @@ void circuit_information_count_component (CircuitInformation* self, ComponentDef
 		_tmp17__length1 = self->priv->componentCounts_length1;
 		_tmp18_ = componentCount;
 		circuit_information_component_count_copy (&_tmp18_, &_tmp19_);
-		_vala_array_add17 (&self->priv->componentCounts, &self->priv->componentCounts_length1, &self->priv->_componentCounts_size_, &_tmp19_);
+		_vala_array_add19 (&self->priv->componentCounts, &self->priv->componentCounts_length1, &self->priv->_componentCounts_size_, &_tmp19_);
 		circuit_information_component_count_destroy (&componentCount);
 	}
 }

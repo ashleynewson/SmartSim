@@ -259,7 +259,6 @@ typedef struct _PropertyItemStringClass PropertyItemStringClass;
 typedef struct _PropertiesQuery PropertiesQuery;
 typedef struct _PropertiesQueryClass PropertiesQueryClass;
 #define _properties_query_unref0(var) ((var == NULL) ? NULL : (var = (properties_query_unref (var), NULL)))
-#define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
 typedef struct _ParamSpecProject ParamSpecProject;
 
 typedef enum  {
@@ -322,6 +321,7 @@ struct _ComponentDef {
 	volatile int ref_count;
 	ComponentDefPrivate * priv;
 	Graphic* graphic;
+	gchar* graphicReferenceFilename;
 	gchar* name;
 	gchar* description;
 	gchar* iconFilename;
@@ -504,13 +504,13 @@ gboolean project_plugins_allowed (Project* self, const gchar* extra);
 void basic_dialog_error (GtkWindow* window, const gchar* text);
 gint basic_dialog_ask_generic (GtkWindow* window, GtkMessageType messageType, const gchar* text, gchar** options, int options_length1);
 void project_register (Project* project);
-static void _vala_array_add62 (Project*** array, int* length, int* size, Project* value);
+static void _vala_array_add64 (Project*** array, int* length, int* size, Project* value);
 void project_unregister (Project* project);
-static void _vala_array_add63 (Project*** array, int* length, int* size, Project* value);
+static void _vala_array_add65 (Project*** array, int* length, int* size, Project* value);
 static Project** _vala_array_dup55 (Project** self, int length);
 void project_clean_up (void);
 gboolean designer_window_project_has_windows (Project* project);
-static void _vala_array_add64 (Project*** array, int* length, int* size, Project* value);
+static void _vala_array_add66 (Project*** array, int* length, int* size, Project* value);
 gint project_destroy_all_windows (Project* self);
 static Project** _vala_array_dup56 (Project** self, int length);
 Project* project_new (void);
@@ -587,7 +587,7 @@ gpointer value_get_pin_def (const GValue* value);
 GType pin_def_get_type (void) G_GNUC_CONST;
 ComponentDef* project_resolve_def_name (Project* self, const gchar* name);
 static CustomComponentDef** _vala_array_dup57 (CustomComponentDef** self, int length);
-static void _vala_array_add65 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
+static void _vala_array_add67 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
 static CustomComponentDef** _vala_array_dup58 (CustomComponentDef** self, int length);
 void project_update_custom_menus (Project* self);
 void project_update_plugin_menus (Project* self);
@@ -603,13 +603,13 @@ GQuark custom_component_def_load_error_quark (void);
 CustomComponentDef* custom_component_def_new_from_file (const gchar* infoFilename, Project* project, GError** error);
 CustomComponentDef* custom_component_def_construct_from_file (GType object_type, const gchar* infoFilename, Project* project, GError** error);
 static CustomComponentDef** _vala_array_dup59 (CustomComponentDef** self, int length);
-static void _vala_array_add66 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
+static void _vala_array_add68 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
 static CustomComponentDef** _vala_array_dup60 (CustomComponentDef** self, int length);
 PluginComponentManager* plugin_component_manager_from_filename (const gchar* filename);
 static PluginComponentDef** _vala_array_dup61 (PluginComponentDef** self, int length);
 static PluginComponentManager** _vala_array_dup62 (PluginComponentManager** self, int length);
-static void _vala_array_add67 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value);
-static void _vala_array_add68 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value);
+static void _vala_array_add69 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value);
+static void _vala_array_add70 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value);
 static PluginComponentDef** _vala_array_dup63 (PluginComponentDef** self, int length);
 static PluginComponentManager** _vala_array_dup64 (PluginComponentManager** self, int length);
 GQuark plugin_component_def_load_error_quark (void);
@@ -617,8 +617,8 @@ PluginComponentManager* plugin_component_manager_new_from_file (const gchar* inf
 PluginComponentManager* plugin_component_manager_construct_from_file (GType object_type, const gchar* infoFilename, Project* project, GError** error);
 static PluginComponentDef** _vala_array_dup65 (PluginComponentDef** self, int length);
 static PluginComponentManager** _vala_array_dup66 (PluginComponentManager** self, int length);
-static void _vala_array_add69 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value);
-static void _vala_array_add70 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value);
+static void _vala_array_add71 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value);
+static void _vala_array_add72 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value);
 static PluginComponentDef** _vala_array_dup67 (PluginComponentDef** self, int length);
 static PluginComponentManager** _vala_array_dup68 (PluginComponentManager** self, int length);
 CustomComponentDef* project_get_default_component (Project* self);
@@ -651,7 +651,7 @@ gboolean designer_window_save_component (DesignerWindow* self, gboolean saveAs);
 const gchar* project_get_name (Project* self);
 void project_save_component_list (Project* self, xmlTextWriter* xmlWriter);
 void custom_component_def_update_immediate_dependencies (CustomComponentDef* self, gboolean includePlugins);
-static void _vala_array_add71 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
+static void _vala_array_add73 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
 gpointer wire_inst_ref (gpointer instance);
 void wire_inst_unref (gpointer instance);
 GParamSpec* param_spec_wire_inst (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
@@ -666,23 +666,23 @@ void value_set_annotation (GValue* value, gpointer v_object);
 void value_take_annotation (GValue* value, gpointer v_object);
 gpointer value_get_annotation (const GValue* value);
 GType annotation_get_type (void) G_GNUC_CONST;
-static void _vala_array_add72 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
-static void _vala_array_add73 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
-void custom_component_def_remove_immediate_dependency (CustomComponentDef* self, ComponentDef* removeComponent);
 static void _vala_array_add74 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
+static void _vala_array_add75 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
+void custom_component_def_remove_immediate_dependency (CustomComponentDef* self, ComponentDef* removeComponent);
+static void _vala_array_add76 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
 static CustomComponentDef** _vala_array_dup69 (CustomComponentDef** self, int length);
 gchar* project_relative_filename (Project* self, const gchar* rawTargetFilename);
 gint project_remove_component (Project* self, CustomComponentDef* removeComponent);
 CustomComponentDef** project_component_users (Project* self, ComponentDef* usedComponent, int* result_length1);
-static void _vala_array_add75 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
+static void _vala_array_add77 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
 static CustomComponentDef** _vala_array_dup70 (CustomComponentDef** self, int length);
 gint project_remove_plugin_component (Project* self, PluginComponentDef* removeComponent);
-static void _vala_array_add76 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value);
-static void _vala_array_add77 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value);
+static void _vala_array_add78 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value);
+static void _vala_array_add79 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value);
 static PluginComponentDef** _vala_array_dup71 (PluginComponentDef** self, int length);
 static PluginComponentManager** _vala_array_dup72 (PluginComponentManager** self, int length);
 static gboolean _vala_component_def_array_contains (ComponentDef** stack, int stack_length, ComponentDef* needle);
-static void _vala_array_add78 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
+static void _vala_array_add80 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value);
 void project_configure (Project* self);
 PropertySet* property_set_new (const gchar* name, const gchar* description);
 PropertySet* property_set_construct (GType object_type, const gchar* name, const gchar* description);
@@ -701,8 +701,7 @@ gpointer value_get_properties_query (const GValue* value);
 GType properties_query_get_type (void) G_GNUC_CONST;
 gint properties_query_run (PropertiesQuery* self);
 gchar* property_item_string_get_data (PropertySet* propertySet, const gchar* name);
-static void _vala_array_add79 (gchar*** array, int* length, int* size, gchar* value);
-static void _vala_array_add80 (gchar*** array, int* length, int* size, gchar* value);
+gchar* core_absolute_filename (const gchar* filename, const gchar* pwd);
 static void _vala_array_add81 (Designer*** array, int* length, int* size, Designer* value);
 void project_unregister_designer (Project* self, Designer* designer);
 static void _vala_array_add82 (Designer*** array, int* length, int* size, Designer* value);
@@ -798,7 +797,7 @@ static gpointer _project_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add62 (Project*** array, int* length, int* size, Project* value) {
+static void _vala_array_add64 (Project*** array, int* length, int* size, Project* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Project*, *array, (*size) + 1);
@@ -826,7 +825,7 @@ void project_register (Project* project) {
 	_tmp1__length1 = project_projects_length1;
 	_tmp2_ = project;
 	_tmp3_ = _project_ref0 (_tmp2_);
-	_vala_array_add62 (&project_projects, &project_projects_length1, &_project_projects_size_, _tmp3_);
+	_vala_array_add64 (&project_projects, &project_projects_length1, &_project_projects_size_, _tmp3_);
 	_tmp4_ = project;
 	_tmp4_->myID = position;
 	_tmp5_ = stdout;
@@ -837,7 +836,7 @@ void project_register (Project* project) {
 /**
  * Removes //project// from the static //projects// array.
  */
-static void _vala_array_add63 (Project*** array, int* length, int* size, Project* value) {
+static void _vala_array_add65 (Project*** array, int* length, int* size, Project* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Project*, *array, (*size) + 1);
@@ -941,7 +940,7 @@ void project_unregister (Project* project) {
 					_tmp16_ = i;
 					_tmp17_ = _tmp15_[_tmp16_];
 					_tmp18_ = _project_ref0 (_tmp17_);
-					_vala_array_add63 (&tempArray, &tempArray_length1, &_tempArray_size_, _tmp18_);
+					_vala_array_add65 (&tempArray, &tempArray_length1, &_tempArray_size_, _tmp18_);
 					_tmp19_ = newID;
 					newID = _tmp19_ + 1;
 				}
@@ -970,7 +969,7 @@ void project_unregister (Project* project) {
 }
 
 
-static void _vala_array_add64 (Project*** array, int* length, int* size, Project* value) {
+static void _vala_array_add66 (Project*** array, int* length, int* size, Project* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (Project*, *array, (*size) + 1);
@@ -1041,7 +1040,7 @@ void project_clean_up (void) {
 					_tmp5__length1 = newProjects_length1;
 					_tmp6_ = project;
 					_tmp7_ = _project_ref0 (_tmp6_);
-					_vala_array_add64 (&newProjects, &newProjects_length1, &_newProjects_size_, _tmp7_);
+					_vala_array_add66 (&newProjects, &newProjects_length1, &_newProjects_size_, _tmp7_);
 					_tmp8_ = project;
 					_tmp9_ = newID;
 					_tmp8_->myID = _tmp9_;
@@ -1925,7 +1924,7 @@ static CustomComponentDef** _vala_array_dup57 (CustomComponentDef** self, int le
 }
 
 
-static void _vala_array_add65 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
+static void _vala_array_add67 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (CustomComponentDef*, *array, (*size) + 1);
@@ -2016,7 +2015,7 @@ CustomComponentDef* project_new_component (Project* self) {
 	_tmp14__length1 = newCustomComponentDefs_length1;
 	_tmp15_ = newComponent;
 	_tmp16_ = _component_def_ref0 (_tmp15_);
-	_vala_array_add65 (&newCustomComponentDefs, &newCustomComponentDefs_length1, &_newCustomComponentDefs_size_, _tmp16_);
+	_vala_array_add67 (&newCustomComponentDefs, &newCustomComponentDefs_length1, &_newCustomComponentDefs_size_, _tmp16_);
 	_tmp17_ = newCustomComponentDefs;
 	_tmp17__length1 = newCustomComponentDefs_length1;
 	_tmp18_ = (_tmp17_ != NULL) ? _vala_array_dup58 (_tmp17_, _tmp17__length1) : ((gpointer) _tmp17_);
@@ -2323,7 +2322,7 @@ static CustomComponentDef** _vala_array_dup59 (CustomComponentDef** self, int le
 }
 
 
-static void _vala_array_add66 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
+static void _vala_array_add68 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (CustomComponentDef*, *array, (*size) + 1);
@@ -2376,10 +2375,10 @@ CustomComponentDef* project_load_component (Project* self, const gchar* fileName
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch54_component_def_load_error;
+				goto __catch58_component_def_load_error;
 			}
 			if (_inner_error_->domain == CUSTOM_COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch54_custom_component_def_load_error;
+				goto __catch58_custom_component_def_load_error;
 			}
 			_component_def_unref0 (newComponent);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -2399,7 +2398,7 @@ CustomComponentDef* project_load_component (Project* self, const gchar* fileName
 		_tmp5__length1 = newCustomComponentDefs_length1;
 		_tmp6_ = newComponent;
 		_tmp7_ = _component_def_ref0 (_tmp6_);
-		_vala_array_add66 (&newCustomComponentDefs, &newCustomComponentDefs_length1, &_newCustomComponentDefs_size_, _tmp7_);
+		_vala_array_add68 (&newCustomComponentDefs, &newCustomComponentDefs_length1, &_newCustomComponentDefs_size_, _tmp7_);
 		_tmp8_ = newCustomComponentDefs;
 		_tmp8__length1 = newCustomComponentDefs_length1;
 		_tmp9_ = (_tmp8_ != NULL) ? _vala_array_dup60 (_tmp8_, _tmp8__length1) : ((gpointer) _tmp8_);
@@ -2411,8 +2410,8 @@ CustomComponentDef* project_load_component (Project* self, const gchar* fileName
 		project_update_plugin_menus (self);
 		newCustomComponentDefs = (_vala_array_free (newCustomComponentDefs, newCustomComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 	}
-	goto __finally54;
-	__catch54_component_def_load_error:
+	goto __finally58;
+	__catch58_component_def_load_error:
 	{
 		GError* _error_ = NULL;
 		GError* _tmp10_;
@@ -2431,8 +2430,8 @@ CustomComponentDef* project_load_component (Project* self, const gchar* fileName
 		newComponent = NULL;
 		_g_error_free0 (_error_);
 	}
-	goto __finally54;
-	__catch54_custom_component_def_load_error:
+	goto __finally58;
+	__catch58_custom_component_def_load_error:
 	{
 		GError* _error_ = NULL;
 		GError* _tmp14_;
@@ -2451,7 +2450,7 @@ CustomComponentDef* project_load_component (Project* self, const gchar* fileName
 		newComponent = NULL;
 		_g_error_free0 (_error_);
 	}
-	__finally54:
+	__finally58:
 	if (_inner_error_ != NULL) {
 		_component_def_unref0 (newComponent);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -2498,7 +2497,7 @@ static PluginComponentManager** _vala_array_dup62 (PluginComponentManager** self
 }
 
 
-static void _vala_array_add67 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value) {
+static void _vala_array_add69 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PluginComponentDef*, *array, (*size) + 1);
@@ -2508,7 +2507,7 @@ static void _vala_array_add67 (PluginComponentDef*** array, int* length, int* si
 }
 
 
-static void _vala_array_add68 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value) {
+static void _vala_array_add70 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PluginComponentManager*, *array, (*size) + 1);
@@ -2570,7 +2569,7 @@ static PluginComponentManager** _vala_array_dup66 (PluginComponentManager** self
 }
 
 
-static void _vala_array_add69 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value) {
+static void _vala_array_add71 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PluginComponentDef*, *array, (*size) + 1);
@@ -2580,7 +2579,7 @@ static void _vala_array_add69 (PluginComponentDef*** array, int* length, int* si
 }
 
 
-static void _vala_array_add70 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value) {
+static void _vala_array_add72 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PluginComponentManager*, *array, (*size) + 1);
@@ -2757,12 +2756,12 @@ PluginComponentDef* project_load_plugin_component (Project* self, const gchar* f
 		_tmp26__length1 = newPluginComponentDefs_length1;
 		_tmp27_ = newComponent;
 		_tmp28_ = _component_def_ref0 (_tmp27_);
-		_vala_array_add67 (&newPluginComponentDefs, &newPluginComponentDefs_length1, &_newPluginComponentDefs_size_, _tmp28_);
+		_vala_array_add69 (&newPluginComponentDefs, &newPluginComponentDefs_length1, &_newPluginComponentDefs_size_, _tmp28_);
 		_tmp29_ = newPluginComponentManagers;
 		_tmp29__length1 = newPluginComponentManagers_length1;
 		_tmp30_ = newManager;
 		_tmp31_ = _plugin_component_manager_ref0 (_tmp30_);
-		_vala_array_add68 (&newPluginComponentManagers, &newPluginComponentManagers_length1, &_newPluginComponentManagers_size_, _tmp31_);
+		_vala_array_add70 (&newPluginComponentManagers, &newPluginComponentManagers_length1, &_newPluginComponentManagers_size_, _tmp31_);
 		_tmp32_ = newPluginComponentDefs;
 		_tmp32__length1 = newPluginComponentDefs_length1;
 		_tmp33_ = (_tmp32_ != NULL) ? _vala_array_dup63 (_tmp32_, _tmp32__length1) : ((gpointer) _tmp32_);
@@ -2826,10 +2825,10 @@ PluginComponentDef* project_load_plugin_component (Project* self, const gchar* f
 		_tmp38_ = _tmp37_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch55_component_def_load_error;
+				goto __catch59_component_def_load_error;
 			}
 			if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch55_plugin_component_def_load_error;
+				goto __catch59_plugin_component_def_load_error;
 			}
 			_plugin_component_manager_unref0 (newManager);
 			_component_def_unref0 (newComponent);
@@ -2862,12 +2861,12 @@ PluginComponentDef* project_load_plugin_component (Project* self, const gchar* f
 		_tmp46__length1 = newPluginComponentDefs_length1;
 		_tmp47_ = newComponent;
 		_tmp48_ = _component_def_ref0 (_tmp47_);
-		_vala_array_add69 (&newPluginComponentDefs, &newPluginComponentDefs_length1, &_newPluginComponentDefs_size_, _tmp48_);
+		_vala_array_add71 (&newPluginComponentDefs, &newPluginComponentDefs_length1, &_newPluginComponentDefs_size_, _tmp48_);
 		_tmp49_ = newPluginComponentManagers;
 		_tmp49__length1 = newPluginComponentManagers_length1;
 		_tmp50_ = newManager;
 		_tmp51_ = _plugin_component_manager_ref0 (_tmp50_);
-		_vala_array_add70 (&newPluginComponentManagers, &newPluginComponentManagers_length1, &_newPluginComponentManagers_size_, _tmp51_);
+		_vala_array_add72 (&newPluginComponentManagers, &newPluginComponentManagers_length1, &_newPluginComponentManagers_size_, _tmp51_);
 		_tmp52_ = newPluginComponentDefs;
 		_tmp52__length1 = newPluginComponentDefs_length1;
 		_tmp53_ = (_tmp52_ != NULL) ? _vala_array_dup67 (_tmp52_, _tmp52__length1) : ((gpointer) _tmp52_);
@@ -2886,8 +2885,8 @@ PluginComponentDef* project_load_plugin_component (Project* self, const gchar* f
 		newPluginComponentManagers = (_vala_array_free (newPluginComponentManagers, newPluginComponentManagers_length1, (GDestroyNotify) plugin_component_manager_unref), NULL);
 		newPluginComponentDefs = (_vala_array_free (newPluginComponentDefs, newPluginComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 	}
-	goto __finally55;
-	__catch55_component_def_load_error:
+	goto __finally59;
+	__catch59_component_def_load_error:
 	{
 		GError* _error_ = NULL;
 		gboolean _tmp56_ = FALSE;
@@ -2939,8 +2938,8 @@ PluginComponentDef* project_load_plugin_component (Project* self, const gchar* f
 		}
 		_g_error_free0 (_error_);
 	}
-	goto __finally55;
-	__catch55_plugin_component_def_load_error:
+	goto __finally59;
+	__catch59_plugin_component_def_load_error:
 	{
 		GError* _error_ = NULL;
 		const gchar* _tmp71_;
@@ -2972,7 +2971,7 @@ PluginComponentDef* project_load_plugin_component (Project* self, const gchar* f
 		}
 		_g_error_free0 (_error_);
 	}
-	__finally55:
+	__finally59:
 	if (_inner_error_ != NULL) {
 		_plugin_component_manager_unref0 (newManager);
 		_component_def_unref0 (newComponent);
@@ -3912,26 +3911,6 @@ gint project_save (Project* self, const gchar* filename) {
 }
 
 
-static void _vala_array_add71 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
-	if ((*length) == (*size)) {
-		*size = (*size) ? (2 * (*size)) : 4;
-		*array = g_renew (CustomComponentDef*, *array, (*size) + 1);
-	}
-	(*array)[(*length)++] = value;
-	(*array)[*length] = NULL;
-}
-
-
-static void _vala_array_add72 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
-	if ((*length) == (*size)) {
-		*size = (*size) ? (2 * (*size)) : 4;
-		*array = g_renew (CustomComponentDef*, *array, (*size) + 1);
-	}
-	(*array)[(*length)++] = value;
-	(*array)[*length] = NULL;
-}
-
-
 static void _vala_array_add73 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
@@ -3943,6 +3922,26 @@ static void _vala_array_add73 (CustomComponentDef*** array, int* length, int* si
 
 
 static void _vala_array_add74 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
+	if ((*length) == (*size)) {
+		*size = (*size) ? (2 * (*size)) : 4;
+		*array = g_renew (CustomComponentDef*, *array, (*size) + 1);
+	}
+	(*array)[(*length)++] = value;
+	(*array)[*length] = NULL;
+}
+
+
+static void _vala_array_add75 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
+	if ((*length) == (*size)) {
+		*size = (*size) ? (2 * (*size)) : 4;
+		*array = g_renew (CustomComponentDef*, *array, (*size) + 1);
+	}
+	(*array)[(*length)++] = value;
+	(*array)[*length] = NULL;
+}
+
+
+static void _vala_array_add76 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (CustomComponentDef*, *array, (*size) + 1);
@@ -4017,7 +4016,7 @@ void project_save_component_list (Project* self, xmlTextWriter* xmlWriter) {
 				_tmp5__length1 = unsavedComponents_length1;
 				_tmp6_ = customComponentDef;
 				_tmp7_ = _component_def_ref0 (_tmp6_);
-				_vala_array_add71 (&unsavedComponents, &unsavedComponents_length1, &_unsavedComponents_size_, _tmp7_);
+				_vala_array_add73 (&unsavedComponents, &unsavedComponents_length1, &_unsavedComponents_size_, _tmp7_);
 				_component_def_unref0 (customComponentDef);
 			}
 		}
@@ -4084,12 +4083,12 @@ void project_save_component_list (Project* self, xmlTextWriter* xmlWriter) {
 						_tmp14__length1 = saveLoadOrder_length1;
 						_tmp15_ = customComponentDef;
 						_tmp16_ = _component_def_ref0 (_tmp15_);
-						_vala_array_add72 (&saveLoadOrder, &saveLoadOrder_length1, &_saveLoadOrder_size_, _tmp16_);
+						_vala_array_add74 (&saveLoadOrder, &saveLoadOrder_length1, &_saveLoadOrder_size_, _tmp16_);
 						_tmp17_ = justAdded;
 						_tmp17__length1 = justAdded_length1;
 						_tmp18_ = customComponentDef;
 						_tmp19_ = _component_def_ref0 (_tmp18_);
-						_vala_array_add73 (&justAdded, &justAdded_length1, &_justAdded_size_, _tmp19_);
+						_vala_array_add75 (&justAdded, &justAdded_length1, &_justAdded_size_, _tmp19_);
 						stillWorking = TRUE;
 					}
 					_component_def_unref0 (customComponentDef);
@@ -4156,7 +4155,7 @@ void project_save_component_list (Project* self, xmlTextWriter* xmlWriter) {
 						_tmp29__length1 = newUnsavedComponents_length1;
 						_tmp30_ = customComponentDef;
 						_tmp31_ = _component_def_ref0 (_tmp30_);
-						_vala_array_add74 (&newUnsavedComponents, &newUnsavedComponents_length1, &_newUnsavedComponents_size_, _tmp31_);
+						_vala_array_add76 (&newUnsavedComponents, &newUnsavedComponents_length1, &_newUnsavedComponents_size_, _tmp31_);
 					}
 					_component_def_unref0 (customComponentDef);
 				}
@@ -4293,7 +4292,7 @@ void project_save_component_list (Project* self, xmlTextWriter* xmlWriter) {
 }
 
 
-static void _vala_array_add75 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
+static void _vala_array_add77 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (CustomComponentDef*, *array, (*size) + 1);
@@ -4443,7 +4442,7 @@ gint project_remove_component (Project* self, CustomComponentDef* removeComponen
 					_tmp23__length1 = newCustomComponentDefs_length1;
 					_tmp24_ = customComponentDef;
 					_tmp25_ = _component_def_ref0 (_tmp24_);
-					_vala_array_add75 (&newCustomComponentDefs, &newCustomComponentDefs_length1, &_newCustomComponentDefs_size_, _tmp25_);
+					_vala_array_add77 (&newCustomComponentDefs, &newCustomComponentDefs_length1, &_newCustomComponentDefs_size_, _tmp25_);
 				}
 				_component_def_unref0 (customComponentDef);
 			}
@@ -4469,7 +4468,7 @@ gint project_remove_component (Project* self, CustomComponentDef* removeComponen
 }
 
 
-static void _vala_array_add76 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value) {
+static void _vala_array_add78 (PluginComponentDef*** array, int* length, int* size, PluginComponentDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PluginComponentDef*, *array, (*size) + 1);
@@ -4479,7 +4478,7 @@ static void _vala_array_add76 (PluginComponentDef*** array, int* length, int* si
 }
 
 
-static void _vala_array_add77 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value) {
+static void _vala_array_add79 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PluginComponentManager*, *array, (*size) + 1);
@@ -4650,7 +4649,7 @@ gint project_remove_plugin_component (Project* self, PluginComponentDef* removeC
 					_tmp23__length1 = newPluginComponentDefs_length1;
 					_tmp24_ = pluginComponentDef;
 					_tmp25_ = _component_def_ref0 (_tmp24_);
-					_vala_array_add76 (&newPluginComponentDefs, &newPluginComponentDefs_length1, &_newPluginComponentDefs_size_, _tmp25_);
+					_vala_array_add78 (&newPluginComponentDefs, &newPluginComponentDefs_length1, &_newPluginComponentDefs_size_, _tmp25_);
 				}
 				_component_def_unref0 (pluginComponentDef);
 			}
@@ -4691,7 +4690,7 @@ gint project_remove_plugin_component (Project* self, PluginComponentDef* removeC
 					_tmp32__length1 = newPluginComponentManagers_length1;
 					_tmp33_ = pluginComponentManager;
 					_tmp34_ = _plugin_component_manager_ref0 (_tmp33_);
-					_vala_array_add77 (&newPluginComponentManagers, &newPluginComponentManagers_length1, &_newPluginComponentManagers_size_, _tmp34_);
+					_vala_array_add79 (&newPluginComponentManagers, &newPluginComponentManagers_length1, &_newPluginComponentManagers_size_, _tmp34_);
 				}
 				_plugin_component_manager_unref0 (pluginComponentManager);
 			}
@@ -4730,7 +4729,7 @@ static gboolean _vala_component_def_array_contains (ComponentDef** stack, int st
 }
 
 
-static void _vala_array_add78 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
+static void _vala_array_add80 (CustomComponentDef*** array, int* length, int* size, CustomComponentDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (CustomComponentDef*, *array, (*size) + 1);
@@ -4791,7 +4790,7 @@ CustomComponentDef** project_component_users (Project* self, ComponentDef* usedC
 					_tmp7__length1 = userList_length1;
 					_tmp8_ = customComponentDef;
 					_tmp9_ = _component_def_ref0 (_tmp8_);
-					_vala_array_add78 (&userList, &userList_length1, &_userList_size_, _tmp9_);
+					_vala_array_add80 (&userList, &userList_length1, &_userList_size_, _tmp9_);
 				}
 				_component_def_unref0 (customComponentDef);
 			}
@@ -4837,518 +4836,39 @@ void project_configure (Project* self) {
 }
 
 
-static gchar* string_replace (const gchar* self, const gchar* old, const gchar* replacement) {
-	gchar* result = NULL;
-	GError * _inner_error_ = NULL;
-	g_return_val_if_fail (self != NULL, NULL);
-	g_return_val_if_fail (old != NULL, NULL);
-	g_return_val_if_fail (replacement != NULL, NULL);
-	{
-		const gchar* _tmp0_;
-		gchar* _tmp1_ = NULL;
-		gchar* _tmp2_;
-		GRegex* _tmp3_;
-		GRegex* _tmp4_;
-		GRegex* regex;
-		GRegex* _tmp5_;
-		const gchar* _tmp6_;
-		gchar* _tmp7_ = NULL;
-		gchar* _tmp8_;
-		_tmp0_ = old;
-		_tmp1_ = g_regex_escape_string (_tmp0_, -1);
-		_tmp2_ = _tmp1_;
-		_tmp3_ = g_regex_new (_tmp2_, 0, 0, &_inner_error_);
-		_tmp4_ = _tmp3_;
-		_g_free0 (_tmp2_);
-		regex = _tmp4_;
-		if (_inner_error_ != NULL) {
-			if (_inner_error_->domain == G_REGEX_ERROR) {
-				goto __catch56_g_regex_error;
-			}
-			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
-			g_clear_error (&_inner_error_);
-			return NULL;
-		}
-		_tmp5_ = regex;
-		_tmp6_ = replacement;
-		_tmp7_ = g_regex_replace_literal (_tmp5_, self, (gssize) (-1), 0, _tmp6_, 0, &_inner_error_);
-		_tmp8_ = _tmp7_;
-		if (_inner_error_ != NULL) {
-			_g_regex_unref0 (regex);
-			if (_inner_error_->domain == G_REGEX_ERROR) {
-				goto __catch56_g_regex_error;
-			}
-			_g_regex_unref0 (regex);
-			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
-			g_clear_error (&_inner_error_);
-			return NULL;
-		}
-		result = _tmp8_;
-		_g_regex_unref0 (regex);
-		return result;
-	}
-	goto __finally56;
-	__catch56_g_regex_error:
-	{
-		GError* e = NULL;
-		e = _inner_error_;
-		_inner_error_ = NULL;
-		g_assert_not_reached ();
-		_g_error_free0 (e);
-	}
-	__finally56:
-	if (_inner_error_ != NULL) {
-		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
-		g_clear_error (&_inner_error_);
-		return NULL;
-	}
-}
-
-
-static gint string_index_of (const gchar* self, const gchar* needle, gint start_index) {
-	gint result = 0;
-	gint _tmp0_;
-	const gchar* _tmp1_;
-	gchar* _tmp2_ = NULL;
-	gchar* _result_;
-	gchar* _tmp3_;
-	g_return_val_if_fail (self != NULL, 0);
-	g_return_val_if_fail (needle != NULL, 0);
-	_tmp0_ = start_index;
-	_tmp1_ = needle;
-	_tmp2_ = strstr (((gchar*) self) + _tmp0_, (gchar*) _tmp1_);
-	_result_ = _tmp2_;
-	_tmp3_ = _result_;
-	if (_tmp3_ != NULL) {
-		gchar* _tmp4_;
-		_tmp4_ = _result_;
-		result = (gint) (_tmp4_ - ((gchar*) self));
-		return result;
-	} else {
-		result = -1;
-		return result;
-	}
-}
-
-
-static gchar* string_slice (const gchar* self, glong start, glong end) {
-	gchar* result = NULL;
-	gint _tmp0_;
-	gint _tmp1_;
-	glong string_length;
-	glong _tmp2_;
-	glong _tmp5_;
-	gboolean _tmp8_ = FALSE;
-	glong _tmp9_;
-	gboolean _tmp12_;
-	gboolean _tmp13_ = FALSE;
-	glong _tmp14_;
-	gboolean _tmp17_;
-	glong _tmp18_;
-	glong _tmp19_;
-	glong _tmp20_;
-	glong _tmp21_;
-	glong _tmp22_;
-	gchar* _tmp23_ = NULL;
-	g_return_val_if_fail (self != NULL, NULL);
-	_tmp0_ = strlen (self);
-	_tmp1_ = _tmp0_;
-	string_length = (glong) _tmp1_;
-	_tmp2_ = start;
-	if (_tmp2_ < ((glong) 0)) {
-		glong _tmp3_;
-		glong _tmp4_;
-		_tmp3_ = string_length;
-		_tmp4_ = start;
-		start = _tmp3_ + _tmp4_;
-	}
-	_tmp5_ = end;
-	if (_tmp5_ < ((glong) 0)) {
-		glong _tmp6_;
-		glong _tmp7_;
-		_tmp6_ = string_length;
-		_tmp7_ = end;
-		end = _tmp6_ + _tmp7_;
-	}
-	_tmp9_ = start;
-	if (_tmp9_ >= ((glong) 0)) {
-		glong _tmp10_;
-		glong _tmp11_;
-		_tmp10_ = start;
-		_tmp11_ = string_length;
-		_tmp8_ = _tmp10_ <= _tmp11_;
-	} else {
-		_tmp8_ = FALSE;
-	}
-	_tmp12_ = _tmp8_;
-	g_return_val_if_fail (_tmp12_, NULL);
-	_tmp14_ = end;
-	if (_tmp14_ >= ((glong) 0)) {
-		glong _tmp15_;
-		glong _tmp16_;
-		_tmp15_ = end;
-		_tmp16_ = string_length;
-		_tmp13_ = _tmp15_ <= _tmp16_;
-	} else {
-		_tmp13_ = FALSE;
-	}
-	_tmp17_ = _tmp13_;
-	g_return_val_if_fail (_tmp17_, NULL);
-	_tmp18_ = start;
-	_tmp19_ = end;
-	g_return_val_if_fail (_tmp18_ <= _tmp19_, NULL);
-	_tmp20_ = start;
-	_tmp21_ = end;
-	_tmp22_ = start;
-	_tmp23_ = g_strndup (((gchar*) self) + _tmp20_, (gsize) (_tmp21_ - _tmp22_));
-	result = _tmp23_;
-	return result;
-}
-
-
-static void _vala_array_add79 (gchar*** array, int* length, int* size, gchar* value) {
-	if ((*length) == (*size)) {
-		*size = (*size) ? (2 * (*size)) : 4;
-		*array = g_renew (gchar*, *array, (*size) + 1);
-	}
-	(*array)[(*length)++] = value;
-	(*array)[*length] = NULL;
-}
-
-
-static void _vala_array_add80 (gchar*** array, int* length, int* size, gchar* value) {
-	if ((*length) == (*size)) {
-		*size = (*size) ? (2 * (*size)) : 4;
-		*array = g_renew (gchar*, *array, (*size) + 1);
-	}
-	(*array)[(*length)++] = value;
-	(*array)[*length] = NULL;
-}
-
-
 gchar* project_relative_filename (Project* self, const gchar* rawTargetFilename) {
 	gchar* result = NULL;
 	const gchar* _tmp0_;
-	gchar* _tmp1_ = NULL;
-	gchar* targetFilename;
-	const gchar* _tmp2_;
-	gchar* _tmp3_ = NULL;
-	gchar* projectFilename;
-	gchar** _tmp4_ = NULL;
-	gchar** projectDirectories;
-	gint projectDirectories_length1;
-	gint _projectDirectories_size_;
-	gchar** _tmp5_ = NULL;
-	gchar** targetDirectories;
-	gint targetDirectories_length1;
-	gint _targetDirectories_size_;
-	gchar* _tmp6_;
-	gchar* _result_;
-	gint startIndex;
-	gint endIndex;
-	const gchar* _tmp7_;
-	gboolean _tmp8_ = FALSE;
-	gint commonCount = 0;
-	const gchar* _tmp63_;
-	const gchar* _tmp64_;
-	gchar* _tmp65_ = NULL;
-	gchar* _tmp66_;
-	gchar* _tmp67_;
+	const gchar* _tmp1_;
+	gchar* _tmp2_ = NULL;
 	g_return_val_if_fail (self != NULL, NULL);
 	g_return_val_if_fail (rawTargetFilename != NULL, NULL);
 	_tmp0_ = rawTargetFilename;
-	_tmp1_ = string_replace (_tmp0_, G_DIR_SEPARATOR_S, "/");
-	targetFilename = _tmp1_;
-	_tmp2_ = self->filename;
-	_tmp3_ = string_replace (_tmp2_, G_DIR_SEPARATOR_S, "/");
-	projectFilename = _tmp3_;
-	_tmp4_ = g_new0 (gchar*, 0 + 1);
-	projectDirectories = _tmp4_;
-	projectDirectories_length1 = 0;
-	_projectDirectories_size_ = projectDirectories_length1;
-	_tmp5_ = g_new0 (gchar*, 0 + 1);
-	targetDirectories = _tmp5_;
-	targetDirectories_length1 = 0;
-	_targetDirectories_size_ = targetDirectories_length1;
-	_tmp6_ = g_strdup ("");
-	_result_ = _tmp6_;
-	startIndex = 0;
-	endIndex = 0;
-	_tmp7_ = targetFilename;
-	_tmp8_ = g_path_is_absolute (_tmp7_);
-	if (!_tmp8_) {
-		const gchar* _tmp9_;
-		gchar* _tmp10_;
-		_tmp9_ = rawTargetFilename;
-		_tmp10_ = g_strdup (_tmp9_);
-		result = _tmp10_;
-		_g_free0 (_result_);
-		targetDirectories = (_vala_array_free (targetDirectories, targetDirectories_length1, (GDestroyNotify) g_free), NULL);
-		projectDirectories = (_vala_array_free (projectDirectories, projectDirectories_length1, (GDestroyNotify) g_free), NULL);
-		_g_free0 (projectFilename);
-		_g_free0 (targetFilename);
-		return result;
-	}
-	while (TRUE) {
-		gint _tmp11_;
-		const gchar* _tmp12_;
-		gint _tmp13_;
-		gint _tmp14_ = 0;
-		gint _tmp15_;
-		_tmp11_ = endIndex;
-		startIndex = _tmp11_ + 1;
-		_tmp12_ = projectFilename;
-		_tmp13_ = startIndex;
-		_tmp14_ = string_index_of (_tmp12_, "/", _tmp13_);
-		endIndex = _tmp14_;
-		_tmp15_ = endIndex;
-		if (_tmp15_ == (-1)) {
-			break;
-		} else {
-			gchar** _tmp16_;
-			gint _tmp16__length1;
-			const gchar* _tmp17_;
-			gint _tmp18_;
-			gint _tmp19_;
-			gchar* _tmp20_ = NULL;
-			_tmp16_ = projectDirectories;
-			_tmp16__length1 = projectDirectories_length1;
-			_tmp17_ = projectFilename;
-			_tmp18_ = startIndex;
-			_tmp19_ = endIndex;
-			_tmp20_ = string_slice (_tmp17_, (glong) _tmp18_, (glong) _tmp19_);
-			_vala_array_add79 (&projectDirectories, &projectDirectories_length1, &_projectDirectories_size_, _tmp20_);
-		}
-	}
-	startIndex = 0;
-	endIndex = 0;
-	while (TRUE) {
-		gint _tmp21_;
-		const gchar* _tmp22_;
-		gint _tmp23_;
-		gint _tmp24_ = 0;
-		gint _tmp25_;
-		_tmp21_ = endIndex;
-		startIndex = _tmp21_ + 1;
-		_tmp22_ = targetFilename;
-		_tmp23_ = startIndex;
-		_tmp24_ = string_index_of (_tmp22_, "/", _tmp23_);
-		endIndex = _tmp24_;
-		_tmp25_ = endIndex;
-		if (_tmp25_ == (-1)) {
-			break;
-		} else {
-			gchar** _tmp26_;
-			gint _tmp26__length1;
-			const gchar* _tmp27_;
-			gint _tmp28_;
-			gint _tmp29_;
-			gchar* _tmp30_ = NULL;
-			_tmp26_ = targetDirectories;
-			_tmp26__length1 = targetDirectories_length1;
-			_tmp27_ = targetFilename;
-			_tmp28_ = startIndex;
-			_tmp29_ = endIndex;
-			_tmp30_ = string_slice (_tmp27_, (glong) _tmp28_, (glong) _tmp29_);
-			_vala_array_add80 (&targetDirectories, &targetDirectories_length1, &_targetDirectories_size_, _tmp30_);
-		}
-	}
-	{
-		gboolean _tmp31_;
-		commonCount = 0;
-		_tmp31_ = TRUE;
-		while (TRUE) {
-			gboolean _tmp32_;
-			gint _tmp34_;
-			gchar** _tmp35_;
-			gint _tmp35__length1;
-			gchar** _tmp36_;
-			gint _tmp36__length1;
-			gint _tmp37_;
-			const gchar* _tmp38_;
-			gchar** _tmp39_;
-			gint _tmp39__length1;
-			gint _tmp40_;
-			const gchar* _tmp41_;
-			_tmp32_ = _tmp31_;
-			if (!_tmp32_) {
-				gint _tmp33_;
-				_tmp33_ = commonCount;
-				commonCount = _tmp33_ + 1;
-			}
-			_tmp31_ = FALSE;
-			_tmp34_ = commonCount;
-			_tmp35_ = projectDirectories;
-			_tmp35__length1 = projectDirectories_length1;
-			if (!(_tmp34_ < _tmp35__length1)) {
-				break;
-			}
-			_tmp36_ = projectDirectories;
-			_tmp36__length1 = projectDirectories_length1;
-			_tmp37_ = commonCount;
-			_tmp38_ = _tmp36_[_tmp37_];
-			_tmp39_ = targetDirectories;
-			_tmp39__length1 = targetDirectories_length1;
-			_tmp40_ = commonCount;
-			_tmp41_ = _tmp39_[_tmp40_];
-			if (g_strcmp0 (_tmp38_, _tmp41_) != 0) {
-				break;
-			}
-		}
-	}
-	{
-		gint _tmp42_;
-		gint i;
-		_tmp42_ = commonCount;
-		i = _tmp42_;
-		{
-			gboolean _tmp43_;
-			_tmp43_ = TRUE;
-			while (TRUE) {
-				gboolean _tmp44_;
-				gint _tmp46_;
-				gchar** _tmp47_;
-				gint _tmp47__length1;
-				const gchar* _tmp48_;
-				gchar* _tmp49_;
-				_tmp44_ = _tmp43_;
-				if (!_tmp44_) {
-					gint _tmp45_;
-					_tmp45_ = i;
-					i = _tmp45_ + 1;
-				}
-				_tmp43_ = FALSE;
-				_tmp46_ = i;
-				_tmp47_ = projectDirectories;
-				_tmp47__length1 = projectDirectories_length1;
-				if (!(_tmp46_ < _tmp47__length1)) {
-					break;
-				}
-				_tmp48_ = _result_;
-				_tmp49_ = g_strconcat (_tmp48_, "../", NULL);
-				_g_free0 (_result_);
-				_result_ = _tmp49_;
-			}
-		}
-	}
-	{
-		gint _tmp50_;
-		gint i;
-		_tmp50_ = commonCount;
-		i = _tmp50_;
-		{
-			gboolean _tmp51_;
-			_tmp51_ = TRUE;
-			while (TRUE) {
-				gboolean _tmp52_;
-				gint _tmp54_;
-				gchar** _tmp55_;
-				gint _tmp55__length1;
-				const gchar* _tmp56_;
-				gchar** _tmp57_;
-				gint _tmp57__length1;
-				gint _tmp58_;
-				const gchar* _tmp59_;
-				gchar* _tmp60_;
-				gchar* _tmp61_;
-				gchar* _tmp62_;
-				_tmp52_ = _tmp51_;
-				if (!_tmp52_) {
-					gint _tmp53_;
-					_tmp53_ = i;
-					i = _tmp53_ + 1;
-				}
-				_tmp51_ = FALSE;
-				_tmp54_ = i;
-				_tmp55_ = targetDirectories;
-				_tmp55__length1 = targetDirectories_length1;
-				if (!(_tmp54_ < _tmp55__length1)) {
-					break;
-				}
-				_tmp56_ = _result_;
-				_tmp57_ = targetDirectories;
-				_tmp57__length1 = targetDirectories_length1;
-				_tmp58_ = i;
-				_tmp59_ = _tmp57_[_tmp58_];
-				_tmp60_ = g_strconcat (_tmp59_, "/", NULL);
-				_tmp61_ = _tmp60_;
-				_tmp62_ = g_strconcat (_tmp56_, _tmp61_, NULL);
-				_g_free0 (_result_);
-				_result_ = _tmp62_;
-				_g_free0 (_tmp61_);
-			}
-		}
-	}
-	_tmp63_ = _result_;
-	_tmp64_ = targetFilename;
-	_tmp65_ = g_path_get_basename (_tmp64_);
-	_tmp66_ = _tmp65_;
-	_tmp67_ = g_strconcat (_tmp63_, _tmp66_, NULL);
-	_g_free0 (_result_);
-	_result_ = _tmp67_;
-	_g_free0 (_tmp66_);
-	result = _result_;
-	targetDirectories = (_vala_array_free (targetDirectories, targetDirectories_length1, (GDestroyNotify) g_free), NULL);
-	projectDirectories = (_vala_array_free (projectDirectories, projectDirectories_length1, (GDestroyNotify) g_free), NULL);
-	_g_free0 (projectFilename);
-	_g_free0 (targetFilename);
+	_tmp1_ = self->filename;
+	_tmp2_ = core_absolute_filename (_tmp0_, _tmp1_);
+	result = _tmp2_;
 	return result;
 }
 
 
 gchar* project_absolute_filename (Project* self, const gchar* targetFilename) {
 	gchar* result = NULL;
-	gchar* _tmp0_;
-	gchar* _result_;
+	const gchar* _tmp0_;
 	const gchar* _tmp1_;
-	gboolean _tmp2_ = FALSE;
-	const gchar* _tmp5_;
-	const gchar* _tmp6_;
-	gchar* _tmp7_ = NULL;
-	gchar* _tmp8_;
-	gchar* _tmp9_;
-	gchar* _tmp10_;
-	gchar* _tmp11_;
-	const gchar* _tmp12_;
-	const gchar* _tmp13_;
-	gchar* _tmp14_ = NULL;
-	gchar* _tmp15_;
-	gchar* _tmp16_;
+	gchar* _tmp2_ = NULL;
+	gchar* _tmp3_;
+	gchar* _tmp4_ = NULL;
+	gchar* _tmp5_;
 	g_return_val_if_fail (self != NULL, NULL);
 	g_return_val_if_fail (targetFilename != NULL, NULL);
-	_tmp0_ = g_strdup ("");
-	_result_ = _tmp0_;
-	_tmp1_ = targetFilename;
-	_tmp2_ = g_path_is_absolute (_tmp1_);
-	if (_tmp2_) {
-		const gchar* _tmp3_;
-		gchar* _tmp4_;
-		_tmp3_ = targetFilename;
-		_tmp4_ = g_strdup (_tmp3_);
-		result = _tmp4_;
-		_g_free0 (_result_);
-		return result;
-	}
-	_tmp5_ = _result_;
-	_tmp6_ = self->filename;
-	_tmp7_ = g_path_get_dirname (_tmp6_);
-	_tmp8_ = _tmp7_;
-	_tmp9_ = g_strconcat (_tmp8_, G_DIR_SEPARATOR_S, NULL);
-	_tmp10_ = _tmp9_;
-	_tmp11_ = g_strconcat (_tmp5_, _tmp10_, NULL);
-	_g_free0 (_result_);
-	_result_ = _tmp11_;
-	_g_free0 (_tmp10_);
-	_g_free0 (_tmp8_);
-	_tmp12_ = _result_;
-	_tmp13_ = targetFilename;
-	_tmp14_ = string_replace (_tmp13_, "/", G_DIR_SEPARATOR_S);
-	_tmp15_ = _tmp14_;
-	_tmp16_ = g_strconcat (_tmp12_, _tmp15_, NULL);
-	_g_free0 (_result_);
-	_result_ = _tmp16_;
-	_g_free0 (_tmp15_);
-	result = _result_;
+	_tmp0_ = targetFilename;
+	_tmp1_ = self->filename;
+	_tmp2_ = g_path_get_dirname (_tmp1_);
+	_tmp3_ = _tmp2_;
+	_tmp4_ = core_absolute_filename (_tmp0_, _tmp3_);
+	_tmp5_ = _tmp4_;
+	_g_free0 (_tmp3_);
+	result = _tmp5_;
 	return result;
 }
 

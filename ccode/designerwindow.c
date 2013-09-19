@@ -435,6 +435,7 @@ struct _ComponentDef {
 	volatile int ref_count;
 	ComponentDefPrivate * priv;
 	Graphic* graphic;
+	gchar* graphicReferenceFilename;
 	gchar* name;
 	gchar* description;
 	gchar* iconFilename;
@@ -603,15 +604,15 @@ enum  {
 	DESIGNER_WINDOW_DUMMY_PROPERTY
 };
 void designer_window_register (DesignerWindow* window);
-static void _vala_array_add49 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
+static void _vala_array_add51 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
 void designer_window_unregister (DesignerWindow* window);
-static void _vala_array_add50 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
+static void _vala_array_add52 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
 static DesignerWindow** _vala_array_dup45 (DesignerWindow** self, int length);
 void project_clean_up (void);
 gboolean designer_window_project_has_windows (Project* project);
 gint designer_window_count_project_windows (Project* project);
 DesignerWindow** designer_window_get_project_windows (Project* project, int* result_length1);
-static void _vala_array_add51 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
+static void _vala_array_add53 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value);
 DesignerWindow* designer_window_new (void);
 DesignerWindow* designer_window_construct (GType object_type);
 void designer_window_populate (DesignerWindow* self);
@@ -801,8 +802,8 @@ GType pin_def_get_type (void) G_GNUC_CONST;
 static void _____lambda76_ (Block1Data* _data1_);
 void designer_set_insert_component (Designer* self, ComponentDef* insertComponentDef);
 static void ______lambda76__gtk_tool_button_clicked (GtkToolButton* _sender, gpointer self);
-static void _vala_array_add52 (GtkRadioToolButton*** array, int* length, int* size, GtkRadioToolButton* value);
-static void _vala_array_add53 (GtkImage*** array, int* length, int* size, GtkImage* value);
+static void _vala_array_add54 (GtkRadioToolButton*** array, int* length, int* size, GtkRadioToolButton* value);
+static void _vala_array_add55 (GtkImage*** array, int* length, int* size, GtkImage* value);
 static gboolean designer_window_mouse_down (DesignerWindow* self, GdkEventButton* event);
 static gboolean _designer_window_mouse_down_gtk_widget_button_press_event (GtkWidget* _sender, GdkEventButton* event, gpointer self);
 static gboolean designer_window_mouse_move (DesignerWindow* self, GdkEventMotion* event);
@@ -828,20 +829,20 @@ gpointer value_get_plugin_component_manager (const GValue* value);
 GType plugin_component_manager_get_type (void) G_GNUC_CONST;
 static void ______lambda2_ (Block2Data* _data2_);
 static void _______lambda2__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void _vala_array_add54 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
+static void _vala_array_add56 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
 static void ______lambda3_ (Block2Data* _data2_);
 gint project_reopen_window_from_component (Project* self, CustomComponentDef* customComponentDef);
 static void _______lambda3__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void _vala_array_add55 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
+static void _vala_array_add57 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
 static Block3Data* block3_data_ref (Block3Data* _data3_);
 static void block3_data_unref (void * _userdata_);
 static void ______lambda4_ (Block3Data* _data3_);
 static void _______lambda4__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void _vala_array_add56 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
+static void _vala_array_add58 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
 static void ______lambda5_ (Block3Data* _data3_);
 static gboolean designer_window_remove_plugin_component (DesignerWindow* self, PluginComponentDef* pluginComponentDef);
 static void _______lambda5__gtk_menu_item_activate (GtkMenuItem* _sender, gpointer self);
-static void _vala_array_add57 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
+static void _vala_array_add59 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value);
 void designer_window_update_error_mode (DesignerWindow* self, gboolean _error_);
 gboolean designer_get_hasComponent (Designer* self);
 void custom_component_def_get_design_bounds (CustomComponentDef* self, gint* right, gint* down, gint* left, gint* up);
@@ -993,7 +994,7 @@ static gpointer _g_object_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add49 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
+static void _vala_array_add51 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (DesignerWindow*, *array, (*size) + 1);
@@ -1021,7 +1022,7 @@ void designer_window_register (DesignerWindow* window) {
 	_tmp1__length1 = designer_window_designerWindows_length1;
 	_tmp2_ = window;
 	_tmp3_ = _g_object_ref0 (_tmp2_);
-	_vala_array_add49 (&designer_window_designerWindows, &designer_window_designerWindows_length1, &_designer_window_designerWindows_size_, _tmp3_);
+	_vala_array_add51 (&designer_window_designerWindows, &designer_window_designerWindows_length1, &_designer_window_designerWindows_size_, _tmp3_);
 	_tmp4_ = window;
 	_tmp4_->myID = position;
 	_tmp5_ = stdout;
@@ -1033,7 +1034,7 @@ void designer_window_register (DesignerWindow* window) {
  * Removes //window// from the list of visible DesignerWindows.
  * When there are no more visible windows, the application quits.
  */
-static void _vala_array_add50 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
+static void _vala_array_add52 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (DesignerWindow*, *array, (*size) + 1);
@@ -1155,7 +1156,7 @@ void designer_window_unregister (DesignerWindow* window) {
 					_tmp21_ = i;
 					_tmp22_ = _tmp20_[_tmp21_];
 					_tmp23_ = _g_object_ref0 (_tmp22_);
-					_vala_array_add50 (&tempArray, &tempArray_length1, &_tempArray_size_, _tmp23_);
+					_vala_array_add52 (&tempArray, &tempArray_length1, &_tempArray_size_, _tmp23_);
 					_tmp24_ = newID;
 					newID = _tmp24_ + 1;
 				}
@@ -1268,7 +1269,7 @@ gint designer_window_count_project_windows (Project* project) {
 }
 
 
-static void _vala_array_add51 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
+static void _vala_array_add53 (DesignerWindow*** array, int* length, int* size, DesignerWindow* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (DesignerWindow*, *array, (*size) + 1);
@@ -1323,7 +1324,7 @@ DesignerWindow** designer_window_get_project_windows (Project* project, int* res
 					_tmp6__length1 = projectDesignerWindows_length1;
 					_tmp7_ = designerWindow;
 					_tmp8_ = _g_object_ref0 (_tmp7_);
-					_vala_array_add51 (&projectDesignerWindows, &projectDesignerWindows_length1, &_projectDesignerWindows_size_, _tmp8_);
+					_vala_array_add53 (&projectDesignerWindows, &projectDesignerWindows_length1, &_projectDesignerWindows_size_, _tmp8_);
 				}
 				_g_object_unref0 (designerWindow);
 			}
@@ -2107,7 +2108,7 @@ static void ______lambda76__gtk_tool_button_clicked (GtkToolButton* _sender, gpo
 }
 
 
-static void _vala_array_add52 (GtkRadioToolButton*** array, int* length, int* size, GtkRadioToolButton* value) {
+static void _vala_array_add54 (GtkRadioToolButton*** array, int* length, int* size, GtkRadioToolButton* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkRadioToolButton*, *array, (*size) + 1);
@@ -2117,7 +2118,7 @@ static void _vala_array_add52 (GtkRadioToolButton*** array, int* length, int* si
 }
 
 
-static void _vala_array_add53 (GtkImage*** array, int* length, int* size, GtkImage* value) {
+static void _vala_array_add55 (GtkImage*** array, int* length, int* size, GtkImage* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkImage*, *array, (*size) + 1);
@@ -2632,14 +2633,14 @@ void designer_window_populate (DesignerWindow* self) {
 		_tmp1_ = gdk_pixbuf_new_from_file (PACKAGE_DATADIR "images/icons/smartsim64.png", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch45_g_error;
+			goto __catch49_g_error;
 		}
 		_tmp3_ = _tmp2_;
 		gtk_window_set_icon ((GtkWindow*) self, _tmp3_);
 		_g_object_unref0 (_tmp3_);
 	}
-	goto __finally45;
-	__catch45_g_error:
+	goto __finally49;
+	__catch49_g_error:
 	{
 		FILE* _tmp4_;
 		g_clear_error (&_inner_error_);
@@ -2647,7 +2648,7 @@ void designer_window_populate (DesignerWindow* self) {
 		_tmp4_ = stderr;
 		fprintf (_tmp4_, "Could not load window image.\n");
 	}
-	__finally45:
+	__finally49:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
@@ -3639,12 +3640,12 @@ void designer_window_populate (DesignerWindow* self) {
 				_tmp420__length1 = self->priv->toolStandards_length1;
 				_tmp421_ = toolStandard;
 				_tmp422_ = _g_object_ref0 (_tmp421_);
-				_vala_array_add52 (&self->priv->toolStandards, &self->priv->toolStandards_length1, &self->priv->_toolStandards_size_, _tmp422_);
+				_vala_array_add54 (&self->priv->toolStandards, &self->priv->toolStandards_length1, &self->priv->_toolStandards_size_, _tmp422_);
 				_tmp423_ = self->priv->toolStandardImages;
 				_tmp423__length1 = self->priv->toolStandardImages_length1;
 				_tmp424_ = toolStandardImage;
 				_tmp425_ = _g_object_ref0 (_tmp424_);
-				_vala_array_add53 (&self->priv->toolStandardImages, &self->priv->toolStandardImages_length1, &self->priv->_toolStandardImages_size_, _tmp425_);
+				_vala_array_add55 (&self->priv->toolStandardImages, &self->priv->toolStandardImages_length1, &self->priv->_toolStandardImages_size_, _tmp425_);
 				_tmp426_ = self->priv->toolbar;
 				_tmp427_ = toolStandard;
 				gtk_toolbar_insert (_tmp426_, (GtkToolItem*) _tmp427_, -1);
@@ -3814,7 +3815,7 @@ static void _______lambda2__gtk_menu_item_activate (GtkMenuItem* _sender, gpoint
 }
 
 
-static void _vala_array_add54 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
+static void _vala_array_add56 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkMenuItem*, *array, (*size) + 1);
@@ -3840,7 +3841,7 @@ static void _______lambda3__gtk_menu_item_activate (GtkMenuItem* _sender, gpoint
 }
 
 
-static void _vala_array_add55 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
+static void _vala_array_add57 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkMenuItem*, *array, (*size) + 1);
@@ -3995,7 +3996,7 @@ void designer_window_update_custom_menu (DesignerWindow* self) {
 					_tmp32__length1 = self->priv->toolCustomsMenuComponents_length1;
 					_tmp33_ = toolMenuItem;
 					_tmp34_ = _g_object_ref0 (_tmp33_);
-					_vala_array_add54 (&self->priv->toolCustomsMenuComponents, &self->priv->toolCustomsMenuComponents_length1, &self->priv->_toolCustomsMenuComponents_size_, _tmp34_);
+					_vala_array_add56 (&self->priv->toolCustomsMenuComponents, &self->priv->toolCustomsMenuComponents_length1, &self->priv->_toolCustomsMenuComponents_size_, _tmp34_);
 					_tmp35_ = _data2_->customComponentDef;
 					_tmp36_ = ((ComponentDef*) _tmp35_)->name;
 					_tmp37_ = (GtkMenuItem*) gtk_menu_item_new_with_label (_tmp36_);
@@ -4010,7 +4011,7 @@ void designer_window_update_custom_menu (DesignerWindow* self) {
 					_tmp41__length1 = self->priv->menuWindowsComponents_length1;
 					_tmp42_ = windowMenuItem;
 					_tmp43_ = _g_object_ref0 (_tmp42_);
-					_vala_array_add55 (&self->priv->menuWindowsComponents, &self->priv->menuWindowsComponents_length1, &self->priv->_menuWindowsComponents_size_, _tmp43_);
+					_vala_array_add57 (&self->priv->menuWindowsComponents, &self->priv->menuWindowsComponents_length1, &self->priv->_menuWindowsComponents_size_, _tmp43_);
 					_g_object_unref0 (windowMenuItem);
 					_g_object_unref0 (toolMenuItem);
 					block2_data_unref (_data2_);
@@ -4079,7 +4080,7 @@ static void _______lambda4__gtk_menu_item_activate (GtkMenuItem* _sender, gpoint
 }
 
 
-static void _vala_array_add56 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
+static void _vala_array_add58 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkMenuItem*, *array, (*size) + 1);
@@ -4103,7 +4104,7 @@ static void _______lambda5__gtk_menu_item_activate (GtkMenuItem* _sender, gpoint
 }
 
 
-static void _vala_array_add57 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
+static void _vala_array_add59 (GtkMenuItem*** array, int* length, int* size, GtkMenuItem* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (GtkMenuItem*, *array, (*size) + 1);
@@ -4245,7 +4246,7 @@ void designer_window_update_plugin_menu (DesignerWindow* self) {
 					_tmp27__length1 = self->priv->toolPluginsMenuComponents_length1;
 					_tmp28_ = toolMenuItem;
 					_tmp29_ = _g_object_ref0 (_tmp28_);
-					_vala_array_add56 (&self->priv->toolPluginsMenuComponents, &self->priv->toolPluginsMenuComponents_length1, &self->priv->_toolPluginsMenuComponents_size_, _tmp29_);
+					_vala_array_add58 (&self->priv->toolPluginsMenuComponents, &self->priv->toolPluginsMenuComponents_length1, &self->priv->_toolPluginsMenuComponents_size_, _tmp29_);
 					_tmp30_ = _data3_->pluginComponentDef;
 					_tmp31_ = ((ComponentDef*) _tmp30_)->name;
 					_tmp32_ = (GtkMenuItem*) gtk_menu_item_new_with_label (_tmp31_);
@@ -4260,7 +4261,7 @@ void designer_window_update_plugin_menu (DesignerWindow* self) {
 					_tmp36__length1 = self->priv->menuFileRemoveplugincomponentComponents_length1;
 					_tmp37_ = removeplugincomponentMenuItem;
 					_tmp38_ = _g_object_ref0 (_tmp37_);
-					_vala_array_add57 (&self->priv->menuFileRemoveplugincomponentComponents, &self->priv->menuFileRemoveplugincomponentComponents_length1, &self->priv->_menuFileRemoveplugincomponentComponents_size_, _tmp38_);
+					_vala_array_add59 (&self->priv->menuFileRemoveplugincomponentComponents, &self->priv->menuFileRemoveplugincomponentComponents_length1, &self->priv->_menuFileRemoveplugincomponentComponents_size_, _tmp38_);
 					_tmp39_ = self->priv->menuFileRemoveplugincomponent;
 					gtk_widget_set_sensitive ((GtkWidget*) _tmp39_, TRUE);
 					_g_object_unref0 (removeplugincomponentMenuItem);
@@ -6970,7 +6971,7 @@ static void designer_window_load_project (DesignerWindow* self, const gchar* fil
 		_tmp7_ = _tmp6_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == PROJECT_LOAD_ERROR) {
-				goto __catch46_project_load_error;
+				goto __catch50_project_load_error;
 			}
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 			g_clear_error (&_inner_error_);
@@ -6996,8 +6997,8 @@ static void designer_window_load_project (DesignerWindow* self, const gchar* fil
 		designer_window_update_title (self);
 		_component_def_unref0 (defaultComponent);
 	}
-	goto __finally46;
-	__catch46_project_load_error:
+	goto __finally50;
+	__catch50_project_load_error:
 	{
 		GError* _error_ = NULL;
 		FILE* _tmp14_;
@@ -7011,7 +7012,7 @@ static void designer_window_load_project (DesignerWindow* self, const gchar* fil
 		fprintf (_tmp14_, "Error loading project: %s\n", _tmp16_);
 		_g_error_free0 (_error_);
 	}
-	__finally46:
+	__finally50:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
@@ -7038,13 +7039,13 @@ static void designer_window_show_about (DesignerWindow* self) {
 		_tmp0_ = gdk_pixbuf_new_from_file (PACKAGE_DATADIR "images/icons/smartsim64.png", &_inner_error_);
 		_tmp1_ = _tmp0_;
 		if (_inner_error_ != NULL) {
-			goto __catch47_g_error;
+			goto __catch51_g_error;
 		}
 		_g_object_unref0 (logo);
 		logo = _tmp1_;
 	}
-	goto __finally47;
-	__catch47_g_error:
+	goto __finally51;
+	__catch51_g_error:
 	{
 		FILE* _tmp2_;
 		g_clear_error (&_inner_error_);
@@ -7052,7 +7053,7 @@ static void designer_window_show_about (DesignerWindow* self) {
 		_tmp2_ = stderr;
 		fprintf (_tmp2_, "Could not load logo image.\n");
 	}
-	__finally47:
+	__finally51:
 	if (_inner_error_ != NULL) {
 		_g_object_unref0 (logo);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -7187,12 +7188,12 @@ void designer_window_print (DesignerWindow* self) {
 		_tmp22_ = gtk_print_operation_run (_tmp21_, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, (GtkWindow*) self, &_inner_error_);
 		_tmp23_ = _tmp22_;
 		if (_inner_error_ != NULL) {
-			goto __catch48_g_error;
+			goto __catch52_g_error;
 		}
 		_result_ = _tmp23_;
 	}
-	goto __finally48;
-	__catch48_g_error:
+	goto __finally52;
+	__catch52_g_error:
 	{
 		FILE* _tmp24_;
 		g_clear_error (&_inner_error_);
@@ -7202,7 +7203,7 @@ void designer_window_print (DesignerWindow* self) {
 		_g_object_unref0 (printOperation);
 		return;
 	}
-	__finally48:
+	__finally52:
 	if (_inner_error_ != NULL) {
 		_g_object_unref0 (printOperation);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);

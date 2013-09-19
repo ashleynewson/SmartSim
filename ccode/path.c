@@ -110,17 +110,17 @@ enum  {
 Path* path_new (gint xStart, gint yStart);
 Path* path_construct (GType object_type, gint xStart, gint yStart);
 void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse);
-static void _vala_array_add58 (PathLine** array, int* length, int* size, const PathLine* value);
+static void _vala_array_add60 (PathLine** array, int* length, int* size, const PathLine* value);
 static PathLine* _vala_array_dup47 (PathLine* self, int length);
 static PathLine* _vala_array_dup48 (PathLine* self, int length);
 static PathLine* _vala_array_dup49 (PathLine* self, int length);
 static PathLine* _vala_array_dup50 (PathLine* self, int length);
 static PathLine* _vala_array_dup51 (PathLine* self, int length);
-static void _vala_array_add59 (PathLine** array, int* length, int* size, const PathLine* value);
+static void _vala_array_add61 (PathLine** array, int* length, int* size, const PathLine* value);
 static PathLine* _vala_array_dup52 (PathLine* self, int length);
 gint path_append (Path* self, gint x, gint y, gfloat diagonalThreshold);
 static PathLine* _vala_array_dup53 (PathLine* self, int length);
-static void _vala_array_add60 (PathLine** array, int* length, int* size, const PathLine* value);
+static void _vala_array_add62 (PathLine** array, int* length, int* size, const PathLine* value);
 static PathLine* _vala_array_dup54 (PathLine* self, int length);
 gint path_find (Path* self, gint x, gint y);
 void path_move (Path* self, gint x, gint y);
@@ -157,7 +157,7 @@ Path* path_new (gint xStart, gint yStart) {
 }
 
 
-static void _vala_array_add58 (PathLine** array, int* length, int* size, const PathLine* value) {
+static void _vala_array_add60 (PathLine** array, int* length, int* size, const PathLine* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PathLine, *array, *size);
@@ -191,7 +191,7 @@ static PathLine* _vala_array_dup51 (PathLine* self, int length) {
 }
 
 
-static void _vala_array_add59 (PathLine** array, int* length, int* size, const PathLine* value) {
+static void _vala_array_add61 (PathLine** array, int* length, int* size, const PathLine* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PathLine, *array, *size);
@@ -357,7 +357,7 @@ void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse
 					_tmp33_ = extraLines;
 					_tmp33__length1 = extraLines_length1;
 					_tmp34_ = reversedLine;
-					_vala_array_add58 (&extraLines, &extraLines_length1, &_extraLines_size_, &_tmp34_);
+					_vala_array_add60 (&extraLines, &extraLines_length1, &_extraLines_size_, &_tmp34_);
 				}
 			}
 		}
@@ -550,7 +550,7 @@ void path_merge (Path* self, Path* extraPath, gboolean prepend, gboolean reverse
 				_tmp81__length1 = lastLines_length1;
 				_tmp82_ = i;
 				_tmp83_ = _tmp81_[_tmp82_];
-				_vala_array_add59 (&newLines, &newLines_length1, &_newLines_size_, &_tmp83_);
+				_vala_array_add61 (&newLines, &newLines_length1, &_newLines_size_, &_tmp83_);
 			}
 		}
 	}
@@ -609,7 +609,7 @@ static PathLine* _vala_array_dup53 (PathLine* self, int length) {
 }
 
 
-static void _vala_array_add60 (PathLine** array, int* length, int* size, const PathLine* value) {
+static void _vala_array_add62 (PathLine** array, int* length, int* size, const PathLine* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PathLine, *array, *size);
@@ -1054,7 +1054,7 @@ gint path_append (Path* self, gint x, gint y, gfloat diagonalThreshold) {
 			_tmp106_ = newLines;
 			_tmp106__length1 = newLines_length1;
 			_tmp107_ = line;
-			_vala_array_add60 (&newLines, &newLines_length1, &_newLines_size_, &_tmp107_);
+			_vala_array_add62 (&newLines, &newLines_length1, &_newLines_size_, &_tmp107_);
 		}
 	}
 	_tmp108_ = newLines;

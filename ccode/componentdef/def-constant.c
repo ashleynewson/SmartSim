@@ -232,6 +232,7 @@ struct _ComponentDef {
 	volatile int ref_count;
 	ComponentDefPrivate * priv;
 	Graphic* graphic;
+	gchar* graphicReferenceFilename;
 	gchar* name;
 	gchar* description;
 	gchar* iconFilename;
@@ -496,11 +497,11 @@ ConstantComponentDef* constant_component_def_construct (GType object_type, GErro
 	{
 		component_def_load_from_file ((ComponentDef*) self, CONSTANT_COMPONENT_DEF_infoFilename, &_inner_error_);
 		if (_inner_error_ != NULL) {
-			goto __catch16_g_error;
+			goto __catch20_g_error;
 		}
 	}
-	goto __finally16;
-	__catch16_g_error:
+	goto __finally20;
+	__catch20_g_error:
 	{
 		FILE* _tmp0_;
 		GError* _tmp1_;
@@ -510,9 +511,9 @@ ConstantComponentDef* constant_component_def_construct (GType object_type, GErro
 		fprintf (_tmp0_, "Failed to load built in component \"%s\"\n", CONSTANT_COMPONENT_DEF_infoFilename);
 		_tmp1_ = g_error_new_literal (COMPONENT_DEF_LOAD_ERROR, COMPONENT_DEF_LOAD_ERROR_LOAD, "Failed to load \"" CONSTANT_COMPONENT_DEF_infoFilename "\"\n");
 		_inner_error_ = _tmp1_;
-		goto __finally16;
+		goto __finally20;
 	}
-	__finally16:
+	__finally20:
 	if (_inner_error_ != NULL) {
 		if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
 			g_propagate_error (error, _inner_error_);
@@ -552,13 +553,13 @@ static void constant_component_def_real_add_properties (ComponentDef* base, Prop
 		_tmp1_ = property_item_selection_get_data_throw (_tmp0_, "Value", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch17_g_error;
+			goto __catch21_g_error;
 		}
 		_g_free0 (constantString);
 		constantString = _tmp2_;
 	}
-	goto __finally17;
-	__catch17_g_error:
+	goto __finally21;
+	__catch21_g_error:
 	{
 		gchar* _tmp3_;
 		g_clear_error (&_inner_error_);
@@ -567,7 +568,7 @@ static void constant_component_def_real_add_properties (ComponentDef* base, Prop
 		_g_free0 (constantString);
 		constantString = _tmp3_;
 	}
-	__finally17:
+	__finally21:
 	if (_inner_error_ != NULL) {
 		_g_free0 (constantString);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -609,13 +610,13 @@ static void constant_component_def_real_get_properties (ComponentDef* base, Prop
 		_tmp1_ = property_item_selection_get_data_throw (_tmp0_, "Value", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch18_g_error;
+			goto __catch22_g_error;
 		}
 		_g_free0 (constantString);
 		constantString = _tmp2_;
 	}
-	goto __finally18;
-	__catch18_g_error:
+	goto __finally22;
+	__catch22_g_error:
 	{
 		gchar* _tmp3_;
 		g_clear_error (&_inner_error_);
@@ -624,7 +625,7 @@ static void constant_component_def_real_get_properties (ComponentDef* base, Prop
 		_g_free0 (constantString);
 		constantString = _tmp3_;
 	}
-	__finally18:
+	__finally22:
 	if (_inner_error_ != NULL) {
 		_g_free0 (constantString);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -803,13 +804,13 @@ static void constant_component_def_real_save_properties (ComponentDef* base, xml
 		_tmp1_ = property_item_selection_get_data_throw (_tmp0_, "Value", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch19_g_error;
+			goto __catch23_g_error;
 		}
 		_g_free0 (constantString);
 		constantString = _tmp2_;
 	}
-	goto __finally19;
-	__catch19_g_error:
+	goto __finally23;
+	__catch23_g_error:
 	{
 		gchar* _tmp3_;
 		g_clear_error (&_inner_error_);
@@ -818,7 +819,7 @@ static void constant_component_def_real_save_properties (ComponentDef* base, xml
 		_g_free0 (constantString);
 		constantString = _tmp3_;
 	}
-	__finally19:
+	__finally23:
 	if (_inner_error_ != NULL) {
 		_g_free0 (constantString);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -917,13 +918,13 @@ static void constant_component_def_real_compile_component (ComponentDef* base, C
 		_tmp15_ = property_item_selection_get_data_throw (_tmp14_, "Value", &_inner_error_);
 		_tmp16_ = _tmp15_;
 		if (_inner_error_ != NULL) {
-			goto __catch20_g_error;
+			goto __catch24_g_error;
 		}
 		_g_free0 (constantString);
 		constantString = _tmp16_;
 	}
-	goto __finally20;
-	__catch20_g_error:
+	goto __finally24;
+	__catch24_g_error:
 	{
 		gchar* _tmp17_;
 		g_clear_error (&_inner_error_);
@@ -932,7 +933,7 @@ static void constant_component_def_real_compile_component (ComponentDef* base, C
 		_g_free0 (constantString);
 		constantString = _tmp17_;
 	}
-	__finally20:
+	__finally24:
 	if (_inner_error_ != NULL) {
 		_g_free0 (constantString);
 		_connection_unref0 (outputWire);
@@ -999,13 +1000,13 @@ static void constant_component_def_real_extra_render (ComponentDef* base, cairo_
 		_tmp4_ = property_item_selection_get_data_throw (_tmp3_, "Value", &_inner_error_);
 		_tmp5_ = _tmp4_;
 		if (_inner_error_ != NULL) {
-			goto __catch21_g_error;
+			goto __catch25_g_error;
 		}
 		_g_free0 (constantString);
 		constantString = _tmp5_;
 	}
-	goto __finally21;
-	__catch21_g_error:
+	goto __finally25;
+	__catch25_g_error:
 	{
 		gchar* _tmp6_;
 		g_clear_error (&_inner_error_);
@@ -1014,7 +1015,7 @@ static void constant_component_def_real_extra_render (ComponentDef* base, cairo_
 		_g_free0 (constantString);
 		constantString = _tmp6_;
 	}
-	__finally21:
+	__finally25:
 	if (_inner_error_ != NULL) {
 		_g_free0 (text);
 		_g_free0 (constantString);

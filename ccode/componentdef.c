@@ -163,6 +163,7 @@ typedef struct _PluginComponentDef PluginComponentDef;
 typedef struct _PluginComponentDefClass PluginComponentDefClass;
 
 #define TYPE_VERSION_COMPARISON (version_comparison_get_type ())
+#define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _pin_def_unref0(var) ((var == NULL) ? NULL : (var = (pin_def_unref (var), NULL)))
 typedef struct _ComponentInstPrivate ComponentInstPrivate;
 
@@ -220,6 +221,7 @@ struct _ComponentDef {
 	volatile int ref_count;
 	ComponentDefPrivate * priv;
 	Graphic* graphic;
+	gchar* graphicReferenceFilename;
 	gchar* name;
 	gchar* description;
 	gchar* iconFilename;
@@ -278,6 +280,10 @@ typedef enum  {
 	VERSION_COMPARISON_GREATER
 } VersionComparison;
 
+typedef enum  {
+	GRAPHIC_LOAD_ERROR_FILE
+} GraphicLoadError;
+#define GRAPHIC_LOAD_ERROR graphic_load_error_quark ()
 struct _ComponentInst {
 	GTypeInstance parent_instance;
 	volatile int ref_count;
@@ -464,11 +470,13 @@ GType version_comparison_get_type (void) G_GNUC_CONST;
 VersionComparison core_compare_versions (const gchar* whatVersion, const gchar* withVersion);
 #define CORE_shortVersionString PACKAGE_VERSION
 gboolean core_version_ignored (const gchar* extra);
-Graphic* graphic_new_from_file (const gchar* filename);
-Graphic* graphic_construct_from_file (GType object_type, const gchar* filename);
+gchar* core_relative_filename (const gchar* rawTargetFilename, const gchar* rawReferenceFilename);
+GQuark graphic_load_error_quark (void);
+Graphic* graphic_new_from_file (const gchar* filename, GError** error);
+Graphic* graphic_construct_from_file (GType object_type, const gchar* filename, GError** error);
 PinDef* pin_def_new_load (xmlNode* xmlnode);
 PinDef* pin_def_construct_load (GType object_type, xmlNode* xmlnode);
-static void _vala_array_add26 (PinDef*** array, int* length, int* size, PinDef* value);
+static void _vala_array_add28 (PinDef*** array, int* length, int* size, PinDef* value);
 static PinDef** _vala_array_dup5 (PinDef** self, int length);
 void component_def_render (ComponentDef* self, cairo_t* context, Direction direction, gboolean flipped, ComponentInst* componentInst, gboolean colourBackground);
 void graphic_render (Graphic* self, cairo_t* context);
@@ -544,7 +552,7 @@ static gpointer _pin_def_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add26 (PinDef*** array, int* length, int* size, PinDef* value) {
+static void _vala_array_add28 (PinDef*** array, int* length, int* size, PinDef* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PinDef*, *array, (*size) + 1);
@@ -584,11 +592,11 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 	PinDef** pinDefs;
 	gint pinDefs_length1;
 	gint _pinDefs_size_;
-	xmlDoc* _tmp247_;
-	PinDef** _tmp248_;
-	gint _tmp248__length1;
-	PinDef** _tmp249_;
-	gint _tmp249__length1;
+	xmlDoc* _tmp267_;
+	PinDef** _tmp268_;
+	gint _tmp268__length1;
+	PinDef** _tmp269_;
+	gint _tmp269__length1;
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (self != NULL);
 	g_return_if_fail (infoFilename != NULL);
@@ -1179,8 +1187,6 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 										xmlNode* _tmp161_;
 										const gchar* _tmp162_;
 										gchar* _tmp163_;
-										gchar* _tmp164_;
-										Graphic* _tmp165_;
 										_tmp155_ = _tmp154_;
 										if (!_tmp155_) {
 											xmlNode* _tmp156_;
@@ -1201,12 +1207,112 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 										}
 										_tmp161_ = xmldata;
 										_tmp162_ = _tmp161_->content;
-										_tmp163_ = g_strconcat (PACKAGE_DATADIR "components/graphics/", _tmp162_, NULL);
-										_tmp164_ = _tmp163_;
-										_tmp165_ = graphic_new_from_file (_tmp164_);
-										_graphic_unref0 (self->graphic);
-										self->graphic = _tmp165_;
-										_g_free0 (_tmp164_);
+										_tmp163_ = g_strdup (_tmp162_);
+										_g_free0 (self->graphicReferenceFilename);
+										self->graphicReferenceFilename = _tmp163_;
+										{
+											xmlNode* _tmp164_;
+											const gchar* _tmp165_;
+											const gchar* _tmp166_;
+											gchar* _tmp167_ = NULL;
+											gchar* _tmp168_;
+											Graphic* _tmp169_;
+											Graphic* _tmp170_;
+											Graphic* _tmp171_;
+											_tmp164_ = xmldata;
+											_tmp165_ = _tmp164_->content;
+											_tmp166_ = infoFilename;
+											_tmp167_ = core_relative_filename (_tmp165_, _tmp166_);
+											_tmp168_ = _tmp167_;
+											_tmp169_ = graphic_new_from_file (_tmp168_, &_inner_error_);
+											_tmp170_ = _tmp169_;
+											_g_free0 (_tmp168_);
+											_tmp171_ = _tmp170_;
+											if (_inner_error_ != NULL) {
+												goto __catch3_g_error;
+											}
+											_graphic_unref0 (self->graphic);
+											self->graphic = _tmp171_;
+										}
+										goto __finally3;
+										__catch3_g_error:
+										{
+											g_clear_error (&_inner_error_);
+											_inner_error_ = NULL;
+											{
+												xmlNode* _tmp172_;
+												const gchar* _tmp173_;
+												gchar* _tmp174_;
+												gchar* _tmp175_;
+												Graphic* _tmp176_;
+												Graphic* _tmp177_;
+												Graphic* _tmp178_;
+												_tmp172_ = xmldata;
+												_tmp173_ = _tmp172_->content;
+												_tmp174_ = g_strconcat (PACKAGE_DATADIR "components/graphics/", _tmp173_, NULL);
+												_tmp175_ = _tmp174_;
+												_tmp176_ = graphic_new_from_file (_tmp175_, &_inner_error_);
+												_tmp177_ = _tmp176_;
+												_g_free0 (_tmp175_);
+												_tmp178_ = _tmp177_;
+												if (_inner_error_ != NULL) {
+													if (_inner_error_->domain == GRAPHIC_LOAD_ERROR) {
+														goto __catch4_graphic_load_error;
+													}
+													pinDefs = (_vala_array_free (pinDefs, pinDefs_length1, (GDestroyNotify) pin_def_unref), NULL);
+													g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+													g_clear_error (&_inner_error_);
+													return;
+												}
+												_graphic_unref0 (self->graphic);
+												self->graphic = _tmp178_;
+											}
+											goto __finally4;
+											__catch4_graphic_load_error:
+											{
+												GError* _error_ = NULL;
+												FILE* _tmp179_;
+												xmlNode* _tmp180_;
+												const gchar* _tmp181_;
+												gchar* _tmp182_;
+												gchar* _tmp183_;
+												gchar* _tmp184_;
+												gchar* _tmp185_;
+												_error_ = _inner_error_;
+												_inner_error_ = NULL;
+												_tmp179_ = stdout;
+												_tmp180_ = xmldata;
+												_tmp181_ = _tmp180_->content;
+												_tmp182_ = g_strconcat ("Cannot load graphic \"", _tmp181_, NULL);
+												_tmp183_ = _tmp182_;
+												_tmp184_ = g_strconcat (_tmp183_, "\"\n", NULL);
+												_tmp185_ = _tmp184_;
+												fprintf (_tmp179_, "%s", _tmp185_);
+												_g_free0 (_tmp185_);
+												_g_free0 (_tmp183_);
+												_g_error_free0 (_error_);
+											}
+											__finally4:
+											if (_inner_error_ != NULL) {
+												pinDefs = (_vala_array_free (pinDefs, pinDefs_length1, (GDestroyNotify) pin_def_unref), NULL);
+												g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+												g_clear_error (&_inner_error_);
+												return;
+											}
+										}
+										__finally3:
+										if (_inner_error_ != NULL) {
+											if (((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == CUSTOM_COMPONENT_DEF_LOAD_ERROR)) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
+												g_propagate_error (error, _inner_error_);
+												pinDefs = (_vala_array_free (pinDefs, pinDefs_length1, (GDestroyNotify) pin_def_unref), NULL);
+												return;
+											} else {
+												pinDefs = (_vala_array_free (pinDefs, pinDefs_length1, (GDestroyNotify) pin_def_unref), NULL);
+												g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+												g_clear_error (&_inner_error_);
+												return;
+											}
+										}
 									}
 								}
 							}
@@ -1220,46 +1326,46 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 					{
 						{
 							{
-								xmlNode* _tmp166_;
-								xmlNode* _tmp167_;
+								xmlNode* _tmp186_;
+								xmlNode* _tmp187_;
 								xmlNode* xmldata;
-								_tmp166_ = xmlnode;
-								_tmp167_ = _tmp166_->children;
-								xmldata = _tmp167_;
+								_tmp186_ = xmlnode;
+								_tmp187_ = _tmp186_->children;
+								xmldata = _tmp187_;
 								{
-									gboolean _tmp168_;
-									_tmp168_ = TRUE;
+									gboolean _tmp188_;
+									_tmp188_ = TRUE;
 									while (TRUE) {
-										gboolean _tmp169_;
-										xmlNode* _tmp172_;
-										xmlNode* _tmp173_;
-										xmlElementType _tmp174_;
-										xmlNode* _tmp175_;
-										const gchar* _tmp176_;
-										gchar* _tmp177_;
-										_tmp169_ = _tmp168_;
-										if (!_tmp169_) {
-											xmlNode* _tmp170_;
-											xmlNode* _tmp171_;
-											_tmp170_ = xmldata;
-											_tmp171_ = _tmp170_->next;
-											xmldata = _tmp171_;
+										gboolean _tmp189_;
+										xmlNode* _tmp192_;
+										xmlNode* _tmp193_;
+										xmlElementType _tmp194_;
+										xmlNode* _tmp195_;
+										const gchar* _tmp196_;
+										gchar* _tmp197_;
+										_tmp189_ = _tmp188_;
+										if (!_tmp189_) {
+											xmlNode* _tmp190_;
+											xmlNode* _tmp191_;
+											_tmp190_ = xmldata;
+											_tmp191_ = _tmp190_->next;
+											xmldata = _tmp191_;
 										}
-										_tmp168_ = FALSE;
-										_tmp172_ = xmldata;
-										if (!(_tmp172_ != NULL)) {
+										_tmp188_ = FALSE;
+										_tmp192_ = xmldata;
+										if (!(_tmp192_ != NULL)) {
 											break;
 										}
-										_tmp173_ = xmlnode;
-										_tmp174_ = _tmp173_->type;
-										if (_tmp174_ != XML_ELEMENT_NODE) {
+										_tmp193_ = xmlnode;
+										_tmp194_ = _tmp193_->type;
+										if (_tmp194_ != XML_ELEMENT_NODE) {
 											continue;
 										}
-										_tmp175_ = xmldata;
-										_tmp176_ = _tmp175_->content;
-										_tmp177_ = g_strdup (_tmp176_);
+										_tmp195_ = xmldata;
+										_tmp196_ = _tmp195_->content;
+										_tmp197_ = g_strdup (_tmp196_);
 										_g_free0 (self->label);
-										self->label = _tmp177_;
+										self->label = _tmp197_;
 									}
 								}
 							}
@@ -1273,121 +1379,121 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 					{
 						{
 							{
-								xmlNode* _tmp178_;
-								xmlAttr* _tmp179_;
+								xmlNode* _tmp198_;
+								xmlAttr* _tmp199_;
 								xmlAttr* xmlattr;
-								_tmp178_ = xmlnode;
-								_tmp179_ = _tmp178_->properties;
-								xmlattr = _tmp179_;
+								_tmp198_ = xmlnode;
+								_tmp199_ = _tmp198_->properties;
+								xmlattr = _tmp199_;
 								{
-									gboolean _tmp180_;
-									_tmp180_ = TRUE;
+									gboolean _tmp200_;
+									_tmp200_ = TRUE;
 									while (TRUE) {
-										gboolean _tmp181_;
-										xmlAttr* _tmp184_;
-										xmlAttr* _tmp185_;
-										const gchar* _tmp186_;
-										const gchar* _tmp187_;
-										GQuark _tmp189_ = 0U;
-										static GQuark _tmp188_label0 = 0;
-										static GQuark _tmp188_label1 = 0;
-										static GQuark _tmp188_label2 = 0;
-										static GQuark _tmp188_label3 = 0;
-										static GQuark _tmp188_label4 = 0;
-										_tmp181_ = _tmp180_;
-										if (!_tmp181_) {
-											xmlAttr* _tmp182_;
-											xmlAttr* _tmp183_;
-											_tmp182_ = xmlattr;
-											_tmp183_ = _tmp182_->next;
-											xmlattr = _tmp183_;
+										gboolean _tmp201_;
+										xmlAttr* _tmp204_;
+										xmlAttr* _tmp205_;
+										const gchar* _tmp206_;
+										const gchar* _tmp207_;
+										GQuark _tmp209_ = 0U;
+										static GQuark _tmp208_label0 = 0;
+										static GQuark _tmp208_label1 = 0;
+										static GQuark _tmp208_label2 = 0;
+										static GQuark _tmp208_label3 = 0;
+										static GQuark _tmp208_label4 = 0;
+										_tmp201_ = _tmp200_;
+										if (!_tmp201_) {
+											xmlAttr* _tmp202_;
+											xmlAttr* _tmp203_;
+											_tmp202_ = xmlattr;
+											_tmp203_ = _tmp202_->next;
+											xmlattr = _tmp203_;
 										}
-										_tmp180_ = FALSE;
-										_tmp184_ = xmlattr;
-										if (!(_tmp184_ != NULL)) {
+										_tmp200_ = FALSE;
+										_tmp204_ = xmlattr;
+										if (!(_tmp204_ != NULL)) {
 											break;
 										}
-										_tmp185_ = xmlattr;
-										_tmp186_ = _tmp185_->name;
-										_tmp187_ = _tmp186_;
-										_tmp189_ = (NULL == _tmp187_) ? 0 : g_quark_from_string (_tmp187_);
-										if (_tmp189_ == ((0 != _tmp188_label0) ? _tmp188_label0 : (_tmp188_label0 = g_quark_from_static_string ("right")))) {
+										_tmp205_ = xmlattr;
+										_tmp206_ = _tmp205_->name;
+										_tmp207_ = _tmp206_;
+										_tmp209_ = (NULL == _tmp207_) ? 0 : g_quark_from_string (_tmp207_);
+										if (_tmp209_ == ((0 != _tmp208_label0) ? _tmp208_label0 : (_tmp208_label0 = g_quark_from_static_string ("right")))) {
 											switch (0) {
 												default:
 												{
-													xmlAttr* _tmp190_;
-													xmlNode* _tmp191_;
-													const gchar* _tmp192_;
-													gint _tmp193_ = 0;
-													_tmp190_ = xmlattr;
-													_tmp191_ = _tmp190_->children;
-													_tmp192_ = _tmp191_->content;
-													_tmp193_ = atoi (_tmp192_);
-													self->rightBound = _tmp193_;
+													xmlAttr* _tmp210_;
+													xmlNode* _tmp211_;
+													const gchar* _tmp212_;
+													gint _tmp213_ = 0;
+													_tmp210_ = xmlattr;
+													_tmp211_ = _tmp210_->children;
+													_tmp212_ = _tmp211_->content;
+													_tmp213_ = atoi (_tmp212_);
+													self->rightBound = _tmp213_;
 													break;
 												}
 											}
-										} else if (_tmp189_ == ((0 != _tmp188_label1) ? _tmp188_label1 : (_tmp188_label1 = g_quark_from_static_string ("down")))) {
+										} else if (_tmp209_ == ((0 != _tmp208_label1) ? _tmp208_label1 : (_tmp208_label1 = g_quark_from_static_string ("down")))) {
 											switch (0) {
 												default:
 												{
-													xmlAttr* _tmp194_;
-													xmlNode* _tmp195_;
-													const gchar* _tmp196_;
-													gint _tmp197_ = 0;
-													_tmp194_ = xmlattr;
-													_tmp195_ = _tmp194_->children;
-													_tmp196_ = _tmp195_->content;
-													_tmp197_ = atoi (_tmp196_);
-													self->downBound = _tmp197_;
+													xmlAttr* _tmp214_;
+													xmlNode* _tmp215_;
+													const gchar* _tmp216_;
+													gint _tmp217_ = 0;
+													_tmp214_ = xmlattr;
+													_tmp215_ = _tmp214_->children;
+													_tmp216_ = _tmp215_->content;
+													_tmp217_ = atoi (_tmp216_);
+													self->downBound = _tmp217_;
 													break;
 												}
 											}
-										} else if (_tmp189_ == ((0 != _tmp188_label2) ? _tmp188_label2 : (_tmp188_label2 = g_quark_from_static_string ("left")))) {
+										} else if (_tmp209_ == ((0 != _tmp208_label2) ? _tmp208_label2 : (_tmp208_label2 = g_quark_from_static_string ("left")))) {
 											switch (0) {
 												default:
 												{
-													xmlAttr* _tmp198_;
-													xmlNode* _tmp199_;
-													const gchar* _tmp200_;
-													gint _tmp201_ = 0;
-													_tmp198_ = xmlattr;
-													_tmp199_ = _tmp198_->children;
-													_tmp200_ = _tmp199_->content;
-													_tmp201_ = atoi (_tmp200_);
-													self->leftBound = _tmp201_;
+													xmlAttr* _tmp218_;
+													xmlNode* _tmp219_;
+													const gchar* _tmp220_;
+													gint _tmp221_ = 0;
+													_tmp218_ = xmlattr;
+													_tmp219_ = _tmp218_->children;
+													_tmp220_ = _tmp219_->content;
+													_tmp221_ = atoi (_tmp220_);
+													self->leftBound = _tmp221_;
 													break;
 												}
 											}
-										} else if (_tmp189_ == ((0 != _tmp188_label3) ? _tmp188_label3 : (_tmp188_label3 = g_quark_from_static_string ("up")))) {
+										} else if (_tmp209_ == ((0 != _tmp208_label3) ? _tmp208_label3 : (_tmp208_label3 = g_quark_from_static_string ("up")))) {
 											switch (0) {
 												default:
 												{
-													xmlAttr* _tmp202_;
-													xmlNode* _tmp203_;
-													const gchar* _tmp204_;
-													gint _tmp205_ = 0;
-													_tmp202_ = xmlattr;
-													_tmp203_ = _tmp202_->children;
-													_tmp204_ = _tmp203_->content;
-													_tmp205_ = atoi (_tmp204_);
-													self->upBound = _tmp205_;
+													xmlAttr* _tmp222_;
+													xmlNode* _tmp223_;
+													const gchar* _tmp224_;
+													gint _tmp225_ = 0;
+													_tmp222_ = xmlattr;
+													_tmp223_ = _tmp222_->children;
+													_tmp224_ = _tmp223_->content;
+													_tmp225_ = atoi (_tmp224_);
+													self->upBound = _tmp225_;
 													break;
 												}
 											}
-										} else if (_tmp189_ == ((0 != _tmp188_label4) ? _tmp188_label4 : (_tmp188_label4 = g_quark_from_static_string ("drawbox")))) {
+										} else if (_tmp209_ == ((0 != _tmp208_label4) ? _tmp208_label4 : (_tmp208_label4 = g_quark_from_static_string ("drawbox")))) {
 											switch (0) {
 												default:
 												{
-													xmlAttr* _tmp206_;
-													xmlNode* _tmp207_;
-													const gchar* _tmp208_;
-													gboolean _tmp209_ = FALSE;
-													_tmp206_ = xmlattr;
-													_tmp207_ = _tmp206_->children;
-													_tmp208_ = _tmp207_->content;
-													_tmp209_ = bool_parse (_tmp208_);
-													self->drawBox = _tmp209_;
+													xmlAttr* _tmp226_;
+													xmlNode* _tmp227_;
+													const gchar* _tmp228_;
+													gboolean _tmp229_ = FALSE;
+													_tmp226_ = xmlattr;
+													_tmp227_ = _tmp226_->children;
+													_tmp228_ = _tmp227_->content;
+													_tmp229_ = bool_parse (_tmp228_);
+													self->drawBox = _tmp229_;
 													break;
 												}
 											}
@@ -1405,116 +1511,116 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 					{
 						{
 							{
-								xmlNode* _tmp210_;
-								xmlAttr* _tmp211_;
+								xmlNode* _tmp230_;
+								xmlAttr* _tmp231_;
 								xmlAttr* xmlattr;
-								_tmp210_ = xmlnode;
-								_tmp211_ = _tmp210_->properties;
-								xmlattr = _tmp211_;
+								_tmp230_ = xmlnode;
+								_tmp231_ = _tmp230_->properties;
+								xmlattr = _tmp231_;
 								{
-									gboolean _tmp212_;
-									_tmp212_ = TRUE;
+									gboolean _tmp232_;
+									_tmp232_ = TRUE;
 									while (TRUE) {
-										gboolean _tmp213_;
-										xmlAttr* _tmp216_;
-										xmlAttr* _tmp217_;
-										const gchar* _tmp218_;
-										const gchar* _tmp219_;
-										GQuark _tmp221_ = 0U;
-										static GQuark _tmp220_label0 = 0;
-										static GQuark _tmp220_label1 = 0;
-										static GQuark _tmp220_label2 = 0;
-										static GQuark _tmp220_label3 = 0;
-										_tmp213_ = _tmp212_;
-										if (!_tmp213_) {
-											xmlAttr* _tmp214_;
-											xmlAttr* _tmp215_;
-											_tmp214_ = xmlattr;
-											_tmp215_ = _tmp214_->next;
-											xmlattr = _tmp215_;
+										gboolean _tmp233_;
+										xmlAttr* _tmp236_;
+										xmlAttr* _tmp237_;
+										const gchar* _tmp238_;
+										const gchar* _tmp239_;
+										GQuark _tmp241_ = 0U;
+										static GQuark _tmp240_label0 = 0;
+										static GQuark _tmp240_label1 = 0;
+										static GQuark _tmp240_label2 = 0;
+										static GQuark _tmp240_label3 = 0;
+										_tmp233_ = _tmp232_;
+										if (!_tmp233_) {
+											xmlAttr* _tmp234_;
+											xmlAttr* _tmp235_;
+											_tmp234_ = xmlattr;
+											_tmp235_ = _tmp234_->next;
+											xmlattr = _tmp235_;
 										}
-										_tmp212_ = FALSE;
-										_tmp216_ = xmlattr;
-										if (!(_tmp216_ != NULL)) {
+										_tmp232_ = FALSE;
+										_tmp236_ = xmlattr;
+										if (!(_tmp236_ != NULL)) {
 											break;
 										}
-										_tmp217_ = xmlattr;
-										_tmp218_ = _tmp217_->name;
-										_tmp219_ = _tmp218_;
-										_tmp221_ = (NULL == _tmp219_) ? 0 : g_quark_from_string (_tmp219_);
-										if (_tmp221_ == ((0 != _tmp220_label0) ? _tmp220_label0 : (_tmp220_label0 = g_quark_from_static_string ("a")))) {
+										_tmp237_ = xmlattr;
+										_tmp238_ = _tmp237_->name;
+										_tmp239_ = _tmp238_;
+										_tmp241_ = (NULL == _tmp239_) ? 0 : g_quark_from_string (_tmp239_);
+										if (_tmp241_ == ((0 != _tmp240_label0) ? _tmp240_label0 : (_tmp240_label0 = g_quark_from_static_string ("a")))) {
 											switch (0) {
 												default:
 												{
-													xmlAttr* _tmp222_;
-													xmlNode* _tmp223_;
-													const gchar* _tmp224_;
-													gint _tmp225_ = 0;
-													gint _tmp226_;
-													_tmp222_ = xmlattr;
-													_tmp223_ = _tmp222_->children;
-													_tmp224_ = _tmp223_->content;
-													_tmp225_ = atoi (_tmp224_);
-													self->backgroundAlpha = _tmp225_;
-													_tmp226_ = self->backgroundAlpha;
-													self->backgroundAlphaF = ((gdouble) _tmp226_) / 255.0;
+													xmlAttr* _tmp242_;
+													xmlNode* _tmp243_;
+													const gchar* _tmp244_;
+													gint _tmp245_ = 0;
+													gint _tmp246_;
+													_tmp242_ = xmlattr;
+													_tmp243_ = _tmp242_->children;
+													_tmp244_ = _tmp243_->content;
+													_tmp245_ = atoi (_tmp244_);
+													self->backgroundAlpha = _tmp245_;
+													_tmp246_ = self->backgroundAlpha;
+													self->backgroundAlphaF = ((gdouble) _tmp246_) / 255.0;
 													break;
 												}
 											}
-										} else if (_tmp221_ == ((0 != _tmp220_label1) ? _tmp220_label1 : (_tmp220_label1 = g_quark_from_static_string ("r")))) {
+										} else if (_tmp241_ == ((0 != _tmp240_label1) ? _tmp240_label1 : (_tmp240_label1 = g_quark_from_static_string ("r")))) {
 											switch (0) {
 												default:
 												{
-													xmlAttr* _tmp227_;
-													xmlNode* _tmp228_;
-													const gchar* _tmp229_;
-													gint _tmp230_ = 0;
-													gint _tmp231_;
-													_tmp227_ = xmlattr;
-													_tmp228_ = _tmp227_->children;
-													_tmp229_ = _tmp228_->content;
-													_tmp230_ = atoi (_tmp229_);
-													self->backgroundRed = _tmp230_;
-													_tmp231_ = self->backgroundRed;
-													self->backgroundRedF = ((gdouble) _tmp231_) / 255.0;
+													xmlAttr* _tmp247_;
+													xmlNode* _tmp248_;
+													const gchar* _tmp249_;
+													gint _tmp250_ = 0;
+													gint _tmp251_;
+													_tmp247_ = xmlattr;
+													_tmp248_ = _tmp247_->children;
+													_tmp249_ = _tmp248_->content;
+													_tmp250_ = atoi (_tmp249_);
+													self->backgroundRed = _tmp250_;
+													_tmp251_ = self->backgroundRed;
+													self->backgroundRedF = ((gdouble) _tmp251_) / 255.0;
 													break;
 												}
 											}
-										} else if (_tmp221_ == ((0 != _tmp220_label2) ? _tmp220_label2 : (_tmp220_label2 = g_quark_from_static_string ("g")))) {
+										} else if (_tmp241_ == ((0 != _tmp240_label2) ? _tmp240_label2 : (_tmp240_label2 = g_quark_from_static_string ("g")))) {
 											switch (0) {
 												default:
 												{
-													xmlAttr* _tmp232_;
-													xmlNode* _tmp233_;
-													const gchar* _tmp234_;
-													gint _tmp235_ = 0;
-													gint _tmp236_;
-													_tmp232_ = xmlattr;
-													_tmp233_ = _tmp232_->children;
-													_tmp234_ = _tmp233_->content;
-													_tmp235_ = atoi (_tmp234_);
-													self->backgroundGreen = _tmp235_;
-													_tmp236_ = self->backgroundGreen;
-													self->backgroundGreenF = ((gdouble) _tmp236_) / 255.0;
+													xmlAttr* _tmp252_;
+													xmlNode* _tmp253_;
+													const gchar* _tmp254_;
+													gint _tmp255_ = 0;
+													gint _tmp256_;
+													_tmp252_ = xmlattr;
+													_tmp253_ = _tmp252_->children;
+													_tmp254_ = _tmp253_->content;
+													_tmp255_ = atoi (_tmp254_);
+													self->backgroundGreen = _tmp255_;
+													_tmp256_ = self->backgroundGreen;
+													self->backgroundGreenF = ((gdouble) _tmp256_) / 255.0;
 													break;
 												}
 											}
-										} else if (_tmp221_ == ((0 != _tmp220_label3) ? _tmp220_label3 : (_tmp220_label3 = g_quark_from_static_string ("b")))) {
+										} else if (_tmp241_ == ((0 != _tmp240_label3) ? _tmp240_label3 : (_tmp240_label3 = g_quark_from_static_string ("b")))) {
 											switch (0) {
 												default:
 												{
-													xmlAttr* _tmp237_;
-													xmlNode* _tmp238_;
-													const gchar* _tmp239_;
-													gint _tmp240_ = 0;
-													gint _tmp241_;
-													_tmp237_ = xmlattr;
-													_tmp238_ = _tmp237_->children;
-													_tmp239_ = _tmp238_->content;
-													_tmp240_ = atoi (_tmp239_);
-													self->backgroundBlue = _tmp240_;
-													_tmp241_ = self->backgroundBlue;
-													self->backgroundBlueF = ((gdouble) _tmp241_) / 255.0;
+													xmlAttr* _tmp257_;
+													xmlNode* _tmp258_;
+													const gchar* _tmp259_;
+													gint _tmp260_ = 0;
+													gint _tmp261_;
+													_tmp257_ = xmlattr;
+													_tmp258_ = _tmp257_->children;
+													_tmp259_ = _tmp258_->content;
+													_tmp260_ = atoi (_tmp259_);
+													self->backgroundBlue = _tmp260_;
+													_tmp261_ = self->backgroundBlue;
+													self->backgroundBlueF = ((gdouble) _tmp261_) / 255.0;
 													break;
 												}
 											}
@@ -1531,21 +1637,21 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 					default:
 					{
 						{
-							xmlNode* _tmp242_;
-							PinDef* _tmp243_;
+							xmlNode* _tmp262_;
+							PinDef* _tmp263_;
 							PinDef* pinDef;
-							PinDef** _tmp244_;
-							gint _tmp244__length1;
-							PinDef* _tmp245_;
-							PinDef* _tmp246_;
-							_tmp242_ = xmlnode;
-							_tmp243_ = pin_def_new_load (_tmp242_);
-							pinDef = _tmp243_;
-							_tmp244_ = pinDefs;
-							_tmp244__length1 = pinDefs_length1;
-							_tmp245_ = pinDef;
-							_tmp246_ = _pin_def_ref0 (_tmp245_);
-							_vala_array_add26 (&pinDefs, &pinDefs_length1, &_pinDefs_size_, _tmp246_);
+							PinDef** _tmp264_;
+							gint _tmp264__length1;
+							PinDef* _tmp265_;
+							PinDef* _tmp266_;
+							_tmp262_ = xmlnode;
+							_tmp263_ = pin_def_new_load (_tmp262_);
+							pinDef = _tmp263_;
+							_tmp264_ = pinDefs;
+							_tmp264__length1 = pinDefs_length1;
+							_tmp265_ = pinDef;
+							_tmp266_ = _pin_def_ref0 (_tmp265_);
+							_vala_array_add28 (&pinDefs, &pinDefs_length1, &_pinDefs_size_, _tmp266_);
 							_pin_def_unref0 (pinDef);
 						}
 						break;
@@ -1554,15 +1660,15 @@ void component_def_load_from_file (ComponentDef* self, const gchar* infoFilename
 			}
 		}
 	}
-	_tmp247_ = xmldoc;
-	xmlFreeDoc (_tmp247_);
-	_tmp248_ = pinDefs;
-	_tmp248__length1 = pinDefs_length1;
-	_tmp249_ = (_tmp248_ != NULL) ? _vala_array_dup5 (_tmp248_, _tmp248__length1) : ((gpointer) _tmp248_);
-	_tmp249__length1 = _tmp248__length1;
+	_tmp267_ = xmldoc;
+	xmlFreeDoc (_tmp267_);
+	_tmp268_ = pinDefs;
+	_tmp268__length1 = pinDefs_length1;
+	_tmp269_ = (_tmp268_ != NULL) ? _vala_array_dup5 (_tmp268_, _tmp268__length1) : ((gpointer) _tmp268_);
+	_tmp269__length1 = _tmp268__length1;
 	self->pinDefs = (_vala_array_free (self->pinDefs, self->pinDefs_length1, (GDestroyNotify) pin_def_unref), NULL);
-	self->pinDefs = _tmp249_;
-	self->pinDefs_length1 = _tmp249__length1;
+	self->pinDefs = _tmp269_;
+	self->pinDefs_length1 = _tmp269__length1;
 	pinDefs = (_vala_array_free (pinDefs, pinDefs_length1, (GDestroyNotify) pin_def_unref), NULL);
 	return;
 }
@@ -2554,6 +2660,7 @@ static void component_def_instance_init (ComponentDef * self) {
 	gchar* _tmp2_;
 	gchar* _tmp3_;
 	gchar* _tmp4_;
+	self->graphicReferenceFilename = NULL;
 	_tmp0_ = g_strdup ("");
 	self->name = _tmp0_;
 	_tmp1_ = g_strdup ("");
@@ -2581,6 +2688,7 @@ static void component_def_finalize (ComponentDef* obj) {
 	ComponentDef * self;
 	self = G_TYPE_CHECK_INSTANCE_CAST (obj, TYPE_COMPONENT_DEF, ComponentDef);
 	_graphic_unref0 (self->graphic);
+	_g_free0 (self->graphicReferenceFilename);
 	_g_free0 (self->name);
 	_g_free0 (self->description);
 	_g_free0 (self->iconFilename);

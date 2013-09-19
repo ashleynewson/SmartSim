@@ -228,6 +228,7 @@ struct _ComponentDef {
 	volatile int ref_count;
 	ComponentDefPrivate * priv;
 	Graphic* graphic;
+	gchar* graphicReferenceFilename;
 	gchar* name;
 	gchar* description;
 	gchar* iconFilename;
@@ -314,12 +315,12 @@ enum  {
 	PLUGIN_COMPONENT_MANAGER_DUMMY_PROPERTY
 };
 static void plugin_component_manager_register (PluginComponentManager* pluginComponentManager);
-static void _vala_array_add61 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value);
+static void _vala_array_add63 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value);
 void plugin_component_manager_unregister_all (void);
 static void plugin_component_manager_unload (PluginComponentManager* self);
 PluginComponentManager* plugin_component_manager_from_name (const gchar* name);
 PluginComponentManager* plugin_component_manager_from_filename (const gchar* filename);
-gchar* core_absolute_filename (const gchar* filename);
+gchar* core_absolute_filename (const gchar* filename, const gchar* pwd);
 GQuark component_def_load_error_quark (void);
 GQuark plugin_component_def_load_error_quark (void);
 PluginComponentManager* plugin_component_manager_new_from_file (const gchar* infoFilename, Project* project, GError** error);
@@ -396,7 +397,7 @@ static gpointer _plugin_component_manager_ref0 (gpointer self) {
 }
 
 
-static void _vala_array_add61 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value) {
+static void _vala_array_add63 (PluginComponentManager*** array, int* length, int* size, PluginComponentManager* value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (PluginComponentManager*, *array, (*size) + 1);
@@ -425,7 +426,7 @@ static void plugin_component_manager_register (PluginComponentManager* pluginCom
 	_tmp1__length1 = plugin_component_manager_pluginComponentManagers_length1;
 	_tmp2_ = pluginComponentManager;
 	_tmp3_ = _plugin_component_manager_ref0 (_tmp2_);
-	_vala_array_add61 (&plugin_component_manager_pluginComponentManagers, &plugin_component_manager_pluginComponentManagers_length1, &_plugin_component_manager_pluginComponentManagers_size_, _tmp3_);
+	_vala_array_add63 (&plugin_component_manager_pluginComponentManagers, &plugin_component_manager_pluginComponentManagers_length1, &_plugin_component_manager_pluginComponentManagers_size_, _tmp3_);
 	_tmp4_ = stdout;
 	_tmp5_ = pluginComponentManager;
 	_tmp6_ = _tmp5_->name;
@@ -546,39 +547,59 @@ PluginComponentManager* plugin_component_manager_from_filename (const gchar* fil
 				const gchar* _tmp4_;
 				gchar* _tmp5_ = NULL;
 				gchar* _tmp6_;
-				const gchar* _tmp7_;
-				gchar* _tmp8_ = NULL;
-				gchar* _tmp9_;
-				PluginComponentManager* _tmp10_;
-				const gchar* _tmp11_;
+				gchar* _tmp7_ = NULL;
+				gchar* _tmp8_;
+				const gchar* _tmp9_;
+				gchar* _tmp10_ = NULL;
+				gchar* _tmp11_;
 				gchar* _tmp12_ = NULL;
 				gchar* _tmp13_;
-				const gchar* _tmp14_;
-				gchar* _tmp15_ = NULL;
-				gchar* _tmp16_;
-				gboolean _tmp17_;
+				PluginComponentManager* _tmp14_;
+				const gchar* _tmp15_;
+				gchar* _tmp16_ = NULL;
+				gchar* _tmp17_;
+				gchar* _tmp18_ = NULL;
+				gchar* _tmp19_;
+				const gchar* _tmp20_;
+				gchar* _tmp21_ = NULL;
+				gchar* _tmp22_;
+				gchar* _tmp23_ = NULL;
+				gchar* _tmp24_;
+				gboolean _tmp25_;
 				_tmp2_ = stdout;
 				_tmp3_ = pluginComponentManager;
 				_tmp4_ = _tmp3_->filename;
-				_tmp5_ = core_absolute_filename (_tmp4_);
+				_tmp5_ = g_get_current_dir ();
 				_tmp6_ = _tmp5_;
-				_tmp7_ = filename;
-				_tmp8_ = core_absolute_filename (_tmp7_);
-				_tmp9_ = _tmp8_;
-				fprintf (_tmp2_, "Comparing component filenames: \n\t\"%s\"\n\t\"%s\"\n", _tmp6_, _tmp9_);
-				_g_free0 (_tmp9_);
-				_g_free0 (_tmp6_);
-				_tmp10_ = pluginComponentManager;
-				_tmp11_ = _tmp10_->filename;
-				_tmp12_ = core_absolute_filename (_tmp11_);
+				_tmp7_ = core_absolute_filename (_tmp4_, _tmp6_);
+				_tmp8_ = _tmp7_;
+				_tmp9_ = filename;
+				_tmp10_ = g_get_current_dir ();
+				_tmp11_ = _tmp10_;
+				_tmp12_ = core_absolute_filename (_tmp9_, _tmp11_);
 				_tmp13_ = _tmp12_;
-				_tmp14_ = filename;
-				_tmp15_ = core_absolute_filename (_tmp14_);
-				_tmp16_ = _tmp15_;
-				_tmp17_ = g_strcmp0 (_tmp13_, _tmp16_) == 0;
-				_g_free0 (_tmp16_);
+				fprintf (_tmp2_, "Comparing component filenames: \n\t\"%s\"\n\t\"%s\"\n", _tmp8_, _tmp13_);
 				_g_free0 (_tmp13_);
-				if (_tmp17_) {
+				_g_free0 (_tmp11_);
+				_g_free0 (_tmp8_);
+				_g_free0 (_tmp6_);
+				_tmp14_ = pluginComponentManager;
+				_tmp15_ = _tmp14_->filename;
+				_tmp16_ = g_get_current_dir ();
+				_tmp17_ = _tmp16_;
+				_tmp18_ = core_absolute_filename (_tmp15_, _tmp17_);
+				_tmp19_ = _tmp18_;
+				_tmp20_ = filename;
+				_tmp21_ = g_get_current_dir ();
+				_tmp22_ = _tmp21_;
+				_tmp23_ = core_absolute_filename (_tmp20_, _tmp22_);
+				_tmp24_ = _tmp23_;
+				_tmp25_ = g_strcmp0 (_tmp19_, _tmp24_) == 0;
+				_g_free0 (_tmp24_);
+				_g_free0 (_tmp22_);
+				_g_free0 (_tmp19_);
+				_g_free0 (_tmp17_);
+				if (_tmp25_) {
 					result = pluginComponentManager;
 					return result;
 				}
@@ -664,13 +685,13 @@ PluginComponentManager* plugin_component_manager_construct_from_file (GType obje
 		plugin_component_manager_load (self, _tmp16_, &_inner_error_);
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch50_plugin_component_def_load_error;
+				goto __catch54_plugin_component_def_load_error;
 			}
-			goto __finally50;
+			goto __finally54;
 		}
 	}
-	goto __finally50;
-	__catch50_plugin_component_def_load_error:
+	goto __finally54;
+	__catch54_plugin_component_def_load_error:
 	{
 		GError* _error_ = NULL;
 		GError* _tmp17_;
@@ -681,9 +702,9 @@ PluginComponentManager* plugin_component_manager_construct_from_file (GType obje
 		_tmp18_ = _g_error_copy0 (_tmp17_);
 		_inner_error_ = _tmp18_;
 		_g_error_free0 (_error_);
-		goto __finally50;
+		goto __finally54;
 	}
-	__finally50:
+	__finally54:
 	if (_inner_error_ != NULL) {
 		if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 			g_propagate_error (error, _inner_error_);
@@ -1132,7 +1153,7 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 			plugin_component_manager_load_library (self, _tmp117_, &_inner_error_);
 			if (_inner_error_ != NULL) {
 				if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
-					goto __catch51_plugin_component_def_load_error;
+					goto __catch55_plugin_component_def_load_error;
 				}
 				_g_free0 (libraryPath);
 				g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -1140,8 +1161,8 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 				return 0;
 			}
 		}
-		goto __finally51;
-		__catch51_plugin_component_def_load_error:
+		goto __finally55;
+		__catch55_plugin_component_def_load_error:
 		{
 			GError* _error_ = NULL;
 			GError* _tmp118_;
@@ -1152,9 +1173,9 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 			_tmp119_ = _g_error_copy0 (_tmp118_);
 			_inner_error_ = _tmp119_;
 			_g_error_free0 (_error_);
-			goto __finally51;
+			goto __finally55;
 		}
-		__finally51:
+		__finally55:
 		if (_inner_error_ != NULL) {
 			if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 				g_propagate_error (error, _inner_error_);
@@ -1205,7 +1226,7 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 			plugin_component_manager_load_library (self, _tmp132_, &_inner_error_);
 			if (_inner_error_ != NULL) {
 				if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
-					goto __catch52_plugin_component_def_load_error;
+					goto __catch56_plugin_component_def_load_error;
 				}
 				_g_free0 (libraryPath);
 				g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -1213,8 +1234,8 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 				return 0;
 			}
 		}
-		goto __finally52;
-		__catch52_plugin_component_def_load_error:
+		goto __finally56;
+		__catch56_plugin_component_def_load_error:
 		{
 			GError* _error_ = NULL;
 			GError* _tmp133_;
@@ -1234,7 +1255,7 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 					plugin_component_manager_load_library (self, _tmp136_, &_inner_error_);
 					if (_inner_error_ != NULL) {
 						if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
-							goto __catch53_plugin_component_def_load_error;
+							goto __catch57_plugin_component_def_load_error;
 						}
 						_g_error_free0 (_error_);
 						_g_free0 (libraryPath);
@@ -1243,8 +1264,8 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 						return 0;
 					}
 				}
-				goto __finally53;
-				__catch53_plugin_component_def_load_error:
+				goto __finally57;
+				__catch57_plugin_component_def_load_error:
 				{
 					GError* _error_ = NULL;
 					GError* _tmp137_;
@@ -1255,12 +1276,12 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 					_tmp138_ = _g_error_copy0 (_tmp137_);
 					_inner_error_ = _tmp138_;
 					_g_error_free0 (_error_);
-					goto __finally53;
+					goto __finally57;
 				}
-				__finally53:
+				__finally57:
 				if (_inner_error_ != NULL) {
 					_g_error_free0 (_error_);
-					goto __finally52;
+					goto __finally56;
 				}
 			} else {
 				GError* _tmp139_;
@@ -1269,11 +1290,11 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 				_tmp140_ = _g_error_copy0 (_tmp139_);
 				_inner_error_ = _tmp140_;
 				_g_error_free0 (_error_);
-				goto __finally52;
+				goto __finally56;
 			}
 			_g_error_free0 (_error_);
 		}
-		__finally52:
+		__finally56:
 		if (_inner_error_ != NULL) {
 			if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 				g_propagate_error (error, _inner_error_);

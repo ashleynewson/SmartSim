@@ -220,6 +220,7 @@ struct _ComponentDef {
 	volatile int ref_count;
 	ComponentDefPrivate * priv;
 	Graphic* graphic;
+	gchar* graphicReferenceFilename;
 	gchar* name;
 	gchar* description;
 	gchar* iconFilename;
@@ -465,11 +466,11 @@ TFlipflopComponentDef* tflipflop_component_def_construct (GType object_type, GEr
 	{
 		component_def_load_from_file ((ComponentDef*) self, TFLIPFLOP_COMPONENT_DEF_infoFilename, &_inner_error_);
 		if (_inner_error_ != NULL) {
-			goto __catch41_g_error;
+			goto __catch45_g_error;
 		}
 	}
-	goto __finally41;
-	__catch41_g_error:
+	goto __finally45;
+	__catch45_g_error:
 	{
 		FILE* _tmp0_;
 		GError* _tmp1_;
@@ -479,9 +480,9 @@ TFlipflopComponentDef* tflipflop_component_def_construct (GType object_type, GEr
 		fprintf (_tmp0_, "Failed to load built in component \"%s\"\n", TFLIPFLOP_COMPONENT_DEF_infoFilename);
 		_tmp1_ = g_error_new_literal (COMPONENT_DEF_LOAD_ERROR, COMPONENT_DEF_LOAD_ERROR_LOAD, "Failed to load \"" TFLIPFLOP_COMPONENT_DEF_infoFilename "\"\n");
 		_inner_error_ = _tmp1_;
-		goto __finally41;
+		goto __finally45;
 	}
-	__finally41:
+	__finally45:
 	if (_inner_error_ != NULL) {
 		if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
 			g_propagate_error (error, _inner_error_);

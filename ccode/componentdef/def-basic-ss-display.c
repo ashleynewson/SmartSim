@@ -232,6 +232,7 @@ struct _ComponentDef {
 	volatile int ref_count;
 	ComponentDefPrivate * priv;
 	Graphic* graphic;
+	gchar* graphicReferenceFilename;
 	gchar* name;
 	gchar* description;
 	gchar* iconFilename;
@@ -498,11 +499,11 @@ BasicSsDisplayComponentDef* basic_ss_display_component_def_construct (GType obje
 	{
 		component_def_load_from_file ((ComponentDef*) self, BASIC_SS_DISPLAY_COMPONENT_DEF_infoFilename, &_inner_error_);
 		if (_inner_error_ != NULL) {
-			goto __catch2_g_error;
+			goto __catch6_g_error;
 		}
 	}
-	goto __finally2;
-	__catch2_g_error:
+	goto __finally6;
+	__catch6_g_error:
 	{
 		FILE* _tmp0_;
 		GError* _tmp1_;
@@ -512,9 +513,9 @@ BasicSsDisplayComponentDef* basic_ss_display_component_def_construct (GType obje
 		fprintf (_tmp0_, "Failed to load built in component \"%s\"\n", BASIC_SS_DISPLAY_COMPONENT_DEF_infoFilename);
 		_tmp1_ = g_error_new_literal (COMPONENT_DEF_LOAD_ERROR, COMPONENT_DEF_LOAD_ERROR_LOAD, "Failed to load \"" BASIC_SS_DISPLAY_COMPONENT_DEF_infoFilename "\"\n");
 		_inner_error_ = _tmp1_;
-		goto __finally2;
+		goto __finally6;
 	}
-	__finally2:
+	__finally6:
 	if (_inner_error_ != NULL) {
 		if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
 			g_propagate_error (error, _inner_error_);
@@ -554,13 +555,13 @@ static void basic_ss_display_component_def_real_add_properties (ComponentDef* ba
 		_tmp1_ = property_item_selection_get_data_throw (_tmp0_, "Type", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch3_g_error;
+			goto __catch7_g_error;
 		}
 		_g_free0 (typeString);
 		typeString = _tmp2_;
 	}
-	goto __finally3;
-	__catch3_g_error:
+	goto __finally7;
+	__catch7_g_error:
 	{
 		gchar* _tmp3_;
 		g_clear_error (&_inner_error_);
@@ -569,7 +570,7 @@ static void basic_ss_display_component_def_real_add_properties (ComponentDef* ba
 		_g_free0 (typeString);
 		typeString = _tmp3_;
 	}
-	__finally3:
+	__finally7:
 	if (_inner_error_ != NULL) {
 		_g_free0 (typeString);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -611,13 +612,13 @@ static void basic_ss_display_component_def_real_get_properties (ComponentDef* ba
 		_tmp1_ = property_item_selection_get_data_throw (_tmp0_, "Type", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch4_g_error;
+			goto __catch8_g_error;
 		}
 		_g_free0 (typeString);
 		typeString = _tmp2_;
 	}
-	goto __finally4;
-	__catch4_g_error:
+	goto __finally8;
+	__catch8_g_error:
 	{
 		gchar* _tmp3_;
 		g_clear_error (&_inner_error_);
@@ -626,7 +627,7 @@ static void basic_ss_display_component_def_real_get_properties (ComponentDef* ba
 		_g_free0 (typeString);
 		typeString = _tmp3_;
 	}
-	__finally4:
+	__finally8:
 	if (_inner_error_ != NULL) {
 		_g_free0 (typeString);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -771,13 +772,13 @@ static void basic_ss_display_component_def_real_save_properties (ComponentDef* b
 		_tmp1_ = property_item_selection_get_data_throw (_tmp0_, "Type", &_inner_error_);
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch5_g_error;
+			goto __catch9_g_error;
 		}
 		_g_free0 (typeString);
 		typeString = _tmp2_;
 	}
-	goto __finally5;
-	__catch5_g_error:
+	goto __finally9;
+	__catch9_g_error:
 	{
 		gchar* _tmp3_;
 		g_clear_error (&_inner_error_);
@@ -786,7 +787,7 @@ static void basic_ss_display_component_def_real_save_properties (ComponentDef* b
 		_g_free0 (typeString);
 		typeString = _tmp3_;
 	}
-	__finally5:
+	__finally9:
 	if (_inner_error_ != NULL) {
 		_g_free0 (typeString);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -1024,13 +1025,13 @@ static void basic_ss_display_component_def_real_compile_component (ComponentDef*
 		_tmp60_ = property_item_selection_get_data_throw (_tmp59_, "Type", &_inner_error_);
 		_tmp61_ = _tmp60_;
 		if (_inner_error_ != NULL) {
-			goto __catch6_g_error;
+			goto __catch10_g_error;
 		}
 		_g_free0 (typeString);
 		typeString = _tmp61_;
 	}
-	goto __finally6;
-	__catch6_g_error:
+	goto __finally10;
+	__catch10_g_error:
 	{
 		gchar* _tmp62_;
 		g_clear_error (&_inner_error_);
@@ -1039,7 +1040,7 @@ static void basic_ss_display_component_def_real_compile_component (ComponentDef*
 		_g_free0 (typeString);
 		typeString = _tmp62_;
 	}
-	__finally6:
+	__finally10:
 	if (_inner_error_ != NULL) {
 		_connection_unref0 (inputPWire);
 		_connection_unref0 (input8Wire);
@@ -1118,13 +1119,13 @@ static void basic_ss_display_component_def_real_configure_inst (ComponentDef* ba
 		_tmp3_ = property_item_selection_get_data_throw (_tmp2_, "Type", &_inner_error_);
 		_tmp4_ = _tmp3_;
 		if (_inner_error_ != NULL) {
-			goto __catch7_g_error;
+			goto __catch11_g_error;
 		}
 		_g_free0 (typeString);
 		typeString = _tmp4_;
 	}
-	goto __finally7;
-	__catch7_g_error:
+	goto __finally11;
+	__catch11_g_error:
 	{
 		gchar* _tmp5_;
 		g_clear_error (&_inner_error_);
@@ -1133,7 +1134,7 @@ static void basic_ss_display_component_def_real_configure_inst (ComponentDef* ba
 		_g_free0 (typeString);
 		typeString = _tmp5_;
 	}
-	__finally7:
+	__finally11:
 	if (_inner_error_ != NULL) {
 		_g_free0 (typeString);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);

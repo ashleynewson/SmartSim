@@ -303,13 +303,13 @@ gchar* property_item_file_get_filename (PropertySet* propertySet, const gchar* n
 		_tmp2_ = property_item_file_get_filename_throw (_tmp0_, _tmp1_, &_inner_error_);
 		_tmp3_ = _tmp2_;
 		if (_inner_error_ != NULL) {
-			goto __catch59_g_error;
+			goto __catch62_g_error;
 		}
 		result = _tmp3_;
 		return result;
 	}
-	goto __finally59;
-	__catch59_g_error:
+	goto __finally62;
+	__catch62_g_error:
 	{
 		gchar* _tmp4_;
 		g_clear_error (&_inner_error_);
@@ -318,7 +318,7 @@ gchar* property_item_file_get_filename (PropertySet* propertySet, const gchar* n
 		result = _tmp4_;
 		return result;
 	}
-	__finally59:
+	__finally62:
 	g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 	g_clear_error (&_inner_error_);
 	return NULL;
@@ -339,16 +339,16 @@ void property_item_file_set_filename (PropertySet* propertySet, const gchar* nam
 		_tmp2_ = data;
 		property_item_file_set_filename_throw (_tmp0_, _tmp1_, _tmp2_, &_inner_error_);
 		if (_inner_error_ != NULL) {
-			goto __catch60_g_error;
+			goto __catch63_g_error;
 		}
 	}
-	goto __finally60;
-	__catch60_g_error:
+	goto __finally63;
+	__catch63_g_error:
 	{
 		g_clear_error (&_inner_error_);
 		_inner_error_ = NULL;
 	}
-	__finally60:
+	__finally63:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);

@@ -71,6 +71,7 @@ typedef struct _ComponentDefClass ComponentDefClass;
 typedef struct _Graphic Graphic;
 typedef struct _GraphicClass GraphicClass;
 #define _graphic_unref0(var) ((var == NULL) ? NULL : (var = (graphic_unref (var), NULL)))
+#define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 
 #define TYPE_DESIGNER_WINDOW (designer_window_get_type ())
 #define DESIGNER_WINDOW(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_DESIGNER_WINDOW, DesignerWindow))
@@ -222,8 +223,8 @@ typedef struct _ReaderComponentDefClass ReaderComponentDefClass;
 
 typedef struct _BasicSsDisplayComponentDef BasicSsDisplayComponentDef;
 typedef struct _BasicSsDisplayComponentDefClass BasicSsDisplayComponentDefClass;
-#define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _fclose0(var) ((var == NULL) ? NULL : (var = (fclose (var), NULL)))
+#define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
 typedef struct _ParamSpecCore ParamSpecCore;
 
 typedef enum  {
@@ -261,6 +262,10 @@ struct _CoreClass {
 	void (*finalize) (Core *self);
 };
 
+typedef enum  {
+	GRAPHIC_LOAD_ERROR_FILE
+} GraphicLoadError;
+#define GRAPHIC_LOAD_ERROR graphic_load_error_quark ()
 typedef enum  {
 	COMPONENT_DEF_LOAD_ERROR_NOT_COMPONENT,
 	COMPONENT_DEF_LOAD_ERROR_FILE,
@@ -342,8 +347,9 @@ gboolean core_version_ignored (const gchar* extra);
 gint basic_dialog_ask_generic (GtkWindow* window, GtkMessageType messageType, const gchar* text, gchar** options, int options_length1);
 gint core_main (gchar** args, int args_length1);
 static gchar* core_load_string_from_file (const gchar* filename);
-Graphic* graphic_new_from_file (const gchar* filename);
-Graphic* graphic_construct_from_file (GType object_type, const gchar* filename);
+GQuark graphic_load_error_quark (void);
+Graphic* graphic_new_from_file (const gchar* filename, GError** error);
+Graphic* graphic_construct_from_file (GType object_type, const gchar* filename, GError** error);
 gpointer graphic_ref (gpointer instance);
 void graphic_unref (gpointer instance);
 GParamSpec* param_spec_graphic (const gchar* name, const gchar* nick, const gchar* blurb, GType object_type, GParamFlags flags);
@@ -416,12 +422,15 @@ static void _vala_array_add14 (ComponentDef*** array, int* length, int* size, Co
 static ComponentDef** _vala_array_dup1 (ComponentDef** self, int length);
 ComponentDef** core_get_standard_defs (int* result_length1);
 static ComponentDef** _vala_array_dup2 (ComponentDef** self, int length);
-gchar* core_absolute_filename (const gchar* filename);
+gchar* core_relative_filename (const gchar* rawTargetFilename, const gchar* rawReferenceFilename);
+static void _vala_array_add15 (gchar*** array, int* length, int* size, gchar* value);
+static void _vala_array_add16 (gchar*** array, int* length, int* size, gchar* value);
+gchar* core_absolute_filename (const gchar* filename, const gchar* pwd);
 VersionComparison core_compare_versions (const gchar* whatVersion, const gchar* withVersion);
 static gint* core_version_to_numbers (const gchar* version, int* result_length1);
 static guint8* _vala_array_dup3 (guint8* self, int length);
-static void _vala_array_add15 (gint** array, int* length, int* size, gint value);
-static void _vala_array_add16 (gint** array, int* length, int* size, gint value);
+static void _vala_array_add17 (gint** array, int* length, int* size, gint value);
+static void _vala_array_add18 (gint** array, int* length, int* size, gint value);
 Core* core_new (void);
 Core* core_construct (GType object_type);
 static void core_finalize (Core* obj);
@@ -551,13 +560,13 @@ gint core_main (gchar** args, int args_length1) {
 	FILE* _tmp4_;
 	gchar* _tmp5_ = NULL;
 	FILE* _tmp6_;
-	Graphic* _tmp7_;
-	FILE* _tmp8_;
-	DesignerWindow* _tmp9_;
-	DesignerWindow* _tmp10_;
-	FILE* _tmp11_;
 	FILE* _tmp12_;
-	FILE* _tmp13_;
+	DesignerWindow* _tmp13_;
+	DesignerWindow* _tmp14_;
+	FILE* _tmp15_;
+	FILE* _tmp16_;
+	FILE* _tmp17_;
+	GError * _inner_error_ = NULL;
 	_tmp0_ = stdout;
 	fprintf (_tmp0_, "%s\n", CORE_programName);
 	_tmp1_ = stdout;
@@ -574,24 +583,58 @@ gint core_main (gchar** args, int args_length1) {
 	gtk_init (&args_length1, &args);
 	_tmp6_ = stdout;
 	fprintf (_tmp6_, "Loading Place-holder Graphic\n");
-	_tmp7_ = graphic_new_from_file (PACKAGE_DATADIR "images/graphics/placeholder");
-	_graphic_unref0 (graphic_placeHolder);
-	graphic_placeHolder = _tmp7_;
-	_tmp8_ = stdout;
-	fprintf (_tmp8_, "Loading Components\n");
-	core_load_standard_defs ();
-	_tmp9_ = designer_window_new ();
-	g_object_ref_sink (_tmp9_);
-	_tmp10_ = _tmp9_;
-	_g_object_unref0 (_tmp10_);
-	_tmp11_ = stdout;
-	fprintf (_tmp11_, "Ready\n");
-	gtk_main ();
+	{
+		Graphic* _tmp7_;
+		Graphic* _tmp8_;
+		_tmp7_ = graphic_new_from_file (PACKAGE_DATADIR "images/graphics/placeholder", &_inner_error_);
+		_tmp8_ = _tmp7_;
+		if (_inner_error_ != NULL) {
+			if (_inner_error_->domain == GRAPHIC_LOAD_ERROR) {
+				goto __catch0_graphic_load_error;
+			}
+			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+			g_clear_error (&_inner_error_);
+			return 0;
+		}
+		_graphic_unref0 (graphic_placeHolder);
+		graphic_placeHolder = _tmp8_;
+	}
+	goto __finally0;
+	__catch0_graphic_load_error:
+	{
+		GError* _error_ = NULL;
+		FILE* _tmp9_;
+		GError* _tmp10_;
+		const gchar* _tmp11_;
+		_error_ = _inner_error_;
+		_inner_error_ = NULL;
+		_tmp9_ = stdout;
+		_tmp10_ = _error_;
+		_tmp11_ = _tmp10_->message;
+		fprintf (_tmp9_, "Could not load place-holder graphic: %s\n", _tmp11_);
+		_g_error_free0 (_error_);
+	}
+	__finally0:
+	if (_inner_error_ != NULL) {
+		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+		g_clear_error (&_inner_error_);
+		return 0;
+	}
 	_tmp12_ = stdout;
-	fprintf (_tmp12_, "Program Terminating...\n");
+	fprintf (_tmp12_, "Loading Components\n");
+	core_load_standard_defs ();
+	_tmp13_ = designer_window_new ();
+	g_object_ref_sink (_tmp13_);
+	_tmp14_ = _tmp13_;
+	_g_object_unref0 (_tmp14_);
+	_tmp15_ = stdout;
+	fprintf (_tmp15_, "Ready\n");
+	gtk_main ();
+	_tmp16_ = stdout;
+	fprintf (_tmp16_, "Program Terminating...\n");
 	plugin_component_manager_unregister_all ();
-	_tmp13_ = stdout;
-	fprintf (_tmp13_, "Program Terminated.\n");
+	_tmp17_ = stdout;
+	fprintf (_tmp17_, "Program Terminated.\n");
 	result = 0;
 	return result;
 }
@@ -839,7 +882,7 @@ static void core_load_standard_defs (void) {
 		_tmp2_ = _tmp1_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -853,7 +896,7 @@ static void core_load_standard_defs (void) {
 		_tmp5_ = _tmp4_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -867,7 +910,7 @@ static void core_load_standard_defs (void) {
 		_tmp8_ = _tmp7_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -881,7 +924,7 @@ static void core_load_standard_defs (void) {
 		_tmp11_ = _tmp10_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -895,7 +938,7 @@ static void core_load_standard_defs (void) {
 		_tmp14_ = _tmp13_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -909,7 +952,7 @@ static void core_load_standard_defs (void) {
 		_tmp17_ = _tmp16_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -923,7 +966,7 @@ static void core_load_standard_defs (void) {
 		_tmp20_ = _tmp19_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -937,7 +980,7 @@ static void core_load_standard_defs (void) {
 		_tmp23_ = _tmp22_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -951,7 +994,7 @@ static void core_load_standard_defs (void) {
 		_tmp26_ = _tmp25_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -965,7 +1008,7 @@ static void core_load_standard_defs (void) {
 		_tmp29_ = _tmp28_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -979,7 +1022,7 @@ static void core_load_standard_defs (void) {
 		_tmp32_ = _tmp31_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -993,7 +1036,7 @@ static void core_load_standard_defs (void) {
 		_tmp35_ = _tmp34_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -1007,7 +1050,7 @@ static void core_load_standard_defs (void) {
 		_tmp38_ = _tmp37_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -1021,7 +1064,7 @@ static void core_load_standard_defs (void) {
 		_tmp41_ = _tmp40_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch0_component_def_load_error;
+				goto __catch1_component_def_load_error;
 			}
 			standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -1032,8 +1075,8 @@ static void core_load_standard_defs (void) {
 		_tmp42__length1 = standardComponentDefs_length1;
 		_vala_array_add14 (&standardComponentDefs, &standardComponentDefs_length1, &_standardComponentDefs_size_, (ComponentDef*) _tmp41_);
 	}
-	goto __finally0;
-	__catch0_component_def_load_error:
+	goto __finally1;
+	__catch1_component_def_load_error:
 	{
 		GError* _error_ = NULL;
 		const gchar* _tmp43_;
@@ -1051,7 +1094,7 @@ static void core_load_standard_defs (void) {
 		_g_object_unref0 (messageDialog);
 		_g_error_free0 (_error_);
 	}
-	__finally0:
+	__finally1:
 	if (_inner_error_ != NULL) {
 		standardComponentDefs = (_vala_array_free (standardComponentDefs, standardComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -1224,18 +1267,481 @@ ComponentDef** core_get_standard_defs (int* result_length1) {
 
 
 /**
- * Returns the absolute filename based upon the current working directory.
+ * Returns the relative filename based upon the current working directory
+ * or a specified one.
  */
-gchar* core_absolute_filename (const gchar* filename) {
+static gchar* string_replace (const gchar* self, const gchar* old, const gchar* replacement) {
+	gchar* result = NULL;
+	GError * _inner_error_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	g_return_val_if_fail (old != NULL, NULL);
+	g_return_val_if_fail (replacement != NULL, NULL);
+	{
+		const gchar* _tmp0_;
+		gchar* _tmp1_ = NULL;
+		gchar* _tmp2_;
+		GRegex* _tmp3_;
+		GRegex* _tmp4_;
+		GRegex* regex;
+		GRegex* _tmp5_;
+		const gchar* _tmp6_;
+		gchar* _tmp7_ = NULL;
+		gchar* _tmp8_;
+		_tmp0_ = old;
+		_tmp1_ = g_regex_escape_string (_tmp0_, -1);
+		_tmp2_ = _tmp1_;
+		_tmp3_ = g_regex_new (_tmp2_, 0, 0, &_inner_error_);
+		_tmp4_ = _tmp3_;
+		_g_free0 (_tmp2_);
+		regex = _tmp4_;
+		if (_inner_error_ != NULL) {
+			if (_inner_error_->domain == G_REGEX_ERROR) {
+				goto __catch2_g_regex_error;
+			}
+			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+			g_clear_error (&_inner_error_);
+			return NULL;
+		}
+		_tmp5_ = regex;
+		_tmp6_ = replacement;
+		_tmp7_ = g_regex_replace_literal (_tmp5_, self, (gssize) (-1), 0, _tmp6_, 0, &_inner_error_);
+		_tmp8_ = _tmp7_;
+		if (_inner_error_ != NULL) {
+			_g_regex_unref0 (regex);
+			if (_inner_error_->domain == G_REGEX_ERROR) {
+				goto __catch2_g_regex_error;
+			}
+			_g_regex_unref0 (regex);
+			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+			g_clear_error (&_inner_error_);
+			return NULL;
+		}
+		result = _tmp8_;
+		_g_regex_unref0 (regex);
+		return result;
+	}
+	goto __finally2;
+	__catch2_g_regex_error:
+	{
+		GError* e = NULL;
+		e = _inner_error_;
+		_inner_error_ = NULL;
+		g_assert_not_reached ();
+		_g_error_free0 (e);
+	}
+	__finally2:
+	if (_inner_error_ != NULL) {
+		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+		g_clear_error (&_inner_error_);
+		return NULL;
+	}
+}
+
+
+static gint string_index_of (const gchar* self, const gchar* needle, gint start_index) {
+	gint result = 0;
+	gint _tmp0_;
+	const gchar* _tmp1_;
+	gchar* _tmp2_ = NULL;
+	gchar* _result_;
+	gchar* _tmp3_;
+	g_return_val_if_fail (self != NULL, 0);
+	g_return_val_if_fail (needle != NULL, 0);
+	_tmp0_ = start_index;
+	_tmp1_ = needle;
+	_tmp2_ = strstr (((gchar*) self) + _tmp0_, (gchar*) _tmp1_);
+	_result_ = _tmp2_;
+	_tmp3_ = _result_;
+	if (_tmp3_ != NULL) {
+		gchar* _tmp4_;
+		_tmp4_ = _result_;
+		result = (gint) (_tmp4_ - ((gchar*) self));
+		return result;
+	} else {
+		result = -1;
+		return result;
+	}
+}
+
+
+static gchar* string_slice (const gchar* self, glong start, glong end) {
+	gchar* result = NULL;
+	gint _tmp0_;
+	gint _tmp1_;
+	glong string_length;
+	glong _tmp2_;
+	glong _tmp5_;
+	gboolean _tmp8_ = FALSE;
+	glong _tmp9_;
+	gboolean _tmp12_;
+	gboolean _tmp13_ = FALSE;
+	glong _tmp14_;
+	gboolean _tmp17_;
+	glong _tmp18_;
+	glong _tmp19_;
+	glong _tmp20_;
+	glong _tmp21_;
+	glong _tmp22_;
+	gchar* _tmp23_ = NULL;
+	g_return_val_if_fail (self != NULL, NULL);
+	_tmp0_ = strlen (self);
+	_tmp1_ = _tmp0_;
+	string_length = (glong) _tmp1_;
+	_tmp2_ = start;
+	if (_tmp2_ < ((glong) 0)) {
+		glong _tmp3_;
+		glong _tmp4_;
+		_tmp3_ = string_length;
+		_tmp4_ = start;
+		start = _tmp3_ + _tmp4_;
+	}
+	_tmp5_ = end;
+	if (_tmp5_ < ((glong) 0)) {
+		glong _tmp6_;
+		glong _tmp7_;
+		_tmp6_ = string_length;
+		_tmp7_ = end;
+		end = _tmp6_ + _tmp7_;
+	}
+	_tmp9_ = start;
+	if (_tmp9_ >= ((glong) 0)) {
+		glong _tmp10_;
+		glong _tmp11_;
+		_tmp10_ = start;
+		_tmp11_ = string_length;
+		_tmp8_ = _tmp10_ <= _tmp11_;
+	} else {
+		_tmp8_ = FALSE;
+	}
+	_tmp12_ = _tmp8_;
+	g_return_val_if_fail (_tmp12_, NULL);
+	_tmp14_ = end;
+	if (_tmp14_ >= ((glong) 0)) {
+		glong _tmp15_;
+		glong _tmp16_;
+		_tmp15_ = end;
+		_tmp16_ = string_length;
+		_tmp13_ = _tmp15_ <= _tmp16_;
+	} else {
+		_tmp13_ = FALSE;
+	}
+	_tmp17_ = _tmp13_;
+	g_return_val_if_fail (_tmp17_, NULL);
+	_tmp18_ = start;
+	_tmp19_ = end;
+	g_return_val_if_fail (_tmp18_ <= _tmp19_, NULL);
+	_tmp20_ = start;
+	_tmp21_ = end;
+	_tmp22_ = start;
+	_tmp23_ = g_strndup (((gchar*) self) + _tmp20_, (gsize) (_tmp21_ - _tmp22_));
+	result = _tmp23_;
+	return result;
+}
+
+
+static void _vala_array_add15 (gchar*** array, int* length, int* size, gchar* value) {
+	if ((*length) == (*size)) {
+		*size = (*size) ? (2 * (*size)) : 4;
+		*array = g_renew (gchar*, *array, (*size) + 1);
+	}
+	(*array)[(*length)++] = value;
+	(*array)[*length] = NULL;
+}
+
+
+static void _vala_array_add16 (gchar*** array, int* length, int* size, gchar* value) {
+	if ((*length) == (*size)) {
+		*size = (*size) ? (2 * (*size)) : 4;
+		*array = g_renew (gchar*, *array, (*size) + 1);
+	}
+	(*array)[(*length)++] = value;
+	(*array)[*length] = NULL;
+}
+
+
+gchar* core_relative_filename (const gchar* rawTargetFilename, const gchar* rawReferenceFilename) {
+	gchar* result = NULL;
+	const gchar* _tmp0_;
+	gchar* _tmp1_ = NULL;
+	gchar* targetFilename;
+	const gchar* _tmp2_;
+	gchar* _tmp3_ = NULL;
+	gchar* referenceFilename;
+	gchar** _tmp4_ = NULL;
+	gchar** referenceDirectories;
+	gint referenceDirectories_length1;
+	gint _referenceDirectories_size_;
+	gchar** _tmp5_ = NULL;
+	gchar** targetDirectories;
+	gint targetDirectories_length1;
+	gint _targetDirectories_size_;
+	gchar* _tmp6_;
+	gchar* _result_;
+	gint startIndex;
+	gint endIndex;
+	const gchar* _tmp7_;
+	gboolean _tmp8_ = FALSE;
+	gint commonCount = 0;
+	const gchar* _tmp63_;
+	const gchar* _tmp64_;
+	gchar* _tmp65_ = NULL;
+	gchar* _tmp66_;
+	gchar* _tmp67_;
+	g_return_val_if_fail (rawTargetFilename != NULL, NULL);
+	g_return_val_if_fail (rawReferenceFilename != NULL, NULL);
+	_tmp0_ = rawTargetFilename;
+	_tmp1_ = string_replace (_tmp0_, G_DIR_SEPARATOR_S, "/");
+	targetFilename = _tmp1_;
+	_tmp2_ = rawReferenceFilename;
+	_tmp3_ = string_replace (_tmp2_, G_DIR_SEPARATOR_S, "/");
+	referenceFilename = _tmp3_;
+	_tmp4_ = g_new0 (gchar*, 0 + 1);
+	referenceDirectories = _tmp4_;
+	referenceDirectories_length1 = 0;
+	_referenceDirectories_size_ = referenceDirectories_length1;
+	_tmp5_ = g_new0 (gchar*, 0 + 1);
+	targetDirectories = _tmp5_;
+	targetDirectories_length1 = 0;
+	_targetDirectories_size_ = targetDirectories_length1;
+	_tmp6_ = g_strdup ("");
+	_result_ = _tmp6_;
+	startIndex = 0;
+	endIndex = 0;
+	_tmp7_ = targetFilename;
+	_tmp8_ = g_path_is_absolute (_tmp7_);
+	if (!_tmp8_) {
+		const gchar* _tmp9_;
+		gchar* _tmp10_;
+		_tmp9_ = rawTargetFilename;
+		_tmp10_ = g_strdup (_tmp9_);
+		result = _tmp10_;
+		_g_free0 (_result_);
+		targetDirectories = (_vala_array_free (targetDirectories, targetDirectories_length1, (GDestroyNotify) g_free), NULL);
+		referenceDirectories = (_vala_array_free (referenceDirectories, referenceDirectories_length1, (GDestroyNotify) g_free), NULL);
+		_g_free0 (referenceFilename);
+		_g_free0 (targetFilename);
+		return result;
+	}
+	while (TRUE) {
+		gint _tmp11_;
+		const gchar* _tmp12_;
+		gint _tmp13_;
+		gint _tmp14_ = 0;
+		gint _tmp15_;
+		_tmp11_ = endIndex;
+		startIndex = _tmp11_ + 1;
+		_tmp12_ = referenceFilename;
+		_tmp13_ = startIndex;
+		_tmp14_ = string_index_of (_tmp12_, "/", _tmp13_);
+		endIndex = _tmp14_;
+		_tmp15_ = endIndex;
+		if (_tmp15_ == (-1)) {
+			break;
+		} else {
+			gchar** _tmp16_;
+			gint _tmp16__length1;
+			const gchar* _tmp17_;
+			gint _tmp18_;
+			gint _tmp19_;
+			gchar* _tmp20_ = NULL;
+			_tmp16_ = referenceDirectories;
+			_tmp16__length1 = referenceDirectories_length1;
+			_tmp17_ = referenceFilename;
+			_tmp18_ = startIndex;
+			_tmp19_ = endIndex;
+			_tmp20_ = string_slice (_tmp17_, (glong) _tmp18_, (glong) _tmp19_);
+			_vala_array_add15 (&referenceDirectories, &referenceDirectories_length1, &_referenceDirectories_size_, _tmp20_);
+		}
+	}
+	startIndex = 0;
+	endIndex = 0;
+	while (TRUE) {
+		gint _tmp21_;
+		const gchar* _tmp22_;
+		gint _tmp23_;
+		gint _tmp24_ = 0;
+		gint _tmp25_;
+		_tmp21_ = endIndex;
+		startIndex = _tmp21_ + 1;
+		_tmp22_ = targetFilename;
+		_tmp23_ = startIndex;
+		_tmp24_ = string_index_of (_tmp22_, "/", _tmp23_);
+		endIndex = _tmp24_;
+		_tmp25_ = endIndex;
+		if (_tmp25_ == (-1)) {
+			break;
+		} else {
+			gchar** _tmp26_;
+			gint _tmp26__length1;
+			const gchar* _tmp27_;
+			gint _tmp28_;
+			gint _tmp29_;
+			gchar* _tmp30_ = NULL;
+			_tmp26_ = targetDirectories;
+			_tmp26__length1 = targetDirectories_length1;
+			_tmp27_ = targetFilename;
+			_tmp28_ = startIndex;
+			_tmp29_ = endIndex;
+			_tmp30_ = string_slice (_tmp27_, (glong) _tmp28_, (glong) _tmp29_);
+			_vala_array_add16 (&targetDirectories, &targetDirectories_length1, &_targetDirectories_size_, _tmp30_);
+		}
+	}
+	{
+		gboolean _tmp31_;
+		commonCount = 0;
+		_tmp31_ = TRUE;
+		while (TRUE) {
+			gboolean _tmp32_;
+			gint _tmp34_;
+			gchar** _tmp35_;
+			gint _tmp35__length1;
+			gchar** _tmp36_;
+			gint _tmp36__length1;
+			gint _tmp37_;
+			const gchar* _tmp38_;
+			gchar** _tmp39_;
+			gint _tmp39__length1;
+			gint _tmp40_;
+			const gchar* _tmp41_;
+			_tmp32_ = _tmp31_;
+			if (!_tmp32_) {
+				gint _tmp33_;
+				_tmp33_ = commonCount;
+				commonCount = _tmp33_ + 1;
+			}
+			_tmp31_ = FALSE;
+			_tmp34_ = commonCount;
+			_tmp35_ = referenceDirectories;
+			_tmp35__length1 = referenceDirectories_length1;
+			if (!(_tmp34_ < _tmp35__length1)) {
+				break;
+			}
+			_tmp36_ = referenceDirectories;
+			_tmp36__length1 = referenceDirectories_length1;
+			_tmp37_ = commonCount;
+			_tmp38_ = _tmp36_[_tmp37_];
+			_tmp39_ = targetDirectories;
+			_tmp39__length1 = targetDirectories_length1;
+			_tmp40_ = commonCount;
+			_tmp41_ = _tmp39_[_tmp40_];
+			if (g_strcmp0 (_tmp38_, _tmp41_) != 0) {
+				break;
+			}
+		}
+	}
+	{
+		gint _tmp42_;
+		gint i;
+		_tmp42_ = commonCount;
+		i = _tmp42_;
+		{
+			gboolean _tmp43_;
+			_tmp43_ = TRUE;
+			while (TRUE) {
+				gboolean _tmp44_;
+				gint _tmp46_;
+				gchar** _tmp47_;
+				gint _tmp47__length1;
+				const gchar* _tmp48_;
+				gchar* _tmp49_;
+				_tmp44_ = _tmp43_;
+				if (!_tmp44_) {
+					gint _tmp45_;
+					_tmp45_ = i;
+					i = _tmp45_ + 1;
+				}
+				_tmp43_ = FALSE;
+				_tmp46_ = i;
+				_tmp47_ = referenceDirectories;
+				_tmp47__length1 = referenceDirectories_length1;
+				if (!(_tmp46_ < _tmp47__length1)) {
+					break;
+				}
+				_tmp48_ = _result_;
+				_tmp49_ = g_strconcat (_tmp48_, "../", NULL);
+				_g_free0 (_result_);
+				_result_ = _tmp49_;
+			}
+		}
+	}
+	{
+		gint _tmp50_;
+		gint i;
+		_tmp50_ = commonCount;
+		i = _tmp50_;
+		{
+			gboolean _tmp51_;
+			_tmp51_ = TRUE;
+			while (TRUE) {
+				gboolean _tmp52_;
+				gint _tmp54_;
+				gchar** _tmp55_;
+				gint _tmp55__length1;
+				const gchar* _tmp56_;
+				gchar** _tmp57_;
+				gint _tmp57__length1;
+				gint _tmp58_;
+				const gchar* _tmp59_;
+				gchar* _tmp60_;
+				gchar* _tmp61_;
+				gchar* _tmp62_;
+				_tmp52_ = _tmp51_;
+				if (!_tmp52_) {
+					gint _tmp53_;
+					_tmp53_ = i;
+					i = _tmp53_ + 1;
+				}
+				_tmp51_ = FALSE;
+				_tmp54_ = i;
+				_tmp55_ = targetDirectories;
+				_tmp55__length1 = targetDirectories_length1;
+				if (!(_tmp54_ < _tmp55__length1)) {
+					break;
+				}
+				_tmp56_ = _result_;
+				_tmp57_ = targetDirectories;
+				_tmp57__length1 = targetDirectories_length1;
+				_tmp58_ = i;
+				_tmp59_ = _tmp57_[_tmp58_];
+				_tmp60_ = g_strconcat (_tmp59_, "/", NULL);
+				_tmp61_ = _tmp60_;
+				_tmp62_ = g_strconcat (_tmp56_, _tmp61_, NULL);
+				_g_free0 (_result_);
+				_result_ = _tmp62_;
+				_g_free0 (_tmp61_);
+			}
+		}
+	}
+	_tmp63_ = _result_;
+	_tmp64_ = targetFilename;
+	_tmp65_ = g_path_get_basename (_tmp64_);
+	_tmp66_ = _tmp65_;
+	_tmp67_ = g_strconcat (_tmp63_, _tmp66_, NULL);
+	_g_free0 (_result_);
+	_result_ = _tmp67_;
+	_g_free0 (_tmp66_);
+	result = _result_;
+	targetDirectories = (_vala_array_free (targetDirectories, targetDirectories_length1, (GDestroyNotify) g_free), NULL);
+	referenceDirectories = (_vala_array_free (referenceDirectories, referenceDirectories_length1, (GDestroyNotify) g_free), NULL);
+	_g_free0 (referenceFilename);
+	_g_free0 (targetFilename);
+	return result;
+}
+
+
+/**
+ * Returns the absolute filename based upon the current working directory
+ * or a specified one.
+ */
+gchar* core_absolute_filename (const gchar* filename, const gchar* pwd) {
 	gchar* result = NULL;
 	const gchar* _tmp0_;
 	gboolean _tmp1_ = FALSE;
-	gchar* _tmp4_ = NULL;
-	gchar* pwd;
+	const gchar* _tmp4_;
 	const gchar* _tmp5_;
-	const gchar* _tmp6_;
-	gchar* _tmp7_ = NULL;
+	gchar* _tmp6_ = NULL;
 	g_return_val_if_fail (filename != NULL, NULL);
+	g_return_val_if_fail (pwd != NULL, NULL);
 	_tmp0_ = filename;
 	_tmp1_ = g_path_is_absolute (_tmp0_);
 	if (_tmp1_ == TRUE) {
@@ -1246,13 +1752,10 @@ gchar* core_absolute_filename (const gchar* filename) {
 		result = _tmp3_;
 		return result;
 	}
-	_tmp4_ = g_get_current_dir ();
-	pwd = _tmp4_;
-	_tmp5_ = pwd;
-	_tmp6_ = filename;
-	_tmp7_ = g_build_filename (_tmp5_, _tmp6_, NULL);
-	result = _tmp7_;
-	_g_free0 (pwd);
+	_tmp4_ = pwd;
+	_tmp5_ = filename;
+	_tmp6_ = g_build_filename (_tmp4_, _tmp5_, NULL);
+	result = _tmp6_;
 	return result;
 }
 
@@ -1449,7 +1952,7 @@ static guint8* _vala_array_dup3 (guint8* self, int length) {
 }
 
 
-static void _vala_array_add15 (gint** array, int* length, int* size, gint value) {
+static void _vala_array_add17 (gint** array, int* length, int* size, gint value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (gint, *array, *size);
@@ -1458,7 +1961,7 @@ static void _vala_array_add15 (gint** array, int* length, int* size, gint value)
 }
 
 
-static void _vala_array_add16 (gint** array, int* length, int* size, gint value) {
+static void _vala_array_add18 (gint** array, int* length, int* size, gint value) {
 	if ((*length) == (*size)) {
 		*size = (*size) ? (2 * (*size)) : 4;
 		*array = g_renew (gint, *array, *size);
@@ -1536,7 +2039,7 @@ static gint* core_version_to_numbers (const gchar* version, int* result_length1)
 							_tmp9__length1 = numbers_length1;
 							_tmp10_ = number;
 							_tmp11_ = atoi (_tmp10_);
-							_vala_array_add15 (&numbers, &numbers_length1, &_numbers_size_, _tmp11_);
+							_vala_array_add17 (&numbers, &numbers_length1, &_numbers_size_, _tmp11_);
 							_tmp12_ = g_strdup ("");
 							_g_free0 (number);
 							number = _tmp12_;
@@ -1579,7 +2082,7 @@ static gint* core_version_to_numbers (const gchar* version, int* result_length1)
 		_tmp17__length1 = numbers_length1;
 		_tmp18_ = number;
 		_tmp19_ = atoi (_tmp18_);
-		_vala_array_add16 (&numbers, &numbers_length1, &_numbers_size_, _tmp19_);
+		_vala_array_add18 (&numbers, &numbers_length1, &_numbers_size_, _tmp19_);
 		_tmp20_ = g_strdup ("");
 		_g_free0 (number);
 		number = _tmp20_;

@@ -220,6 +220,7 @@ struct _ComponentDef {
 	volatile int ref_count;
 	ComponentDefPrivate * priv;
 	Graphic* graphic;
+	gchar* graphicReferenceFilename;
 	gchar* name;
 	gchar* description;
 	gchar* iconFilename;
@@ -465,11 +466,11 @@ PeDFlipflopComponentDef* pe_dflipflop_component_def_construct (GType object_type
 	{
 		component_def_load_from_file ((ComponentDef*) self, PE_DFLIPFLOP_COMPONENT_DEF_infoFilename, &_inner_error_);
 		if (_inner_error_ != NULL) {
-			goto __catch39_g_error;
+			goto __catch43_g_error;
 		}
 	}
-	goto __finally39;
-	__catch39_g_error:
+	goto __finally43;
+	__catch43_g_error:
 	{
 		FILE* _tmp0_;
 		GError* _tmp1_;
@@ -479,9 +480,9 @@ PeDFlipflopComponentDef* pe_dflipflop_component_def_construct (GType object_type
 		fprintf (_tmp0_, "Failed to load built in component \"%s\"\n", PE_DFLIPFLOP_COMPONENT_DEF_infoFilename);
 		_tmp1_ = g_error_new_literal (COMPONENT_DEF_LOAD_ERROR, COMPONENT_DEF_LOAD_ERROR_LOAD, "Failed to load \"" PE_DFLIPFLOP_COMPONENT_DEF_infoFilename "\"\n");
 		_inner_error_ = _tmp1_;
-		goto __finally39;
+		goto __finally43;
 	}
-	__finally39:
+	__finally43:
 	if (_inner_error_ != NULL) {
 		if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
 			g_propagate_error (error, _inner_error_);
