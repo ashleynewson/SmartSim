@@ -956,76 +956,79 @@ public class Project {
 	}
 	
 	public string relative_filename (string rawTargetFilename) { //May need to be replaced!
-		string targetFilename = rawTargetFilename.replace (GLib.Path.DIR_SEPARATOR_S, "/");
-		string projectFilename = filename.replace (GLib.Path.DIR_SEPARATOR_S, "/");
+		return Core.absolute_filename (rawTargetFilename, this.filename);
 		
-		string[] projectDirectories = {};
-		string[] targetDirectories = {};
+		// string targetFilename = rawTargetFilename.replace (GLib.Path.DIR_SEPARATOR_S, "/");
+		// string projectFilename = filename.replace (GLib.Path.DIR_SEPARATOR_S, "/");
 		
-		string result = "";
+		// string[] projectDirectories = {};
+		// string[] targetDirectories = {};
 		
-		int startIndex = 0;
-		int endIndex = 0;
+		// string result = "";
 		
-		if (!GLib.Path.is_absolute(targetFilename)) {
-			return rawTargetFilename;
-		}
+		// int startIndex = 0;
+		// int endIndex = 0;
 		
-		while (true) { //breaks
-			startIndex = endIndex + 1;
-			endIndex = projectFilename.index_of ("/", startIndex);
-			if (endIndex == -1) {
-				break;
-			} else {
-				projectDirectories += projectFilename.slice (startIndex, endIndex);
-			}
-		}
+		// if (!GLib.Path.is_absolute(targetFilename)) {
+		// 	return rawTargetFilename;
+		// }
 		
-		startIndex = 0;
-		endIndex = 0;
+		// while (true) { //breaks
+		// 	startIndex = endIndex + 1;
+		// 	endIndex = projectFilename.index_of ("/", startIndex);
+		// 	if (endIndex == -1) {
+		// 		break;
+		// 	} else {
+		// 		projectDirectories += projectFilename.slice (startIndex, endIndex);
+		// 	}
+		// }
 		
-		while (true) { //breaks
-			startIndex = endIndex + 1;
-			endIndex = targetFilename.index_of ("/", startIndex);
-			if (endIndex == -1) {
-				break;
-			} else {
-				targetDirectories += targetFilename.slice (startIndex, endIndex);
-			}
-		}
+		// startIndex = 0;
+		// endIndex = 0;
 		
-		int commonCount;
+		// while (true) { //breaks
+		// 	startIndex = endIndex + 1;
+		// 	endIndex = targetFilename.index_of ("/", startIndex);
+		// 	if (endIndex == -1) {
+		// 		break;
+		// 	} else {
+		// 		targetDirectories += targetFilename.slice (startIndex, endIndex);
+		// 	}
+		// }
 		
-		for (commonCount = 0; commonCount < projectDirectories.length; commonCount++) {
-			if (projectDirectories[commonCount] != targetDirectories[commonCount]) {
-				break;
-			}
-		}
+		// int commonCount;
 		
-		for (int i = commonCount; i < projectDirectories.length; i++) {
-			result += "../"; //Is there a const for ".."?
-		}
+		// for (commonCount = 0; commonCount < projectDirectories.length; commonCount++) {
+		// 	if (projectDirectories[commonCount] != targetDirectories[commonCount]) {
+		// 		break;
+		// 	}
+		// }
 		
-		for (int i = commonCount; i < targetDirectories.length; i++) {
-			result += targetDirectories[i] + "/"; //Is there a const for ".."?
-		}
+		// for (int i = commonCount; i < projectDirectories.length; i++) {
+		// 	result += "../"; //Is there a const for ".."?
+		// }
 		
-		result += GLib.Path.get_basename (targetFilename);
+		// for (int i = commonCount; i < targetDirectories.length; i++) {
+		// 	result += targetDirectories[i] + "/"; //Is there a const for ".."?
+		// }
 		
-		return result;
+		// result += GLib.Path.get_basename (targetFilename);
+		
+		// return result;
 	}
 	
 	public string absolute_filename (string targetFilename) { //May need to be replaced!
-		string result = "";
+		return Core.absolute_filename (targetFilename, GLib.Path.get_dirname(this.filename));
+		// string result = "";
 		
-		if (GLib.Path.is_absolute(targetFilename)) {
-			return targetFilename;
-		}
+		// if (GLib.Path.is_absolute(targetFilename)) {
+		// 	return targetFilename;
+		// }
 		
-		result += GLib.Path.get_dirname (filename) + GLib.Path.DIR_SEPARATOR_S;
-		result += targetFilename.replace ("/", GLib.Path.DIR_SEPARATOR_S);
+		// result += GLib.Path.get_dirname (filename) + GLib.Path.DIR_SEPARATOR_S;
+		// result += targetFilename.replace ("/", GLib.Path.DIR_SEPARATOR_S);
 		
-		return result;
+		// return result;
 	}
 	
 	/**

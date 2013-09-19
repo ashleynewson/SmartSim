@@ -20,6 +20,10 @@
  */
 
 
+public errordomain GraphicLoadError {
+	FILE
+}
+
 /**
  * Used to store and render an SVG image.
  */
@@ -62,12 +66,16 @@ public class Graphic {
 	 * Loads a graphic from the files //filename//.info and
 	 * //filename//.svg.
 	 */
-	public Graphic.from_file (string filename) {
+	public Graphic.from_file (string filename) throws GraphicLoadError {
 		stdout.printf ("Loading graphic \"%s\"\n", filename);
 		this.filename = filename;
 		
-		load_info (filename + ".info");
-		load_svg (filename + ".svg");
+		if (load_info(filename + ".info") != 0) {
+			throw new GraphicLoadError.FILE ("Unable to open graphic file \"" + filename + ".info\".");
+		}
+		if (load_svg(filename + ".svg") != 0) {
+			throw new GraphicLoadError.FILE ("Unable to open svg file \"" + filename + ".svg\".");
+		}
 	}
 	
 	/**

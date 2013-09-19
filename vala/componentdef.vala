@@ -56,6 +56,10 @@ public abstract class ComponentDef {
 	 * diagram.
 	 */
 	public Graphic graphic;
+	/**
+	 * The filename to use if the graphic has not been changed.
+	 */
+	protected string graphicReferenceFilename = null;
 	
 	public string name = "";
 	public string description = "";
@@ -218,7 +222,17 @@ public abstract class ComponentDef {
 					if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
 						continue;
 					}
-					this.graphic = new Graphic.from_file (Config.resourcesDir + "components/graphics/" + xmldata->content);
+					
+					this.graphicReferenceFilename = xmldata->content;
+					try {
+						this.graphic = new Graphic.from_file (Core.relative_filename(xmldata->content, infoFilename));
+					} catch {
+						try {
+							this.graphic = new Graphic.from_file (Config.resourcesDir + "components/graphics/" + xmldata->content);
+						} catch (GraphicLoadError error) {
+							stdout.printf ("Cannot load graphic \"" + xmldata->content + "\"\n");
+						}
+					}
 				}
 			}
 			break;

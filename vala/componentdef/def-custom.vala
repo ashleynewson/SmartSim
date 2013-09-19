@@ -538,6 +538,9 @@ public class CustomComponentDef : ComponentDef {
 		xmlWriter.write_element ("name", (name != null) ? name : "Untitled");
 		xmlWriter.write_element ("description", description);
 		xmlWriter.write_element ("label", label);
+		if (this.graphicReferenceFilename != null) {
+			xmlWriter.write_element ("graphic", this.graphicReferenceFilename);
+		}
 		
 		xmlWriter.start_element ("bound");
 		xmlWriter.write_attribute ("right", rightBound.to_string());

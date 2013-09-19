@@ -140,7 +140,11 @@ with SmartSim. If not, see:
 		Gtk.init (ref args);
 		
 		stdout.printf ("Loading Place-holder Graphic\n");
-		Graphic.placeHolder = new Graphic.from_file (Config.resourcesDir + "images/graphics/placeholder");
+		try {
+			Graphic.placeHolder = new Graphic.from_file (Config.resourcesDir + "images/graphics/placeholder");
+		} catch (GraphicLoadError error) {
+			stdout.printf ("Could not load place-holder graphic: %s\n", error.message);
+		}
 		
 		stdout.printf ("Loading Components\n");
 		Core.load_standard_defs ();
@@ -230,13 +234,77 @@ with SmartSim. If not, see:
 	}
 	
 	/**
-	 * Returns the absolute filename based upon the current working directory.
+	 * Returns the relative filename based upon the current working directory
+	 * or a specified one.
 	 */
-	public static string absolute_filename (string filename) {
+	public static string relative_filename (string rawTargetFilename, string rawReferenceFilename = Environment.get_current_dir()) { //May need to be replaced!
+		string targetFilename = rawTargetFilename.replace (GLib.Path.DIR_SEPARATOR_S, "/");
+		string referenceFilename = rawReferenceFilename.replace (GLib.Path.DIR_SEPARATOR_S, "/");
+		
+		string[] referenceDirectories = {};
+		string[] targetDirectories = {};
+		
+		string result = "";
+		
+		int startIndex = 0;
+		int endIndex = 0;
+		
+		if (!GLib.Path.is_absolute(targetFilename)) {
+			return rawTargetFilename;
+		}
+		
+		while (true) { //breaks
+			startIndex = endIndex + 1;
+			endIndex = referenceFilename.index_of ("/", startIndex);
+			if (endIndex == -1) {
+				break;
+			} else {
+				referenceDirectories += referenceFilename.slice (startIndex, endIndex);
+			}
+		}
+		
+		startIndex = 0;
+		endIndex = 0;
+		
+		while (true) { //breaks
+			startIndex = endIndex + 1;
+			endIndex = targetFilename.index_of ("/", startIndex);
+			if (endIndex == -1) {
+				break;
+			} else {
+				targetDirectories += targetFilename.slice (startIndex, endIndex);
+			}
+		}
+		
+		int commonCount;
+		
+		for (commonCount = 0; commonCount < referenceDirectories.length; commonCount++) {
+			if (referenceDirectories[commonCount] != targetDirectories[commonCount]) {
+				break;
+			}
+		}
+		
+		for (int i = commonCount; i < referenceDirectories.length; i++) {
+			result += "../"; //Is there a const for ".."?
+		}
+		
+		for (int i = commonCount; i < targetDirectories.length; i++) {
+			result += targetDirectories[i] + "/"; //Is there a const for ".."?
+		}
+		
+		result += GLib.Path.get_basename (targetFilename);
+		
+		return result;
+	}
+	
+	/**
+	 * Returns the absolute filename based upon the current working directory
+	 * or a specified one.
+	 */
+	public static string absolute_filename (string filename, string pwd = Environment.get_current_dir()) {
 		if (GLib.Path.is_absolute(filename) == true) {
 			return filename;
 		}
-		string pwd = Environment.get_current_dir ();
 		return GLib.Path.build_filename (pwd, filename);
 	}
 	
