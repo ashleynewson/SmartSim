@@ -296,6 +296,7 @@ clean:
 .PHONY : doc
 .PHONY : plugins
 .PHONY : plugin_altand
+.PHONY : plugin_gpiopin
 .PHONY : update_ccode
 
 

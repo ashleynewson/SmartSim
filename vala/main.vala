@@ -305,7 +305,39 @@ with SmartSim. If not, see:
 		if (GLib.Path.is_absolute(filename) == true) {
 			return filename;
 		}
-		return GLib.Path.build_filename (pwd, filename);
+		return reduce_filename (GLib.Path.build_filename(pwd, filename));
+	}
+	
+	/**
+	 * Simplifies a filename. For example, "./a/b\..\c/./d" would reduce to
+	 * "a/c/d"
+	 */
+	public static string reduce_filename (string rawFilename) {
+		string filename = rawFilename.replace(GLib.Path.DIR_SEPARATOR_S, "/");
+		string[] rawParts = filename.split("/");
+		string[] reducedParts = {};
+		
+		foreach (string part in rawParts) {
+			switch (part) {
+			case ".":
+				// Do nothing.
+				break;
+			case "..":
+				if (reducedParts.length == 0) {
+					reducedParts += "..";
+				} else if (reducedParts[reducedParts.length-1] == "..") {
+					reducedParts += "..";
+				} else {
+					reducedParts.length--;
+				}
+				break;
+			default:
+				reducedParts += part;
+				break;
+			}
+		}
+		
+		return string.joinv ("/", reducedParts);
 	}
 	
 	/**
