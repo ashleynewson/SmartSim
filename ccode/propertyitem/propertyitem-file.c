@@ -532,11 +532,11 @@ static void property_item_file_real_read_widget (PropertyItem* base, GtkWidget* 
 	if (_tmp0_ != NULL) {
 		GtkWidget* _tmp1_;
 		_tmp1_ = propertyWidget;
-		if (G_TYPE_CHECK_INSTANCE_TYPE (_tmp1_, GTK_TYPE_HBOX)) {
+		if (G_TYPE_CHECK_INSTANCE_TYPE (_tmp1_, GTK_TYPE_BOX)) {
 			GtkWidget* _tmp2_;
-			GtkHBox* _tmp3_;
-			GtkHBox* hBox;
-			GtkHBox* _tmp4_;
+			GtkBox* _tmp3_;
+			GtkBox* hBox;
+			GtkBox* _tmp4_;
 			GList* _tmp5_ = NULL;
 			GList* children;
 			GList* _tmp6_;
@@ -545,7 +545,7 @@ static void property_item_file_real_read_widget (PropertyItem* base, GtkWidget* 
 			GtkWidget* stringEntry;
 			GtkWidget* _tmp9_;
 			_tmp2_ = propertyWidget;
-			_tmp3_ = _g_object_ref0 (G_TYPE_CHECK_INSTANCE_TYPE (_tmp2_, GTK_TYPE_HBOX) ? ((GtkHBox*) _tmp2_) : NULL);
+			_tmp3_ = _g_object_ref0 (G_TYPE_CHECK_INSTANCE_TYPE (_tmp2_, GTK_TYPE_BOX) ? ((GtkBox*) _tmp2_) : NULL);
 			hBox = _tmp3_;
 			_tmp4_ = hBox;
 			_tmp5_ = gtk_container_get_children ((GtkContainer*) _tmp4_);
