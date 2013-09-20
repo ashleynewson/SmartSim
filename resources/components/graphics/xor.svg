@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -7,17 +9,43 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="55"
+   height="40"
+   id="svg5586"
    version="1.1"
-   viewBox="0 0 55 40"
-   preserveAspectRatio="xMidYMid"
-   id="svg2"
-   inkscape:version="0.48.1 r9760"
-   width="100%"
-   height="100%"
-   sodipodi:docname="xor.svg"
-   style="fill-rule:evenodd">
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="New document 18">
+  <defs
+     id="defs5588" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="15.839192"
+     inkscape:cx="15.262197"
+     inkscape:cy="19.496051"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:snap-global="true"
+     inkscape:window-width="1680"
+     inkscape:window-height="978"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid5605"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
   <metadata
-     id="metadata106">
+     id="metadata5591">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -28,128 +56,23 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <defs
-     id="defs104" />
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1280"
-     inkscape:window-height="723"
-     id="namedview102"
-     showgrid="false"
-     inkscape:zoom="3.6203867"
-     inkscape:cx="65.351577"
-     inkscape:cy="54.377085"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg2" />
   <g
-     visibility="visible"
-     id="Default"
-     style="visibility:visible"
-     transform="translate(0,-29660)">
-    <desc
-       id="desc5">Master slide</desc>
-    <g
-       style="fill:none;stroke:none"
-       id="g7">
-      <rect
-         x="0"
-         y="0"
-         width="21000"
-         height="29700"
-         id="rect9" />
-    </g>
-  </g>
-  <g
-     style="visibility:visible"
-     id="g66"
-     transform="matrix(0.01923077,0,0,0.01904762,-13.273821,-84.766)">
-    <desc
-       id="desc68">Drawing</desc>
-    <g
-       id="g70">
-      <g
-         style="fill:none;stroke:#000000;stroke-width:100;stroke-linejoin:round"
-         id="g72">
-        <path
-           style="fill:none"
-           d="m 1000,4500 c 1500,0 2000,500 2500,1000"
-           id="path74"
-           inkscape:connector-curvature="0" />
-      </g>
-      <g
-         id="g76" />
-    </g>
-  </g>
-  <g
-     style="visibility:visible"
-     id="g78"
-     transform="matrix(0.01923077,0,0,0.01904762,-13.273821,-84.766)">
-    <desc
-       id="desc80">Drawing</desc>
-    <g
-       id="g82">
-      <g
-         style="fill:none;stroke:#000000;stroke-width:100;stroke-linejoin:round"
-         id="g84">
-        <path
-           style="fill:none"
-           d="m 1000,6500 c 1500,0 2000,-500 2500,-1000"
-           id="path86"
-           inkscape:connector-curvature="0" />
-      </g>
-      <g
-         id="g88" />
-    </g>
-  </g>
-  <g
-     style="visibility:visible"
-     id="g90"
-     transform="matrix(0.01923077,0,0,0.01904762,-13.273821,-84.766)">
-    <desc
-       id="desc92">Drawing</desc>
-    <g
-       id="g94">
-      <g
-         style="fill:none;stroke:#000000;stroke-width:100;stroke-linejoin:round"
-         id="g96">
-        <path
-           style="fill:none"
-           d="m 1000,6500 c 1000,-1000 0,-2000 0,-2000"
-           id="path98"
-           inkscape:connector-curvature="0" />
-      </g>
-      <g
-         id="g100" />
-    </g>
-  </g>
-  <g
-     style="fill-rule:evenodd;visibility:visible"
-     id="g90-2"
-     transform="matrix(0.01923077,0,0,0.01904762,-18.273821,-84.766479)">
-    <desc
-       id="desc92-2">Drawing</desc>
-    <g
-       id="g94-0">
-      <g
-         style="fill:none;stroke:#000000;stroke-width:100;stroke-linejoin:round"
-         id="g96-2">
-        <path
-           style="fill:none"
-           d="m 1000,6500 c 1000,-1000 0,-2000 0,-2000"
-           id="path98-1"
-           inkscape:connector-curvature="0" />
-      </g>
-      <g
-         id="g100-7" />
-    </g>
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1012.3622)">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 5,1012.3622 c 30.000001,0 45.000001,15 50.000001,20 -5,5 -20,20 -50.000001,20 13.000001,-13 13.000001,-27 0,-40 z"
+       id="path5010"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 0,0 C 13,13 13,27 0,40"
+       id="path5632"
+       inkscape:connector-curvature="0"
+       transform="translate(0,1012.3622)"
+       sodipodi:nodetypes="cc" />
   </g>
 </svg>

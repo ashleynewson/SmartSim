@@ -132,7 +132,8 @@ public class MultiplexerComponentDef : ComponentDef {
 		context.line_to (componentInst.rightBound, componentInst.upBound + componentInst.rightBound);
 		context.line_to (componentInst.rightBound, componentInst.downBound - componentInst.rightBound);
 		context.line_to (componentInst.leftBound, componentInst.downBound);
-		context.line_to (componentInst.leftBound, componentInst.upBound);
+		context.close_path ();
+		// context.line_to (componentInst.leftBound, componentInst.upBound);
 		
 		context.stroke ();
 		

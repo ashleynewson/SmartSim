@@ -1234,14 +1234,10 @@ static void multiplexer_component_def_real_extra_render (ComponentDef* base, cai
 	ComponentInst* _tmp32_;
 	gint _tmp33_;
 	cairo_t* _tmp34_;
-	ComponentInst* _tmp35_;
-	gint _tmp36_;
-	ComponentInst* _tmp37_;
-	gint _tmp38_;
-	cairo_t* _tmp39_;
-	cairo_t* _tmp40_;
-	cairo_t* _tmp41_;
-	cairo_matrix_t _tmp42_;
+	cairo_t* _tmp35_;
+	cairo_t* _tmp36_;
+	cairo_t* _tmp37_;
+	cairo_matrix_t _tmp38_;
 	self = (MultiplexerComponentDef*) base;
 	g_return_if_fail (context != NULL);
 	_tmp0_ = componentInst;
@@ -1319,18 +1315,14 @@ static void multiplexer_component_def_real_extra_render (ComponentDef* base, cai
 	_tmp33_ = _tmp32_->downBound;
 	cairo_line_to (_tmp29_, (gdouble) _tmp31_, (gdouble) _tmp33_);
 	_tmp34_ = context;
-	_tmp35_ = componentInst;
-	_tmp36_ = _tmp35_->leftBound;
-	_tmp37_ = componentInst;
-	_tmp38_ = _tmp37_->upBound;
-	cairo_line_to (_tmp34_, (gdouble) _tmp36_, (gdouble) _tmp38_);
-	_tmp39_ = context;
-	cairo_stroke (_tmp39_);
-	_tmp40_ = context;
-	cairo_set_line_width (_tmp40_, (gdouble) 1);
-	_tmp41_ = context;
-	_tmp42_ = oldmatrix;
-	cairo_set_matrix (_tmp41_, &_tmp42_);
+	cairo_close_path (_tmp34_);
+	_tmp35_ = context;
+	cairo_stroke (_tmp35_);
+	_tmp36_ = context;
+	cairo_set_line_width (_tmp36_, (gdouble) 1);
+	_tmp37_ = context;
+	_tmp38_ = oldmatrix;
+	cairo_set_matrix (_tmp37_, &_tmp38_);
 }
 
 

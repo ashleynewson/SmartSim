@@ -189,7 +189,8 @@ public class Tag {
 				context.line_to (10,  10);
 				context.line_to (0, 0);
 				context.line_to (10, -10);
-				context.line_to (tagWidth + 10, -10);
+				// context.line_to (tagWidth + 10, -10);
+				context.close_path ();
 				context.stroke ();
 				if (direction == Direction.LEFT) {
 					context.rotate (Math.PI);
@@ -205,7 +206,8 @@ public class Tag {
 				context.line_to (tagWidth,  10);
 				context.line_to (tagWidth + 10, 0);
 				context.line_to (tagWidth, -10);
-				context.line_to (0, -10);
+				// context.line_to (0, -10);
+				context.close_path ();
 				context.stroke ();
 				if (direction == Direction.LEFT) {
 					context.rotate (Math.PI);
@@ -222,7 +224,8 @@ public class Tag {
 				context.line_to (tagWidth + 20, 0);
 				context.line_to (tagWidth + 10, -10);
 				context.line_to (10, -10);
-				context.line_to (0, 0);
+				// context.line_to (0, 0);
+				context.close_path ();
 				context.stroke ();
 				if (direction == Direction.LEFT) {
 					context.rotate (Math.PI);
