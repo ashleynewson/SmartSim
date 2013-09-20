@@ -126,8 +126,8 @@ public class PropertyItemFile : PropertyItem {
 	
 	public override void read_widget (Gtk.Widget propertyWidget) {
 		if (propertyWidget != null) {
-			if (propertyWidget is Gtk.HBox) {
-				Gtk.HBox hBox = (propertyWidget as Gtk.HBox);
+			if (propertyWidget is Gtk.Box) {
+				Gtk.Box hBox = (propertyWidget as Gtk.Box);
 				List<weak Gtk.Widget> children = hBox.get_children ();
 				
 				Gtk.Widget stringEntry = children.nth_data(0);
