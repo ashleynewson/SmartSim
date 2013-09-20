@@ -6,3 +6,4 @@ ccode/Makefile
 resource_tar/Makefile
 config.status
 config.log
+config.h
