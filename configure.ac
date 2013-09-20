@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([smartsim], [1.3.1], [ashleynewson@smartsim.org.uk])
+AC_INIT([smartsim], [1.3.2], [ashleynewson@smartsim.org.uk])
 AC_CONFIG_SRCDIR([config.h.in])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
