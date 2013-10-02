@@ -152,7 +152,8 @@ public class GpioPinPluginComponentState : ComponentState {
 	
 	private bool read_gpio () {
 		bool value = (valueFile.getc() == '1') ? true : false;
-		valueFile.rewind ();
+		valueFile.flush ();
+		valueFile.seek (0, FileSeek.SET);
 		return value;
 	}
 	
