@@ -231,13 +231,14 @@ public class DesignerWindow : Gtk.Window {
 	private Gtk.FileFilter anysspFileFilter;
 	private Gtk.FileFilter anysscFileFilter;
 	private Gtk.FileFilter anyssxFileFilter;
+	private Gtk.FileFilter sspFileFilter;
 	private Gtk.FileFilter sscFileFilter;
 	private Gtk.FileFilter sscxmlFileFilter;
 	private Gtk.FileFilter xmlFileFilter;
-//	private Gtk.FileFilter ssxFileFilter;
-//	private Gtk.FileFilter pngFileFilter;
-//	private Gtk.FileFilter pdfFileFilter;
-//	private Gtk.FileFilter svgFileFilter;
+	private Gtk.FileFilter ssxFileFilter;
+	private Gtk.FileFilter pngFileFilter;
+	private Gtk.FileFilter pdfFileFilter;
+	private Gtk.FileFilter svgFileFilter;
 	private Gtk.FileFilter anyFileFilter;
 	
 	private Gtk.PrintSettings printSettings;
@@ -979,6 +980,10 @@ public class DesignerWindow : Gtk.Window {
 		anysspFileFilter.set_filter_name("Any SmartSim Project Format (.ssp)");
 		anysspFileFilter.add_pattern("*.ssp");
 		
+		sspFileFilter = new Gtk.FileFilter();
+		sspFileFilter.set_filter_name("SmartSim Project Format (.ssp)");
+		sspFileFilter.add_pattern("*.ssp");
+		
 		anysscFileFilter = new Gtk.FileFilter();
 		anysscFileFilter.set_filter_name("Any SmartSim Component Format (.ssc, .ssc.xml, .xml)");
 		anysscFileFilter.add_pattern("*.ssc");
@@ -1001,26 +1006,24 @@ public class DesignerWindow : Gtk.Window {
 		anyssxFileFilter.set_filter_name("Any SmartSim Plugin Component (.ssx)");
 		anyssxFileFilter.add_pattern("*.ssx");
 		
-		// ssxFileFilter = new Gtk.FileFilter();
-		// ssxFileFilter.set_filter_name("SmartSim Plugin Component (.ssx)");
-		// ssxFileFilter.add_pattern("*.ssc");
+		ssxFileFilter = new Gtk.FileFilter();
+		ssxFileFilter.set_filter_name("SmartSim Plugin Component (.ssx)");
+		ssxFileFilter.add_pattern("*.ssx");
 		
-		/*
 		pngFileFilter = new Gtk.FileFilter();
-		pngFileFilter.set_name("Portable Network Graphic (.png)");
+		pngFileFilter.set_filter_name("Portable Network Graphic (.png)");
 		pngFileFilter.add_pattern("*.png");
 		
 		pdfFileFilter = new Gtk.FileFilter();
-		pdfFileFilter.set_name("Adobe Portable Document (.pdf)");
+		pdfFileFilter.set_filter_name("Adobe Portable Document (.pdf)");
 		pdfFileFilter.add_pattern("*.pdf");
 		
 		svgFileFilter = new Gtk.FileFilter();
-		svgFileFilter.set_name("Scalable Vector Graphic (.svg)");
+		svgFileFilter.set_filter_name("Scalable Vector Graphic (.svg)");
 		svgFileFilter.add_pattern("*.svg");
-		*/
 		
 		anyFileFilter = new Gtk.FileFilter();
-		anyFileFilter.set_name("Any File");
+		anyFileFilter.set_filter_name("Any File");
 		anyFileFilter.add_pattern("*");
 		
 		//Update window and custom component selections
@@ -1627,7 +1630,11 @@ public class DesignerWindow : Gtk.Window {
 			Gtk.ResponseType.ACCEPT);
 		
 		fileChooser.add_filter(anysscFileFilter);
-		add_filefilters (fileChooser);
+		fileChooser.add_filter(sscFileFilter);
+		fileChooser.add_filter(sscxmlFileFilter);
+		fileChooser.add_filter(xmlFileFilter);
+		fileChooser.add_filter(anyFileFilter);
+		// add_filefilters (fileChooser);
 		
 		if (fileChooser.run () == Gtk.ResponseType.ACCEPT) {
 			if (project.reopen_window_from_file(fileChooser.get_filename()) == 0) {
@@ -1662,6 +1669,8 @@ public class DesignerWindow : Gtk.Window {
 			Gtk.ResponseType.ACCEPT);
 		
 		fileChooser.add_filter(anyssxFileFilter);
+		fileChooser.add_filter(ssxFileFilter);
+		fileChooser.add_filter(anyFileFilter);
 		
 		if (fileChooser.run () == Gtk.ResponseType.ACCEPT) {
 			stdout.printf ("Load Plugin Component From: %s\n", fileChooser.get_filename());
@@ -1696,7 +1705,11 @@ public class DesignerWindow : Gtk.Window {
 				Gtk.Stock.SAVE,
 				Gtk.ResponseType.ACCEPT);
 			
-			add_filefilters (fileChooser);
+			// add_filefilters (fileChooser);
+			fileChooser.add_filter(sscFileFilter);
+			fileChooser.add_filter(sscxmlFileFilter);
+			fileChooser.add_filter(xmlFileFilter);
+			fileChooser.add_filter(anyFileFilter);
 			fileChooser.do_overwrite_confirmation = true;
 			
 			bool stillChoosing = true;
@@ -1750,6 +1763,8 @@ public class DesignerWindow : Gtk.Window {
 			Gtk.ResponseType.ACCEPT);
 		
 		fileChooser.add_filter(anysspFileFilter);
+		fileChooser.add_filter(sspFileFilter);
+		fileChooser.add_filter(anyFileFilter);
 		
 		if (fileChooser.run () == Gtk.ResponseType.ACCEPT) {
 			stdout.printf ("Load Project From: %s\n", fileChooser.get_filename());
@@ -1784,7 +1799,8 @@ public class DesignerWindow : Gtk.Window {
 				Gtk.Stock.SAVE,
 				Gtk.ResponseType.ACCEPT);
 			
-			fileChooser.add_filter(anysspFileFilter);
+			fileChooser.add_filter(sspFileFilter);
+			fileChooser.add_filter(anyFileFilter);
 			fileChooser.do_overwrite_confirmation = true;
 			
 			bool stillChoosing = true;
@@ -1825,12 +1841,14 @@ public class DesignerWindow : Gtk.Window {
 	/**
 	 * Sets file extension filter opens in component open/save dialogs.
 	 */
+	/*
 	private void add_filefilters (Gtk.FileChooser fileChooser) {
 		fileChooser.add_filter(sscFileFilter);
 		fileChooser.add_filter(sscxmlFileFilter);
 		fileChooser.add_filter(xmlFileFilter);
 		fileChooser.add_filter(anyFileFilter);
 	}
+	*/
 	
 	/**
 	 * Creates a new component in this window. Does not open a new
