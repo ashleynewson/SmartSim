@@ -31,8 +31,18 @@
 public class Customiser {
 	private Gtk.Dialog dialog;
 		private Gtk.Box layoutHBox;
-			private Gtk.EventBox controller;
-				private Gtk.DrawingArea display;
+			private Gtk.Box layoutVBox;
+				private Gtk.RadioToolButton hiddenRadioToolButton;
+				private Gtk.Toolbar toolbar;
+					private Gtk.RadioToolButton toolScroll;
+						private Gtk.Image toolScrollImage;
+					private Gtk.RadioToolButton toolZoom;
+						private Gtk.Image toolZoomImage;
+					private Gtk.SeparatorToolItem toolSeparator1;
+					private Gtk.RadioToolButton toolPin;
+						private Gtk.Image toolPinImage;
+				private Gtk.EventBox controller;
+					private Gtk.DrawingArea display;
 			private Gtk.Box controlsVBox;
 				private Gtk.Box nameHBox;
 					private Gtk.Entry nameEntry;
@@ -71,6 +81,38 @@ public class Customiser {
 		private Gtk.Button closeButton;
 	
 	private Cairo.Surface gridCache;
+	
+	/**
+	 * Actions to perform when the mouse button is released.
+	 */
+	private enum MouseMode {
+		SCROLL,
+		ZOOM,
+		PIN
+	}
+	/**
+	 * The size of a grid square. Affects snapping as well as the
+	 * displayed grid.
+	 */
+	public int gridSize = 5;
+	
+	/**
+	 * Where the user's view is centred around (x).
+	 */
+	private int xView = 0;
+	/**
+	 * Where the user's view is centred around (y).
+	 */
+	private int yView = 0;
+	/**
+	 * Magnification of the display.
+	 */
+	public float zoom = 1;
+	/**
+	 * Specifies the action to perform when the mouse button is
+	 * released.
+	 */
+	private MouseMode mouseMode = MouseMode.PIN;
 	
 	/**
 	 * The custom component being edited.
@@ -146,17 +188,54 @@ public class Customiser {
 		layoutHBox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 2);
 		content.pack_start (layoutHBox, true, true, 1);
 		
-			controller = new Gtk.EventBox ();
-			layoutHBox.pack_start (controller, true, true, 1);
-			controller.button_press_event.connect (mouse_down);
-			controller.button_release_event.connect (mouse_up);
+			layoutVBox = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
+			layoutHBox.pack_start (layoutVBox, true, true, 1);
+		
+				hiddenRadioToolButton = new Gtk.RadioToolButton (null);
+				
+				toolbar = new Gtk.Toolbar ();
+				toolbar.toolbar_style = Gtk.ToolbarStyle.ICONS;
+				layoutVBox.pack_start (toolbar, false, true, 0);
+					
+					toolScrollImage = new Gtk.Image.from_file (Config.resourcesDir + "images/toolbar/scroll.png");
+					toolScroll = new Gtk.RadioToolButton.from_widget (hiddenRadioToolButton);
+					toolScroll.set_label ("Scroll");
+					toolScroll.set_icon_widget (toolScrollImage);
+					toolbar.insert (toolScroll, -1);
+					toolScroll.set_tooltip_text ("Scroll: Move your view of the component with click and drag.");
+					toolScroll.clicked.connect (() => {mouseMode = MouseMode.SCROLL;});
+					
+					toolZoomImage = new Gtk.Image.from_file (Config.resourcesDir + "images/toolbar/zoom.png");
+					toolZoom = new Gtk.RadioToolButton.from_widget (hiddenRadioToolButton);
+					toolZoom.set_label ("Zoom");
+					toolZoom.set_icon_widget (toolZoomImage);
+					toolbar.insert (toolZoom, -1);
+					toolZoom.set_tooltip_text ("Zoom: Drag downward to zoom in or upward to zoom out.");
+					toolZoom.clicked.connect (() => {mouseMode = MouseMode.ZOOM;});
+					
+					toolSeparator1 = new Gtk.SeparatorToolItem ();
+					toolbar.insert (toolSeparator1, -1);
+					
+					toolPinImage = new Gtk.Image.from_file (Config.resourcesDir + "images/toolbar/pin.png");
+					toolPin = new Gtk.RadioToolButton.from_widget (hiddenRadioToolButton);
+					toolPin.set_label ("Pin");
+					toolPin.set_icon_widget (toolPinImage);
+					toolbar.insert (toolPin, -1);
+					toolPin.set_tooltip_text ("Pin: Click outside the component to position a pin.");
+					toolPin.clicked.connect (() => {mouseMode = MouseMode.PIN;});
+					toolPin.active = true;
 			
-				display = new Gtk.DrawingArea ();
-				controller.add (display);
-				// display.expose_event.connect (() => {render_def (); return false;});
-				display.draw.connect ((context) => {render_def (context); return false;});
-				display.configure_event.connect (() => {gridCache = null; render_def (); return false;});
-			
+				controller = new Gtk.EventBox ();
+				layoutVBox.pack_start (controller, true, true, 1);
+				controller.button_press_event.connect (mouse_down);
+				controller.button_release_event.connect (mouse_up);
+				
+					display = new Gtk.DrawingArea ();
+					controller.add (display);
+					// display.expose_event.connect (() => {render_def (); return false;});
+					display.draw.connect ((context) => {render_def (context); return false;});
+					display.configure_event.connect (() => {gridCache = null; render_def (); return false;});
+				
 			controlsVBox = new Gtk.Box (Gtk.Orientation.VERTICAL, 2);
 			layoutHBox.pack_start (controlsVBox, false, true, 1);
 			
@@ -334,8 +413,6 @@ public class Customiser {
 		int width = areaAllocation.width;
 		int height = areaAllocation.height;
 		
-		int halfGridSize = parent.gridSize / 2;
-		
 		int xCentre = width / 2;
 		int yCentre = height / 2;
 		int xStart = xMouseStart - xCentre;
@@ -343,26 +420,50 @@ public class Customiser {
 		int xEnd = (int)event.x - xCentre;
 		int yEnd = (int)event.y - yCentre;
 //		int xDiff = xEnd - xStart;
-//		int yDiff = yEnd - yStart;
+		int yDiff = yEnd - yStart;
 		
-		int xBoardStart = xStart;
-		int yBoardStart = yStart;
-		int xBoardEnd = xEnd;
-		int yBoardEnd = yEnd;
+//		int xBoardStart = xStart;
+//		int yBoardStart = yStart;
+//		int xBoardEnd = xEnd;
+//		int yBoardEnd = yEnd;
 		
-		xBoardStart += (xBoardStart > 0) ? halfGridSize : -halfGridSize;
-		yBoardStart += (yBoardStart > 0) ? halfGridSize : -halfGridSize;
-		xBoardStart = (xBoardStart / parent.gridSize) * parent.gridSize;
-		yBoardStart = (yBoardStart / parent.gridSize) * parent.gridSize;
-		xBoardEnd += (xBoardEnd > 0) ? halfGridSize : -halfGridSize;
-		yBoardEnd += (yBoardEnd > 0) ? halfGridSize : -halfGridSize;
-		xBoardEnd = (xBoardEnd / parent.gridSize) * parent.gridSize;
-		yBoardEnd = (yBoardEnd / parent.gridSize) * parent.gridSize;
+		int halfGridSize = gridSize / 2;
+		
+		int xBoardStart = (int)((float)xStart / zoom + (float)xView);
+		int yBoardStart = (int)((float)yStart / zoom + (float)yView);
+		int xBoardEnd = (int)((float)xEnd / zoom + (float)xView);
+		int yBoardEnd = (int)((float)yEnd / zoom + (float)yView);
+		
+		switch (mouseMode) {
+			case MouseMode.SCROLL:
+			case MouseMode.ZOOM:
+				break;
+			case MouseMode.PIN:
+				xBoardStart += (xBoardStart > 0) ? halfGridSize : -halfGridSize;
+				yBoardStart += (yBoardStart > 0) ? halfGridSize : -halfGridSize;
+				xBoardStart = (xBoardStart / gridSize) * gridSize;
+				yBoardStart = (yBoardStart / gridSize) * gridSize;
+				
+				xBoardEnd += (xBoardEnd > 0) ? halfGridSize : -halfGridSize;
+				yBoardEnd += (yBoardEnd > 0) ? halfGridSize : -halfGridSize;
+				xBoardEnd = (xBoardEnd / gridSize) * gridSize;
+				yBoardEnd = (yBoardEnd / gridSize) * gridSize;
+				break;
+		}
+		
+//		xBoardStart += (xBoardStart > 0) ? halfGridSize : -halfGridSize;
+//		yBoardStart += (yBoardStart > 0) ? halfGridSize : -halfGridSize;
+//		xBoardStart = (xBoardStart / parent.gridSize) * parent.gridSize;
+//		yBoardStart = (yBoardStart / parent.gridSize) * parent.gridSize;
+//		xBoardEnd += (xBoardEnd > 0) ? halfGridSize : -halfGridSize;
+//		yBoardEnd += (yBoardEnd > 0) ? halfGridSize : -halfGridSize;
+//		xBoardEnd = (xBoardEnd / parent.gridSize) * parent.gridSize;
+//		yBoardEnd = (yBoardEnd / parent.gridSize) * parent.gridSize;
 		
 		stdout.printf ("Customiser Interact @ %i, %i - %i, %i\n", xBoardStart, yBoardStart, xBoardEnd, yBoardEnd);
 		
-//		int xBoardDiff = xBoardEnd - xBoardStart;
-//		int yBoardDiff = yBoardEnd - yBoardStart;
+		int xBoardDiff = xBoardEnd - xBoardStart;
+		int yBoardDiff = yBoardEnd - yBoardStart;
 		
 //		int xBoardDiff = (int)((float)xDiff / zoom);
 //		int yBoardDiff = (int)((float)yDiff / zoom);
@@ -375,6 +476,9 @@ public class Customiser {
 //		y = yEnd;
 		
 //		int xDiffAbs = (xDiff > 0) ? xDiff : -xDiff;
+		int yDiffAbs = (yDiff > 0) ? yDiff : -yDiff;
+		
+//		int xDiffAbs = (xDiff > 0) ? xDiff : -xDiff;
 //		int yDiffAbs = (yDiff > 0) ? yDiff : -yDiff;
 //		int xBoardDiffAbs = (xBoardDiff > 0) ? xBoardDiff : -xBoardDiff;
 //		int yBoardDiffAbs = (yBoardDiff > 0) ? yBoardDiff : -yBoardDiff;
@@ -384,21 +488,38 @@ public class Customiser {
 		int leftBound = customComponentDef.leftBound;
 		int upBound = customComponentDef.upBound;
 		
-		if (upBound <= yBoardEnd && yBoardEnd <= downBound) {
-			if (xBoardEnd < leftBound) {
-				selectedPin.set_position (leftBound, yBoardEnd, leftBound - xBoardEnd, Direction.LEFT);
-			}
-			if (xBoardEnd > rightBound) {
-				selectedPin.set_position (rightBound, yBoardEnd, xBoardEnd - rightBound, Direction.RIGHT);
-			}
-		}
-		if (leftBound <= xBoardEnd && xBoardEnd <= rightBound) {
-			if (yBoardEnd < upBound) {
-				selectedPin.set_position (xBoardEnd, upBound, upBound - yBoardEnd, Direction.UP);
-			}
-			if (yBoardEnd > downBound) {
-				selectedPin.set_position (xBoardEnd, downBound, yBoardEnd - downBound, Direction.DOWN);
-			}
+		switch (mouseMode) {
+			case MouseMode.SCROLL:
+				xView -= xBoardDiff;
+				yView -= yBoardDiff;
+				gridCache = null;
+				break;
+			case MouseMode.ZOOM:
+				if (yDiff > 0) {
+					zoom *= 1.0f + ((float)yDiffAbs / (float)height);
+				} else {
+					zoom /= 1.0f + ((float)yDiffAbs / (float)height);
+				}
+				gridCache = null;
+				break;
+			case MouseMode.PIN:
+				if (upBound <= yBoardEnd && yBoardEnd <= downBound) {
+					if (xBoardEnd < leftBound) {
+						selectedPin.set_position (leftBound, yBoardEnd, leftBound - xBoardEnd, Direction.LEFT);
+					}
+					if (xBoardEnd > rightBound) {
+						selectedPin.set_position (rightBound, yBoardEnd, xBoardEnd - rightBound, Direction.RIGHT);
+					}
+				}
+				if (leftBound <= xBoardEnd && xBoardEnd <= rightBound) {
+					if (yBoardEnd < upBound) {
+						selectedPin.set_position (xBoardEnd, upBound, upBound - yBoardEnd, Direction.UP);
+					}
+					if (yBoardEnd > downBound) {
+						selectedPin.set_position (xBoardEnd, downBound, yBoardEnd - downBound, Direction.DOWN);
+					}
+				}
+				break;
 		}
 		
 		update_values ();
@@ -588,14 +709,16 @@ public class Customiser {
 				gridContext.set_source_rgb (1, 1, 1);
 				gridContext.paint ();
 				
-				float spacing = parent.gridSize;
+				float spacing = zoom * parent.gridSize;
 				
 				while (spacing < 2) {
 					spacing *= parent.gridSize;
 				}
 				
-				float y = ((height / 2)) % (spacing);
-				float x = ((width  / 2)) % (spacing);
+				float y = ((height / 2) - (float)yView * zoom) % (spacing);
+				float x = ((width  / 2) - (float)xView * zoom) % (spacing);
+				// float y = ((height / 2)) % (spacing);
+				// float x = ((width  / 2)) % (spacing);
 				
 				gridContext.set_source_rgba (0, 0, 0, 0.5);
 				
@@ -607,10 +730,16 @@ public class Customiser {
 					gridContext.stroke ();
 				}
 				
+				// x = (width / 2) - xView * zoom;
+				// y = (height / 2) - yView * zoom;
+				
 				spacing *= 4;
 				
-				y = ((height / 2)) % (spacing);
-				x = ((width  / 2)) % (spacing);
+				y = ((height / 2) - (float)yView * zoom) % (spacing);
+				x = ((width  / 2) - (float)xView * zoom) % (spacing);// - (spacing * (xView % 4));
+				
+				// y = ((height / 2)) % (spacing);
+				// x = ((width  / 2)) % (spacing);
 				
 				gridContext.set_source_rgba (0, 0, 0, 1.0);
 				
@@ -635,6 +764,8 @@ public class Customiser {
 		}
 		
 		context.translate (width / 2, height / 2);
+		context.scale (zoom, zoom);
+		context.translate (-xView, -yView);
 		
 		context.set_source_rgb (0, 0, 0);
 		

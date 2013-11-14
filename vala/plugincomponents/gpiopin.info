@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphic_info>
+	<name>GPIO Pin</name>
+	<description>Allows access to sysfs controllable GPIO hardware.</description>
+	<centre x="10" y="10" />
+	<size width="20" height="20" />
+</graphic_info>
+
