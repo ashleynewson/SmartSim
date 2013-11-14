@@ -2,7 +2,7 @@
 <plugin_component>
 	<name>GPIO Pin</name>
 	<description>Allows access to sysfs controllable GPIO hardware.</description>
-	<label>GPIO</label>
+	<graphic>gpiopin</graphic>
 	<library>gpiopin</library>
 	<bound right="10" down="10" left="-10" up="-10"/>
 	<pin x="10" y="0" direction="right" length="10" flow="bi"/>

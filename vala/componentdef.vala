@@ -225,7 +225,7 @@ public abstract class ComponentDef {
 					
 					this.graphicReferenceFilename = xmldata->content;
 					try {
-						this.graphic = new Graphic.from_file (Core.relative_filename(xmldata->content, infoFilename));
+						this.graphic = new Graphic.from_file (Core.absolute_filename(xmldata->content, GLib.Path.get_dirname(infoFilename)));
 					} catch {
 						try {
 							this.graphic = new Graphic.from_file (Config.resourcesDir + "components/graphics/" + xmldata->content);

@@ -27,8 +27,11 @@ public class ImageExporter {
 		
 		if (propertiesQuery.run() == Gtk.ResponseType.APPLY) {
 			Gtk.FileFilter pngFileFilter = new Gtk.FileFilter();
-			pngFileFilter.set_name("Portable Network Graphic (.png)");
+			pngFileFilter.set_filter_name("Portable Network Graphic (.png)");
 			pngFileFilter.add_pattern("*.png");
+			Gtk.FileFilter anyFileFilter = new Gtk.FileFilter();
+			anyFileFilter.set_filter_name("Any File");
+			anyFileFilter.add_pattern("*");
 			
 			Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog (
 				"Export to PNG",
@@ -40,6 +43,7 @@ public class ImageExporter {
 				Gtk.ResponseType.ACCEPT);
 			
 			fileChooser.add_filter (pngFileFilter);
+			fileChooser.add_filter (anyFileFilter);
 			fileChooser.do_overwrite_confirmation = true;
 			
 			bool stillChoosing = true;
@@ -89,8 +93,11 @@ public class ImageExporter {
 		string filename = "";
 		
 		Gtk.FileFilter pdfFileFilter = new Gtk.FileFilter();
-		pdfFileFilter.set_name("Portable Document Format (.pdf)");
+		pdfFileFilter.set_filter_name("Portable Document Format (.pdf)");
 		pdfFileFilter.add_pattern("*.pdf");
+		Gtk.FileFilter anyFileFilter = new Gtk.FileFilter();
+		anyFileFilter.set_filter_name("Any File");
+		anyFileFilter.add_pattern("*");
 		
 		Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog (
 			"Export to PDF",
@@ -102,6 +109,7 @@ public class ImageExporter {
 			Gtk.ResponseType.ACCEPT);
 		
 		fileChooser.add_filter (pdfFileFilter);
+		fileChooser.add_filter (anyFileFilter);
 		fileChooser.do_overwrite_confirmation = true;
 		
 		bool stillChoosing = true;
@@ -149,8 +157,11 @@ public class ImageExporter {
 		
 		if (propertiesQuery.run() == Gtk.ResponseType.APPLY) {
 			Gtk.FileFilter svgFileFilter = new Gtk.FileFilter();
-			svgFileFilter.set_name("Scalable Vector Graphic (.svg)");
+			svgFileFilter.set_filter_name("Scalable Vector Graphic (.svg)");
 			svgFileFilter.add_pattern("*.svg");
+			Gtk.FileFilter anyFileFilter = new Gtk.FileFilter();
+			anyFileFilter.set_filter_name("Any File");
+			anyFileFilter.add_pattern("*");
 			
 			Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog (
 				"Export to SVG",
@@ -162,6 +173,7 @@ public class ImageExporter {
 				Gtk.ResponseType.ACCEPT);
 			
 			fileChooser.add_filter (svgFileFilter);
+			fileChooser.add_filter (anyFileFilter);
 			fileChooser.do_overwrite_confirmation = true;
 			
 			bool stillChoosing = true;

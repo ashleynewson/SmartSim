@@ -128,14 +128,36 @@ with SmartSim. If not, see:
 	 * single DesignerWindow.
 	 */
 	public static int main (string[] args) {
+		string[] projectsToOpen = {};
+		
 		stdout.printf ("%s\n", Core.programName);
 		stdout.printf ("\t%s\n", Core.versionString);
 		stdout.printf ("Copyright: %s\n", Core.copyrightString);
 		stdout.printf ("License: %s\n", Core.licenseName);
 		
-		stdout.printf ("Loading System...\n");
-		
 		Core.fullLicenseText = Core.load_string_from_file ("COPYING");
+		
+		for (int i = 1; i < args.length; i++) {
+			string arg = args[i];
+			switch (arg) {
+			case "--version":
+				return 0;
+			case "--license":
+				stdout.printf ("%s\n", Core.licenseName);
+				stdout.printf ("%s\n", Core.fullLicenseText);
+				return 0;
+			default:
+				if (arg.substring(0, 2) == "--") {
+					stderr.printf ("Unrecognised command \"%s\".\n", arg);
+				} else {
+                    /* Assume it is a project file. */
+					projectsToOpen += arg;
+				}
+				break;
+			}
+		}
+		
+		stdout.printf ("Loading System...\n");
 		
 		Gtk.init (ref args);
 		
@@ -149,7 +171,13 @@ with SmartSim. If not, see:
 		stdout.printf ("Loading Components\n");
 		Core.load_standard_defs ();
 		
-		new DesignerWindow();
+		if (projectsToOpen.length == 0) {
+			new DesignerWindow();
+		} else {
+			foreach (string filename in projectsToOpen) {
+				new DesignerWindow.with_project_from_file (filename);
+			}
+		}
 		
 		stdout.printf ("Ready\n");
 		
