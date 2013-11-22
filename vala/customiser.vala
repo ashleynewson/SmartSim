@@ -404,8 +404,6 @@ public class Customiser {
 	/**
 	 * Signal handler for the Gtk.EventBox. Handles a mouse button up
 	 * event on the display area. This is when an action is taken.
-	 * 
-	 * Only changes the pins' positions.
 	 */
 	private bool mouse_up (Gdk.EventButton event) {
 		Gtk.Allocation areaAllocation;
@@ -503,20 +501,22 @@ public class Customiser {
 				gridCache = null;
 				break;
 			case MouseMode.PIN:
-				if (upBound <= yBoardEnd && yBoardEnd <= downBound) {
-					if (xBoardEnd < leftBound) {
-						selectedPin.set_position (leftBound, yBoardEnd, leftBound - xBoardEnd, Direction.LEFT);
+				if (selectedPin != null) {
+					if (upBound <= yBoardEnd && yBoardEnd <= downBound) {
+						if (xBoardEnd < leftBound) {
+							selectedPin.set_position (leftBound, yBoardEnd, leftBound - xBoardEnd, Direction.LEFT);
+						}
+						if (xBoardEnd > rightBound) {
+							selectedPin.set_position (rightBound, yBoardEnd, xBoardEnd - rightBound, Direction.RIGHT);
+						}
 					}
-					if (xBoardEnd > rightBound) {
-						selectedPin.set_position (rightBound, yBoardEnd, xBoardEnd - rightBound, Direction.RIGHT);
-					}
-				}
-				if (leftBound <= xBoardEnd && xBoardEnd <= rightBound) {
-					if (yBoardEnd < upBound) {
-						selectedPin.set_position (xBoardEnd, upBound, upBound - yBoardEnd, Direction.UP);
-					}
-					if (yBoardEnd > downBound) {
-						selectedPin.set_position (xBoardEnd, downBound, yBoardEnd - downBound, Direction.DOWN);
+					if (leftBound <= xBoardEnd && xBoardEnd <= rightBound) {
+						if (yBoardEnd < upBound) {
+							selectedPin.set_position (xBoardEnd, upBound, upBound - yBoardEnd, Direction.UP);
+						}
+						if (yBoardEnd > downBound) {
+							selectedPin.set_position (xBoardEnd, downBound, yBoardEnd - downBound, Direction.DOWN);
+						}
 					}
 				}
 				break;
