@@ -177,13 +177,13 @@ public class Graphic {
 	 * Renders the SVG, performing any necessary transformations.
 	 */
 	public void render (Cairo.Context context) {
-		Cairo.Matrix oldmatrix;
+		Cairo.Matrix oldMatrix;
 		
-		context.get_matrix (out oldmatrix);
+		oldMatrix = context.get_matrix ();
 		
 		context.translate (-xCentre, -yCentre);
 		svgHandle.render_cairo (context);
 		
-		context.set_matrix (oldmatrix);
+		context.set_matrix (oldMatrix);
 	}
 }

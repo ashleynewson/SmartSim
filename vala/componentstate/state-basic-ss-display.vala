@@ -59,9 +59,9 @@ public class BasicSsDisplayComponentState : ComponentState {
 	}
 	
 	public override void render (Cairo.Context context) {
-		Cairo.Matrix oldmatrix;
+		Cairo.Matrix oldMatrix;
 		
-		context.get_matrix (out oldmatrix);
+		oldMatrix = context.get_matrix ();
 		
 		double oldLineWidth = context.get_line_width ();
 		
@@ -91,7 +91,7 @@ public class BasicSsDisplayComponentState : ComponentState {
 		
 		if (input == -1) {
 			context.set_line_width (oldLineWidth);
-			context.set_matrix (oldmatrix);
+			context.set_matrix (oldMatrix);
 			return;
 		}
 		
@@ -177,7 +177,7 @@ public class BasicSsDisplayComponentState : ComponentState {
 		
 		context.set_line_width (oldLineWidth);
 		
-		context.set_matrix (oldmatrix);
+		context.set_matrix (oldMatrix);
 	}
 	
 	public override void update () {

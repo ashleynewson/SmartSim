@@ -326,9 +326,9 @@ public class PinInst {
 				context.set_source_rgb (1, 0, 0);
 			}
 			
-			Cairo.Matrix oldmatrix;
+			Cairo.Matrix oldMatrix;
 			
-			context.get_matrix (out oldmatrix);
+			oldMatrix = context.get_matrix ();
 			context.translate (x[i], y[i]);
 			
 			if (pinDef.direction != Direction.NONE) {
@@ -361,7 +361,7 @@ public class PinInst {
 				}
 			}
 			
-			context.set_matrix (oldmatrix);
+			context.set_matrix (oldMatrix);
 		}
 	}
 }

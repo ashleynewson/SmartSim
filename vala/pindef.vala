@@ -347,9 +347,9 @@ public class PinDef {
 	 * circle is displayed on the start of the pin.
 	 */
 	public void render (Cairo.Context context, bool invert) {
-		Cairo.Matrix oldmatrix;
+		Cairo.Matrix oldMatrix;
 		
-		context.get_matrix (out oldmatrix);
+		oldMatrix = context.get_matrix ();
 		context.translate (x, y);
 		
 		if (direction != Direction.NONE) {
@@ -388,6 +388,6 @@ public class PinDef {
 */
 		}
 		
-		context.set_matrix (oldmatrix);
+		context.set_matrix (oldMatrix);
 	}
 }

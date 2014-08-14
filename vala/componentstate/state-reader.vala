@@ -39,9 +39,9 @@ public class ReaderComponentState : ComponentState {
 	public override void render (Cairo.Context context) {
 		string text;
 		
-		Cairo.Matrix oldmatrix;
+		Cairo.Matrix oldMatrix;
 		
-		context.get_matrix (out oldmatrix);
+		oldMatrix = context.get_matrix ();
 		
 		context.translate (componentInst.xPosition, componentInst.yPosition);
 		
@@ -79,7 +79,7 @@ public class ReaderComponentState : ComponentState {
 		
 		context.show_text (text);
 		
-		context.set_matrix (oldmatrix);
+		context.set_matrix (oldMatrix);
 	}
 	
 	public override void update () {

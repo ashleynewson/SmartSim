@@ -92,3 +92,5 @@ smartsim_CFLAGS= \
 	$(LIBXML_CFLAGS) \
 	$(DEF_CFLAGS) \
 	$(NOTHING)
+
+SUBDIRS=plugincomponents

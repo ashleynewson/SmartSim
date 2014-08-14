@@ -5,6 +5,7 @@ AC_PREREQ([2.68])
 AC_INIT([smartsim], [1.4], [ashleynewson@smartsim.org.uk])
 AC_CONFIG_SRCDIR([config.h.in])
 AM_INIT_AUTOMAKE
+LT_INIT
 AC_CONFIG_HEADERS([config.h])
 
 
@@ -43,7 +44,15 @@ AC_CHECK_HEADERS([float.h stdlib.h string.h])
 # Checks for library functions.
 AC_CHECK_FUNCS([memset strstr])
 
+# Optional features
+AC_ARG_ENABLE([plugins],
+    AS_HELP_STRING([--enable-plugins], [Build plugin components]))
+# AS_IF([test "x$enable_plugins" = "xyes"], [
+# ])
+AM_CONDITIONAL([ENABLE_PLUGINS], [test "$enable_plugins" = "yes"])
+
 AC_CONFIG_FILES([Makefile
                  ccode/Makefile
+                 ccode/plugincomponents/Makefile
                  resources_tar/Makefile])
 AC_OUTPUT

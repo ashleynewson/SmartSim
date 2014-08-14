@@ -750,9 +750,9 @@ public class ComponentInst {
 	 * highlights the instance in red.
 	 */
 	public void render (Cairo.Context context, bool showHints = false, bool showErrors = false, bool colourBackgrounds = true) {
-		Cairo.Matrix oldmatrix;
+		Cairo.Matrix oldMatrix;
 		
-		context.get_matrix (out oldmatrix);
+		oldMatrix = context.get_matrix ();
 		
 		context.translate (xPosition, yPosition);
 		
@@ -821,7 +821,7 @@ public class ComponentInst {
 			context.set_source_rgba (0, 0, 0, 1);
 		}
 		
-		context.set_matrix (oldmatrix);
+		context.set_matrix (oldMatrix);
 	}
 	
 	~ComponentInst () {

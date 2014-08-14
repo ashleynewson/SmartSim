@@ -150,9 +150,9 @@ public class Tag {
 		context.line_to (xTag, yTag);
 		context.stroke ();
 		
-		Cairo.Matrix oldmatrix;
+		Cairo.Matrix oldMatrix;
 		
-		context.get_matrix (out oldmatrix);
+		oldMatrix = context.get_matrix ();
 		
 		context.translate (xTag, yTag);
 		
@@ -237,7 +237,7 @@ public class Tag {
 				break;
 		}
 		
-		context.set_matrix (oldmatrix);
+		context.set_matrix (oldMatrix);
 	}
 }
 

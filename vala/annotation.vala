@@ -203,9 +203,9 @@ public class Annotation {
 	 */
 	public void render (Cairo.Context context, bool showHints = false) {
 		Cairo.TextExtents textExtents;
-		Cairo.Matrix oldmatrix;
+		Cairo.Matrix oldMatrix;
 		
-		context.get_matrix (out oldmatrix);
+		oldMatrix = context.get_matrix ();
 		
 		context.translate (xPosition, yPosition);
 		
@@ -231,6 +231,6 @@ public class Annotation {
 		context.show_text (text);
 		context.stroke ();
 		
-		context.set_matrix (oldmatrix);
+		context.set_matrix (oldMatrix);
 	}
 }

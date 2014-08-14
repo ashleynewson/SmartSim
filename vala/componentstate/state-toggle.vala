@@ -45,9 +45,9 @@ public class ToggleComponentState : ComponentState {
 	public override void render (Cairo.Context context) {
 		string text;
 		
-		Cairo.Matrix oldmatrix;
+		Cairo.Matrix oldMatrix;
 		
-		context.get_matrix (out oldmatrix);
+		oldMatrix = context.get_matrix ();
 		
 		context.translate (componentInst.xPosition, componentInst.yPosition);
 		
@@ -77,7 +77,7 @@ public class ToggleComponentState : ComponentState {
 		context.move_to (-textExtents.width/2, +textExtents.height/2);
 		context.show_text (text);
 		
-		context.set_matrix (oldmatrix);
+		context.set_matrix (oldMatrix);
 	}
 	
 	public override void update () {

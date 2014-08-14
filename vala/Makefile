@@ -104,6 +104,8 @@ C_FILES= \
 	$(C_FILES_ROOT) \
 	$(C_FILES_COMPONENTDEF) \
 	$(C_FILES_COMPONENTSTATE) \
+	$(C_FILES_PLUGINDEF) \
+	$(C_FILES_PLUGINSTATE) \
 	$(C_FILES_PROPERTYITEM) \
 	$(NOTHING)
 
@@ -176,7 +178,9 @@ SOURCE_FILES= \
 PLUGIN_COMMON_CFLAGS= \
 	-I/usr/include/glib-2.0 \
 	-I/usr/lib/i386-linux-gnu/glib-2.0/include \
-	`pkg-config --cflags glib-2.0 gtk+-3.0 cairo librsvg-2.0 libxml-2.0 gmodule-2.0`
+	`pkg-config --cflags glib-2.0 gtk+-3.0 cairo librsvg-2.0 libxml-2.0 gmodule-2.0` \
+	$(NOTHING)
+
 PLUGIN_COMMON_LIBS= \
 	`pkg-config --libs glib-2.0 gtk+-3.0 cairo librsvg-2.0 libxml-2.0 gmodule-2.0` \
 	$(NOTHING)
@@ -184,7 +188,7 @@ PLUGIN_COMMON_LIBS= \
 PLUGIN_OUTPUT_PREFIX= "plugincomponents/lib"
 PLUGIN_OUTPUT_SUFFIX= ".so"
 
-# Plugin AltAnd
+# Plugin AltAnd (unused)
 
 PLUGIN_ALTAND_C_FILES= \
 	plugincomponents/plugin-def-altand.c \
@@ -201,7 +205,7 @@ PLUGIN_ALTAND_LIBS=
 
 PLUGIN_ALTAND_OUTPUT_NAME= $(PLUGIN_OUTPUT_PREFIX)"altand"$(PLUGIN_OUTPUT_SUFFIX)
 
-# Plugin GPIO
+# Plugin GPIO Pin
 
 PLUGIN_GPIOPIN_C_FILES= \
 	plugincomponents/plugin-def-gpiopin.c \
@@ -217,6 +221,16 @@ PLUGIN_GPIOPIN_CFLAGS=
 PLUGIN_GPIOPIN_LIBS=
 
 PLUGIN_GPIOPIN_OUTPUT_NAME= $(PLUGIN_OUTPUT_PREFIX)"gpiopin"$(PLUGIN_OUTPUT_SUFFIX)
+
+# Combine
+
+PLUGIN_SOURCE_FILES= \
+	$(PLUGIN_GPIOPIN_SOURCE_FILES) \
+	$(NOTHING)
+
+PLUGIN_C_FILES= \
+	$(PLUGIN_GPIOPIN_C_FILES) \
+	$(NOTHING)
 
 # End plugins
 
@@ -239,8 +253,6 @@ all: native plugins
 native:
 	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -o smartsim --verbose $(VALA_PACKAGES)
 
-plugins: plugin_altand plugin_gpiopin
-
 plugin_altand:
 	$(VALAC) $(SOURCE_FILES) $(PLUGIN_ALTAND_SOURCE_FILES) $(CONFIG_FILES) -C --verbose $(VALA_PACKAGES)
 	$(CC) -shared -fPIC $(PLUGIN_COMMON_CFLAGS) $(PLUGIN_COMMON_LIBS) $(PLUGIN_ALTAND_CFLAGS) $(PLUGIN_ALTAND_LIBS) -o $(PLUGIN_ALTAND_OUTPUT_NAME) $(PLUGIN_ALTAND_C_FILES)
@@ -259,11 +271,18 @@ debug:
 cfiles:
 	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -C --verbose $(VALA_PACKAGES)
 
+plugins_cfiles:
+	$(VALAC) $(SOURCE_FILES) $(PLUGIN_SOURCE_FILES) $(CONFIG_FILES) -C --verbose $(VALA_PACKAGES)
+
+plugins: plugins_cfiles
+	$(CC) -shared -fPIC $(PLUGIN_COMMON_CFLAGS) $(PLUGIN_COMMON_LIBS) $(PLUGIN_GPIOPIN_CFLAGS) $(PLUGIN_GPIOPIN_LIBS) -o $(PLUGIN_GPIOPIN_OUTPUT_NAME) $(PLUGIN_GPIOPIN_C_FILES)
+
 update_ccode: cfiles
 	mv $(C_FILES_ROOT) ../ccode/
 	mv $(C_FILES_COMPONENTDEF) ../ccode/componentdef/
 	mv $(C_FILES_COMPONENTSTATE) ../ccode/componentstate/
 	mv $(C_FILES_PROPERTYITEM) ../ccode/propertyitem/
+	-mv $(PLUGIN_C_FILES) ../ccode/plugincomponents/
 
 win32: cfiles
 	$(WINCC) -I./ -o smartsim.exe c/*.c c/componentdef/*.c c/componentstate/*.c c/propertyitem/*.c -mms-bitfields $(WINCC_PATH_FLAGS) -lgtk-win32-2.0 -latk-1.0 -lgdk-win32-2.0 -lpangowin32-1.0 -lgdi32 -lpangocairo-1.0 -lpango-1.0 -lrsvg-2 -lm -lgio-2.0 -lgdk_pixbuf-2.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lglib-2.0 -lintl -llibxml2
@@ -282,6 +301,7 @@ clean:
 	-rm smartsim
 	-rm smartsim.exe
 	-rm $(C_FILES)
+	-rm $(PLUGIN_C_FILES)
 
 
 
@@ -295,6 +315,7 @@ clean:
 .PHONY : debug
 .PHONY : doc
 .PHONY : plugins
+.PHONY : plugins_cfiles
 .PHONY : plugin_altand
 .PHONY : plugin_gpiopin
 .PHONY : update_ccode

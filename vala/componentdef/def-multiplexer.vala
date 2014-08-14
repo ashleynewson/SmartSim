@@ -94,13 +94,13 @@ public class MultiplexerComponentDef : ComponentDef {
 	}
 	
 	public override void extra_render (Cairo.Context context, Direction direction, bool flipped, ComponentInst? componentInst) {
-		Cairo.Matrix oldmatrix;
+		Cairo.Matrix oldMatrix;
 		
 		if (componentInst == null) {
 			return;
 		}
 		
-		context.get_matrix (out oldmatrix);
+		oldMatrix = context.get_matrix ();
 		
 		double angle = 0;
 		
@@ -139,6 +139,6 @@ public class MultiplexerComponentDef : ComponentDef {
 		
 		context.set_line_width (1);
 		
-		context.set_matrix (oldmatrix);
+		context.set_matrix (oldMatrix);
 	}
 }

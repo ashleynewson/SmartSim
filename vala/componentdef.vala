@@ -318,9 +318,9 @@ public abstract class ComponentDef {
 	 */
 	public void render (Cairo.Context context, Direction direction = Direction.RIGHT, bool flipped = false, ComponentInst? componentInst = null, bool colourBackground = true) {
 		if (graphic != null) {
-			Cairo.Matrix oldmatrix;
+			Cairo.Matrix oldMatrix;
 			
-			context.get_matrix (out oldmatrix);
+			oldMatrix = context.get_matrix ();
 			
 			double angle = 0;
 			
@@ -346,7 +346,7 @@ public abstract class ComponentDef {
 			
 			graphic.render (context);
 			
-			context.set_matrix (oldmatrix);
+			context.set_matrix (oldMatrix);
 		} else {
 			render_box (context, direction, flipped, colourBackground, componentInst);
 		}
@@ -358,8 +358,8 @@ public abstract class ComponentDef {
 	 * Renders the box diagram. Used when there is no graphic.
 	 */
 	public void render_box (Cairo.Context context, Direction direction, bool flipped, bool colourBackground, ComponentInst? componentInst) {
-		Cairo.Matrix oldmatrix;
-		Cairo.Matrix oldmatrix2;
+		Cairo.Matrix oldMatrix;
+		Cairo.Matrix oldMatrix2;
 		Cairo.TextExtents textExtents;
 		
 		int rightBound;
@@ -379,7 +379,7 @@ public abstract class ComponentDef {
 			upBound = componentInst.upBound;
 		}
 		
-		context.get_matrix (out oldmatrix);
+		oldMatrix = context.get_matrix ();
 		
 		context.set_source_rgba (0, 0, 0, 1);
 		
@@ -436,15 +436,15 @@ public abstract class ComponentDef {
 			}
 		}
 		
-		context.get_matrix (out oldmatrix2);
-		context.set_matrix (oldmatrix);
+		oldMatrix2 = context.get_matrix ();
+		context.set_matrix (oldMatrix);
 		
 		context.set_font_size (16);
 		context.text_extents (label, out textExtents);
 		context.move_to (-textExtents.width/2, +textExtents.height/2);
 		context.show_text (label);
 		
-		context.set_matrix (oldmatrix2);
+		context.set_matrix (oldMatrix2);
 		
 		context.set_line_width (1);
 		
@@ -462,7 +462,7 @@ public abstract class ComponentDef {
 			switch (pinDef.labelType) {
 			case PinDef.LabelType.TEXT:
 			case PinDef.LabelType.TEXTBAR:
-				context.get_matrix (out oldmatrix2);
+				oldMatrix2 = context.get_matrix ();
 					
 				if (componentInst == null) {
 					context.translate (pinDef.xLabel, pinDef.yLabel);
@@ -485,10 +485,10 @@ public abstract class ComponentDef {
 					context.stroke ();
 				}
 					
-				context.set_matrix (oldmatrix2);
+				context.set_matrix (oldMatrix2);
 				break;
 			case PinDef.LabelType.CLOCK:
-				context.get_matrix (out oldmatrix2);
+				oldMatrix2 = context.get_matrix ();
 					
 				if (componentInst == null) {
 					context.translate (pinDef.x, pinDef.y);
@@ -519,12 +519,12 @@ public abstract class ComponentDef {
 				context.line_to (0,  6);
 				context.stroke ();
 					
-				context.set_matrix (oldmatrix2);
+				context.set_matrix (oldMatrix2);
 				break;
 			}
 		}
 		
-		context.set_matrix (oldmatrix);
+		context.set_matrix (oldMatrix);
 	}
 	
 	/**

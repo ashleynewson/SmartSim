@@ -553,7 +553,7 @@ public class TimingDiagram : Gtk.Window {
 		
 		Cairo.Matrix oldMatrix;
 		Cairo.TextExtents textExtents;
-		context.get_matrix (out oldMatrix);
+		oldMatrix = context.get_matrix ();
 		context.translate (10, yZoom * 1.2 - yView + 20);
 		
 		foreach (string label in labels) {
@@ -581,7 +581,7 @@ public class TimingDiagram : Gtk.Window {
 	
 	public void render_graphs (Cairo.Context context, bool fullRender, int width, int largestLength) {
 		Cairo.Matrix oldMatrix;
-		context.get_matrix (out oldMatrix);
+		oldMatrix = context.get_matrix ();
 		
 		context.translate (largestLength + 20 - ((float)xView * xZoom), yZoom * 1.2 - yView + 20);
 		int xLimit = (int)((float)(width - (largestLength + 20) + xView) / xZoom);

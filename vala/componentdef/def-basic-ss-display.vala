@@ -169,9 +169,9 @@ public class BasicSsDisplayComponentDef : ComponentDef {
 	}
 	
 	public override void extra_render (Cairo.Context context, Direction direction, bool flipped, ComponentInst? componentInst) {
-		Cairo.Matrix oldmatrix;
+		Cairo.Matrix oldMatrix;
 		
-		context.get_matrix (out oldmatrix);
+		oldMatrix = context.get_matrix ();
 		
 		double oldLineWidth = context.get_line_width ();
 		
@@ -241,6 +241,6 @@ public class BasicSsDisplayComponentDef : ComponentDef {
 		
 		context.set_line_width (oldLineWidth);
 		
-		context.set_matrix (oldmatrix);
+		context.set_matrix (oldMatrix);
 	}
 }
