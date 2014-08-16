@@ -92,20 +92,21 @@ am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 @ENABLE_PLUGINS_TRUE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
-@ENABLE_PLUGINS_TRUE@gpiopin_la_DEPENDENCIES = $(am__DEPENDENCIES_2) \
+@ENABLE_PLUGINS_TRUE@libgpiopin_la_DEPENDENCIES =  \
+@ENABLE_PLUGINS_TRUE@	$(am__DEPENDENCIES_2) \
 @ENABLE_PLUGINS_TRUE@	$(am__DEPENDENCIES_1)
-am__gpiopin_la_SOURCES_DIST = plugin-def-gpiopin.c \
+am__libgpiopin_la_SOURCES_DIST = plugin-def-gpiopin.c \
 	plugin-state-gpiopin.c
 am__objects_1 =
-@ENABLE_PLUGINS_TRUE@am_gpiopin_la_OBJECTS =  \
-@ENABLE_PLUGINS_TRUE@	gpiopin_la-plugin-def-gpiopin.lo \
-@ENABLE_PLUGINS_TRUE@	gpiopin_la-plugin-state-gpiopin.lo \
+@ENABLE_PLUGINS_TRUE@am_libgpiopin_la_OBJECTS =  \
+@ENABLE_PLUGINS_TRUE@	libgpiopin_la-plugin-def-gpiopin.lo \
+@ENABLE_PLUGINS_TRUE@	libgpiopin_la-plugin-state-gpiopin.lo \
 @ENABLE_PLUGINS_TRUE@	$(am__objects_1)
-gpiopin_la_OBJECTS = $(am_gpiopin_la_OBJECTS)
-gpiopin_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(gpiopin_la_CFLAGS) \
-	$(CFLAGS) $(gpiopin_la_LDFLAGS) $(LDFLAGS) -o $@
-@ENABLE_PLUGINS_TRUE@am_gpiopin_la_rpath = -rpath $(pkglibdir)
+libgpiopin_la_OBJECTS = $(am_libgpiopin_la_OBJECTS)
+libgpiopin_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libgpiopin_la_CFLAGS) \
+	$(CFLAGS) $(libgpiopin_la_LDFLAGS) $(LDFLAGS) -o $@
+@ENABLE_PLUGINS_TRUE@am_libgpiopin_la_rpath = -rpath $(pkglibdir)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -119,8 +120,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(gpiopin_la_SOURCES)
-DIST_SOURCES = $(am__gpiopin_la_SOURCES_DIST)
+SOURCES = $(libgpiopin_la_SOURCES)
+DIST_SOURCES = $(am__libgpiopin_la_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -258,7 +259,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 NOTHING = 
-@ENABLE_PLUGINS_TRUE@pkglib_LTLIBRARIES = gpiopin.la
+@ENABLE_PLUGINS_TRUE@pkglib_LTLIBRARIES = libgpiopin.la
 @ENABLE_PLUGINS_TRUE@plugin_LIBADD = \
 @ENABLE_PLUGINS_TRUE@	$(NOTHING)
 
@@ -275,20 +276,20 @@ NOTHING =
 @ENABLE_PLUGINS_TRUE@	-module \
 @ENABLE_PLUGINS_TRUE@	$(NOTHING)
 
-@ENABLE_PLUGINS_TRUE@gpiopin_la_SOURCES = \
+@ENABLE_PLUGINS_TRUE@libgpiopin_la_SOURCES = \
 @ENABLE_PLUGINS_TRUE@	plugin-def-gpiopin.c \
 @ENABLE_PLUGINS_TRUE@	plugin-state-gpiopin.c \
 @ENABLE_PLUGINS_TRUE@	$(NOTHING)
 
-@ENABLE_PLUGINS_TRUE@gpiopin_la_LIBADD = \
+@ENABLE_PLUGINS_TRUE@libgpiopin_la_LIBADD = \
 @ENABLE_PLUGINS_TRUE@	$(plugin_LIBADD) \
 @ENABLE_PLUGINS_TRUE@	$(NOTHING)
 
-@ENABLE_PLUGINS_TRUE@gpiopin_la_CFLAGS = \
+@ENABLE_PLUGINS_TRUE@libgpiopin_la_CFLAGS = \
 @ENABLE_PLUGINS_TRUE@	$(plugin_CFLAGS) \
 @ENABLE_PLUGINS_TRUE@	$(NOTHING)
 
-@ENABLE_PLUGINS_TRUE@gpiopin_la_LDFLAGS = \
+@ENABLE_PLUGINS_TRUE@libgpiopin_la_LDFLAGS = \
 @ENABLE_PLUGINS_TRUE@	$(plugin_LDFLAGS) \
 @ENABLE_PLUGINS_TRUE@	$(NOTHING)
 
@@ -358,8 +359,8 @@ clean-pkglibLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-gpiopin.la: $(gpiopin_la_OBJECTS) $(gpiopin_la_DEPENDENCIES) $(EXTRA_gpiopin_la_DEPENDENCIES) 
-	$(gpiopin_la_LINK) $(am_gpiopin_la_rpath) $(gpiopin_la_OBJECTS) $(gpiopin_la_LIBADD) $(LIBS)
+libgpiopin.la: $(libgpiopin_la_OBJECTS) $(libgpiopin_la_DEPENDENCIES) $(EXTRA_libgpiopin_la_DEPENDENCIES) 
+	$(libgpiopin_la_LINK) $(am_libgpiopin_la_rpath) $(libgpiopin_la_OBJECTS) $(libgpiopin_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -367,8 +368,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpiopin_la-plugin-def-gpiopin.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpiopin_la-plugin-state-gpiopin.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgpiopin_la-plugin-def-gpiopin.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgpiopin_la-plugin-state-gpiopin.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -391,19 +392,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-gpiopin_la-plugin-def-gpiopin.lo: plugin-def-gpiopin.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gpiopin_la_CFLAGS) $(CFLAGS) -MT gpiopin_la-plugin-def-gpiopin.lo -MD -MP -MF $(DEPDIR)/gpiopin_la-plugin-def-gpiopin.Tpo -c -o gpiopin_la-plugin-def-gpiopin.lo `test -f 'plugin-def-gpiopin.c' || echo '$(srcdir)/'`plugin-def-gpiopin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gpiopin_la-plugin-def-gpiopin.Tpo $(DEPDIR)/gpiopin_la-plugin-def-gpiopin.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='plugin-def-gpiopin.c' object='gpiopin_la-plugin-def-gpiopin.lo' libtool=yes @AMDEPBACKSLASH@
+libgpiopin_la-plugin-def-gpiopin.lo: plugin-def-gpiopin.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgpiopin_la_CFLAGS) $(CFLAGS) -MT libgpiopin_la-plugin-def-gpiopin.lo -MD -MP -MF $(DEPDIR)/libgpiopin_la-plugin-def-gpiopin.Tpo -c -o libgpiopin_la-plugin-def-gpiopin.lo `test -f 'plugin-def-gpiopin.c' || echo '$(srcdir)/'`plugin-def-gpiopin.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgpiopin_la-plugin-def-gpiopin.Tpo $(DEPDIR)/libgpiopin_la-plugin-def-gpiopin.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='plugin-def-gpiopin.c' object='libgpiopin_la-plugin-def-gpiopin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gpiopin_la_CFLAGS) $(CFLAGS) -c -o gpiopin_la-plugin-def-gpiopin.lo `test -f 'plugin-def-gpiopin.c' || echo '$(srcdir)/'`plugin-def-gpiopin.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgpiopin_la_CFLAGS) $(CFLAGS) -c -o libgpiopin_la-plugin-def-gpiopin.lo `test -f 'plugin-def-gpiopin.c' || echo '$(srcdir)/'`plugin-def-gpiopin.c
 
-gpiopin_la-plugin-state-gpiopin.lo: plugin-state-gpiopin.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gpiopin_la_CFLAGS) $(CFLAGS) -MT gpiopin_la-plugin-state-gpiopin.lo -MD -MP -MF $(DEPDIR)/gpiopin_la-plugin-state-gpiopin.Tpo -c -o gpiopin_la-plugin-state-gpiopin.lo `test -f 'plugin-state-gpiopin.c' || echo '$(srcdir)/'`plugin-state-gpiopin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gpiopin_la-plugin-state-gpiopin.Tpo $(DEPDIR)/gpiopin_la-plugin-state-gpiopin.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='plugin-state-gpiopin.c' object='gpiopin_la-plugin-state-gpiopin.lo' libtool=yes @AMDEPBACKSLASH@
+libgpiopin_la-plugin-state-gpiopin.lo: plugin-state-gpiopin.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgpiopin_la_CFLAGS) $(CFLAGS) -MT libgpiopin_la-plugin-state-gpiopin.lo -MD -MP -MF $(DEPDIR)/libgpiopin_la-plugin-state-gpiopin.Tpo -c -o libgpiopin_la-plugin-state-gpiopin.lo `test -f 'plugin-state-gpiopin.c' || echo '$(srcdir)/'`plugin-state-gpiopin.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgpiopin_la-plugin-state-gpiopin.Tpo $(DEPDIR)/libgpiopin_la-plugin-state-gpiopin.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='plugin-state-gpiopin.c' object='libgpiopin_la-plugin-state-gpiopin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gpiopin_la_CFLAGS) $(CFLAGS) -c -o gpiopin_la-plugin-state-gpiopin.lo `test -f 'plugin-state-gpiopin.c' || echo '$(srcdir)/'`plugin-state-gpiopin.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgpiopin_la_CFLAGS) $(CFLAGS) -c -o libgpiopin_la-plugin-state-gpiopin.lo `test -f 'plugin-state-gpiopin.c' || echo '$(srcdir)/'`plugin-state-gpiopin.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

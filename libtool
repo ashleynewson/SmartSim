@@ -1,8 +1,8 @@
-#! /bin/sh
+#! /bin/bash
 
 # libtool - Provide generalized library-building support services.
-# Generated automatically by config.status (smartsim) 1.4
-# Libtool was configured on host ashley-gentoo-laptop:
+# Generated automatically by config.status (smartsim) 1.4.1
+# Libtool was configured on host ashley-raspberrypi:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 #
 #   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005,
@@ -53,10 +53,10 @@ build_old_libs=yes
 pic_mode=default
 
 # Whether or not to optimize for fast installation.
-fast_install=needless
+fast_install=yes
 
 # Shell to use when invoking shell scripts.
-SHELL="/bin/sh"
+SHELL="/bin/bash"
 
 # An echo program that protects backslashes.
 ECHO="printf %s\\n"
@@ -66,13 +66,13 @@ PATH_SEPARATOR=":"
 
 # The host system.
 host_alias=
-host=x86_64-unknown-linux-gnu
-host_os=linux-gnu
+host=armv6l-unknown-linux-gnueabihf
+host_os=linux-gnueabihf
 
 # The build system.
 build_alias=
-build=x86_64-unknown-linux-gnu
-build_os=linux-gnu
+build=armv6l-unknown-linux-gnueabihf
+build_os=linux-gnueabihf
 
 # A sed program that does not truncate output.
 SED="/bin/sed"
@@ -240,7 +240,7 @@ runpath_var=LD_RUN_PATH
 shlibpath_var=LD_LIBRARY_PATH
 
 # Is shlibpath searched before the hard-coded library search path?
-shlibpath_overrides_runpath=yes
+shlibpath_overrides_runpath=no
 
 # Format of library name prefix.
 libname_spec="lib\$name"
@@ -272,10 +272,10 @@ finish_eval=""
 hardcode_into_libs=yes
 
 # Compile-time system search path for libraries.
-sys_lib_search_path_spec="/usr/lib/gcc/x86_64-pc-linux-gnu/4.7.3 /usr/lib64 /lib64 /usr/x86_64-pc-linux-gnu/lib "
+sys_lib_search_path_spec="/usr/lib/gcc/arm-linux-gnueabihf/4.6 /usr/lib/arm-linux-gnueabihf /usr/lib /lib/arm-linux-gnueabihf /lib "
 
 # Run-time system search path for libraries.
-sys_lib_dlsearch_path_spec="/lib /usr/lib /lib64 /usr/lib64 /usr/local/lib64 /lib32 /usr/lib32 /usr/local/lib32 /lib /usr/lib /usr/local/lib /usr/lib/gcc/x86_64-pc-linux-gnu/4.7.3/32 /usr/lib/gcc/x86_64-pc-linux-gnu/4.7.3 /usr/lib32/OpenCL/vendors/nvidia /usr/lib64/OpenCL/vendors/nvidia /usr/lib32/opengl/xorg-x11/lib /usr/lib64/opengl/xorg-x11/lib /usr/lib64/qt4 /usr/lib32/qt4 /usr/lib/qt4 /usr/lib64/sidplay/builders /usr/lib/sidplay/builders /usr/games/lib64 /usr/games/lib32 /usr/games/lib "
+sys_lib_dlsearch_path_spec="/lib /usr/lib /opt/vc/lib /lib/arm-linux-gnueabihf /usr/lib/arm-linux-gnueabihf /usr/local/lib "
 
 # Whether dlopen is supported.
 dlopen_support=unknown
@@ -292,7 +292,7 @@ striplib="strip --strip-unneeded"
 
 
 # The linker used to build libraries.
-LD="/usr/x86_64-pc-linux-gnu/bin/ld -m elf_x86_64"
+LD="/usr/bin/ld"
 
 # How to create reloadable object files.
 reload_flag=" -r"

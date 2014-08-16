@@ -4,7 +4,7 @@ if ENABLE_PLUGINS
 
 
 
-pkglib_LTLIBRARIES=gpiopin.la
+pkglib_LTLIBRARIES=libgpiopin.la
 
 plugin_LIBADD= \
 	$(NOTHING)
@@ -20,18 +20,18 @@ plugin_LDFLAGS= \
 	-module \
 	$(NOTHING)
 
-gpiopin_la_SOURCES= \
+libgpiopin_la_SOURCES= \
 	plugin-def-gpiopin.c \
 	plugin-state-gpiopin.c \
 	$(NOTHING)
 
-gpiopin_la_LIBADD= \
+libgpiopin_la_LIBADD= \
 	$(plugin_LIBADD) \
 	$(NOTHING)
-gpiopin_la_CFLAGS= \
+libgpiopin_la_CFLAGS= \
 	$(plugin_CFLAGS) \
 	$(NOTHING)
-gpiopin_la_LDFLAGS= \
+libgpiopin_la_LDFLAGS= \
 	$(plugin_LDFLAGS) \
 	$(NOTHING)
 

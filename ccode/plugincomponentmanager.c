@@ -736,6 +736,7 @@ PluginComponentManager* plugin_component_manager_new_from_file (const gchar* inf
 static gint plugin_component_manager_load (PluginComponentManager* self, const gchar* infoFilename, GError** error) {
 	gint result = 0;
 	gchar* libraryPath = NULL;
+	gchar* builtLibraryPath = NULL;
 	FILE* _tmp0_ = NULL;
 	const gchar* _tmp1_ = NULL;
 	xmlDoc* xmldoc = NULL;
@@ -764,6 +765,7 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 	g_return_val_if_fail (self != NULL, 0);
 	g_return_val_if_fail (infoFilename != NULL, 0);
 	libraryPath = NULL;
+	builtLibraryPath = NULL;
 	_tmp0_ = stdout;
 	_tmp1_ = infoFilename;
 	fprintf (_tmp0_, "Loading plugin component specific data from \"%s\"\n", _tmp1_);
@@ -799,9 +801,11 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 		_inner_error_ = _tmp14_;
 		if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 			g_propagate_error (error, _inner_error_);
+			_g_free0 (builtLibraryPath);
 			_g_free0 (libraryPath);
 			return 0;
 		} else {
+			_g_free0 (builtLibraryPath);
 			_g_free0 (libraryPath);
 			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 			g_clear_error (&_inner_error_);
@@ -840,9 +844,11 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 		_inner_error_ = _tmp27_;
 		if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 			g_propagate_error (error, _inner_error_);
+			_g_free0 (builtLibraryPath);
 			_g_free0 (libraryPath);
 			return 0;
 		} else {
+			_g_free0 (builtLibraryPath);
 			_g_free0 (libraryPath);
 			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 			g_clear_error (&_inner_error_);
@@ -897,9 +903,11 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 		_inner_error_ = _tmp47_;
 		if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 			g_propagate_error (error, _inner_error_);
+			_g_free0 (builtLibraryPath);
 			_g_free0 (libraryPath);
 			return 0;
 		} else {
+			_g_free0 (builtLibraryPath);
 			_g_free0 (libraryPath);
 			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 			g_clear_error (&_inner_error_);
@@ -1080,9 +1088,11 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 		_inner_error_ = _tmp95_;
 		if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 			g_propagate_error (error, _inner_error_);
+			_g_free0 (builtLibraryPath);
 			_g_free0 (libraryPath);
 			return 0;
 		} else {
+			_g_free0 (builtLibraryPath);
 			_g_free0 (libraryPath);
 			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 			g_clear_error (&_inner_error_);
@@ -1119,9 +1129,11 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 		_inner_error_ = _tmp108_;
 		if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 			g_propagate_error (error, _inner_error_);
+			_g_free0 (builtLibraryPath);
 			_g_free0 (libraryPath);
 			return 0;
 		} else {
+			_g_free0 (builtLibraryPath);
 			_g_free0 (libraryPath);
 			g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 			g_clear_error (&_inner_error_);
@@ -1138,17 +1150,18 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 		_tmp111_ = g_utf8_strdown (_tmp110_, (gssize) (-1));
 		_tmp112_ = _tmp111_;
 		_tmp113_ = g_strconcat (PACKAGE_LIBDIR, _tmp112_, NULL);
-		_g_free0 (libraryPath);
-		libraryPath = _tmp113_;
+		_g_free0 (builtLibraryPath);
+		builtLibraryPath = _tmp113_;
 		_g_free0 (_tmp112_);
 		{
 			const gchar* _tmp114_ = NULL;
-			_tmp114_ = libraryPath;
+			_tmp114_ = builtLibraryPath;
 			plugin_component_manager_load_library (self, _tmp114_, &_inner_error_);
 			if (_inner_error_ != NULL) {
 				if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
 					goto __catch55_plugin_component_def_load_error;
 				}
+				_g_free0 (builtLibraryPath);
 				_g_free0 (libraryPath);
 				g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 				g_clear_error (&_inner_error_);
@@ -1173,9 +1186,11 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 		if (_inner_error_ != NULL) {
 			if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 				g_propagate_error (error, _inner_error_);
+				_g_free0 (builtLibraryPath);
 				_g_free0 (libraryPath);
 				return 0;
 			} else {
+				_g_free0 (builtLibraryPath);
 				_g_free0 (libraryPath);
 				g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 				g_clear_error (&_inner_error_);
@@ -1208,20 +1223,28 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 			_tmp126_ = g_path_get_basename (_tmp125_);
 			_tmp127_ = _tmp126_;
 			_tmp128_ = g_build_filename (_tmp121_, _tmp124_, _tmp127_, NULL);
-			_g_free0 (libraryPath);
-			libraryPath = _tmp128_;
+			_g_free0 (builtLibraryPath);
+			builtLibraryPath = _tmp128_;
 			_g_free0 (_tmp127_);
 			_g_free0 (_tmp124_);
 			_g_free0 (_tmp121_);
+		} else {
+			const gchar* _tmp129_ = NULL;
+			gchar* _tmp130_ = NULL;
+			_tmp129_ = libraryPath;
+			_tmp130_ = g_strdup (_tmp129_);
+			_g_free0 (builtLibraryPath);
+			builtLibraryPath = _tmp130_;
 		}
 		{
-			const gchar* _tmp129_ = NULL;
-			_tmp129_ = libraryPath;
-			plugin_component_manager_load_library (self, _tmp129_, &_inner_error_);
+			const gchar* _tmp131_ = NULL;
+			_tmp131_ = builtLibraryPath;
+			plugin_component_manager_load_library (self, _tmp131_, &_inner_error_);
 			if (_inner_error_ != NULL) {
 				if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
 					goto __catch56_plugin_component_def_load_error;
 				}
+				_g_free0 (builtLibraryPath);
 				_g_free0 (libraryPath);
 				g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 				g_clear_error (&_inner_error_);
@@ -1232,26 +1255,27 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 		__catch56_plugin_component_def_load_error:
 		{
 			GError* _error_ = NULL;
-			GError* _tmp130_ = NULL;
+			GError* _tmp132_ = NULL;
 			_error_ = _inner_error_;
 			_inner_error_ = NULL;
-			_tmp130_ = _error_;
-			if (g_error_matches (_tmp130_, PLUGIN_COMPONENT_DEF_LOAD_ERROR, PLUGIN_COMPONENT_DEF_LOAD_ERROR_LIBRARY_NOT_ACCESSIBLE)) {
+			_tmp132_ = _error_;
+			if (g_error_matches (_tmp132_, PLUGIN_COMPONENT_DEF_LOAD_ERROR, PLUGIN_COMPONENT_DEF_LOAD_ERROR_LIBRARY_NOT_ACCESSIBLE)) {
 				{
-					const gchar* _tmp131_ = NULL;
-					gchar* _tmp132_ = NULL;
 					const gchar* _tmp133_ = NULL;
-					_tmp131_ = libraryPath;
-					_tmp132_ = g_strconcat (PACKAGE_LIBDIR, _tmp131_, NULL);
-					_g_free0 (libraryPath);
-					libraryPath = _tmp132_;
+					gchar* _tmp134_ = NULL;
+					const gchar* _tmp135_ = NULL;
 					_tmp133_ = libraryPath;
-					plugin_component_manager_load_library (self, _tmp133_, &_inner_error_);
+					_tmp134_ = g_strconcat (PACKAGE_LIBDIR, _tmp133_, NULL);
+					_g_free0 (builtLibraryPath);
+					builtLibraryPath = _tmp134_;
+					_tmp135_ = builtLibraryPath;
+					plugin_component_manager_load_library (self, _tmp135_, &_inner_error_);
 					if (_inner_error_ != NULL) {
 						if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
 							goto __catch57_plugin_component_def_load_error;
 						}
 						_g_error_free0 (_error_);
+						_g_free0 (builtLibraryPath);
 						_g_free0 (libraryPath);
 						g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 						g_clear_error (&_inner_error_);
@@ -1262,13 +1286,13 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 				__catch57_plugin_component_def_load_error:
 				{
 					GError* _error_ = NULL;
-					GError* _tmp134_ = NULL;
-					GError* _tmp135_ = NULL;
+					GError* _tmp136_ = NULL;
+					GError* _tmp137_ = NULL;
 					_error_ = _inner_error_;
 					_inner_error_ = NULL;
-					_tmp134_ = _error_;
-					_tmp135_ = _g_error_copy0 (_tmp134_);
-					_inner_error_ = _tmp135_;
+					_tmp136_ = _error_;
+					_tmp137_ = _g_error_copy0 (_tmp136_);
+					_inner_error_ = _tmp137_;
 					_g_error_free0 (_error_);
 					goto __finally57;
 				}
@@ -1278,11 +1302,11 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 					goto __finally56;
 				}
 			} else {
-				GError* _tmp136_ = NULL;
-				GError* _tmp137_ = NULL;
-				_tmp136_ = _error_;
-				_tmp137_ = _g_error_copy0 (_tmp136_);
-				_inner_error_ = _tmp137_;
+				GError* _tmp138_ = NULL;
+				GError* _tmp139_ = NULL;
+				_tmp138_ = _error_;
+				_tmp139_ = _g_error_copy0 (_tmp138_);
+				_inner_error_ = _tmp139_;
 				_g_error_free0 (_error_);
 				goto __finally56;
 			}
@@ -1292,9 +1316,11 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 		if (_inner_error_ != NULL) {
 			if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 				g_propagate_error (error, _inner_error_);
+				_g_free0 (builtLibraryPath);
 				_g_free0 (libraryPath);
 				return 0;
 			} else {
+				_g_free0 (builtLibraryPath);
 				_g_free0 (libraryPath);
 				g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 				g_clear_error (&_inner_error_);
@@ -1303,6 +1329,7 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 		}
 	}
 	result = 0;
+	_g_free0 (builtLibraryPath);
 	_g_free0 (libraryPath);
 	return result;
 }

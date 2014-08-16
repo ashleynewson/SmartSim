@@ -1671,6 +1671,7 @@ public class DesignerWindow : Gtk.Window {
 		fileChooser.add_filter(anyssxFileFilter);
 		fileChooser.add_filter(ssxFileFilter);
 		fileChooser.add_filter(anyFileFilter);
+		fileChooser.add_shortcut_folder(Config.resourcesDir + "plugins");
 		
 		if (fileChooser.run () == Gtk.ResponseType.ACCEPT) {
 			stdout.printf ("Load Plugin Component From: %s\n", fileChooser.get_filename());

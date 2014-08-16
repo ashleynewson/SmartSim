@@ -144,6 +144,7 @@ public class PluginComponentManager {
 	 */
 	private int load (string infoFilename) throws ComponentDefLoadError, PluginComponentDefLoadError {
 		string libraryPath = null;
+		string builtLibraryPath = null;
 		
 		stdout.printf ("Loading plugin component specific data from \"%s\"\n", infoFilename);
 		
@@ -215,24 +216,26 @@ public class PluginComponentManager {
 		
 		// If a path is given, try to use that plugin, else resort to the resources directory.
 		if (libraryPath == null) {
-			libraryPath = Config.librariesDir + this.name.down();
+			builtLibraryPath = Config.librariesDir + this.name.down();
 			try {
-				load_library (libraryPath);
+				load_library (builtLibraryPath);
 			} catch (PluginComponentDefLoadError error) {
 				throw error;
 			}
 		} else {
 			if (GLib.Path.is_absolute(libraryPath) == false) {
-				libraryPath = GLib.Path.build_filename (GLib.Path.get_dirname(filename), GLib.Path.get_dirname(libraryPath), GLib.Path.get_basename(libraryPath));
+				builtLibraryPath = GLib.Path.build_filename (GLib.Path.get_dirname(filename), GLib.Path.get_dirname(libraryPath), GLib.Path.get_basename(libraryPath));
+			} else {
+				builtLibraryPath = libraryPath;
 			}
 			try {
-				load_library (libraryPath);
+				load_library (builtLibraryPath);
 			} catch (PluginComponentDefLoadError error) {
 				// The path's version was not found, fall back to resources directory.
 				if (error is PluginComponentDefLoadError.LIBRARY_NOT_ACCESSIBLE) {
 					try {
-						libraryPath = Config.librariesDir + libraryPath;
-						load_library (libraryPath);
+						builtLibraryPath = Config.librariesDir + libraryPath;
+						load_library (builtLibraryPath);
 					} catch (PluginComponentDefLoadError error) {
 						throw error;
 					}
