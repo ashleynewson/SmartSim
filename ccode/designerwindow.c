@@ -6257,9 +6257,10 @@ static gboolean designer_window_open_plugin_component (DesignerWindow* self) {
 	GtkFileChooserDialog* _tmp9_ = NULL;
 	GtkFileFilter* _tmp10_ = NULL;
 	GtkFileFilter* _tmp11_ = NULL;
-	GtkFileChooserDialog* _tmp12_ = NULL;
-	gint _tmp13_ = 0;
-	GtkFileChooserDialog* _tmp25_ = NULL;
+	GtkFileChooserDialog* _tmp14_ = NULL;
+	gint _tmp15_ = 0;
+	GtkFileChooserDialog* _tmp27_ = NULL;
+	GError * _inner_error_ = NULL;
 	g_return_val_if_fail (self != NULL, FALSE);
 	_tmp0_ = self->priv->project;
 	_tmp1_ = project_plugins_allowed (_tmp0_, "");
@@ -6282,39 +6283,63 @@ static gboolean designer_window_open_plugin_component (DesignerWindow* self) {
 	_tmp10_ = self->priv->anyFileFilter;
 	_tmp11_ = _g_object_ref0 (_tmp10_);
 	gtk_file_chooser_add_filter ((GtkFileChooser*) _tmp9_, _tmp11_);
-	_tmp12_ = fileChooser;
-	_tmp13_ = gtk_dialog_run ((GtkDialog*) _tmp12_);
-	if (_tmp13_ == ((gint) GTK_RESPONSE_ACCEPT)) {
-		FILE* _tmp14_ = NULL;
-		GtkFileChooserDialog* _tmp15_ = NULL;
-		gchar* _tmp16_ = NULL;
-		gchar* _tmp17_ = NULL;
-		Project* _tmp18_ = NULL;
-		GtkFileChooserDialog* _tmp19_ = NULL;
-		gchar* _tmp20_ = NULL;
-		gchar* _tmp21_ = NULL;
-		PluginComponentDef* _tmp22_ = NULL;
-		PluginComponentDef* _tmp23_ = NULL;
-		Project* _tmp24_ = NULL;
-		_tmp14_ = stdout;
-		_tmp15_ = fileChooser;
-		_tmp16_ = gtk_file_chooser_get_filename ((GtkFileChooser*) _tmp15_);
-		_tmp17_ = _tmp16_;
-		fprintf (_tmp14_, "Load Plugin Component From: %s\n", _tmp17_);
-		_g_free0 (_tmp17_);
-		_tmp18_ = self->priv->project;
-		_tmp19_ = fileChooser;
-		_tmp20_ = gtk_file_chooser_get_filename ((GtkFileChooser*) _tmp19_);
-		_tmp21_ = _tmp20_;
-		_tmp22_ = project_load_plugin_component (_tmp18_, _tmp21_, NULL);
-		_tmp23_ = _tmp22_;
-		_component_def_unref0 (_tmp23_);
-		_g_free0 (_tmp21_);
-		_tmp24_ = self->priv->project;
-		project_update_plugin_menus (_tmp24_);
+	{
+		GtkFileChooserDialog* _tmp12_ = NULL;
+		_tmp12_ = fileChooser;
+		gtk_file_chooser_add_shortcut_folder ((GtkFileChooser*) _tmp12_, PACKAGE_DATADIR "plugins", &_inner_error_);
+		if (_inner_error_ != NULL) {
+			goto __catch50_g_error;
+		}
 	}
-	_tmp25_ = fileChooser;
-	gtk_widget_destroy ((GtkWidget*) _tmp25_);
+	goto __finally50;
+	__catch50_g_error:
+	{
+		FILE* _tmp13_ = NULL;
+		g_clear_error (&_inner_error_);
+		_inner_error_ = NULL;
+		_tmp13_ = stderr;
+		fprintf (_tmp13_, "Cannot add plugins shortcut %s.\n", PACKAGE_DATADIR "plugins");
+	}
+	__finally50:
+	if (_inner_error_ != NULL) {
+		_g_object_unref0 (fileChooser);
+		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+		g_clear_error (&_inner_error_);
+		return FALSE;
+	}
+	_tmp14_ = fileChooser;
+	_tmp15_ = gtk_dialog_run ((GtkDialog*) _tmp14_);
+	if (_tmp15_ == ((gint) GTK_RESPONSE_ACCEPT)) {
+		FILE* _tmp16_ = NULL;
+		GtkFileChooserDialog* _tmp17_ = NULL;
+		gchar* _tmp18_ = NULL;
+		gchar* _tmp19_ = NULL;
+		Project* _tmp20_ = NULL;
+		GtkFileChooserDialog* _tmp21_ = NULL;
+		gchar* _tmp22_ = NULL;
+		gchar* _tmp23_ = NULL;
+		PluginComponentDef* _tmp24_ = NULL;
+		PluginComponentDef* _tmp25_ = NULL;
+		Project* _tmp26_ = NULL;
+		_tmp16_ = stdout;
+		_tmp17_ = fileChooser;
+		_tmp18_ = gtk_file_chooser_get_filename ((GtkFileChooser*) _tmp17_);
+		_tmp19_ = _tmp18_;
+		fprintf (_tmp16_, "Load Plugin Component From: %s\n", _tmp19_);
+		_g_free0 (_tmp19_);
+		_tmp20_ = self->priv->project;
+		_tmp21_ = fileChooser;
+		_tmp22_ = gtk_file_chooser_get_filename ((GtkFileChooser*) _tmp21_);
+		_tmp23_ = _tmp22_;
+		_tmp24_ = project_load_plugin_component (_tmp20_, _tmp23_, NULL);
+		_tmp25_ = _tmp24_;
+		_component_def_unref0 (_tmp25_);
+		_g_free0 (_tmp23_);
+		_tmp26_ = self->priv->project;
+		project_update_plugin_menus (_tmp26_);
+	}
+	_tmp27_ = fileChooser;
+	gtk_widget_destroy ((GtkWidget*) _tmp27_);
 	result = FALSE;
 	_g_object_unref0 (fileChooser);
 	return result;
@@ -7006,7 +7031,7 @@ static void designer_window_load_project (DesignerWindow* self, const gchar* fil
 		_tmp5_ = _tmp7_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == PROJECT_LOAD_ERROR) {
-				goto __catch50_project_load_error;
+				goto __catch51_project_load_error;
 			}
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 			g_clear_error (&_inner_error_);
@@ -7035,8 +7060,8 @@ static void designer_window_load_project (DesignerWindow* self, const gchar* fil
 		_component_def_unref0 (defaultComponent);
 		_project_unref0 (_tmp5_);
 	}
-	goto __finally50;
-	__catch50_project_load_error:
+	goto __finally51;
+	__catch51_project_load_error:
 	{
 		GError* _error_ = NULL;
 		FILE* _tmp15_ = NULL;
@@ -7050,7 +7075,7 @@ static void designer_window_load_project (DesignerWindow* self, const gchar* fil
 		fprintf (_tmp15_, "Error loading project: %s\n", _tmp17_);
 		_g_error_free0 (_error_);
 	}
-	__finally50:
+	__finally51:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
@@ -7078,7 +7103,7 @@ static void designer_window_show_about (DesignerWindow* self) {
 		_tmp1_ = gdk_pixbuf_new_from_file (PACKAGE_DATADIR "images/icons/smartsim64.png", &_inner_error_);
 		_tmp0_ = _tmp1_;
 		if (_inner_error_ != NULL) {
-			goto __catch51_g_error;
+			goto __catch52_g_error;
 		}
 		_tmp2_ = _tmp0_;
 		_tmp0_ = NULL;
@@ -7086,8 +7111,8 @@ static void designer_window_show_about (DesignerWindow* self) {
 		logo = _tmp2_;
 		_g_object_unref0 (_tmp0_);
 	}
-	goto __finally51;
-	__catch51_g_error:
+	goto __finally52;
+	__catch52_g_error:
 	{
 		FILE* _tmp3_ = NULL;
 		g_clear_error (&_inner_error_);
@@ -7095,7 +7120,7 @@ static void designer_window_show_about (DesignerWindow* self) {
 		_tmp3_ = stderr;
 		fprintf (_tmp3_, "Could not load logo image.\n");
 	}
-	__finally51:
+	__finally52:
 	if (_inner_error_ != NULL) {
 		_g_object_unref0 (logo);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -7230,12 +7255,12 @@ void designer_window_print (DesignerWindow* self) {
 		_tmp23_ = gtk_print_operation_run (_tmp22_, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, (GtkWindow*) self, &_inner_error_);
 		_tmp21_ = _tmp23_;
 		if (_inner_error_ != NULL) {
-			goto __catch52_g_error;
+			goto __catch53_g_error;
 		}
 		_result_ = _tmp21_;
 	}
-	goto __finally52;
-	__catch52_g_error:
+	goto __finally53;
+	__catch53_g_error:
 	{
 		FILE* _tmp24_ = NULL;
 		g_clear_error (&_inner_error_);
@@ -7245,7 +7270,7 @@ void designer_window_print (DesignerWindow* self) {
 		_g_object_unref0 (printOperation);
 		return;
 	}
-	__finally52:
+	__finally53:
 	if (_inner_error_ != NULL) {
 		_g_object_unref0 (printOperation);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);

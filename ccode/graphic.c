@@ -512,7 +512,7 @@ gint graphic_load_svg (Graphic* self, const gchar* filename) {
 		_tmp6_ = rsvg_handle_new_from_file (_tmp5_, &_inner_error_);
 		_tmp4_ = _tmp6_;
 		if (_inner_error_ != NULL) {
-			goto __catch53_g_error;
+			goto __catch54_g_error;
 		}
 		_tmp7_ = _tmp4_;
 		_tmp4_ = NULL;
@@ -520,8 +520,8 @@ gint graphic_load_svg (Graphic* self, const gchar* filename) {
 		self->priv->svgHandle = _tmp7_;
 		_g_object_unref0 (_tmp4_);
 	}
-	goto __finally53;
-	__catch53_g_error:
+	goto __finally54;
+	__catch54_g_error:
 	{
 		FILE* _tmp8_ = NULL;
 		const gchar* _tmp9_ = NULL;
@@ -533,7 +533,7 @@ gint graphic_load_svg (Graphic* self, const gchar* filename) {
 		result = 1;
 		return result;
 	}
-	__finally53:
+	__finally54:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);

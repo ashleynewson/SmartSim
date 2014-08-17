@@ -2358,10 +2358,10 @@ CustomComponentDef* project_load_component (Project* self, const gchar* fileName
 		_tmp0_ = _tmp2_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch58_component_def_load_error;
+				goto __catch59_component_def_load_error;
 			}
 			if (_inner_error_->domain == CUSTOM_COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch58_custom_component_def_load_error;
+				goto __catch59_custom_component_def_load_error;
 			}
 			_component_def_unref0 (newComponent);
 			g_critical ("file %s: line %d: unexpected error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -2396,8 +2396,8 @@ CustomComponentDef* project_load_component (Project* self, const gchar* fileName
 		newCustomComponentDefs = (_vala_array_free (newCustomComponentDefs, newCustomComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 		_component_def_unref0 (_tmp0_);
 	}
-	goto __finally58;
-	__catch58_component_def_load_error:
+	goto __finally59;
+	__catch59_component_def_load_error:
 	{
 		GError* _error_ = NULL;
 		GError* _tmp11_ = NULL;
@@ -2416,8 +2416,8 @@ CustomComponentDef* project_load_component (Project* self, const gchar* fileName
 		newComponent = NULL;
 		_g_error_free0 (_error_);
 	}
-	goto __finally58;
-	__catch58_custom_component_def_load_error:
+	goto __finally59;
+	__catch59_custom_component_def_load_error:
 	{
 		GError* _error_ = NULL;
 		GError* _tmp15_ = NULL;
@@ -2436,7 +2436,7 @@ CustomComponentDef* project_load_component (Project* self, const gchar* fileName
 		newComponent = NULL;
 		_g_error_free0 (_error_);
 	}
-	__finally58:
+	__finally59:
 	if (_inner_error_ != NULL) {
 		_component_def_unref0 (newComponent);
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
@@ -2810,10 +2810,10 @@ PluginComponentDef* project_load_plugin_component (Project* self, const gchar* f
 		_tmp35_ = _tmp37_;
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch59_component_def_load_error;
+				goto __catch60_component_def_load_error;
 			}
 			if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch59_plugin_component_def_load_error;
+				goto __catch60_plugin_component_def_load_error;
 			}
 			_plugin_component_manager_unref0 (newManager);
 			_component_def_unref0 (newComponent);
@@ -2873,8 +2873,8 @@ PluginComponentDef* project_load_plugin_component (Project* self, const gchar* f
 		newPluginComponentDefs = (_vala_array_free (newPluginComponentDefs, newPluginComponentDefs_length1, (GDestroyNotify) component_def_unref), NULL);
 		_plugin_component_manager_unref0 (_tmp35_);
 	}
-	goto __finally59;
-	__catch59_component_def_load_error:
+	goto __finally60;
+	__catch60_component_def_load_error:
 	{
 		GError* _error_ = NULL;
 		gboolean _tmp56_ = FALSE;
@@ -2924,8 +2924,8 @@ PluginComponentDef* project_load_plugin_component (Project* self, const gchar* f
 		}
 		_g_error_free0 (_error_);
 	}
-	goto __finally59;
-	__catch59_plugin_component_def_load_error:
+	goto __finally60;
+	__catch60_plugin_component_def_load_error:
 	{
 		GError* _error_ = NULL;
 		const gchar* _tmp70_ = NULL;
@@ -2957,7 +2957,7 @@ PluginComponentDef* project_load_plugin_component (Project* self, const gchar* f
 		}
 		_g_error_free0 (_error_);
 	}
-	__finally59:
+	__finally60:
 	if (_inner_error_ != NULL) {
 		_plugin_component_manager_unref0 (newManager);
 		_component_def_unref0 (newComponent);

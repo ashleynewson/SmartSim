@@ -685,13 +685,13 @@ PluginComponentManager* plugin_component_manager_construct_from_file (GType obje
 		plugin_component_manager_load (self, _tmp16_, &_inner_error_);
 		if (_inner_error_ != NULL) {
 			if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
-				goto __catch54_plugin_component_def_load_error;
+				goto __catch55_plugin_component_def_load_error;
 			}
-			goto __finally54;
+			goto __finally55;
 		}
 	}
-	goto __finally54;
-	__catch54_plugin_component_def_load_error:
+	goto __finally55;
+	__catch55_plugin_component_def_load_error:
 	{
 		GError* _error_ = NULL;
 		GError* _tmp17_ = NULL;
@@ -702,9 +702,9 @@ PluginComponentManager* plugin_component_manager_construct_from_file (GType obje
 		_tmp18_ = _g_error_copy0 (_tmp17_);
 		_inner_error_ = _tmp18_;
 		_g_error_free0 (_error_);
-		goto __finally54;
+		goto __finally55;
 	}
-	__finally54:
+	__finally55:
 	if (_inner_error_ != NULL) {
 		if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 			g_propagate_error (error, _inner_error_);
@@ -1159,7 +1159,7 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 			plugin_component_manager_load_library (self, _tmp114_, &_inner_error_);
 			if (_inner_error_ != NULL) {
 				if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
-					goto __catch55_plugin_component_def_load_error;
+					goto __catch56_plugin_component_def_load_error;
 				}
 				_g_free0 (builtLibraryPath);
 				_g_free0 (libraryPath);
@@ -1168,8 +1168,8 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 				return 0;
 			}
 		}
-		goto __finally55;
-		__catch55_plugin_component_def_load_error:
+		goto __finally56;
+		__catch56_plugin_component_def_load_error:
 		{
 			GError* _error_ = NULL;
 			GError* _tmp115_ = NULL;
@@ -1180,9 +1180,9 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 			_tmp116_ = _g_error_copy0 (_tmp115_);
 			_inner_error_ = _tmp116_;
 			_g_error_free0 (_error_);
-			goto __finally55;
+			goto __finally56;
 		}
-		__finally55:
+		__finally56:
 		if (_inner_error_ != NULL) {
 			if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 				g_propagate_error (error, _inner_error_);
@@ -1242,7 +1242,7 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 			plugin_component_manager_load_library (self, _tmp131_, &_inner_error_);
 			if (_inner_error_ != NULL) {
 				if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
-					goto __catch56_plugin_component_def_load_error;
+					goto __catch57_plugin_component_def_load_error;
 				}
 				_g_free0 (builtLibraryPath);
 				_g_free0 (libraryPath);
@@ -1251,8 +1251,8 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 				return 0;
 			}
 		}
-		goto __finally56;
-		__catch56_plugin_component_def_load_error:
+		goto __finally57;
+		__catch57_plugin_component_def_load_error:
 		{
 			GError* _error_ = NULL;
 			GError* _tmp132_ = NULL;
@@ -1272,7 +1272,7 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 					plugin_component_manager_load_library (self, _tmp135_, &_inner_error_);
 					if (_inner_error_ != NULL) {
 						if (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR) {
-							goto __catch57_plugin_component_def_load_error;
+							goto __catch58_plugin_component_def_load_error;
 						}
 						_g_error_free0 (_error_);
 						_g_free0 (builtLibraryPath);
@@ -1282,8 +1282,8 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 						return 0;
 					}
 				}
-				goto __finally57;
-				__catch57_plugin_component_def_load_error:
+				goto __finally58;
+				__catch58_plugin_component_def_load_error:
 				{
 					GError* _error_ = NULL;
 					GError* _tmp136_ = NULL;
@@ -1294,12 +1294,12 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 					_tmp137_ = _g_error_copy0 (_tmp136_);
 					_inner_error_ = _tmp137_;
 					_g_error_free0 (_error_);
-					goto __finally57;
+					goto __finally58;
 				}
-				__finally57:
+				__finally58:
 				if (_inner_error_ != NULL) {
 					_g_error_free0 (_error_);
-					goto __finally56;
+					goto __finally57;
 				}
 			} else {
 				GError* _tmp138_ = NULL;
@@ -1308,11 +1308,11 @@ static gint plugin_component_manager_load (PluginComponentManager* self, const g
 				_tmp139_ = _g_error_copy0 (_tmp138_);
 				_inner_error_ = _tmp139_;
 				_g_error_free0 (_error_);
-				goto __finally56;
+				goto __finally57;
 			}
 			_g_error_free0 (_error_);
 		}
-		__finally56:
+		__finally57:
 		if (_inner_error_ != NULL) {
 			if ((_inner_error_->domain == COMPONENT_DEF_LOAD_ERROR) || (_inner_error_->domain == PLUGIN_COMPONENT_DEF_LOAD_ERROR)) {
 				g_propagate_error (error, _inner_error_);

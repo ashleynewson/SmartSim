@@ -865,13 +865,13 @@ void timing_diagram_populate (TimingDiagram* self) {
 		_tmp2_ = gdk_pixbuf_new_from_file (PACKAGE_DATADIR "images/icons/smartsim64.png", &_inner_error_);
 		_tmp1_ = _tmp2_;
 		if (_inner_error_ != NULL) {
-			goto __catch71_g_error;
+			goto __catch72_g_error;
 		}
 		gtk_window_set_icon ((GtkWindow*) self, _tmp1_);
 		_g_object_unref0 (_tmp1_);
 	}
-	goto __finally71;
-	__catch71_g_error:
+	goto __finally72;
+	__catch72_g_error:
 	{
 		FILE* _tmp3_ = NULL;
 		g_clear_error (&_inner_error_);
@@ -879,7 +879,7 @@ void timing_diagram_populate (TimingDiagram* self) {
 		_tmp3_ = stderr;
 		fprintf (_tmp3_, "Could not load window image.\n");
 	}
-	__finally71:
+	__finally72:
 	if (_inner_error_ != NULL) {
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
