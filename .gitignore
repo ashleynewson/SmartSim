@@ -11,7 +11,6 @@ config.h
 libtool
 Makefile
 resource_tar/Makefile
-resources/plugins
 vala/smartsim
 vala/*.c
 *.o
