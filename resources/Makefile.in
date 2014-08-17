@@ -244,12 +244,13 @@ imagesdir = $(smartsimdatadir)/images
 imagesgraphicsdir = $(imagesdir)/graphics
 imagesiconsdir = $(imagesdir)/icons
 imagestoolbardir = $(imagesdir)/toolbar
+pluginsdir = $(smartsimdatadir)/plugins
 smartsimdata_DATA = \
 	./COPYING \
 	./smartsim.ico \
 	$(NOTHING)
 
-@ENABLE_PLUGINS_TRUE@pluginsdir = $(smartsimdatadir)/plugins
+@ENABLE_PLUGINS_FALSE@plugins_DATA = 
 @ENABLE_PLUGINS_TRUE@plugins_DATA = \
 @ENABLE_PLUGINS_TRUE@	./plugins/gpiopin.info \
 @ENABLE_PLUGINS_TRUE@	./plugins/gpiopin.ssx \
