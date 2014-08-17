@@ -376,11 +376,11 @@ public class DesignerWindow : Gtk.Window {
 	/**
 	 * Update display whilst scrolling or zooming with mouse.
 	 */
-	public bool liveScrollUpdate = true;
+	public bool liveScrollUpdate = false;
 	/**
 	 * Insert or move component shadow
 	 */
-	public bool shadowComponent = true;
+	public bool shadowComponent = false;
 	/**
 	 * Will show errors in red.
 	 */
@@ -646,7 +646,7 @@ public class DesignerWindow : Gtk.Window {
 				
 				menuViewLivescrollupdate = new Gtk.CheckMenuItem.with_label ("Live Scroll Update");
 				menuViewMenu.append (menuViewLivescrollupdate);
-				menuViewLivescrollupdate.active = true;
+				menuViewLivescrollupdate.active = false;
 				menuViewLivescrollupdate.toggled.connect ( 
 					(menuItem) => {
 						liveScrollUpdate = menuItem.active;
@@ -654,7 +654,7 @@ public class DesignerWindow : Gtk.Window {
 				
 				menuViewShadowcomponent = new Gtk.CheckMenuItem.with_label ("Shadow Component");
 				menuViewMenu.append (menuViewShadowcomponent);
-				menuViewShadowcomponent.active = true;
+				menuViewShadowcomponent.active = false;
 				menuViewShadowcomponent.toggled.connect ( 
 					(menuItem) => {
 						shadowComponent = menuItem.active;
