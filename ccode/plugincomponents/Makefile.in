@@ -306,9 +306,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu ccode/plugincomponents/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign ccode/plugincomponents/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu ccode/plugincomponents/Makefile
+	  $(AUTOMAKE) --foreign ccode/plugincomponents/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

@@ -4,7 +4,7 @@
 AC_PREREQ([2.68])
 AC_INIT([smartsim], [1.4.1], [ashleynewson@smartsim.org.uk])
 AC_CONFIG_SRCDIR([config.h.in])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign])
 LT_INIT
 AC_CONFIG_HEADERS([config.h])
 
