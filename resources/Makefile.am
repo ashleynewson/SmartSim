@@ -12,18 +12,21 @@ imagesgraphicsdir=$(imagesdir)/graphics
 imagesiconsdir=$(imagesdir)/icons
 imagestoolbardir=$(imagesdir)/toolbar
 
+pluginsdir=$(smartsimdatadir)/plugins
+
 smartsimdata_DATA= \
 	./COPYING \
 	./smartsim.ico \
 	$(NOTHING)
 
 if ENABLE_PLUGINS
-pluginsdir=$(smartsimdatadir)/plugins
 plugins_DATA= \
 	./plugins/gpiopin.info \
 	./plugins/gpiopin.ssx \
 	./plugins/gpiopin.svg \
 	$(NOTHING)
+else
+plugins_DATA=
 endif
 
 componentsgraphics_DATA= \
