@@ -2991,7 +2991,7 @@ void designer_window_populate (DesignerWindow* self) {
 	_tmp143_ = self->priv->menuViewLivescrollupdate;
 	gtk_menu_shell_append ((GtkMenuShell*) _tmp142_, (GtkWidget*) ((GtkMenuItem*) _tmp143_));
 	_tmp144_ = self->priv->menuViewLivescrollupdate;
-	gtk_check_menu_item_set_active (_tmp144_, TRUE);
+	gtk_check_menu_item_set_active (_tmp144_, FALSE);
 	_tmp145_ = self->priv->menuViewLivescrollupdate;
 	g_signal_connect_object (_tmp145_, "toggled", (GCallback) ___lambda20__gtk_check_menu_item_toggled, self, 0);
 	_tmp146_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_label ("Shadow Component");
@@ -3002,7 +3002,7 @@ void designer_window_populate (DesignerWindow* self) {
 	_tmp148_ = self->priv->menuViewShadowcomponent;
 	gtk_menu_shell_append ((GtkMenuShell*) _tmp147_, (GtkWidget*) ((GtkMenuItem*) _tmp148_));
 	_tmp149_ = self->priv->menuViewShadowcomponent;
-	gtk_check_menu_item_set_active (_tmp149_, TRUE);
+	gtk_check_menu_item_set_active (_tmp149_, FALSE);
 	_tmp150_ = self->priv->menuViewShadowcomponent;
 	g_signal_connect_object (_tmp150_, "toggled", (GCallback) ___lambda21__gtk_check_menu_item_toggled, self, 0);
 	_tmp151_ = (GtkCheckMenuItem*) gtk_check_menu_item_new_with_label ("Highlight Errors");
@@ -8819,8 +8819,8 @@ static void designer_window_instance_init (DesignerWindow * self) {
 	self->priv->yView = 0;
 	self->zoom = (gfloat) 1;
 	self->showGrid = TRUE;
-	self->liveScrollUpdate = TRUE;
-	self->shadowComponent = TRUE;
+	self->liveScrollUpdate = FALSE;
+	self->shadowComponent = FALSE;
 	self->priv->highlightErrors = TRUE;
 	self->priv->colourBackgrounds = TRUE;
 	self->priv->showHints = TRUE;

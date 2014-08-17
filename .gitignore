@@ -8,6 +8,7 @@ ccode/smartsim
 config.status
 config.log
 config.h
+libtool
 Makefile
 resource_tar/Makefile
 resources/plugins
