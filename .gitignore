@@ -13,6 +13,7 @@ Makefile
 resource_tar/Makefile
 vala/smartsim
 vala/*.c
+vala/*/*.c
 *.o
 *.so
 *.lo
