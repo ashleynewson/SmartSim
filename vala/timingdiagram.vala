@@ -773,7 +773,7 @@ public class TimingDiagram : Gtk.Window {
 		int duration = (compiledCircuit.iterationCount - iterationCountOffset);
 		int width, height;
 		width = (int)((float)(duration - xView) * xZoom) + text_length() + 21;
-		height = (int)((float)(wireStates.length) * (yZoom * 2.4)) - yView + 21;
+		height = (int)((float)(this.wireStates.length) * (yZoom * 2.4)) - yView + 21;
 		
 		int imageWidth = (int)((double)width * resolution);
 		int imageHeight = (int)((double)height * resolution);
