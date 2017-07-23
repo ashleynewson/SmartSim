@@ -319,18 +319,3 @@ clean:
 .PHONY : plugin_altand
 .PHONY : plugin_gpiopin
 .PHONY : update_ccode
-
-
-
-#linux:
-#	valac logic.vala designerwindow.vala designer.vala project.vala graphic.vala componentinst.vala pindef.vala pininst.vala wireinst.vala path.vala tag.vala annotation.vala propertyset.vala propertiesquery.vala compiledcircuit.vala connection.vala wirestate.vala simulatorwindow.vala customiser.vala componentdef.vala componentdef.vala componentdef/*.vala componentstate.vala componentstate/*.vala -o logic --pkg gtk+-2.0 --pkg librsvg-2.0 --pkg libxml-2.0
-#windows:
-#	wine valac logic.vala designerwindow.vala designer.vala project.vala graphic.vala componentinst.vala pindef.vala pininst.vala wireinst.vala path.vala tag.vala annotation.vala propertyset.vala propertiesquery.vala compiledcircuit.vala connection.vala wirestate.vala simulatorwindow.vala customiser.vala componentdef.vala componentdef/*.vala componentstate.vala componentstate/*.vala -o logic --verbose --pkg gtk+-2.0 --pkg librsvg-2.0 --pkg libxml-2.0
-#all:
-#	valac logic.vala designerwindow.vala designer.vala project.vala graphic.vala componentinst.vala pindef.vala wireinst.vala path.vala tag.vala annotation.vala componentdef.vala componentdef/custom.vala componentdef/buffer.vala componentdef/and.vala componentdef/or.vala componentdef/xor.vala componentdef/tristate.vala -o logic --verbose --pkg gtk+-2.0 --pkg librsvg-2.0 --pkg libxml-2.0
-#linux:
-#	valac logic.vala designerwindow.vala designer.vala project.vala graphic.vala componentinst.vala pindef.vala wireinst.vala path.vala tag.vala annotation.vala componentdef.vala componentdef/custom.vala componentdef/buffer.vala componentdef/and.vala componentdef/or.vala componentdef/xor.vala componentdef/tristate.vala -o logic --pkg gtk+-2.0 --pkg librsvg-2.0 --pkg libxml-2.0
-#windows:
-#	wine valac logic.vala designerwindow.vala designer.vala project.vala graphic.vala componentinst.vala pindef.vala wireinst.vala path.vala tag.vala annotation.vala componentdef.vala componentdef/custom.vala componentdef/buffer.vala componentdef/and.vala componentdef/or.vala componentdef/xor.vala componentdef/tristate.vala -o logic --pkg gtk+-2.0 --pkg librsvg-2.0 --pkg libxml-2.0
-#cfiles:
-#	valac logic.vala designerwindow.vala designer.vala project.vala graphic.vala componentinst.vala pindef.vala wireinst.vala path.vala tag.vala annotation.vala componentdef.vala componentdef/custom.vala componentdef/buffer.vala componentdef/and.vala componentdef/or.vala componentdef/xor.vala componentdef/tristate.vala -C --pkg gtk+-2.0 --pkg librsvg-2.0 --pkg libxml-2.0
