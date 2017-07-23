@@ -266,8 +266,8 @@ public class PluginComponentManager {
 
         void* init_pointer = null;
         void* get_def_pointer = null;
-        init_delegate init_function = null;
-        get_def_delegate get_def_function = null;
+        unowned init_delegate init_function = null;
+        unowned get_def_delegate get_def_function = null;
 
         if (module.symbol("plugin_component_init", out init_pointer)) {
             if (init_pointer != null) {
