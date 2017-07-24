@@ -629,7 +629,7 @@ public class DesignerWindow : Gtk.Window {
         menuViewShowgrid.toggled.connect(
             (menuItem) => {
                 showGrid = menuItem.active;
-                render_design();
+                update_display();
             }
         );
 
@@ -657,7 +657,7 @@ public class DesignerWindow : Gtk.Window {
         menuViewHighlighterrors.toggled.connect(
             (menuItem) => {
                 highlightErrors = menuItem.active;
-                render_design();
+                update_display();
             }
         );
 
@@ -667,7 +667,7 @@ public class DesignerWindow : Gtk.Window {
         menuViewColourbackgrounds.toggled.connect(
             (menuItem) => {
                 colourBackgrounds = menuItem.active;
-                render_design();
+                update_display();
             }
         );
 
@@ -677,7 +677,7 @@ public class DesignerWindow : Gtk.Window {
         menuViewShowdesignerhints.toggled.connect(
             (menuItem) => {
                 showHints = menuItem.active;
-                render_design();
+                update_display();
             }
         );
 
@@ -692,7 +692,7 @@ public class DesignerWindow : Gtk.Window {
         menuEditAutobind.toggled.connect(
             (menuItem) => {
                 autoBind = menuItem.active;
-                render_design();
+                update_display();
             }
         );
 
@@ -773,7 +773,7 @@ public class DesignerWindow : Gtk.Window {
         toolScroll.set_icon_widget(toolScrollImage);
         toolbar.insert(toolScroll, -1);
         toolScroll.set_tooltip_text("Scroll: Move your view of the circuit with click and drag.");
-        toolScroll.clicked.connect(() => {mouseMode = MouseMode.SCROLL; render_overlay();});
+        toolScroll.clicked.connect(() => {mouseMode = MouseMode.SCROLL; update_overlay();});
         toolScroll.active = true;
 
         toolZoomImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/zoom.png");
@@ -782,7 +782,7 @@ public class DesignerWindow : Gtk.Window {
         toolZoom.set_icon_widget(toolZoomImage);
         toolbar.insert(toolZoom, -1);
         toolZoom.set_tooltip_text("Zoom: Drag downward to zoom in or upward to zoom out.");
-        toolZoom.clicked.connect(() => {mouseMode = MouseMode.ZOOM; render_overlay();});
+        toolZoom.clicked.connect(() => {mouseMode = MouseMode.ZOOM; update_overlay();});
 
         toolSeparator1 = new Gtk.SeparatorToolItem();
         toolbar.insert(toolSeparator1, -1);
@@ -793,7 +793,7 @@ public class DesignerWindow : Gtk.Window {
         toolCursor.set_icon_widget(toolCursorImage);
         toolbar.insert(toolCursor, -1);
         toolCursor.set_tooltip_text("Select: Click on an object to select it.");
-        toolCursor.clicked.connect(() => {mouseMode = MouseMode.SELECT; render_overlay();});
+        toolCursor.clicked.connect(() => {mouseMode = MouseMode.SELECT; update_overlay();});
 
         toolMoveImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/move.png");
         toolMove = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
@@ -801,7 +801,7 @@ public class DesignerWindow : Gtk.Window {
         toolMove.set_icon_widget(toolMoveImage);
         toolbar.insert(toolMove, -1);
         toolMove.set_tooltip_text("Move: Click and drag an object to move it.");
-        toolMove.clicked.connect(() => {mouseMode = MouseMode.MOVE; render_overlay();});
+        toolMove.clicked.connect(() => {mouseMode = MouseMode.MOVE; update_overlay();});
 
         toolOrientateImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/orientate.png");
         toolOrientate = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
@@ -809,7 +809,7 @@ public class DesignerWindow : Gtk.Window {
         toolOrientate.set_icon_widget(toolOrientateImage);
         toolbar.insert(toolOrientate, -1);
         toolOrientate.set_tooltip_text("Orientate: Change the rotation of a component by dragging it. Flip by clicking.");
-        toolOrientate.clicked.connect(() => {mouseMode = MouseMode.ORIENTATE; render_overlay();});
+        toolOrientate.clicked.connect(() => {mouseMode = MouseMode.ORIENTATE; update_overlay();});
 
         toolDeleteImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/delete.png");
         toolDelete = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
@@ -817,7 +817,7 @@ public class DesignerWindow : Gtk.Window {
         toolDelete.set_icon_widget(toolDeleteImage);
         toolbar.insert(toolDelete, -1);
         toolDelete.set_tooltip_text("Delete: Click on an object to delete it.");
-        toolDelete.clicked.connect(() => {mouseMode = MouseMode.DELETE; render_overlay();});
+        toolDelete.clicked.connect(() => {mouseMode = MouseMode.DELETE; update_overlay();});
 
         toolAdjustImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/adjust.png");
         toolAdjust = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
@@ -825,7 +825,7 @@ public class DesignerWindow : Gtk.Window {
         toolAdjust.set_icon_widget(toolAdjustImage);
         toolbar.insert(toolAdjust, -1);
         toolAdjust.set_tooltip_text("Adjust: Click on an object to change its properties.");
-        toolAdjust.clicked.connect(() => {mouseMode = MouseMode.ADJUST; render_overlay();});
+        toolAdjust.clicked.connect(() => {mouseMode = MouseMode.ADJUST; update_overlay();});
 
         toolSeparator2 = new Gtk.SeparatorToolItem();
         toolbar.insert(toolSeparator2, -1);
@@ -836,7 +836,7 @@ public class DesignerWindow : Gtk.Window {
         toolAnnotate.set_icon_widget(toolAnnotateImage);
         toolbar.insert(toolAnnotate, -1);
         toolAnnotate.set_tooltip_text("Annotate: Click to insert a text comment.");
-        toolAnnotate.clicked.connect(() => {mouseMode = MouseMode.ANNOTATE; render_overlay();});
+        toolAnnotate.clicked.connect(() => {mouseMode = MouseMode.ANNOTATE; update_overlay();});
 
         toolWireImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/wire.png");
         toolWire = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
@@ -848,10 +848,10 @@ public class DesignerWindow : Gtk.Window {
             () => {
                 if (mouseMode == MouseMode.WIRE) {
                     designer.forget_wire();
-                    render_design();
+                    update_display();
                 }
                 mouseMode = MouseMode.WIRE;
-                render_overlay();
+                update_overlay();
             }
         );
 
@@ -861,7 +861,7 @@ public class DesignerWindow : Gtk.Window {
         toolBind.set_icon_widget(toolBindImage);
         toolbar.insert(toolBind, -1);
         toolBind.set_tooltip_text("Bind: Click where a wire meets a pin or another wire to connect them. Click on an existing connection to remove it.");
-        toolBind.clicked.connect(() => {mouseMode = MouseMode.BIND; render_overlay();});
+        toolBind.clicked.connect(() => {mouseMode = MouseMode.BIND; update_overlay();});
 
         toolTagImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/tag.png");
         toolTag = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
@@ -869,7 +869,7 @@ public class DesignerWindow : Gtk.Window {
         toolTag.set_icon_widget(toolTagImage);
         toolbar.insert(toolTag, -1);
         toolTag.set_tooltip_text("Tag: Drag to or from a wire to create an interface to the higher (container) component.");
-        toolTag.clicked.connect(() => {mouseMode = MouseMode.TAG; render_overlay();});
+        toolTag.clicked.connect(() => {mouseMode = MouseMode.TAG; update_overlay();});
 
         toolInvertImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/invert.png");
         toolInvert = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
@@ -877,7 +877,7 @@ public class DesignerWindow : Gtk.Window {
         toolInvert.set_icon_widget(toolInvertImage);
         toolbar.insert(toolInvert, -1);
         toolInvert.set_tooltip_text("Invert: Click on the end of a pin to invert it.");
-        toolInvert.clicked.connect(() => {mouseMode = MouseMode.INVERT; render_overlay();});
+        toolInvert.clicked.connect(() => {mouseMode = MouseMode.INVERT; update_overlay();});
 
         toolSeparator3 = new Gtk.SeparatorToolItem();
         toolbar.insert(toolSeparator3, -1);
@@ -893,7 +893,7 @@ public class DesignerWindow : Gtk.Window {
                         deselect_tools();
                         mouseMode = MouseMode.INSERT;
                         designer.set_insert_last_custom();
-                        render_overlay();
+                        update_overlay();
                     }
                 }
             }
@@ -910,7 +910,7 @@ public class DesignerWindow : Gtk.Window {
                         deselect_tools();
                         mouseMode = MouseMode.INSERT;
                         designer.set_insert_last_plugin();
-                        render_overlay();
+                        update_overlay();
                     }
                 }
             }
@@ -936,7 +936,7 @@ public class DesignerWindow : Gtk.Window {
                     if (hasDesigner) {
                         mouseMode = MouseMode.INSERT;
                         designer.set_insert_component(componentDef);
-                        render_overlay();
+                        update_overlay();
                     }
                 }
             );
@@ -958,7 +958,7 @@ public class DesignerWindow : Gtk.Window {
         display = new Gtk.DrawingArea();
         controller.add(display);
         display.draw.connect((context) => {render_design(context); return false;});
-        display.configure_event.connect(() => {gridCache = null; render_design(); return false;});
+        display.configure_event.connect(() => {gridCache = null; update_display(); return false;});
 
         printSettings = new Gtk.PrintSettings();
         pageSetup = new Gtk.PageSetup();
@@ -1058,7 +1058,7 @@ public class DesignerWindow : Gtk.Window {
                             deselect_tools();
                             mouseMode = MouseMode.INSERT;
                             designer.set_insert_component(customComponentDef);
-                            render_overlay();
+                            update_overlay();
                         }
                     }
                 );
@@ -1121,7 +1121,7 @@ public class DesignerWindow : Gtk.Window {
                             deselect_tools();
                             mouseMode = MouseMode.INSERT;
                             designer.set_insert_component(pluginComponentDef);
-                            render_overlay();
+                            update_overlay();
                         }
                     }
                 );
@@ -1201,7 +1201,7 @@ public class DesignerWindow : Gtk.Window {
                 }
 
                 gridCache = null;
-                render_design();
+                update_display();
             }
         }
     }
@@ -1246,10 +1246,6 @@ public class DesignerWindow : Gtk.Window {
     }
 
     private bool mouse_move(Gdk.EventMotion event) {
-        if (Gtk.events_pending()) {
-            return false;
-        }
-
         Gtk.Allocation areaAllocation;
         controller.get_allocation(out areaAllocation);
         int width = areaAllocation.width;
@@ -1297,29 +1293,25 @@ public class DesignerWindow : Gtk.Window {
         switch (mouseMode) {
         case MouseMode.SCROLL:
             if (mouseIsDown && liveScrollUpdate) {
-                int xViewOld = xView;
-                int yViewOld = yView;
                 xView -= xBoardDiff;
                 yView -= yBoardDiff;
+                xMouseStart = (int)event.x;
+                yMouseStart = (int)event.y;
                 gridCache = null;
-                render_design();
-                xView = xViewOld;
-                yView = yViewOld;
-                gridCache = null;
+                update_display();
             }
             break;
         case MouseMode.ZOOM:
             if (mouseIsDown && liveScrollUpdate) {
-                float zoomOld = zoom;
                 if (yDiff > 0) {
                     zoom *= 1.0f + ((float)yDiffAbs / (float)height);
                 } else {
                     zoom /= 1.0f + ((float)yDiffAbs / (float)height);
                 }
+                xMouseStart = (int)event.x;
+                yMouseStart = (int)event.y;
                 gridCache = null;
-                render_design();
-                zoom = zoomOld;
-                gridCache = null;
+                update_display();
             }
             break;
         case MouseMode.INSERT:
@@ -1348,7 +1340,7 @@ public class DesignerWindow : Gtk.Window {
                 designer.shadowComponentInst.yPosition = yBoardEnd;
                 designer.shadowComponentInst.direction = direction;
 
-                render_overlay();
+                update_overlay();
             }
             break;
         }
@@ -1555,7 +1547,7 @@ public class DesignerWindow : Gtk.Window {
             break;
         }
 
-        render_design();
+        update_display();
 
         return false;
     }
@@ -1833,7 +1825,7 @@ public class DesignerWindow : Gtk.Window {
         update_custom_menu();
         update_plugin_menu();
         update_title();
-        render_design();
+        update_display();
     }
 
     private void set_component(CustomComponentDef customComponentDef) {
@@ -1844,7 +1836,7 @@ public class DesignerWindow : Gtk.Window {
         update_custom_menu();
         update_plugin_menu();
         update_title();
-        render_design();
+        update_display();
     }
 
     /**
@@ -1863,7 +1855,7 @@ public class DesignerWindow : Gtk.Window {
         update_custom_menu();
         update_plugin_menu();
         update_title();
-        render_design();
+        update_display();
     }
 
     /**
@@ -1882,7 +1874,7 @@ public class DesignerWindow : Gtk.Window {
         designer = project.new_designer(this);
         hasDesigner = true;
         update_title();
-        render_design();
+        update_display();
 
         return this;
     }
@@ -2005,29 +1997,27 @@ public class DesignerWindow : Gtk.Window {
         }
     }
 
-    public bool render_overlay() {
-        if (display == null || !hasDesigner) {
-            return false;
+    public void update_overlay() {
+        if (visible) {
+            display.queue_draw();
         }
+    }
 
+    public void update_display() {
+        staticCache = null;
+
+        if (visible) {
+            display.queue_draw();
+        }
+    }
+
+    public void render_overlay(Cairo.Context context) {
         int width, height;
         Gtk.Allocation areaAllocation;
 
         display.get_allocation(out areaAllocation);
         width = areaAllocation.width;
         height = areaAllocation.height;
-
-        if (staticCache == null) {
-            render_design();
-        }
-
-        Cairo.Context displayContext = Gdk.cairo_create(display.get_window());
-        Cairo.Surface offScreenSurface = new Cairo.Surface.similar(displayContext.get_target(), Cairo.Content.COLOR, width, height);
-        Cairo.Context context = new Cairo.Context(offScreenSurface);
-        displayContext.set_source_surface(offScreenSurface, 0, 0);
-
-        context.set_source_surface(staticCache, 0, 0);
-        context.paint();
 
         context.translate(width / 2, height / 2);
         context.scale(zoom, zoom);
@@ -2039,138 +2029,131 @@ public class DesignerWindow : Gtk.Window {
         if (shadowComponent && mouseMode == MouseMode.INSERT && !mouseIsDown) {
             designer.shadowComponentInst.render(context, showHints, false, colourBackgrounds);
         }
-
-        displayContext.paint();
-
-        return false;
     }
 
     /**
      * Refreshes the work area display.
      */
-    public bool render_design(Cairo.Context? passedDisplayContext = null) {
+    public void render_design(Cairo.Context displayContext) {
         int width, height;
         Gtk.Allocation areaAllocation;
-        Cairo.Context displayContext;
 
         display.get_allocation(out areaAllocation);
         width = areaAllocation.width;
         height = areaAllocation.height;
 
-        if (passedDisplayContext == null) {
-            displayContext = Gdk.cairo_create(display.get_window());
-        } else {
-            displayContext = passedDisplayContext;
-        }
+        // Render off screen for performance and for caching.
         Cairo.Surface offScreenSurface = new Cairo.Surface.similar(displayContext.get_target(), Cairo.Content.COLOR, width, height);
         Cairo.Context context = new Cairo.Context(offScreenSurface);
-        displayContext.set_source_surface(offScreenSurface, 0, 0);
 
-        if (!hasDesigner) {
-            context.translate(width / 2, height / 2);
-            context.scale(zoom, zoom);
-            context.translate(-xView, -yView);
-
-            Cairo.TextExtents textExtents;
-            context.select_font_face("", Cairo.FontSlant.NORMAL, Cairo.FontWeight.BOLD);
-            context.set_font_size(16.0);
-            context.text_extents("Welcome to " + Core.programName + " v" + Core.shortVersionString, out textExtents);
-            context.translate(-textExtents.width / 2, +textExtents.height / 2);
-            context.set_source_rgb(0.75, 0.75, 0.75);
-            context.paint();
-
-            context.set_source_rgb(0, 0, 0);
-            context.show_text("Welcome to " + Core.programName + " v" + Core.shortVersionString);
-            context.stroke();
-            context.select_font_face("", Cairo.FontSlant.NORMAL, Cairo.FontWeight.NORMAL);
-
-            displayContext.paint();
-            return false;
-        }
-
-        context.set_line_width(1);
-
-        if (showGrid) {
-            if (gridCache == null) {
-                gridCache = new Cairo.Surface.similar(context.get_target(), context.get_target().get_content(), width, height);
-                Cairo.Context gridContext = new Cairo.Context(gridCache);
-
-                gridContext.set_source_rgb(1, 1, 1);
-                gridContext.paint();
-
-                float spacing = zoom * gridSize;
-
-                while (spacing < 2) {
-                    spacing *= gridSize;
-                }
-
-                float y = ((height / 2) - (float)yView * zoom) % (spacing);
-                float x = ((width  / 2) - (float)xView * zoom) % (spacing);
-
-                gridContext.set_source_rgba(0, 0, 0, 0.5);
-
-                gridContext.set_dash({1.0, spacing - 1.0}, 0);
-
-                for (; y < height; y += spacing) {
-                    gridContext.move_to(x, y);
-                    gridContext.line_to(width, y);
-                    gridContext.stroke();
-                }
-
-                spacing *= 4;
-
-                y = ((height / 2) - (float)yView * zoom) % (spacing);
-                x = ((width  / 2) - (float)xView * zoom) % (spacing);
-
-                gridContext.set_source_rgba (0, 0, 0, 1.0);
-
-                gridContext.set_dash({1.0, (spacing) - 1.0}, 0);
-
-                for (; y < height; y += spacing) {
-                    gridContext.move_to(x, y);
-                    gridContext.line_to(width, y);
-                    gridContext.stroke();
-                }
-
-                gridContext.set_dash(null, 0);
-
-                gridContext.set_source_rgba(0, 0, 0, 0.5);
-
-                x = (width / 2) - xView * zoom;
-                y = (height / 2) - yView * zoom;
-
-                gridContext.move_to((x - 10 * zoom), (y)            );
-                gridContext.line_to((x + 10 * zoom), (y)            );
-                gridContext.stroke();
-                gridContext.move_to((x)            , (y - 10 * zoom));
-                gridContext.line_to((x)            , (y + 10 * zoom));
-                gridContext.stroke();
-
-                gridContext.set_source_rgba(0, 0, 0, 1);
-            }
-
-            context.set_source_surface(gridCache, 0, 0);
+        if (staticCache != null) {
+            context.set_source_surface(staticCache, 0, 0);
             context.paint();
         } else {
-            context.set_source_rgb(1, 1, 1);
-            context.paint();
+            if (!hasDesigner) {
+                context.translate(width / 2, height / 2);
+                context.scale(zoom, zoom);
+                context.translate(-xView, -yView);
+
+                Cairo.TextExtents textExtents;
+                context.select_font_face("", Cairo.FontSlant.NORMAL, Cairo.FontWeight.BOLD);
+                context.set_font_size(16.0);
+                context.text_extents("Welcome to " + Core.programName + " v" + Core.shortVersionString, out textExtents);
+                context.translate(-textExtents.width / 2, +textExtents.height / 2);
+                context.set_source_rgb(0.75, 0.75, 0.75);
+                context.paint();
+
+                context.set_source_rgb(0, 0, 0);
+                context.show_text("Welcome to " + Core.programName + " v" + Core.shortVersionString);
+                context.stroke();
+                context.select_font_face("", Cairo.FontSlant.NORMAL, Cairo.FontWeight.NORMAL);
+            } else {
+                context.set_line_width(1);
+
+                if (showGrid) {
+                    if (gridCache == null) {
+                        gridCache = new Cairo.Surface.similar(context.get_target(), context.get_target().get_content(), width, height);
+                        Cairo.Context gridContext = new Cairo.Context(gridCache);
+
+                        gridContext.set_source_rgb(1, 1, 1);
+                        gridContext.paint();
+
+                        float spacing = zoom * gridSize;
+
+                        while (spacing < 2) {
+                            spacing *= gridSize;
+                        }
+
+                        float y = ((height / 2) - (float)yView * zoom) % (spacing);
+                        float x = ((width  / 2) - (float)xView * zoom) % (spacing);
+
+                        gridContext.set_source_rgba(0, 0, 0, 0.5);
+
+                        gridContext.set_dash({1.0, spacing - 1.0}, 0);
+
+                        for (; y < height; y += spacing) {
+                            gridContext.move_to(x, y);
+                            gridContext.line_to(width, y);
+                            gridContext.stroke();
+                        }
+
+                        spacing *= 4;
+
+                        y = ((height / 2) - (float)yView * zoom) % (spacing);
+                        x = ((width  / 2) - (float)xView * zoom) % (spacing);
+
+                        gridContext.set_source_rgba (0, 0, 0, 1.0);
+
+                        gridContext.set_dash({1.0, (spacing) - 1.0}, 0);
+
+                        for (; y < height; y += spacing) {
+                            gridContext.move_to(x, y);
+                            gridContext.line_to(width, y);
+                            gridContext.stroke();
+                        }
+
+                        gridContext.set_dash(null, 0);
+
+                        gridContext.set_source_rgba(0, 0, 0, 0.5);
+
+                        x = (width / 2) - xView * zoom;
+                        y = (height / 2) - yView * zoom;
+
+                        gridContext.move_to((x - 10 * zoom), (y)            );
+                        gridContext.line_to((x + 10 * zoom), (y)            );
+                        gridContext.stroke();
+                        gridContext.move_to((x)            , (y - 10 * zoom));
+                        gridContext.line_to((x)            , (y + 10 * zoom));
+                        gridContext.stroke();
+
+                        gridContext.set_source_rgba(0, 0, 0, 1);
+                    }
+
+                    context.set_source_surface(gridCache, 0, 0);
+                    context.paint();
+                } else {
+                    context.set_source_rgb(1, 1, 1);
+                    context.paint();
+                }
+
+                context.translate(width / 2, height / 2);
+                context.scale(zoom, zoom);
+                context.translate(-xView, -yView);
+
+                context.set_source_rgb(0, 0, 0);
+
+                designer.render(context, showHints, highlightErrors, colourBackgrounds);
+            }
+
+            // Cache the non-overlay render, so that we can reuse it when the overlay changes.
+            staticCache = offScreenSurface;
         }
 
-        context.translate(width / 2, height / 2);
-        context.scale(zoom, zoom);
-        context.translate(-xView, -yView);
-
-        context.set_source_rgb(0, 0, 0);
-
-        designer.render(context, showHints, highlightErrors, colourBackgrounds);
-
+        // Apply temporary off-screen buffer to actual display.
+        displayContext.set_source_surface(offScreenSurface, 0, 0);
         displayContext.paint();
 
-        staticCache = offScreenSurface;
-
-        render_overlay();
-
-        return false;
+        render_overlay(displayContext);
     }
 
     /**
@@ -2375,7 +2358,7 @@ public class DesignerWindow : Gtk.Window {
                 project.unregister_designer(designer);
                 hasDesigner = false;
                 update_title();
-                render_design();
+                update_display();
             }
         }
 
@@ -2416,7 +2399,7 @@ public class DesignerWindow : Gtk.Window {
             stdout.printf("Circuit validated with no errors\n");
         }
 
-        render_design();
+        update_display();
     }
 
     /**
@@ -2436,7 +2419,7 @@ public class DesignerWindow : Gtk.Window {
 
             colourBackgrounds = false;
 
-            render_design();
+            update_display();
 
             return;
         }
@@ -2453,7 +2436,7 @@ public class DesignerWindow : Gtk.Window {
             colourBackgrounds = menuViewColourbackgrounds.active;
         }
 
-        render_design();
+        update_display();
     }
 
     /**

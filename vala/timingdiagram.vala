@@ -57,8 +57,7 @@ public class TimingDiagram : Gtk.Window {
     private Gtk.EventBox controller;
     private Gtk.DrawingArea display;
 
-    private Cairo.Surface diagramCache;
-    private Cairo.Surface offScreenSurface;
+    private Cairo.Surface backgroundCache;
     private int largestLengthCache;
 
     private WireState[] wireStates;
@@ -206,8 +205,7 @@ public class TimingDiagram : Gtk.Window {
         menuViewShowgrid.toggled.connect(
             (menuItem) => {
                 showGrid = menuItem.active;
-                diagramCache = null;
-                render(true);
+                update_display(true);
             }
         );
 
@@ -278,13 +276,13 @@ public class TimingDiagram : Gtk.Window {
 
         display = new Gtk.DrawingArea();
         controller.add(display);
-        display.draw.connect((context) => {render(true, context); return false;});
-        display.configure_event.connect(() => {diagramCache = null; render(true); return false;});
+        display.draw.connect((context) => {render(context); return false;});
+        display.configure_event.connect(() => {update_display(true); return false;});
 
         show_all();
         hide();
 
-        render();
+        update_display();
     }
 
     public void close_diagram() {
@@ -300,7 +298,7 @@ public class TimingDiagram : Gtk.Window {
         show_all();
         present();
         set_keep_above(menuViewAlwaysontop.active);
-        render(true);
+        update_display(true);
     }
 
     public void add_wire(WireState newWireState) {
@@ -331,8 +329,7 @@ public class TimingDiagram : Gtk.Window {
 
             newWireState.start_recording(compiledCircuit.iterationCount - iterationCountOffset);
 
-            diagramCache = null;
-            render(true);
+            update_display(true);
         }
 
         set_keep_above(alwaysOnTop);
@@ -408,8 +405,7 @@ public class TimingDiagram : Gtk.Window {
                     labels[wireNumber] = label;
                 }
 
-                diagramCache = null;
-                render(true);
+                update_display(true);
             }
 
             set_keep_above(alwaysOnTop);
@@ -424,8 +420,7 @@ public class TimingDiagram : Gtk.Window {
         xView = 0;
         iterationCountOffset = compiledCircuit.iterationCount;
 
-        diagramCache = null;
-        render(true);
+        update_display(true);
     }
 
     public void reset_view() {
@@ -434,8 +429,7 @@ public class TimingDiagram : Gtk.Window {
         xZoom = 1;
         yZoom = 25;
 
-        diagramCache = null;
-        render(true);
+        update_display(true);
     }
 
     /**
@@ -455,7 +449,7 @@ public class TimingDiagram : Gtk.Window {
 
         barPosition = event.x;
 
-        render(false);
+        update_display(false);
         return false;
     }
 
@@ -510,8 +504,7 @@ public class TimingDiagram : Gtk.Window {
             break;
         }
 
-        diagramCache = null;
-        render(true);
+        update_display(true);
 
         return false;
     }
@@ -536,7 +529,7 @@ public class TimingDiagram : Gtk.Window {
     }
 
     // Also does horizontal grid
-    public void render_labels(Cairo.Context context, bool fullRender, int width, out int largestLength) {
+    public void render_labels(Cairo.Context context, int width, out int largestLength) {
         largestLength = 0;
 
         Cairo.Matrix oldMatrix;
@@ -551,23 +544,21 @@ public class TimingDiagram : Gtk.Window {
             if (largestLength < (int)textExtents.width) {
                 largestLength = (int)textExtents.width;
             }
-            if (fullRender) {
-                context.show_text(label);
-                context.stroke();
+            context.show_text(label);
+            context.stroke();
 
-                context.set_source_rgba(0, 0, 0, 0.25);
-                context.move_to(-10, -yZoom * 1.2);
-                context.line_to(width, -yZoom * 1.2);
-                context.stroke();
+            context.set_source_rgba(0, 0, 0, 0.25);
+            context.move_to(-10, -yZoom * 1.2);
+            context.line_to(width, -yZoom * 1.2);
+            context.stroke();
 
-                context.translate(0, yZoom * 2.4);
-            }
+            context.translate(0, yZoom * 2.4);
         }
 
         context.set_matrix(oldMatrix);
     }
 
-    public void render_graphs(Cairo.Context context, bool fullRender, int width, int largestLength) {
+    public void render_graphs(Cairo.Context context, int width, int largestLength) {
         Cairo.Matrix oldMatrix;
         oldMatrix = context.get_matrix();
 
@@ -584,7 +575,7 @@ public class TimingDiagram : Gtk.Window {
     }
 
     // Also does vertical grid
-    public void render_ruler(Cairo.Context context, bool fullRender, int width, int height, int largestLength) {
+    public void render_ruler(Cairo.Context context, int width, int height, int largestLength) {
         float xLabel;
         int labelValue;
 
@@ -611,7 +602,7 @@ public class TimingDiagram : Gtk.Window {
                 context.show_text(labelValue.to_string());
                 context.stroke();
 
-                if (fullRender && showGrid && xLabel >= largestLength + 20) {
+                if (showGrid && xLabel >= largestLength + 20) {
                     context.set_source_rgba(0, 0, 0, 0.25);
                     context.move_to(xLabel, 20);
                     context.line_to(xLabel, height);
@@ -623,7 +614,7 @@ public class TimingDiagram : Gtk.Window {
                 context.line_to(xLabel, 15);
                 context.stroke();
 
-                if (fullRender && showGrid && xLabel >= largestLength + 20) {
+                if (showGrid && xLabel >= largestLength + 20) {
                     context.set_source_rgba(0, 0, 0, 0.125);
                     context.move_to(xLabel, 20);
                     context.line_to(xLabel, height);
@@ -642,11 +633,19 @@ public class TimingDiagram : Gtk.Window {
         }
     }
 
-    public bool render(bool fullRefresh = true, Cairo.Context? passedDisplayContext = null) {
-        Cairo.Context displayContext;
+    public void update_display(bool fullRefresh = true) {
+        if (fullRefresh) {
+            backgroundCache = null;
+        }
 
+        if (visible) {
+            display.queue_draw();
+        }
+    }
+
+    public void render(Cairo.Context displayContext) {
         if (!visible) {
-            return false;
+            return;
         }
 
         int width, height;
@@ -656,85 +655,38 @@ public class TimingDiagram : Gtk.Window {
         width = areaAllocation.width;
         height = areaAllocation.height;
 
-        if (passedDisplayContext == null) {
-            displayContext = Gdk.cairo_create(display.get_window());
-        } else {
-            displayContext = passedDisplayContext;
-        }
-
         int largestLength;
 
-        if (largestLengthCache == 0) {
-            fullRefresh = true;
-        }
+        Cairo.Surface offScreenSurface = new Cairo.Surface.similar(displayContext.get_target(), displayContext.get_target().get_content(), width, height);
+        Cairo.Context context = new Cairo.Context(offScreenSurface);
 
-        if (fullRefresh || offScreenSurface == null) {
-            Cairo.Surface offScreenSurface = new Cairo.Surface.similar(displayContext.get_target(), displayContext.get_target().get_content(), width, height);
+        if (backgroundCache == null) {
+            backgroundCache = new Cairo.Surface.similar(context.get_target(), Cairo.Content.COLOR_ALPHA, width, height);
+            Cairo.Context backgroundContext = new Cairo.Context(backgroundCache);
 
-            Cairo.Context context = new Cairo.Context(offScreenSurface);
+            backgroundContext.set_source_rgb(1, 1, 1);
+            backgroundContext.paint();
 
-            context.set_source_rgb(1, 1, 1);
-            context.paint();
+            render_labels(backgroundContext, width, out largestLength);
+            render_ruler(backgroundContext, width, height, largestLength);
 
-            if (diagramCache == null) {
-                diagramCache = new Cairo.Surface.similar(context.get_target(), Cairo.Content.COLOR_ALPHA, width, height);
-                Cairo.Context cacheContext = new Cairo.Context(diagramCache);
+            largestLengthCache = largestLength;
 
-                cacheContext.set_operator(Cairo.Operator.SOURCE);
-                cacheContext.set_source_rgba(0, 0, 0, 0);
-                cacheContext.paint();
-                cacheContext.set_operator(Cairo.Operator.OVER);
-
-                render_labels(cacheContext, true, width, out largestLength);
-                render_ruler(cacheContext, true, width, height, largestLength);
-
-                largestLengthCache = largestLength;
-            } else {
-                largestLength = largestLengthCache;
-            }
-
-            render_graphs(context, true, width, largestLength);
-            render_bar(context, height, largestLength);
-
-            context.set_source_surface(diagramCache, 0, 0);
-            context.paint();
-
-            displayContext.set_source_surface(offScreenSurface, 0, 0);
-            displayContext.paint();
+            render_bar(backgroundContext, height, largestLength);
         } else {
-            Cairo.Context context = new Cairo.Context(offScreenSurface);
-
-            context.set_source_rgb(1, 1, 1);
-            context.paint();
-
-            if (diagramCache == null) {
-                diagramCache = new Cairo.Surface.similar(context.get_target(), Cairo.Content.COLOR_ALPHA, width, height);
-                Cairo.Context cacheContext = new Cairo.Context(diagramCache);
-
-                cacheContext.set_operator(Cairo.Operator.SOURCE);
-                cacheContext.set_source_rgba(0, 0, 0, 0);
-                cacheContext.paint();
-                cacheContext.set_operator(Cairo.Operator.OVER);
-
-                render_labels(cacheContext, false, width, out largestLength);
-                render_ruler(cacheContext, false, width, height, largestLength);
-
-                largestLengthCache = largestLength;
-            } else {
-                largestLength = largestLengthCache;
-            }
-
-            render_graphs(context, false, width, largestLength);
-            render_bar(context, height, largestLength);
-
-            context.set_source_surface(diagramCache, 0, 0);
-            context.paint();
-
-            displayContext.set_source_surface(offScreenSurface, 0, 0);
-            displayContext.paint();
+            largestLength = largestLengthCache;
         }
 
-        return false;
+        // Use cached background.
+        context.set_source_surface(backgroundCache, 0, 0);
+        context.paint();
+
+        // Render the graph data
+        render_graphs(context, width, largestLength);
+
+        // Update on screen
+        displayContext.set_source_surface(offScreenSurface, 0, 0);
+        displayContext.paint();
     }
 
     public void export_png() {
@@ -807,9 +759,9 @@ public class TimingDiagram : Gtk.Window {
         stdout.printf("Exporting timing diagram (render size = %i x %i, scale = %f x %f)\n", imageWidth, imageHeight, imageXZoom, imageYZoom);
 
         int largestLength;
-        render_labels(context, true, width, out largestLength);
-        render_graphs(context, true, width, largestLength);
-        render_ruler(context, true, width, height, largestLength);
+        render_labels(context, width, out largestLength);
+        render_graphs(context, width, largestLength);
+        render_ruler(context, width, height, largestLength);
 
         switch (imageFormat) {
         case ImageExporter.ImageFormat.PNG_RGB:

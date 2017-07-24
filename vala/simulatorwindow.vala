@@ -167,6 +167,7 @@ public class SimulatorWindow : Gtk.Window {
      */
     private double timeBeforeRender;
 
+    private Cairo.Surface renderCache = null;
     private bool inhibitRender = false;
 
     private bool autoFitDesign = true;
@@ -324,7 +325,7 @@ public class SimulatorWindow : Gtk.Window {
                 if (autoFitDesign) {
                     fit_design();
                 }
-                render(true);
+                update_display(true);
             }
         );
 
@@ -414,7 +415,8 @@ public class SimulatorWindow : Gtk.Window {
 
         display = new Gtk.DrawingArea();
         controller.add(display);
-        display.draw.connect((context) => {render(true, false, context); return false;});
+        display.draw.connect((context) => {render(context); return false;});
+        display.configure_event.connect((context) => {update_display(true); return false;});
 
         show_all();
 
@@ -526,8 +528,8 @@ public class SimulatorWindow : Gtk.Window {
         menuSimulationRun.active = false;
         toolRun.active = false;
 
-        render(true);
-        timingDiagram.render(true);
+        update_display(true);
+        timingDiagram.update_display(true);
     }
 
     private void show_timing_diagram() {
@@ -574,7 +576,7 @@ public class SimulatorWindow : Gtk.Window {
             zoom = altZoom;
         }
 
-        render(true);
+        update_display(true);
     }
 
     /**
@@ -586,8 +588,8 @@ public class SimulatorWindow : Gtk.Window {
         if (runState != RunState.HALTING && timeBeforeRender <= 0.0) {
             renderingTimer.start();
 
-            render(false);
-            timingDiagram.render(false);
+            update_display(false);
+            timingDiagram.update_display(false);
 
             renderingTimer.stop();
 
@@ -622,7 +624,7 @@ public class SimulatorWindow : Gtk.Window {
 
         if (result == 1) {
             runState = RunState.ERROR;
-            render(true);
+            update_display(true);
 
             stdout.printf("Simulation Error!\n");
             stdout.flush();
@@ -706,7 +708,7 @@ public class SimulatorWindow : Gtk.Window {
         case MouseMode.SCROLL:
             xView -= xBoardDiff;
             yView -= yBoardDiff;
-            render(true);
+            update_display(true);
             break;
         case MouseMode.ZOOM:
             if (yDiff > 0) {
@@ -714,11 +716,11 @@ public class SimulatorWindow : Gtk.Window {
             } else {
                 zoom /= 1.0f + ((float)yDiffAbs / (float)height);
             }
-            render(true);
+            update_display(true);
             break;
         case MouseMode.INTERACT:
             compiledCircuit.interact_components(xBoardEnd, yBoardEnd);
-            render(true, true);
+            update_display(true, true);
             break;
         case MouseMode.CONTEXT:
             int result = compiledCircuit.expand_component(xBoardEnd, yBoardEnd);
@@ -728,18 +730,18 @@ public class SimulatorWindow : Gtk.Window {
                 if (autoFitDesign) {
                     fit_design();
                 }
-                render(true);
+                update_display(true);
                 break;
             case 1: // Shrink
                 compiledCircuit.shrink_component();
                 if (autoFitDesign) {
                     fit_design();
                 }
-                render(true);
+                update_display(true);
                 break;
             case 2: // No Action happened, so interact
                 compiledCircuit.interact_components(xBoardEnd, yBoardEnd);
-                render(true, true);
+                update_display(true, true);
                 break;
             }
             break;
@@ -751,14 +753,14 @@ public class SimulatorWindow : Gtk.Window {
                 if (autoFitDesign) {
                     fit_design();
                 }
-                render(true);
+                update_display(true);
                 break;
             case 1: // Shrink
                 compiledCircuit.shrink_component();
                 if (autoFitDesign) {
                     fit_design();
                 }
-                render(true);
+                update_display(true);
                 break;
             case 2: // No Action
                 break;
@@ -776,23 +778,32 @@ public class SimulatorWindow : Gtk.Window {
         return false;
     }
 
+    public void update_display(bool fullRefresh = true, bool cancelIfRunning = false) {
+        if (fullRefresh) {
+            renderCache = null;
+        }
+
+        if (cancelIfRunning && runState == RunState.RUNNING) {
+            return;
+        }
+
+        if (visible) {
+            display.queue_draw();
+        }
+    }
+
     /**
      * Renders the currently viewed part of the simulation. If
      * //fullRefresh// is false, then the circuit design is not redrawn.
      */
-    public bool render(bool fullRefresh = true, bool cancelIfRunning = false, Cairo.Context? passedDisplayContext = null) {
-        Cairo.Context displayContext;
+    public void render(Cairo.Context displayContext) {
         int width, height;
         Gtk.Allocation areaAllocation;
-
-        if (cancelIfRunning && runState == RunState.RUNNING) {
-            return false;
-        }
 
         // If the display will not naturally update, don't update too much.
         if (runState == RunState.PAUSED) {
             if (inhibitRender) {
-                return false;
+                return;
             }
 
             inhibitRender = true;
@@ -808,37 +819,37 @@ public class SimulatorWindow : Gtk.Window {
         width = areaAllocation.width;
         height = areaAllocation.height;
 
-        if (passedDisplayContext == null) {
-            displayContext = Gdk.cairo_create(display.get_window());
-        } else {
-            displayContext = passedDisplayContext;
-        }
+        Cairo.Surface offScreenSurface = new Cairo.Surface.similar(displayContext.get_target(), displayContext.get_target().get_content(), width, height);
 
-        if (fullRefresh) {
-            Cairo.Surface offScreenSurface = new Cairo.Surface.similar(displayContext.get_target(), displayContext.get_target().get_content(), width, height);
+        Cairo.Context context = new Cairo.Context(offScreenSurface);
 
-            Cairo.Context context = new Cairo.Context(offScreenSurface);
-
+        if (renderCache == null) {
+            // Full render required. Clear to white.
             context.set_source_rgb(1, 1, 1);
             context.paint();
-
-            context.translate(width / 2, height / 2);
-            context.scale(zoom, zoom);
-            context.translate(-xView, -yView);
-
-            compiledCircuit.render(context, true, zoom);
-
-            displayContext.set_source_surface(offScreenSurface, 0, 0);
-            displayContext.paint();
         } else {
-            displayContext.translate(width / 2, height / 2);
-            displayContext.scale(zoom, zoom);
-            displayContext.translate(-xView, -yView);
-
-            compiledCircuit.render(displayContext, false, zoom);
+            // Reuse the previous render.
+            context.set_source_surface(renderCache, 0, 0);
+            context.paint();
         }
 
-        return false;
+        context.translate(width / 2, height / 2);
+        context.scale(zoom, zoom);
+        context.translate(-xView, -yView);
+
+        if (renderCache == null) {
+            // Update everything.
+            compiledCircuit.render(context, true, zoom);
+        } else {
+            // Only update state visualisation.
+            compiledCircuit.render(context, false, zoom);
+        }
+
+        // Store the render for future partial updates.
+        renderCache = offScreenSurface;
+
+        displayContext.set_source_surface(offScreenSurface, 0, 0);
+        displayContext.paint();
     }
 
     /**
