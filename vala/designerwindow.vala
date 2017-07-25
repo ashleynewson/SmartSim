@@ -1591,9 +1591,9 @@ public class DesignerWindow : Gtk.Window {
             "Load Component",
             this,
             Gtk.FileChooserAction.OPEN,
-            Gtk.Stock.CANCEL,
+            "_Cancel",
             Gtk.ResponseType.CANCEL,
-            Gtk.Stock.OPEN,
+            "_Open",
             Gtk.ResponseType.ACCEPT
         );
 
@@ -1630,9 +1630,9 @@ public class DesignerWindow : Gtk.Window {
             "Load Component",
             this,
             Gtk.FileChooserAction.OPEN,
-            Gtk.Stock.CANCEL,
+            "_Cancel",
             Gtk.ResponseType.CANCEL,
-            Gtk.Stock.OPEN,
+            "_Open",
             Gtk.ResponseType.ACCEPT
         );
 
@@ -1674,9 +1674,9 @@ public class DesignerWindow : Gtk.Window {
                 "Save Component",
                 this,
                 Gtk.FileChooserAction.SAVE,
-                Gtk.Stock.CANCEL,
+                "_Cancel",
                 Gtk.ResponseType.CANCEL,
-                Gtk.Stock.SAVE,
+                "_Save",
                 Gtk.ResponseType.ACCEPT
             );
 
@@ -1731,9 +1731,9 @@ public class DesignerWindow : Gtk.Window {
             "Load Project",
             this,
             Gtk.FileChooserAction.OPEN,
-            Gtk.Stock.CANCEL,
+            "_Cancel",
             Gtk.ResponseType.CANCEL,
-            Gtk.Stock.OPEN,
+            "_Open",
             Gtk.ResponseType.ACCEPT
         );
 
@@ -1769,9 +1769,9 @@ public class DesignerWindow : Gtk.Window {
                 "Save Project",
                 this,
                 Gtk.FileChooserAction.SAVE,
-                Gtk.Stock.CANCEL,
+                "_Cancel",
                 Gtk.ResponseType.CANCEL,
-                Gtk.Stock.SAVE,
+                "_Save",
                 Gtk.ResponseType.ACCEPT
             );
 
@@ -2310,9 +2310,9 @@ public class DesignerWindow : Gtk.Window {
             project.name
         );
 
-        messageDialog.add_button(Gtk.Stock.YES, Gtk.ResponseType.YES);
-        messageDialog.add_button(Gtk.Stock.NO, Gtk.ResponseType.NO);
-        messageDialog.add_button(Gtk.Stock.CANCEL, Gtk.ResponseType.CANCEL);
+        messageDialog.add_button("_Yes", Gtk.ResponseType.YES);
+        messageDialog.add_button("_No", Gtk.ResponseType.NO);
+        messageDialog.add_button("_Cancel", Gtk.ResponseType.CANCEL);
 
         switch (messageDialog.run()) {
         case Gtk.ResponseType.CANCEL:

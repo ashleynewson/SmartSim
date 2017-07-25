@@ -67,9 +67,9 @@ public class PropertyItemFile : PropertyItem {
             "Select File",
             null,
             Gtk.FileChooserAction.SAVE,
-            Gtk.Stock.CANCEL,
+            "_Cancel",
             Gtk.ResponseType.CANCEL,
-            Gtk.Stock.OK,
+            "_OK",
             Gtk.ResponseType.ACCEPT
         );
 

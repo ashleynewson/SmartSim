@@ -37,9 +37,9 @@ public class ImageExporter {
                 "Export to PNG",
                 null,
                 Gtk.FileChooserAction.SAVE,
-                Gtk.Stock.CANCEL,
+                "_Cancel",
                 Gtk.ResponseType.CANCEL,
-                Gtk.Stock.SAVE,
+                "_Save",
                 Gtk.ResponseType.ACCEPT
             );
 
@@ -104,9 +104,9 @@ public class ImageExporter {
             "Export to PDF",
             null,
             Gtk.FileChooserAction.SAVE,
-            Gtk.Stock.CANCEL,
+            "_Cancel",
             Gtk.ResponseType.CANCEL,
-            Gtk.Stock.SAVE,
+            "_Save",
             Gtk.ResponseType.ACCEPT
         );
 
@@ -169,9 +169,9 @@ public class ImageExporter {
                 "Export to SVG",
                 null,
                 Gtk.FileChooserAction.SAVE,
-                Gtk.Stock.CANCEL,
+                "_Cancel",
                 Gtk.ResponseType.CANCEL,
-                Gtk.Stock.SAVE,
+                "_Save",
                 Gtk.ResponseType.ACCEPT
             );
 
