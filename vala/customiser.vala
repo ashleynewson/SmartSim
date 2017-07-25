@@ -232,8 +232,8 @@ public class Customiser {
 
         display = new Gtk.DrawingArea();
         controller.add(display);
-        display.draw.connect((context) => {render_def (context); return false;});
-        display.configure_event.connect(() => {gridCache = null; render_def (); return false;});
+        display.draw.connect((context) => {render_def(context); return false;});
+        display.configure_event.connect(() => {gridCache = null; update_display(); return false;});
 
         controlsVBox = new Gtk.Box(Gtk.Orientation.VERTICAL, 2);
         layoutHBox.pack_start(controlsVBox, false, true, 1);
@@ -266,7 +266,7 @@ public class Customiser {
         labelEntry.changed.connect(
             () => {
                 customComponentDef.label = labelEntry.text;
-                render_def();
+                update_display();
             }
         );
         labelHBox.pack_start(labelEntry, true, true, 1);
@@ -337,7 +337,7 @@ public class Customiser {
                 () => {
                     if (selectedPin != null) {
                         selectedPin.label = pinLabelEntry.text;
-                        render_def();
+                        update_display();
                     }
                 }
             );
@@ -497,7 +497,7 @@ public class Customiser {
 
         update_values();
 
-        render_def();
+        update_display();
 
         return false;
     }
@@ -550,7 +550,7 @@ public class Customiser {
 
         colorDialog.destroy();
 
-        render_def();
+        update_display();
     }
 
     /**
@@ -581,7 +581,7 @@ public class Customiser {
             } else if (labelTypeClockRadio.active) {
                 selectedPin.labelType = PinDef.LabelType.CLOCK;
             }
-            render_def();
+            update_display();
         }
     }
 
@@ -594,7 +594,7 @@ public class Customiser {
         customComponentDef.leftBound = leftBoundSpinButton.get_value_as_int();
         customComponentDef.upBound = upBoundSpinButton.get_value_as_int();
 
-        render_def();
+        update_display();
     }
 
     /**
@@ -638,14 +638,19 @@ public class Customiser {
             selectedPin = null;
         }
 
-        render_def();
+        update_display();
+    }
+
+    public void update_display() {
+        if (dialog.visible) {
+            display.queue_draw();
+        }
     }
 
     /**
      * Render the current box design.
      */
-    public bool render_def(Cairo.Context? passedDisplayContext = null) {
-        Cairo.Context displayContext;
+    public void render_def(Cairo.Context displayContext) {
         int width, height;
         Gtk.Allocation areaAllocation;
 
@@ -653,14 +658,8 @@ public class Customiser {
         width = areaAllocation.width;
         height = areaAllocation.height;
 
-        if (passedDisplayContext == null) {
-            displayContext = Gdk.cairo_create(display.get_window());
-        } else {
-            displayContext = passedDisplayContext;
-        }
         Cairo.Surface offScreenSurface = new Cairo.Surface.similar(displayContext.get_target(), Cairo.Content.COLOR, width, height);
         Cairo.Context context = new Cairo.Context(offScreenSurface);
-        displayContext.set_source_surface(offScreenSurface, 0, 0);
 
         context.set_line_width(1);
 
@@ -738,8 +737,7 @@ public class Customiser {
             pinDef.render(context, false);
         }
 
+        displayContext.set_source_surface(offScreenSurface, 0, 0);
         displayContext.paint();
-
-        return false;
     }
 }
