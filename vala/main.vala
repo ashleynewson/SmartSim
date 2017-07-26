@@ -133,10 +133,10 @@ with SmartSim. If not, see:
     public static int main(string[] args) {
         string[] projectsToOpen = {};
 
-        stdout.printf("%s\n", Core.programName);
-        stdout.printf("\t%s\n", Core.versionString);
-        stdout.printf("Copyright: %s\n", Core.copyrightString);
-        stdout.printf("License: %s\n", Core.licenseName);
+        stderr.printf("%s\n", Core.programName);
+        stderr.printf("\t%s\n", Core.versionString);
+        stderr.printf("Copyright: %s\n", Core.copyrightString);
+        stderr.printf("License: %s\n", Core.licenseName);
 
         Core.fullLicenseText = Core.load_string_from_file("COPYING");
 
@@ -146,8 +146,8 @@ with SmartSim. If not, see:
             case "--version":
                 return 0;
             case "--license":
-                stdout.printf("%s\n", Core.licenseName);
-                stdout.printf("%s\n", Core.fullLicenseText);
+                stderr.printf("%s\n", Core.licenseName);
+                stderr.printf("%s\n", Core.fullLicenseText);
                 return 0;
             default:
                 if (arg.substring(0, 2) == "--") {
@@ -160,18 +160,18 @@ with SmartSim. If not, see:
             }
         }
 
-        stdout.printf("Loading System...\n");
+        stderr.printf("Loading System...\n");
 
         Gtk.init(ref args);
 
-        stdout.printf("Loading Place-holder Graphic\n");
+        stderr.printf("Loading Place-holder Graphic\n");
         try {
             Graphic.placeHolder = new Graphic.from_file(Config.resourcesDir + "images/graphics/placeholder");
         } catch (GraphicLoadError error) {
-            stdout.printf("Could not load place-holder graphic: %s\n", error.message);
+            stderr.printf("Could not load place-holder graphic: %s\n", error.message);
         }
 
-        stdout.printf("Loading Components\n");
+        stderr.printf("Loading Components\n");
         Core.load_standard_defs();
 
         if (projectsToOpen.length == 0) {
@@ -182,15 +182,15 @@ with SmartSim. If not, see:
             }
         }
 
-        stdout.printf("Ready\n");
+        stderr.printf("Ready\n");
 
         Gtk.main();
 
-        stdout.printf("Program Terminating...\n");
+        stderr.printf("Program Terminating...\n");
 
         PluginComponentManager.unregister_all();
 
-        stdout.printf("Program Terminated.\n");
+        stderr.printf("Program Terminated.\n");
 
         return 0;
     }

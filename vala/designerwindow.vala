@@ -39,7 +39,7 @@ public class DesignerWindow : Gtk.Window {
         designerWindows += window;
         window.myID = position;
 
-        stdout.printf("Registered designer window %i\n", position);
+        stderr.printf("Registered designer window %i\n", position);
     }
 
     /**
@@ -53,7 +53,7 @@ public class DesignerWindow : Gtk.Window {
         position = window.myID;
 
         if (position == -1) {
-            stdout.printf("Window already unregistered!\n");
+            stderr.printf("Window already unregistered!\n");
             return;
         }
 
@@ -68,12 +68,12 @@ public class DesignerWindow : Gtk.Window {
 
         designerWindows = tempArray;
 
-        stdout.printf("Unregistered designer window %i\n", position);
+        stderr.printf("Unregistered designer window %i\n", position);
 
         Project.clean_up();
 
         if (designerWindows.length == 0) {
-            stdout.printf("No more designer windows! Closing...\n");
+            stderr.printf("No more designer windows! Closing...\n");
             Gtk.main_quit();
         }
     }
@@ -478,7 +478,7 @@ public class DesignerWindow : Gtk.Window {
      * Populate the window with widgets.
      */
     public void populate() {
-        stdout.printf("Design Window Created\n");
+        stderr.printf("Design Window Created\n");
 
         set_default_size(800, 600);
         set_border_width(0);
@@ -1357,7 +1357,7 @@ public class DesignerWindow : Gtk.Window {
 
         if (project != null) {
             if (project.running) {
-                stdout.printf ("Cannot edit running circuit!\n");
+                stderr.printf ("Cannot edit running circuit!\n");
                 return false;
             }
         }
@@ -1403,7 +1403,7 @@ public class DesignerWindow : Gtk.Window {
             xBoardEnd = (xBoardEnd / gridSize) * gridSize;
             yBoardEnd = (yBoardEnd / gridSize) * gridSize;
         }
-        stdout.printf("Interact @ (%i, %i) - (%i, %i)\n", xBoardStart, yBoardStart, xBoardEnd, yBoardEnd);
+        stderr.printf("Interact @ (%i, %i) - (%i, %i)\n", xBoardStart, yBoardStart, xBoardEnd, yBoardEnd);
 
         int xBoardDiff = xBoardEnd - xBoardStart;
         int yBoardDiff = yBoardEnd - yBoardStart;
@@ -1605,7 +1605,7 @@ public class DesignerWindow : Gtk.Window {
 
         if (fileChooser.run() == Gtk.ResponseType.ACCEPT) {
             if (project.reopen_window_from_file(fileChooser.get_filename()) == 0) {
-                stdout.printf("Load Component From: %s\n", fileChooser.get_filename());
+                stderr.printf("Load Component From: %s\n", fileChooser.get_filename());
                 new_designer().load_component(fileChooser.get_filename());
             }
             fileChooser.destroy();
@@ -1647,7 +1647,7 @@ public class DesignerWindow : Gtk.Window {
         }
 
         if (fileChooser.run() == Gtk.ResponseType.ACCEPT) {
-            stdout.printf("Load Plugin Component From: %s\n", fileChooser.get_filename());
+            stderr.printf("Load Plugin Component From: %s\n", fileChooser.get_filename());
             project.load_plugin_component(fileChooser.get_filename());
             project.update_plugin_menus();
         }
@@ -1691,7 +1691,7 @@ public class DesignerWindow : Gtk.Window {
                 if (fileChooser.run() == Gtk.ResponseType.ACCEPT) {
                     componentFileName = fileChooser.get_filename();
                     if ("." in componentFileName) {
-                        stdout.printf("File extension already given\n");
+                        stderr.printf("File extension already given\n");
                     } else {
                         if (fileChooser.filter == sscFileFilter) {
                             componentFileName += ".ssc";
@@ -1716,7 +1716,7 @@ public class DesignerWindow : Gtk.Window {
             fileChooser.destroy();
         }
 
-        stdout.printf("Save Component To: %s\n", componentFileName);
+        stderr.printf("Save Component To: %s\n", componentFileName);
 
         designer.save_component(componentFileName);
 
@@ -1742,7 +1742,7 @@ public class DesignerWindow : Gtk.Window {
         fileChooser.add_filter(anyFileFilter);
 
         if (fileChooser.run() == Gtk.ResponseType.ACCEPT) {
-            stdout.printf("Load Project From: %s\n", fileChooser.get_filename());
+            stderr.printf("Load Project From: %s\n", fileChooser.get_filename());
             load_project(fileChooser.get_filename());
             fileChooser.destroy();
         } else {
@@ -1784,7 +1784,7 @@ public class DesignerWindow : Gtk.Window {
                 if (fileChooser.run() == Gtk.ResponseType.ACCEPT) {
                     project.filename = fileChooser.get_filename();
                     if ("." in project.filename) {
-                        stdout.printf("File extension already given\n");
+                        stderr.printf("File extension already given\n");
                     } else {
                         if (fileChooser.filter == anysspFileFilter) {
                             project.filename += ".ssp";
@@ -1805,7 +1805,7 @@ public class DesignerWindow : Gtk.Window {
             fileChooser.destroy();
         }
 
-        stdout.printf("Save Project To: %s\n", project.filename);
+        stderr.printf("Save Project To: %s\n", project.filename);
 
         project.save(project.filename);
 
@@ -2187,7 +2187,7 @@ public class DesignerWindow : Gtk.Window {
             pageZoom = pageZoom * (double)pageWidth / (double)width;
         }
 
-        stdout.printf("Printing design (render size = %i x %i, scale = %f)\n", pageWidth, pageHeight, pageZoom);
+        stderr.printf("Printing design (render size = %i x %i, scale = %f)\n", pageWidth, pageHeight, pageZoom);
 
         context.translate(pageWidth / 2, pageHeight / 2);
         context.scale(pageZoom, pageZoom);
@@ -2261,7 +2261,7 @@ public class DesignerWindow : Gtk.Window {
 
         context.set_line_width(1);
 
-        stdout.printf("Exporting design (render size = %i x %i, scale = %f)\n", imageWidth, imageHeight, imageZoom);
+        stderr.printf("Exporting design (render size = %i x %i, scale = %f)\n", imageWidth, imageHeight, imageZoom);
 
         context.translate(imageWidth / 2, imageHeight / 2);
         context.scale(imageZoom, imageZoom);
@@ -2331,7 +2331,7 @@ public class DesignerWindow : Gtk.Window {
     }
 
     public void force_destroy_window() {
-        stdout.printf("Designer Window destroyed (not hidden)\n");
+        stderr.printf("Designer Window destroyed (not hidden)\n");
 
         project = null;
         designer = null;
@@ -2392,11 +2392,11 @@ public class DesignerWindow : Gtk.Window {
         }
 
         if (compiledCircuit.errorMessage != "") {
-            stdout.printf("Circuit is invalid!\n");
-            stdout.flush();
+            stderr.printf("Circuit is invalid!\n");
+            stderr.flush();
             stderr.printf("Error Messages:\n%s\n", compiledCircuit.errorMessage);
         } else {
-            stdout.printf("Circuit validated with no errors\n");
+            stderr.printf("Circuit validated with no errors\n");
         }
 
         update_display();
@@ -2425,13 +2425,13 @@ public class DesignerWindow : Gtk.Window {
         }
 
         if (compiledCircuit.errorMessage != "") {
-            stdout.printf("Circuit is invalid!\n");
-            stdout.flush();
+            stderr.printf("Circuit is invalid!\n");
+            stderr.flush();
             stderr.printf("Error Messages:\n%s\n", compiledCircuit.errorMessage);
 
             colourBackgrounds = false;
         } else {
-            stdout.printf("Circuit started with no errors\n");
+            stderr.printf("Circuit started with no errors\n");
 
             colourBackgrounds = menuViewColourbackgrounds.active;
         }
@@ -2464,6 +2464,6 @@ public class DesignerWindow : Gtk.Window {
     }
 
     ~DesignerWindow() {
-        stdout.printf("Designer Window Destroyed\n");
+        stderr.printf("Designer Window Destroyed\n");
     }
 }

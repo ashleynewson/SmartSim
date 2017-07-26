@@ -67,7 +67,7 @@ public class Graphic {
      * //filename//.svg.
      */
     public Graphic.from_file(string filename) throws GraphicLoadError {
-        stdout.printf("Loading graphic \"%s\"\n", filename);
+        stderr.printf("Loading graphic \"%s\"\n", filename);
         this.filename = filename;
 
         if (load_info(filename + ".info") != 0) {
@@ -83,7 +83,7 @@ public class Graphic {
      * (describing its centre, width...).
      */
     public int load_info(string filename) { // All XML Code will need maintaining.
-        stdout.printf("Loading graphic info \"%s\"\n", filename);
+        stderr.printf("Loading graphic info \"%s\"\n", filename);
         this.infoFilename = filename;
 
         Xml.Doc* xmldoc;
@@ -93,22 +93,22 @@ public class Graphic {
         xmldoc = Xml.Parser.parse_file(filename);
 
         if (xmldoc == null) {
-            stdout.printf("Error loading info xml file \"%s\".\n", filename);
-            stdout.printf("File inaccessible.\n");
+            stderr.printf("Error loading info xml file \"%s\".\n", filename);
+            stderr.printf("File inaccessible.\n");
             return 1;
         }
 
         xmlroot = xmldoc->get_root_element();
 
         if (xmlroot == null) {
-            stdout.printf("Error loading info xml file \"%s\".\n", filename);
-            stdout.printf("File is empty.\n");
+            stderr.printf("Error loading info xml file \"%s\".\n", filename);
+            stderr.printf("File is empty.\n");
             return 2;
         }
 
         if (xmlroot->name != "graphic_info") {
-            stdout.printf("Error loading info xml file \"%s\".\n", filename);
-            stdout.printf("Wanted \"graphic_info\" info, but got \"%s\"\n", xmlroot->name);
+            stderr.printf("Error loading info xml file \"%s\".\n", filename);
+            stderr.printf("Wanted \"graphic_info\" info, but got \"%s\"\n", xmlroot->name);
             return 3;
         }
 
@@ -154,18 +154,18 @@ public class Graphic {
      * Loads the SVG using librsvg.
      */
     public int load_svg(string filename) {
-        stdout.printf("Loading svg \"%s\"\n", filename);
+        stderr.printf("Loading svg \"%s\"\n", filename);
         this.svgFilename = filename;
 
         try {
             svgHandle = new Rsvg.Handle.from_file(filename);
         } catch {
-            stdout.printf("Error loading graphic \"%s\"\n", filename);
+            stderr.printf("Error loading graphic \"%s\"\n", filename);
             return 1;
         }
 
         if (svgHandle == null) {
-            stdout.printf("Error loading graphic \"%s\"\n", filename);
+            stderr.printf("Error loading graphic \"%s\"\n", filename);
             return 2;
         }
 

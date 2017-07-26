@@ -42,7 +42,7 @@ public class PluginComponentManager {
         position = pluginComponentManagers.length;
         pluginComponentManagers += pluginComponentManager;
 
-        stdout.printf("Registered Plugin Component Manager (%i: \"%s\").\n", position, pluginComponentManager.name);
+        stderr.printf("Registered Plugin Component Manager (%i: \"%s\").\n", position, pluginComponentManager.name);
     }
 
     /**
@@ -54,14 +54,14 @@ public class PluginComponentManager {
          * All references to plugin code must be removed before un linking.
          */
 
-        stdout.printf("Unregistering Plugin Component Managers...\n");
+        stderr.printf("Unregistering Plugin Component Managers...\n");
 
         foreach (PluginComponentManager pluginComponentManager in pluginComponentManagers) {
             pluginComponentManager.unload();
         }
         pluginComponentManagers = null;
 
-        stdout.printf("Unregistered Plugin Component Managers.\n");
+        stderr.printf("Unregistered Plugin Component Managers.\n");
     }
 
     /**
@@ -83,7 +83,7 @@ public class PluginComponentManager {
      */
     public static PluginComponentManager? from_filename(string filename) {
         foreach (PluginComponentManager pluginComponentManager in pluginComponentManagers) {
-            stdout.printf(
+            stderr.printf(
                 "Comparing component filenames: \n\t\"%s\"\n\t\"%s\"\n",
                 Core.absolute_filename(pluginComponentManager.filename),
                 Core.absolute_filename(filename)
@@ -118,7 +118,7 @@ public class PluginComponentManager {
     public PluginComponentManager.from_file(string infoFilename, Project project) throws ComponentDefLoadError, PluginComponentDefLoadError
     {
         if (PluginComponentManager.from_filename(infoFilename) != null) {
-            stdout.printf("Error initialising plugin: Plugin cannot load twice conflict: \"%s\".\n", infoFilename);
+            stderr.printf("Error initialising plugin: Plugin cannot load twice conflict: \"%s\".\n", infoFilename);
             throw new PluginComponentDefLoadError.NAME_CONFLICT("Plugin cannot load twice: \"" + infoFilename + "\"");
         }
 
@@ -138,7 +138,7 @@ public class PluginComponentManager {
     }
 
     ~PluginComponentManager() {
-        stdout.printf("Plugin \"%s\" (\"%s\") Unloaded.\n", name, filename);
+        stderr.printf("Plugin \"%s\" (\"%s\") Unloaded.\n", name, filename);
     }
 
     /**
@@ -148,7 +148,7 @@ public class PluginComponentManager {
         string libraryPath = null;
         string builtLibraryPath = null;
 
-        stdout.printf("Loading plugin component specific data from \"%s\"\n", infoFilename);
+        stderr.printf("Loading plugin component specific data from \"%s\"\n", infoFilename);
 
         Xml.Doc* xmldoc;
         Xml.Node* xmlroot;
@@ -157,22 +157,22 @@ public class PluginComponentManager {
         xmldoc = Xml.Parser.parse_file(infoFilename);
 
         if (xmldoc == null) {
-            stdout.printf("Error loading info xml file \"%s\".\n", infoFilename);
-            stdout.printf("File inaccessible.\n");
+            stderr.printf("Error loading info xml file \"%s\".\n", infoFilename);
+            stderr.printf("File inaccessible.\n");
             throw new ComponentDefLoadError.FILE("File inaccessible: \"" + infoFilename + "\"");
         }
 
         xmlroot = xmldoc->get_root_element();
 
         if (xmlroot == null) {
-            stdout.printf("Error loading info xml file \"%s\".\n", infoFilename);
-            stdout.printf("File is empty.\n");
+            stderr.printf("Error loading info xml file \"%s\".\n", infoFilename);
+            stderr.printf("File is empty.\n");
             throw new ComponentDefLoadError.FILE("File empty: \"" + infoFilename + "\"");
         }
 
         if (xmlroot->name != "plugin_component") {
-            stdout.printf("Error loading info xml file \"%s\".\n", infoFilename);
-            stdout.printf("Wanted \"plugin_component\" info, but got \"%s\"\n", xmlroot->name);
+            stderr.printf("Error loading info xml file \"%s\".\n", infoFilename);
+            stderr.printf("Wanted \"plugin_component\" info, but got \"%s\"\n", xmlroot->name);
             throw new PluginComponentDefLoadError.NOT_PLUGIN("Wanted \"plugin_component\" info, but got \"" + xmlroot->name + "\": \"" + infoFilename + "\"");
         }
 
@@ -212,7 +212,7 @@ public class PluginComponentManager {
         }
 
         if (PluginComponentManager.from_name(this.name) != null) {
-            stdout.printf("Error initialising plugin: Plugin name conflict: \"%s\".\n", this.name);
+            stderr.printf("Error initialising plugin: Plugin name conflict: \"%s\".\n", this.name);
             throw new PluginComponentDefLoadError.NAME_CONFLICT("Plugin name conflict: \"" + this.name + "\"");
         }
 
@@ -255,14 +255,14 @@ public class PluginComponentManager {
 
         fullLibraryPath = Module.build_path(GLib.Path.get_dirname(libraryPath), GLib.Path.get_basename(libraryPath));
 
-        stdout.printf("Attempting to open module: %s\n", fullLibraryPath);
+        stderr.printf("Attempting to open module: %s\n", fullLibraryPath);
 
         module = Module.open(fullLibraryPath, 0);
         if (module == null) {
-            stdout.printf("Unable to open module: %s\n", Module.error());
+            stderr.printf("Unable to open module: %s\n", Module.error());
             throw new PluginComponentDefLoadError.LIBRARY_NOT_ACCESSIBLE("Library could not be opened: \"" + filename + "\": \"" + fullLibraryPath + "\": ");
         }
-        stdout.printf("Successfully opened module.\n");
+        stderr.printf("Successfully opened module.\n");
 
         void* init_pointer = null;
         void* get_def_pointer = null;
@@ -271,20 +271,20 @@ public class PluginComponentManager {
 
         if (module.symbol("plugin_component_init", out init_pointer)) {
             if (init_pointer != null) {
-                stdout.printf("Initialising plugin... (plugin_component_init).\n");
+                stderr.printf("Initialising plugin... (plugin_component_init).\n");
                 init_function = (init_delegate) init_pointer;
                 if (init_function(this) == false) {
-                    stdout.printf("Error initialising plugin: Plugin init function reported failure.\n");
+                    stderr.printf("Error initialising plugin: Plugin init function reported failure.\n");
                     throw new PluginComponentDefLoadError.INIT_ERROR("Plugin init function reported failure: \"" + filename + "\": \"" + fullLibraryPath + "\": ");
                 } else {
-                    stdout.printf("Initialising plugin... (plugin_component_init).\n");
+                    stderr.printf("Initialising plugin... (plugin_component_init).\n");
                 }
             } else {
-                stdout.printf("Got null plugin_component_init function.\n");
+                stderr.printf("Got null plugin_component_init function.\n");
             }
         }
         if (init_pointer == null) {
-            stdout.printf("Plugin has no init function (plugin_component_init).\n");
+            stderr.printf("Plugin has no init function (plugin_component_init).\n");
         }
 
         if (module.symbol("plugin_component_get_def", out get_def_pointer)) {
@@ -293,23 +293,23 @@ public class PluginComponentManager {
             }
         }
         if (get_def_pointer == null) {
-            stdout.printf("Error initialising plugin: Could not get component definition function.\n");
+            stderr.printf("Error initialising plugin: Could not get component definition function.\n");
             throw new PluginComponentDefLoadError.LIBRARY_NOT_COMPATIBLE("Could not get component definition function: \"" + filename + "\": \"" + fullLibraryPath + "\": ");
         } else {
             pluginComponentDef = get_def_function(this.filename);
             if (pluginComponentDef == null) {
-                stdout.printf("Error initialising plugin: Failure getting component definition.\n");
+                stderr.printf("Error initialising plugin: Failure getting component definition.\n");
                 throw new PluginComponentDefLoadError.INIT_ERROR("Failure getting component definition: \"" + filename + "\": \"" + fullLibraryPath + "\": ");
             }
         }
     }
 
     public void print_info(string text) {
-        stdout.printf("Plugin \"%s\" (\"%s\") Info:\n\t%s\n", name, filename, text);
+        stderr.printf("Plugin \"%s\" (\"%s\") Info:\n\t%s\n", name, filename, text);
     }
 
     public void print_error(string text) {
-        stdout.printf("Plugin \"%s\" (\"%s\") Error:\n\t%s\n", name, filename, text);
+        stderr.printf("Plugin \"%s\" (\"%s\") Error:\n\t%s\n", name, filename, text);
     }
 
     private void unload() {

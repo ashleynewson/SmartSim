@@ -244,7 +244,7 @@ public class PinInst {
                     int yAbsolute;
                     componentInst.absolute_position(x, y, out xAbsolute, out yAbsolute);
                     wireInst.register_component(componentInst, xAbsolute, yAbsolute);
-                    stdout.printf("Connected Component Input\n");
+                    stderr.printf("Connected Component Input\n");
                     return true;
                 }
             }
@@ -265,7 +265,7 @@ public class PinInst {
                 componentInst.absolute_position(x, y, out xAbsolute, out yAbsolute);
                 wireInsts[i].unregister_component_xy(componentInst, xAbsolute, yAbsolute);
                 wireInsts[i] = null;
-                stdout.printf("Disconnected Component Input\n");
+                stderr.printf("Disconnected Component Input\n");
                 return true;
             }
         }
@@ -285,7 +285,7 @@ public class PinInst {
                 componentInst.absolute_position(xConnect[i], yConnect[i], out xAbsolute, out yAbsolute);
                 wireInsts[i].unregister_component_xy(componentInst, xAbsolute, yAbsolute);
                 wireInsts[i] = null;
-                stdout.printf("Disconnected Component Input\n");
+                stderr.printf("Disconnected Component Input\n");
             }
         }
 

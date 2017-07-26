@@ -144,11 +144,11 @@ public class CompiledCircuit {
             }
         }
 
-        stdout.printf("Checking circuit for cyclic dependences.\n");
+        stderr.printf("Checking circuit for cyclic dependences.\n");
         componentChain = rootComponent.validate_dependencies({});
 
         if (componentChain != null) {
-            stdout.printf("Component Failed Cyclic Dependency Test\n");
+            stderr.printf("Component Failed Cyclic Dependency Test\n");
             appendError("Circuit failed cyclic dependency test. Failed ancestry:");
             foreach (CustomComponentDef customComponentDef in componentChain) {
                 appendError("  " + customComponentDef.name + ".");
@@ -158,7 +158,7 @@ public class CompiledCircuit {
             returnState += 1;
         }
 
-        stdout.printf("Checking circuit for unsatisfied connections.\n");
+        stderr.printf("Checking circuit for unsatisfied connections.\n");
         foreach (CustomComponentDef customComponentDef in project.customComponentDefs) {
             int pinErrorCount = 0;
 
@@ -169,7 +169,7 @@ public class CompiledCircuit {
             pinErrorCountTotal += pinErrorCount;
 
             if (pinErrorCount > 0) {
-                stdout.printf("Component Failed Connection Test\n");
+                stderr.printf("Component Failed Connection Test\n");
                 appendError("Component \"" + customComponentDef.name + "\" has " + pinErrorCount.to_string() + " pin errors.");
             }
         }
@@ -178,13 +178,13 @@ public class CompiledCircuit {
             returnState += 2;
         }
 
-        stdout.printf("Checking custom components for unsatisfied interfaces.\n");
+        stderr.printf("Checking custom components for unsatisfied interfaces.\n");
         bool interfaceFailure = false;
 
         foreach (CustomComponentDef customComponentDef in project.customComponentDefs) {
             if (customComponentDef.validate_interfaces() != 0) {
                 interfaceFailure = true;
-                stdout.printf("Component Failed Interface Test\n");
+                stderr.printf("Component Failed Interface Test\n");
                 appendError("Component \"" + customComponentDef.name + "\" has unsatisfied interfaces.");
             }
         }
@@ -196,7 +196,7 @@ public class CompiledCircuit {
         foreach (CustomComponentDef customComponentDef in project.customComponentDefs) {
             int errorCount = customComponentDef.validate_overlaps();
             if (errorCount != 0) {
-                stdout.printf("Component Failed Overlap Test\n");
+                stderr.printf("Component Failed Overlap Test\n");
                 appendWarning("Component \"" + customComponentDef.name + "\" has " + errorCount.to_string() + " overlapping components.");
             }
         }
@@ -248,7 +248,7 @@ public class CompiledCircuit {
                     connections[wireInst.interfaceTag.pinid].wireState.add_interface(reflectedConnection);
                 }
             } else {
-                stdout.printf("Warning: Cannot link tagged wire.\n");
+                stderr.printf("Warning: Cannot link tagged wire.\n");
                 if (ancestry.length == 0) {
                     appendWarning("Found interface tag in the root component.");
                 } else {
@@ -425,7 +425,7 @@ public class CompiledCircuit {
      * (//xInteract//, //yInteract//).
      */
     public void interact_components(int xInteract, int yInteract) {
-        stdout.printf("Simulation Interaction @ (%i, %i)\n", xInteract, yInteract);
+        stderr.printf("Simulation Interaction @ (%i, %i)\n", xInteract, yInteract);
         foreach (ComponentState componentState in componentStates) {
             if (componentState.display) {
                 if (componentState.componentInst.find(xInteract, yInteract) == 1) {
@@ -437,7 +437,7 @@ public class CompiledCircuit {
     }
 
     public WireState? find_wire(int x, int y) {
-        stdout.printf("Simulation Find Wire @ (%i, %i)\n", x, y);
+        stderr.printf("Simulation Find Wire @ (%i, %i)\n", x, y);
         foreach (WireState wireState in wireStates) {
             if (wireState.display) {
                 if (wireState.wireInst.find(x, y) != null ||

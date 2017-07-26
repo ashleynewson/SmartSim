@@ -176,7 +176,7 @@ public class PinDef {
             case "flow":
                 switch (xmlattr->children->content) {
                 default:
-                    stdout.printf("Error: Invalid flow\n");
+                    stderr.printf("Error: Invalid flow\n");
                     break;
                 case "in":
                     flow = Flow.IN;
@@ -231,7 +231,7 @@ public class PinDef {
             }
         }
         if (flow == Flow.NONE) {
-            stdout.printf("Warning: No flow\n");
+            stderr.printf("Warning: No flow\n");
         }
 
         set_position(x, y, length, direction);

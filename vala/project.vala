@@ -98,7 +98,7 @@ public class Project {
         projects += project;
         project.myID = position;
 
-        stdout.printf("Registered project %i\n", position);
+        stderr.printf("Registered project %i\n", position);
     }
 
     /**
@@ -120,10 +120,10 @@ public class Project {
 
         projects = tempArray;
 
-        stdout.printf("Unregistered project %i\n", position);
+        stderr.printf("Unregistered project %i\n", position);
 
         if (projects.length == 0) {
-            stdout.printf("No more open projects!\n");
+            stderr.printf("No more open projects!\n");
         }
     }
 
@@ -139,7 +139,7 @@ public class Project {
             } else {
                 project.destroy_all_windows(); // Hidden window destroyer
 
-                stdout.printf("Unregistered project %i (no windows)\n", project.myID);
+                stderr.printf("Unregistered project %i (no windows)\n", project.myID);
             }
         }
 
@@ -177,7 +177,7 @@ public class Project {
      * Creates a new project and registers it.
      */
     public Project() {
-        stdout.printf("New Project Created\n");
+        stderr.printf("New Project Created\n");
         Project.register(this);
         Project.projectCount ++;
         name = "Project " + Project.projectCount.to_string();
@@ -186,7 +186,7 @@ public class Project {
     }
 
     public Project.load(string filename) throws ProjectLoadError {
-        stdout.printf("Loading Project...\n");
+        stderr.printf("Loading Project...\n");
         Project.register(this);
         Project.projectCount ++;
         name = "Project " + Project.projectCount.to_string();
@@ -200,22 +200,22 @@ public class Project {
         xmldoc = Xml.Parser.parse_file(filename);
 
         if (xmldoc == null) {
-            stdout.printf("Error loading info xml file \"%s\".\n", filename);
-            stdout.printf("File inaccessible.\n");
+            stderr.printf("Error loading info xml file \"%s\".\n", filename);
+            stderr.printf("File inaccessible.\n");
             throw new ProjectLoadError.FILE("File inaccessible");
         }
 
         xmlroot = xmldoc->get_root_element();
 
         if (xmlroot == null) {
-            stdout.printf("Error loading info xml file \"%s\".\n", filename);
-            stdout.printf("File is empty.\n");
+            stderr.printf("Error loading info xml file \"%s\".\n", filename);
+            stderr.printf("File is empty.\n");
             throw new ProjectLoadError.FILE("File empty");
         }
 
         if (xmlroot->name != "project") {
-            stdout.printf("Error loading info xml file \"%s\".\n", filename);
-            stdout.printf("Wanted \"project\" info, but got \"%s\"\n", xmlroot->name);
+            stderr.printf("Error loading info xml file \"%s\".\n", filename);
+            stderr.printf("Wanted \"project\" info, but got \"%s\"\n", xmlroot->name);
             throw new ProjectLoadError.NOT_PROJECT("Wanted \"project\" info, but got \"" + xmlroot->name + "\"");
         }
 
@@ -281,7 +281,7 @@ public class Project {
 
                         string componentFilename = xmldata->content;
 
-                        stdout.printf("Absolute path of file \"%s\" is \"%s\"\n", componentFilename, absolute_filename(componentFilename));
+                        stderr.printf("Absolute path of file \"%s\" is \"%s\"\n", componentFilename, absolute_filename(componentFilename));
 
                         CustomComponentDef component = load_component(absolute_filename(componentFilename));
 
@@ -312,7 +312,7 @@ public class Project {
                             throw new ProjectLoadError.CANCEL("Plugins are disabled.");
                         }
 
-                        stdout.printf("Absolute path of file \"%s\" is \"%s\"\n", componentFilename, absolute_filename(componentFilename));
+                        stderr.printf("Absolute path of file \"%s\" is \"%s\"\n", componentFilename, absolute_filename(componentFilename));
 
                         PluginComponentDef component = load_plugin_component(absolute_filename(componentFilename), Config.resourcesDir + "plugins/" + componentFilename);
 
@@ -327,7 +327,7 @@ public class Project {
     }
 
     ~Project() {
-        stdout.printf("Project Destroyed.\n");
+        stderr.printf("Project Destroyed.\n");
     }
 
     /**
@@ -614,7 +614,7 @@ public class Project {
         compiledCircuit.check_validity();
 
         if (compiledCircuit.errorOccurred) {
-            stdout.printf("Circuit failed validation check.\n");
+            stderr.printf("Circuit failed validation check.\n");
 
             BasicDialog.warning(null, "Circuit failed validation:\n" + compiledCircuit.errorMessage + "\nNote: Unused components can still cause errors.");
 
@@ -622,7 +622,7 @@ public class Project {
         }
 
         if (compiledCircuit.warningOccurred) {
-            stdout.printf("Circuit failed validation check.\n");
+            stderr.printf("Circuit failed validation check.\n");
 
             BasicDialog.warning(null, "Warning:\n" + compiledCircuit.warningMessage + "\nNote: Unused components can still cause errors.");
 
@@ -647,7 +647,7 @@ public class Project {
     public CompiledCircuit? run(bool? startNow = true) {
         CompiledCircuit compiledCircuit;
 
-        stdout.printf("Checking whether Root Component is known...\n");
+        stderr.printf("Checking whether Root Component is known...\n");
 
         if (rootComponent == null) {
             stderr.printf("Cannot run circuit. Root component unknown.\n");
@@ -659,14 +659,14 @@ public class Project {
             return null;
         }
 
-        stdout.printf("Root component is \"%s\".\n", rootComponent.name);
+        stderr.printf("Root component is \"%s\".\n", rootComponent.name);
 
         compiledCircuit = new CompiledCircuit(this, rootComponent);
 
-        stdout.printf("Validating...\n");
+        stderr.printf("Validating...\n");
 
         if (compiledCircuit.check_validity() != 0) {
-            stdout.printf("Circuit failed validation check.\n");
+            stderr.printf("Circuit failed validation check.\n");
 
             BasicDialog.error(null, "Circuit failed validation:\n" + compiledCircuit.errorMessage + "\nNote: Unused components can still cause errors.");
 
@@ -675,8 +675,8 @@ public class Project {
             return null;
         }
 
-        stdout.printf("Validated.\n");
-        stdout.printf("Compiling...\n");
+        stderr.printf("Validated.\n");
+        stderr.printf("Compiling...\n");
 
         compiledCircuit.compile();
 
@@ -696,11 +696,11 @@ public class Project {
 
         update_error_modes(false);
 
-        stdout.printf("Compiled.\n");
+        stderr.printf("Compiled.\n");
 
         SimulatorWindow simulatorWindow = new SimulatorWindow(compiledCircuit);
 
-        stdout.printf("Running Circuit...\n");
+        stderr.printf("Running Circuit...\n");
 
         running = true;
 
@@ -715,7 +715,7 @@ public class Project {
      * Sets the root component for the simulation to //rootComponent//.
      */
     public void set_root_component(CustomComponentDef rootComponent) {
-        stdout.printf("Set root component to \"%s\"\n", rootComponent.name);
+        stderr.printf("Set root component to \"%s\"\n", rootComponent.name);
         this.rootComponent = rootComponent;
     }
 
@@ -756,7 +756,7 @@ public class Project {
             }
         }
 
-        stdout.printf("Saving Project \"%s\" to \"%s\"\n", name, filename);
+        stderr.printf("Saving Project \"%s\" to \"%s\"\n", name, filename);
 
         Xml.TextWriter xmlWriter = new Xml.TextWriter.filename(filename);
 
@@ -772,12 +772,12 @@ public class Project {
         xmlWriter.end_element();
         xmlWriter.end_element();
 
-        stdout.printf("Saving description data...\n");
+        stderr.printf("Saving description data...\n");
 
         xmlWriter.write_element("name", (name != null) ? name : "Untitled");
         xmlWriter.write_element("description", description);
 
-        stdout.printf("Saving component list...\n");
+        stderr.printf("Saving component list...\n");
 
         save_component_list(xmlWriter);
 
@@ -785,7 +785,7 @@ public class Project {
         xmlWriter.end_document();
         xmlWriter.flush();
 
-        stdout.printf("Saving complete...\n");
+        stderr.printf("Saving complete...\n");
 
         return 0;
     }
@@ -832,7 +832,7 @@ public class Project {
         foreach (PluginComponentManager pluginComponentManager in pluginComponentManagers) {
             xmlWriter.start_element("plugin");
 
-            stdout.printf("Relative path of file \"%s\" is \"%s\"\n", pluginComponentManager.filename, relative_filename(pluginComponentManager.filename));
+            stderr.printf("Relative path of file \"%s\" is \"%s\"\n", pluginComponentManager.filename, relative_filename(pluginComponentManager.filename));
 
             xmlWriter.write_string(relative_filename(pluginComponentManager.filename));
 
@@ -846,7 +846,7 @@ public class Project {
                 xmlWriter.write_attribute("root", "true");
             }
 
-            stdout.printf("Relative path of file \"%s\" is \"%s\"\n", customComponentDef.filename, relative_filename(customComponentDef.filename));
+            stderr.printf("Relative path of file \"%s\" is \"%s\"\n", customComponentDef.filename, relative_filename(customComponentDef.filename));
 
             xmlWriter.write_string(relative_filename(customComponentDef.filename));
 
@@ -973,7 +973,7 @@ public class Project {
         designers += designer;
         designer.myID = position;
 
-        stdout.printf("Registered designer %i\n", position);
+        stderr.printf("Registered designer %i\n", position);
     }
 
     /**
@@ -996,10 +996,10 @@ public class Project {
 
         designers = tempArray;
 
-        stdout.printf("Unregistered designer %i\n", position);
+        stderr.printf("Unregistered designer %i\n", position);
 
         if (designers.length == 0) {
-            stdout.printf("No more open designers!\n");
+            stderr.printf("No more open designers!\n");
         }
     }
 }

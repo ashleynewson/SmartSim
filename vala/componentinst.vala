@@ -496,13 +496,13 @@ public class ComponentInst {
      * //replaceWhat// to reference //replaceWith//.
      */
     public void change_wire(WireInst replaceWhat, WireInst replaceWith) {
-        stdout.printf("Reconnecting component\n");
+        stderr.printf("Reconnecting component\n");
 
         for (int i = 0; i < pinInsts.length; i ++) {
             for (int i2 = 0; i2 < pinInsts[i].arraySize; i2 ++) {
                 if (replaceWhat == pinInsts[i].wireInsts[i2]) {
                     pinInsts[i].wireInsts[i2] = replaceWith;
-                    stdout.printf("Component connection changed: %i, %i\n", i, i2);
+                    stderr.printf("Component connection changed: %i, %i\n", i, i2);
                 }
             }
         }
@@ -512,14 +512,14 @@ public class ComponentInst {
      * Disconnects the component from all wires.
      */
     public void detatch_all() {
-        stdout.printf("Disconnecting component completely\n");
+        stderr.printf("Disconnecting component completely\n");
 
         for (int i = 0; i < pinInsts.length; i ++) {
             for (int i2 = 0; i2 < pinInsts[i].arraySize; i2 ++) {
                 if (pinInsts[i].wireInsts[i2] != null) {
                     pinInsts[i].wireInsts[i2].unregister_component(this);
                     pinInsts[i].wireInsts[i2] = null;
-                    stdout.printf("Component input disconnected: %i\n", i);
+                    stderr.printf("Component input disconnected: %i\n", i);
                 }
             }
         }
@@ -531,7 +531,7 @@ public class ComponentInst {
      * wire triggers the disconnection).
      */
     public void disconnect_wire(WireInst wireInst, bool callWire = true) {
-        stdout.printf("Disconnecting component\n");
+        stderr.printf("Disconnecting component\n");
 
         for (int i = 0; i < pinInsts.length; i ++) {
             for (int i2 = 0; i2 < pinInsts[i].arraySize; i2 ++) {
@@ -540,7 +540,7 @@ public class ComponentInst {
                         pinInsts[i].wireInsts[i2].unregister_component(this);
                     }
                     pinInsts[i].wireInsts[i2] = null;
-                    stdout.printf("Component input disconnected: %i\n", i);
+                    stderr.printf("Component input disconnected: %i\n", i);
                 }
             }
         }

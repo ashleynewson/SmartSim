@@ -52,7 +52,7 @@ public class ImageExporter {
                 if (fileChooser.run() == Gtk.ResponseType.ACCEPT) {
                     filename = fileChooser.get_filename();
                     if ("." in filename) {
-                        stdout.printf("File extension already given\n");
+                        stderr.printf("File extension already given\n");
                     } else {
                         if (fileChooser.filter == pngFileFilter) {
                             filename += ".png";
@@ -119,7 +119,7 @@ public class ImageExporter {
             if (fileChooser.run() == Gtk.ResponseType.ACCEPT) {
                 filename = fileChooser.get_filename();
                 if ("." in filename) {
-                    stdout.printf("File extension already given\n");
+                    stderr.printf("File extension already given\n");
                 } else {
                     if (fileChooser.filter == pdfFileFilter) {
                         filename += ".pdf";
@@ -184,7 +184,7 @@ public class ImageExporter {
                 if (fileChooser.run() == Gtk.ResponseType.ACCEPT) {
                     filename = fileChooser.get_filename();
                     if ("." in filename) {
-                        stdout.printf("File extension already given\n");
+                        stderr.printf("File extension already given\n");
                     } else {
                         if (fileChooser.filter == svgFileFilter) {
                             filename += ".svg";

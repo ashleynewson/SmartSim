@@ -122,7 +122,7 @@ public class TimingDiagram : Gtk.Window {
      * Populate the window with widgets.
      */
     public void populate() {
-        stdout.printf("Timing Diagram Window Created\n");
+        stderr.printf("Timing Diagram Window Created\n");
 
         set_default_size(800, 400);
         set_border_width(0);
@@ -756,7 +756,7 @@ public class TimingDiagram : Gtk.Window {
 
         context.set_line_width(1);
 
-        stdout.printf("Exporting timing diagram (render size = %i x %i, scale = %f x %f)\n", imageWidth, imageHeight, imageXZoom, imageYZoom);
+        stderr.printf("Exporting timing diagram (render size = %i x %i, scale = %f x %f)\n", imageWidth, imageHeight, imageXZoom, imageYZoom);
 
         int largestLength;
         render_labels(context, width, out largestLength);

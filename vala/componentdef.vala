@@ -98,11 +98,11 @@ public abstract class ComponentDef {
      */
     public void load_from_file(string infoFilename) throws ComponentDefLoadError, CustomComponentDefLoadError , PluginComponentDefLoadError {
         if (infoFilename == "") {
-            stdout.printf("Defining component later\n");
+            stderr.printf("Defining component later\n");
             return;
         }
 
-        stdout.printf("Loading component info \"%s\"\n", infoFilename);
+        stderr.printf("Loading component info \"%s\"\n", infoFilename);
 
         Xml.Doc* xmldoc;
         Xml.Node* xmlroot;
@@ -111,35 +111,35 @@ public abstract class ComponentDef {
         xmldoc = Xml.Parser.parse_file(infoFilename);
 
         if (xmldoc == null) {
-            stdout.printf("Error loading info xml file \"%s\".\n", infoFilename);
-            stdout.printf("File inaccessible.\n");
+            stderr.printf("Error loading info xml file \"%s\".\n", infoFilename);
+            stderr.printf("File inaccessible.\n");
             throw new ComponentDefLoadError.FILE("File inaccessible");
         }
 
         xmlroot = xmldoc->get_root_element();
 
         if (xmlroot == null) {
-            stdout.printf("Error loading info xml file \"%s\".\n", infoFilename);
-            stdout.printf("File is empty.\n");
+            stderr.printf("Error loading info xml file \"%s\".\n", infoFilename);
+            stderr.printf("File is empty.\n");
             throw new ComponentDefLoadError.FILE("File empty");
         }
 
         if (this is CustomComponentDef) {
             if (xmlroot->name != "custom_component") {
-                stdout.printf("Error loading info xml file \"%s\".\n", infoFilename);
-                stdout.printf("Wanted \"custom_component\" info, but got \"%s\"\n", xmlroot->name);
+                stderr.printf("Error loading info xml file \"%s\".\n", infoFilename);
+                stderr.printf("Wanted \"custom_component\" info, but got \"%s\"\n", xmlroot->name);
                 throw new CustomComponentDefLoadError.NOT_CUSTOM("Wanted \"custom_component\" info, but got \"" + xmlroot->name + "\"");
             }
         } else if (this is PluginComponentDef) {
             if (xmlroot->name != "plugin_component") {
-                stdout.printf("Error loading info xml file \"%s\".\n", infoFilename);
-                stdout.printf("Wanted \"plugin_component\" info, but got \"%s\"\n", xmlroot->name);
+                stderr.printf("Error loading info xml file \"%s\".\n", infoFilename);
+                stderr.printf("Wanted \"plugin_component\" info, but got \"%s\"\n", xmlroot->name);
                 throw new PluginComponentDefLoadError.NOT_PLUGIN("Wanted \"plugin_component\" info, but got \"" + xmlroot->name + "\"");
             }
         } else {
             if (xmlroot->name != "component") {
-                stdout.printf("Error loading info xml file \"%s\".\n", infoFilename);
-                stdout.printf("Wanted \"component\" info, but got \"%s\"\n", xmlroot->name);
+                stderr.printf("Error loading info xml file \"%s\".\n", infoFilename);
+                stderr.printf("Wanted \"component\" info, but got \"%s\"\n", xmlroot->name);
                 throw new ComponentDefLoadError.NOT_COMPONENT("Wanted \"component\" info, but got \"" + xmlroot->name + "\"");
             }
         }
@@ -223,7 +223,7 @@ public abstract class ComponentDef {
                             try {
                                 this.graphic = new Graphic.from_file(Config.resourcesDir + "components/graphics/" + xmldata->content);
                             } catch (GraphicLoadError error) {
-                                stdout.printf("Cannot load graphic \"" + xmldata->content + "\"\n");
+                                stderr.printf("Cannot load graphic \"" + xmldata->content + "\"\n");
                             }
                         }
                     }

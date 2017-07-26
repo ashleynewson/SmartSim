@@ -355,7 +355,7 @@ public class WireInst {
             if (!try_merge_paths(path)) {
                 newPaths += path;
             } else {
-                stdout.printf("Merged Paths\n");
+                stderr.printf("Merged Paths\n");
             }
         }
 

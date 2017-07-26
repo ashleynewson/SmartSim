@@ -196,7 +196,7 @@ public class SimulatorWindow : Gtk.Window {
      * Populate the window with widgets.
      */
     public void populate() {
-        stdout.printf("Simulation Window Created\n");
+        stderr.printf("Simulation Window Created\n");
 
         set_default_size(800, 600);
         set_border_width(0);
@@ -626,8 +626,8 @@ public class SimulatorWindow : Gtk.Window {
             runState = RunState.ERROR;
             update_display(true);
 
-            stdout.printf("Simulation Error!\n");
-            stdout.flush();
+            stderr.printf("Simulation Error!\n");
+            stderr.flush();
             stderr.printf("Error Messages:\n%s\n", compiledCircuit.errorMessage);
 
             BasicDialog.error(null, "Circuit Runtime Error:\n" + compiledCircuit.errorMessage);
@@ -856,7 +856,7 @@ public class SimulatorWindow : Gtk.Window {
      * Ends the simulation. Presenting a summary.
      */
     public void close_simulation() {
-        stdout.printf("Ending Simulation.\n");
+        stderr.printf("Ending Simulation.\n");
 
         runState = RunState.HALTING;
 

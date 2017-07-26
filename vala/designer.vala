@@ -92,11 +92,11 @@ public class Designer {
     public Designer(DesignerWindow viewerWindow, Project parentProject) {
         window = viewerWindow;
         project = parentProject;
-        stdout.printf("New Designer Created\n");
+        stderr.printf("New Designer Created\n");
     }
 
     ~Designer() {
-        stdout.printf("Designer Destroyed\n");
+        stderr.printf("Designer Destroyed\n");
     }
 
     /**
@@ -778,18 +778,18 @@ public class Designer {
     public int save_component(string filename) {
         CustomComponentDef[] componentChain;
 
-        stdout.printf("Checking circuit for cyclic dependences before saving.\n");
+        stderr.printf("Checking circuit for cyclic dependences before saving.\n");
         componentChain = customComponentDef.validate_dependencies({});
 
         if (componentChain != null) {
             string errorMessage = "";
 
-            stdout.printf("Component Failed Cyclic Dependency Test\n");
+            stderr.printf("Component Failed Cyclic Dependency Test\n");
             foreach (CustomComponentDef customComponentDef in componentChain) {
                 errorMessage += "  " + customComponentDef.name + "\n";
             }
 
-            stdout.printf("Circuit failed validation check.\n");
+            stderr.printf("Circuit failed validation check.\n");
             Gtk.MessageDialog messageDialog = new Gtk.MessageDialog(
                 null,
                 Gtk.DialogFlags.MODAL,

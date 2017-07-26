@@ -447,7 +447,7 @@ public class Customiser {
             break;
         }
 
-        stdout.printf("Customiser Interact @ %i, %i - %i, %i\n", xBoardStart, yBoardStart, xBoardEnd, yBoardEnd);
+        stderr.printf("Customiser Interact @ %i, %i - %i, %i\n", xBoardStart, yBoardStart, xBoardEnd, yBoardEnd);
 
         int xBoardDiff = xBoardEnd - xBoardStart;
         int yBoardDiff = yBoardEnd - yBoardStart;
