@@ -164,6 +164,8 @@ with SmartSim. If not, see:
 
         Gtk.init(ref args);
 
+        Gtk.IconTheme.get_default().append_search_path(Config.resourcesDir + "icons");
+
         stderr.printf("Loading Place-holder Graphic\n");
         try {
             Graphic.placeHolder = new Graphic.from_file(Config.resourcesDir + "images/graphics/placeholder");

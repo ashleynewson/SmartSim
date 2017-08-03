@@ -375,7 +375,7 @@ public class Project {
             if (designer.window.componentFileName == filename) {
                 if (designer.window != null) {
                     if (!designer.window.visible) {
-                        designer.window.show_all();
+                        designer.window.show();
                         DesignerWindow.register(designer.window);
                         update_custom_menus();
                         update_plugin_menus();
@@ -406,7 +406,7 @@ public class Project {
             if (designer.customComponentDef == customComponentDef) {
                 if (designer.window != null) {
                     if (!designer.window.visible) {
-                        designer.window.show_all();
+                        designer.window.show();
                         DesignerWindow.register(designer.window);
                         update_custom_menus();
                         update_plugin_menus();

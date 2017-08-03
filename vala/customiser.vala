@@ -179,7 +179,7 @@ public class Customiser {
      * Create a new Gtk Dialog and populate it with widgets
      */
     private void populate() {
-        dialog = new Gtk.Dialog.with_buttons("Customise Component", parent, Gtk.DialogFlags.MODAL);
+        dialog = new Gtk.Dialog.with_buttons("Customise Component", parent.gtk_window, Gtk.DialogFlags.MODAL);
 
         Gtk.Box content = dialog.get_content_area() as Gtk.Box;
         dialog.set_default_size(600, 200);

@@ -52,6 +52,7 @@ C_FILES_ROOT= \
 	wireinst.c \
 	wirestate.c \
 	timingdiagram.c \
+	uicommon.c \
 	updatequeue.c \
 	$(NOTHING)
 
@@ -172,6 +173,7 @@ SOURCE_FILES= \
 	wireinst.vala \
 	wirestate.vala \
 	timingdiagram.vala \
+	uicommon.vala \
 	updatequeue.vala \
 	$(NOTHING)
 
@@ -266,7 +268,7 @@ nativeO3:
 	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -o smartsim --verbose $(VALA_PACKAGES) -X -O3
 
 debug:
-	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -o smartsim --verbose $(VALA_PACKAGES) -X -g
+	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -o smartsim --verbose $(VALA_PACKAGES) -X -g -X -O0
 
 cfiles:
 	$(VALAC) $(SOURCE_FILES) $(CONFIG_FILES) -C --verbose $(VALA_PACKAGES)

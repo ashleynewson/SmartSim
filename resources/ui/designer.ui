@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <!-- Hidden radio button, used mainly for nice group names, and also deactivating other buttons -->
+  <object id="tool_group" class="GtkRadioToolButton">
+    <property name="active">False</property>
+    <property name="sensitive">False</property>
+  </object>
+  <!-- File filters -->
+  <object id="filter_ssp" class="GtkFileFilter">
+    <patterns>
+      <pattern>*.ssp</pattern>
+    </patterns>
+  </object>
+  <object id="filter_ssc" class="GtkFileFilter">
+    <patterns>
+      <pattern>*.ssc</pattern>
+    </patterns>
+  </object>
+  <object id="filter_ssx" class="GtkFileFilter">
+    <patterns>
+      <pattern>*.ssx</pattern>
+    </patterns>
+  </object>
+  <object id="filter_png" class="GtkFileFilter">
+    <patterns>
+      <pattern>*.png</pattern>
+    </patterns>
+  </object>
+  <object id="filter_pdf" class="GtkFileFilter">
+    <patterns>
+      <pattern>*.pdf</pattern>
+    </patterns>
+  </object>
+  <object id="filter_svg" class="GtkFileFilter">
+    <patterns>
+      <pattern>*.svg</pattern>
+    </patterns>
+  </object>
+  <object id="filter_any" class="GtkFileFilter">
+    <patterns>
+      <pattern>*</pattern>
+    </patterns>
+  </object>
+  <!-- Window -->
+  <object id="window" class="GtkWindow">
+    <property name="title">SmartSim</property><!-- Overriden -->
+    <property name="icon_name">smartsim</property>
+    <property name="border_width">0</property>
+    <property name="default_width">800</property>
+    <property name="default_height">600</property>
+    <signal name="delete_event" handler="designer_window_ui_delete_window"/>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <!-- Menu -->
+        <child>
+          <object class="GtkMenuBar">
+            <child>
+              <object class="GtkMenuItem">
+                <property name="label">File</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object id="menu_file_newproject" class="GtkMenuItem">
+                        <property name="label">New Project</property>
+                        <signal name="activate" handler="designer_window_ui_new_project"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_newcomponent" class="GtkMenuItem">
+                        <property name="label">New Component</property>
+                        <property name="sensitive">False</property>
+                        <signal name="activate" handler="designer_window_ui_new_component"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_saveproject" class="GtkMenuItem">
+                        <property name="label">Save Project</property>
+                        <property name="sensitive">False</property>
+                        <signal name="activate" handler="designer_window_ui_save_project"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_saveprojectas" class="GtkMenuItem">
+                        <property name="label">Save Project As</property>
+                        <property name="sensitive">False</property>
+                        <signal name="activate" handler="designer_window_ui_save_project_as"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_openproject" class="GtkMenuItem">
+                        <property name="label">Open Project</property>
+                        <signal name="activate" handler="designer_window_ui_open_project"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_savecomponent" class="GtkMenuItem">
+                        <property name="label">Save Component</property>
+                        <property name="sensitive">False</property>
+                        <signal name="activate" handler="designer_window_ui_save_component"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_savecomponentas" class="GtkMenuItem">
+                        <property name="label">Save Component As</property>
+                        <property name="sensitive">False</property>
+                        <signal name="activate" handler="designer_window_ui_save_component_as"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_opencomponent" class="GtkMenuItem">
+                        <property name="label">Open Component</property>
+                        <property name="sensitive">False</property>
+                        <signal name="activate" handler="designer_window_ui_open_component"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_openplugincomponent" class="GtkMenuItem">
+                        <property name="label">Open Plug-in Component</property>
+                        <property name="sensitive">False</property>
+                        <signal name="activate" handler="designer_window_ui_open_plugin_component"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_export" class="GtkMenuItem">
+                        <property name="label">Export</property>
+                        <property name="sensitive">False</property>
+                        <child type="submenu">
+                          <object class="GtkMenu">
+                            <child>
+                              <object id="menu_export_png" class="GtkMenuItem">
+                                <property name="label">Design Image as PNG Image</property>
+                                <signal name="activate" handler="designer_window_ui_export_png"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object id="menu_export_pdf" class="GtkMenuItem">
+                                <property name="label">Design Image as PDF Document</property>
+                                <signal name="activate" handler="designer_window_ui_export_pdf"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object id="menu_export_svg" class="GtkMenuItem">
+                                <property name="label">Design Image as SVG Image</property>
+                                <signal name="activate" handler="designer_window_ui_export_svg"/>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_pagesetup" class="GtkMenuItem">
+                        <property name="label">Page Setup</property>
+                        <signal name="activate" handler="designer_window_ui_page_setup"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_print" class="GtkMenuItem">
+                        <property name="label">Print</property>
+                        <property name="sensitive">False</property>
+                        <signal name="activate" handler="designer_window_ui_print"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_removecomponent" class="GtkMenuItem">
+                        <property name="label">Remove Component</property>
+                        <property name="sensitive">False</property>
+                        <signal name="activate" handler="designer_window_ui_remove_component"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_removeplugincomponent" class="GtkMenuItem">
+                        <property name="label">Remove Plug-in Component</property>
+                        <property name="sensitive">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_file_close" class="GtkMenuItem">
+                        <property name="label">Close Window</property>
+                        <signal name="activate" handler="designer_window_ui_close"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="label">View</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object id="menu_view_fitdesign" class="GtkMenuItem">
+                        <property name="label">Fit Design to Display</property>
+                        <signal name="activate" handler="designer_window_ui_fit_design"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_view_showgrid" class="GtkCheckMenuItem">
+                        <property name="label">Show Grid</property>
+                        <property name="active">True</property>
+                        <signal name="activate" handler="designer_window_ui_show_grid"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_view_livescroll" class="GtkCheckMenuItem">
+                        <property name="label">Real-time Scrolling</property>
+                        <property name="active">True</property>
+                        <signal name="activate" handler="designer_window_ui_live_scroll"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_view_shadowcomponent" class="GtkCheckMenuItem">
+                        <property name="label">Component Cursor</property>
+                        <signal name="activate" handler="designer_window_ui_shadow_component"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_view_errors" class="GtkCheckMenuItem">
+                        <property name="label">Highlight Errors</property>
+                        <property name="active">True</property>
+                        <signal name="activate" handler="designer_window_ui_highlight_errors"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_view_backgrounds" class="GtkCheckMenuItem">
+                        <property name="label">Component Colouring</property>
+                        <property name="active">True</property>
+                        <signal name="activate" handler="designer_window_ui_colour_backgrounds"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_view_hints" class="GtkCheckMenuItem">
+                        <property name="label">Show Designer Hints</property>
+                        <property name="active">True</property>
+                        <signal name="activate" handler="designer_window_ui_show_hints"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="label">Edit</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object id="menu_edit_autobind" class="GtkCheckMenuItem">
+                        <property name="label">Automatic Wire Binding</property>
+                        <property name="active">True</property>
+                        <signal name="activate" handler="designer_window_ui_autobind"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object id="menu_run" class="GtkMenuItem">
+                <property name="label">Run</property>
+                <property name="sensitive">False</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object id="menu_run_run" class="GtkMenuItem">
+                        <property name="label">Run</property>
+                        <signal name="activate" handler="designer_window_ui_run"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_run_check" class="GtkMenuItem">
+                        <property name="label">Check Circuit Validity</property>
+                        <signal name="activate" handler="designer_window_ui_check"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_run_startpaused" class="GtkCheckMenuItem">
+                        <property name="label">Start Paused</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object id="menu_component" class="GtkMenuItem">
+                <property name="label">Component</property>
+                <property name="sensitive">False</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object id="menu_component_setasroot" class="GtkMenuItem">
+                        <property name="label">Set As Root</property>
+                        <signal name="activate" handler="designer_window_ui_set_root"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_component_customise" class="GtkMenuItem">
+                        <property name="label">Customise</property>
+                        <signal name="activate" handler="designer_window_ui_customise"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object id="menu_project" class="GtkMenuItem">
+                <property name="label">Project</property>
+                <property name="sensitive">False</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object id="menu_project_statistics" class="GtkMenuItem">
+                        <property name="label">Statistics</property>
+                        <signal name="activate" handler="designer_window_ui_project_statistics"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="menu_project_options" class="GtkMenuItem">
+                        <property name="label">Properties</property>
+                        <signal name="activate" handler="designer_window_ui_project_properties"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object id="menu_windows" class="GtkMenuItem">
+                <property name="label">Windows</property>
+                <property name="sensitive">False</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="label">Help</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object id="menu_help_about" class="GtkMenuItem">
+                        <property name="label">About</property>
+                        <signal name="activate" handler="designer_window_ui_about"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <!-- Toolbar -->
+        <child>
+          <object id="toolbar" class="GtkToolbar">
+            <property name="toolbar_style">icons</property>
+            <child>
+              <object id="tool_scroll" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Scroll</property>
+                <property name="icon_name">smartsim-scroll</property>
+                <property name="tooltip_text">Scroll: Move the view of the circuit using click and drag.</property>
+                <property name="active">True</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_zoom" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Zoom</property>
+                <property name="icon_name">smartsim-zoom</property>
+                <property name="tooltip_text">Zoom: Drag downward to zoom in, or upward to zoom out.</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+              </object>
+            </child>
+            <child>
+              <object id="tool_select" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Select</property>
+                <property name="icon_name">smartsim-select</property>
+                <property name="tooltip_text">Select: Click on an object to select it.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_move" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Move</property>
+                <property name="icon_name">smartsim-move</property>
+                <property name="tooltip_text">Move: Click and drag an object to move it.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_orientate" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Orientate</property>
+                <property name="icon_name">smartsim-orientate</property>
+                <property name="tooltip_text">Orientate: Change the rotation of a component by dragging. Flip by clicking..</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_delete" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Delete</property>
+                <property name="icon_name">smartsim-delete</property>
+                <property name="tooltip_text">Delete: Click on an object to delete it.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_adjust" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Adjust</property>
+                <property name="icon_name">smartsim-adjust</property>
+                <property name="tooltip_text">Adjust: Click on an object to change its properties.</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+              </object>
+            </child>
+            <child>
+              <object id="tool_annotate" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Annotate</property>
+                <property name="icon_name">smartsim-annotate</property>
+                <property name="tooltip_text">Annotate: Click to insert a text comment.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_wire" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Wire</property>
+                <property name="icon_name">smartsim-wire</property>
+                <property name="tooltip_text">Wire: Insert a wire by clicking on seccessive points. Click again on the last point to finalise the wire. Click on the previous point to undo. Click this button again to forget the wire currently being draw.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_bind" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Bind</property>
+                <property name="icon_name">smartsim-bind</property>
+                <property name="tooltip_text">Bind: Click where a wire meets a pin or another wire to connect them. Click on an existing connection to remove it.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_tag" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Tag</property>
+                <property name="icon_name">smartsim-tag</property>
+                <property name="tooltip_text">Tag: Drag to or from a wire to create an interface for external components.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_invert" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Invert</property>
+                <property name="icon_name">smartsim-invert</property>
+                <property name="tooltip_text">Invert: Click on the end of a pin to invert it.</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+              </object>
+            </child>
+            <child>
+              <object id="tool_customs" class="GtkMenuToolButton">
+                <property name="label">Custom...</property>
+                <property name="icon_name">smartsim-custom</property>
+                <property name="tooltip_text">Custom Components: Select a custom component from the drop-down menu. Click the button for the last used component.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_plugins" class="GtkMenuToolButton">
+                <property name="label">Plug-in...</property>
+                <property name="icon_name">smartsim-plugin</property>
+                <property name="tooltip_text">Plug-in Components: Select a plug-in component from the drop-down menu. Click the button for the last used component.</property>
+
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+              </object>
+            </child>
+          </object>
+        </child>
+        <!-- Workspace -->
+        <child>
+          <object id="controller" class="GtkEventBox">
+            <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+            <signal name="button_press_event" handler="designer_window_ui_mouse_down"/>
+            <signal name="motion_notify_event" handler="designer_window_ui_mouse_move"/>
+            <signal name="button_release_event" handler="designer_window_ui_mouse_up"/>
+            <child>
+              <object id="display" class="GtkDrawingArea">
+                <signal name="draw" handler="designer_window_ui_render"/>
+                <signal name="configure_event" handler="designer_window_ui_display_configure"/>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="fill">True</property>
+            <property name="expand">True</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

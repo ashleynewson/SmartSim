@@ -24,33 +24,54 @@
  * The primary interface for the user. Used to design components and
  * navigate through the application.
  */
-public class DesignerWindow : Gtk.Window {
+public class DesignerWindow {
+    // I don't know of any way to include this within the UI XML.
+    const string[] projectRequiringWidgetIds = {
+        "menu_file_newcomponent",
+        "menu_file_saveproject",
+        "menu_file_saveprojectas",
+        "menu_file_openproject",
+        "menu_file_opencomponent",
+        "menu_file_openplugincomponent",
+        "menu_run",
+        "menu_project",
+        "menu_windows"
+    };
+    const string[] designerRequiringWidgetIds = {
+        "menu_file_savecomponent",
+        "menu_file_savecomponentas",
+        "menu_file_removecomponent",
+        "menu_file_print",
+        "menu_file_export",
+        "menu_component"
+    };
+
     /**
      * Registration of all visible DesignerWindows.
      */
     private static DesignerWindow[] designerWindows;
 
     /**
-     * Adds //window// to the list of visible DesignerWindows.
+     * Adds //designerWindow// to the list of visible DesignerWindows.
      */
-    public static void register(DesignerWindow window) {
+    public static void register(DesignerWindow designerWindow) {
         int position;
         position = designerWindows.length;
-        designerWindows += window;
-        window.myID = position;
+        designerWindows += designerWindow;
+        designerWindow.myID = position;
 
         stderr.printf("Registered designer window %i\n", position);
     }
 
     /**
-     * Removes //window// from the list of visible DesignerWindows.
+     * Removes //designerWindow// from the list of visible DesignerWindows.
      * When there are no more visible windows, the application quits.
      */
-    public static void unregister(DesignerWindow window) {
+    public static void unregister(DesignerWindow designerWindow) {
         DesignerWindow[] tempArray = {};
         int position;
         int newID = 0;
-        position = window.myID;
+        position = designerWindow.myID;
 
         if (position == -1) {
             stderr.printf("Window already unregistered!\n");
@@ -113,122 +134,28 @@ public class DesignerWindow : Gtk.Window {
 
 
 
-    private Gtk.Box vBox;
-    private Gtk.MenuBar menubar;
-    private Gtk.MenuItem menuFile;
-    private Gtk.Menu menuFileMenu;
-    private Gtk.MenuItem menuFileNewproject;
-    private Gtk.MenuItem menuFileNewcomponent;
-    private Gtk.MenuItem menuFileSeparator1;
-    private Gtk.MenuItem menuFileSaveproject;
-    private Gtk.MenuItem menuFileSaveasproject;
-    private Gtk.MenuItem menuFileSeparator2;
-    private Gtk.MenuItem menuFileOpen;
-    private Gtk.MenuItem menuFileOpenplugincomponent;
-    private Gtk.MenuItem menuFileSeparator3;
-    private Gtk.MenuItem menuFileOpenproject;
-    private Gtk.MenuItem menuFileSeparator4;
-    private Gtk.MenuItem menuFileSave;
-    private Gtk.MenuItem menuFileSaveas;
-    private Gtk.MenuItem menuFileSeparator5;
-    private Gtk.MenuItem menuFileExport;
-    private Gtk.Menu menuFileExportMenu;
-    private Gtk.MenuItem menuFileExportPng;
-    private Gtk.MenuItem menuFileExportPdf;
-    private Gtk.MenuItem menuFileExportSvg;
-    private Gtk.MenuItem menuFileSeparator6;
-    private Gtk.MenuItem menuFilePagesetup;
-    private Gtk.MenuItem menuFilePrint;
-    private Gtk.MenuItem menuFileSeparator7;
-    private Gtk.MenuItem menuFileRemovecomponent;
+    private Gtk.Window window;
     private Gtk.MenuItem menuFileRemoveplugincomponent;
     private Gtk.Menu menuFileRemoveplugincomponentMenu;
     private Gtk.MenuItem[] menuFileRemoveplugincomponentComponents;
-    private Gtk.MenuItem menuFileSeparator8;
-    private Gtk.MenuItem menuFileExit;
-    private Gtk.MenuItem menuView;
-    private Gtk.Menu menuViewMenu;
-    private Gtk.MenuItem menuViewFitdesign;
-    private Gtk.MenuItem menuViewSeparator1;
-    private Gtk.CheckMenuItem menuViewShowgrid;
-    private Gtk.CheckMenuItem menuViewLivescrollupdate;
-    private Gtk.CheckMenuItem menuViewShadowcomponent;
     private Gtk.CheckMenuItem menuViewColourbackgrounds;
-    private Gtk.CheckMenuItem menuViewHighlighterrors;
-    private Gtk.CheckMenuItem menuViewShowdesignerhints;
-    private Gtk.MenuItem menuEdit;
-    private Gtk.Menu menuEditMenu;
-    private Gtk.CheckMenuItem menuEditAutobind;
-    private Gtk.MenuItem menuRun;
-    private Gtk.Menu menuRunMenu;
-    private Gtk.MenuItem menuRunRun;
-    private Gtk.MenuItem menuRunCheckcircuit;
-    private Gtk.MenuItem menuRunSeparator1;
     private Gtk.CheckMenuItem menuRunStartpaused;
-    private Gtk.MenuItem menuProject;
-    private Gtk.Menu menuProjectMenu;
-    private Gtk.MenuItem menuProjectStatistics;
-    private Gtk.MenuItem menuProjectOptions;
-    private Gtk.MenuItem menuComponent;
-    private Gtk.Menu menuComponentMenu;
-    private Gtk.MenuItem menuComponentMakeroot;
-    private Gtk.MenuItem menuComponentCustomise;
     private Gtk.MenuItem menuWindows;
     private Gtk.Menu menuWindowsMenu;
     private Gtk.MenuItem[] menuWindowsComponents;
-    private Gtk.MenuItem menuHelp;
-    private Gtk.Menu menuHelpMenu;
-    private Gtk.MenuItem menuHelpAbout;
     private Gtk.RadioToolButton hiddenRadioToolButton;
     private Gtk.Toolbar toolbar;
-    private Gtk.RadioToolButton toolScroll;
-    private Gtk.Image toolScrollImage;
-    private Gtk.RadioToolButton toolZoom;
-    private Gtk.Image toolZoomImage;
-    private Gtk.SeparatorToolItem toolSeparator1;
-    private Gtk.RadioToolButton toolCursor;
-    private Gtk.Image toolCursorImage;
-    private Gtk.RadioToolButton toolMove;
-    private Gtk.Image toolMoveImage;
-    private Gtk.RadioToolButton toolOrientate;
-    private Gtk.Image toolOrientateImage;
-    private Gtk.RadioToolButton toolDelete;
-    private Gtk.Image toolDeleteImage;
-    private Gtk.RadioToolButton toolAdjust;
-    private Gtk.Image toolAdjustImage;
-    private Gtk.SeparatorToolItem toolSeparator2;
-    private Gtk.RadioToolButton toolAnnotate;
-    private Gtk.Image toolAnnotateImage;
-    private Gtk.RadioToolButton toolWire;
-    private Gtk.Image toolWireImage;
-    private Gtk.RadioToolButton toolBind;
-    private Gtk.Image toolBindImage;
-    private Gtk.RadioToolButton toolTag;
-    private Gtk.Image toolTagImage;
-    private Gtk.RadioToolButton toolInvert;
-    private Gtk.Image toolInvertImage;
-    private Gtk.SeparatorToolItem toolSeparator3;
     private Gtk.MenuToolButton toolCustoms;
-    private Gtk.Image toolCustomsImage;
     private Gtk.Menu toolCustomsMenu;
     private Gtk.MenuItem[] toolCustomsMenuComponents;
     private Gtk.MenuToolButton toolPlugins;
-    private Gtk.Image toolPluginsImage;
     private Gtk.Menu toolPluginsMenu;
     private Gtk.MenuItem[] toolPluginsMenuComponents;
-    private Gtk.SeparatorToolItem toolSeparator4;
-    private Gtk.RadioToolButton[] toolStandards;
-    private Gtk.Image[] toolStandardImages;
     private Gtk.EventBox controller;
     private Gtk.DrawingArea display;
 
-    private Gtk.FileFilter anysspFileFilter;
-    private Gtk.FileFilter anysscFileFilter;
-    private Gtk.FileFilter anyssxFileFilter;
     private Gtk.FileFilter sspFileFilter;
     private Gtk.FileFilter sscFileFilter;
-    private Gtk.FileFilter sscxmlFileFilter;
-    private Gtk.FileFilter xmlFileFilter;
     private Gtk.FileFilter ssxFileFilter;
     private Gtk.FileFilter pngFileFilter;
     private Gtk.FileFilter pdfFileFilter;
@@ -237,6 +164,9 @@ public class DesignerWindow : Gtk.Window {
 
     private Gtk.PrintSettings printSettings;
     private Gtk.PageSetup pageSetup;
+
+    private Gtk.Widget[] projectRequiringWidgets = {};
+    private Gtk.Widget[] designerRequiringWidgets = {};
 
     private Cairo.Surface gridCache;
     private Cairo.Surface staticCache;
@@ -261,14 +191,9 @@ public class DesignerWindow : Gtk.Window {
         set {
             _hasDesigner = value;
 
-            menuFileSave.set_sensitive(value);
-            menuFileSaveas.set_sensitive(value);
-
-            menuFilePrint.set_sensitive(value);
-            menuFileExport.set_sensitive(value);
-            menuFileRemovecomponent.set_sensitive(value);
-
-            menuComponent.set_sensitive(value);
+            foreach (Gtk.Widget widget in designerRequiringWidgets) {
+                widget.set_sensitive(value);
+            }
         }
     }
     /**
@@ -284,16 +209,9 @@ public class DesignerWindow : Gtk.Window {
         set {
             _hasProject = value;
 
-            menuFileNewcomponent.set_sensitive(value);
-            menuFileOpen.set_sensitive(value);
-            menuFileOpenplugincomponent.set_sensitive(value);
-
-            menuFileSaveproject.set_sensitive(value);
-            menuFileSaveasproject.set_sensitive(value);
-
-            menuRun.set_sensitive(value);
-            menuProject.set_sensitive(value);
-            menuWindows.set_sensitive(value);
+            foreach (Gtk.Widget widget in projectRequiringWidgets) {
+                widget.set_sensitive(value);
+            }
 
             update_custom_menu();
             update_plugin_menu();
@@ -370,7 +288,7 @@ public class DesignerWindow : Gtk.Window {
     /**
      * Update display whilst scrolling or zooming with mouse.
      */
-    public bool liveScrollUpdate = false;
+    public bool liveScrollUpdate = true;
     /**
      * Insert or move component shadow
      */
@@ -480,550 +398,314 @@ public class DesignerWindow : Gtk.Window {
     public void populate() {
         stderr.printf("Design Window Created\n");
 
-        set_default_size(800, 600);
-        set_border_width(0);
-        delete_event.connect(() => {close_window(); return true;});
-        set_title(Core.programName);
-
         try {
-            icon = new Gdk.Pixbuf.from_file(Config.resourcesDir + "images/icons/smartsim64.png");
-        } catch {
-            stderr.printf("Could not load window image.\n");
+            Gtk.Builder builder = new Gtk.Builder();
+            try {
+                builder.add_from_file(Config.resourcesDir + "ui/designer.ui");
+            } catch (FileError e) {
+                throw new UICommon.LoadError.MISSING_RESOURCE(e.message);
+            } catch (Error e) {
+                throw new UICommon.LoadError.BAD_RESOURCE(e.message);
+            }
+
+            // Connect basic signals
+            // There doesn't seem to be any error handling for this...
+            builder.connect_signals(this);
+
+            // Get references to useful things
+            window = UICommon.get_object_critical(builder, "window") as Gtk.Window;
+
+            // Menus are enabled/disabled and submenus are populated at runtime.
+            // It would be good if these could be annotated in the ui xml.
+            foreach (string id in projectRequiringWidgetIds) {
+                projectRequiringWidgets += UICommon.get_object_critical(builder, id) as Gtk.Widget;
+            }
+            foreach (string id in designerRequiringWidgetIds) {
+                designerRequiringWidgets += UICommon.get_object_critical(builder, id) as Gtk.Widget;
+            }
+
+            menuFileRemoveplugincomponent = UICommon.get_object_critical(builder, "menu_file_removeplugincomponent") as Gtk.MenuItem;
+            menuViewColourbackgrounds = UICommon.get_object_critical(builder, "menu_view_backgrounds") as Gtk.CheckMenuItem;
+            menuWindows = UICommon.get_object_critical(builder, "menu_windows") as Gtk.MenuItem;
+            menuRunStartpaused = UICommon.get_object_critical(builder, "menu_run_startpaused") as Gtk.CheckMenuItem;
+
+            toolbar = UICommon.get_object_critical(builder, "toolbar") as Gtk.Toolbar;
+            hiddenRadioToolButton = UICommon.get_object_critical(builder, "tool_group") as Gtk.RadioToolButton;
+
+            controller = UICommon.get_object_critical(builder, "controller") as Gtk.EventBox;
+            display = UICommon.get_object_critical(builder, "display") as Gtk.DrawingArea;
+
+            sspFileFilter = UICommon.get_object_critical(builder, "filter_ssp") as Gtk.FileFilter;
+            sscFileFilter = UICommon.get_object_critical(builder, "filter_ssc") as Gtk.FileFilter;
+            ssxFileFilter = UICommon.get_object_critical(builder, "filter_ssx") as Gtk.FileFilter;
+            pngFileFilter = UICommon.get_object_critical(builder, "filter_png") as Gtk.FileFilter;
+            pdfFileFilter = UICommon.get_object_critical(builder, "filter_pdf") as Gtk.FileFilter;
+            svgFileFilter = UICommon.get_object_critical(builder, "filter_svg") as Gtk.FileFilter;
+            anyFileFilter = UICommon.get_object_critical(builder, "filter_any") as Gtk.FileFilter;
+
+            // Connect tools. These connections are done in code for convenience.
+
+            // This could probably be cleaned using a map
+            connect_tool(builder, "tool_scroll", MouseMode.SCROLL);
+            connect_tool(builder, "tool_zoom", MouseMode.ZOOM);
+            connect_tool(builder, "tool_select", MouseMode.SELECT);
+            connect_tool(builder, "tool_move", MouseMode.MOVE);
+            connect_tool(builder, "tool_orientate", MouseMode.ORIENTATE);
+            connect_tool(builder, "tool_delete", MouseMode.DELETE);
+            connect_tool(builder, "tool_adjust", MouseMode.ADJUST);
+            connect_tool(builder, "tool_annotate", MouseMode.ANNOTATE);
+            connect_tool(builder, "tool_wire", MouseMode.WIRE);
+            connect_tool(builder, "tool_bind", MouseMode.BIND);
+            connect_tool(builder, "tool_tag", MouseMode.TAG);
+            connect_tool(builder, "tool_invert", MouseMode.INVERT);
+            toolCustoms = UICommon.get_object_critical(builder, "tool_customs") as Gtk.MenuToolButton;
+            toolCustoms.clicked.connect(
+                                        () => {
+                                            if (hasDesigner) {
+                                                if (designer.set_insert_last_custom()) {
+                                                    deselect_tools();
+                                                    mouseMode = MouseMode.INSERT;
+                                                    designer.set_insert_last_custom();
+                                                    update_overlay();
+                                                }
+                                            }
+                                        }
+                                        );
+            toolPlugins = UICommon.get_object_critical(builder, "tool_plugins") as Gtk.MenuToolButton;
+            toolPlugins.clicked.connect(
+                                        () => {
+                                            if (hasDesigner) {
+                                                if (designer.set_insert_last_plugin()) {
+                                                    deselect_tools();
+                                                    mouseMode = MouseMode.INSERT;
+                                                    designer.set_insert_last_plugin();
+                                                    update_overlay();
+                                                }
+                                            }
+                                        }
+                                        );
+
+            // Component listing defined Dynamically
+
+            standardComponentDefs = Core.standardComponentDefs;
+            for (int i = 0; i < standardComponentDefs.length; i ++) {
+                ComponentDef componentDef = standardComponentDefs[i];
+                Gtk.Image toolStandardImage;
+                Gtk.RadioToolButton toolStandard;
+                toolStandardImage = new Gtk.Image.from_file(Config.resourcesDir + "components/icons/" + componentDef.iconFilename);
+                toolStandardImage.icon_size = 24;
+                toolStandard = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
+                toolStandard.set_label(componentDef.name);
+                toolStandard.set_icon_widget(toolStandardImage);
+                toolStandard.clicked.connect(
+                                             () => {
+                                                 if (hasDesigner) {
+                                                     mouseMode = MouseMode.INSERT;
+                                                     designer.set_insert_component(componentDef);
+                                                     update_overlay();
+                                                 }
+                                             }
+                                             );
+                toolbar.insert(toolStandard, -1);
+                toolStandard.set_tooltip_text(componentDef.name + ": " + componentDef.description);
+            }
+
+            // Printing
+
+            printSettings = new Gtk.PrintSettings();
+            pageSetup = new Gtk.PageSetup();
+            pageSetup.set_orientation(Gtk.PageOrientation.LANDSCAPE);
+
+            // Update window and custom component selections
+
+            update_custom_menu();
+            update_plugin_menu();
+
+            // I know of no way to set the file filter names in UI code.
+
+            sspFileFilter.set_filter_name("SmartSim Project Format (.ssp)");
+            sscFileFilter.set_filter_name("SmartSim Component (.ssc)");
+            ssxFileFilter.set_filter_name("SmartSim Plugin Component (.ssx)");
+            pngFileFilter.set_filter_name("Portable Network Graphic (.png)");
+            pdfFileFilter.set_filter_name("Portable Document Format (.pdf)");
+            svgFileFilter.set_filter_name("Scalable Vector Graphic (.svg)");
+            anyFileFilter.set_filter_name("Any File");
+
+            // Finish
+
+            window.show_all();
+
+            window.set_title(Core.programName);
+        } catch (UICommon.LoadError e) {
+            UICommon.fatal_load_error(e);
         }
-
-        vBox = new Gtk.Box(Gtk.Orientation.VERTICAL, 2);
-        add(vBox);
-
-        // Menus
-
-        menubar = new Gtk.MenuBar();
-        vBox.pack_start(menubar, false, true, 0);
-
-        menuFile = new Gtk.MenuItem.with_label("File");
-        menubar.append(menuFile);
-        menuFileMenu = new Gtk.Menu();
-        menuFile.set_submenu(menuFileMenu);
-
-        menuFileNewproject = new Gtk.MenuItem.with_label("New Project");
-        menuFileMenu.append(menuFileNewproject);
-        menuFileNewproject.activate.connect(new_project);
-
-        menuFileNewcomponent = new Gtk.MenuItem.with_label("New Component");
-        menuFileMenu.append(menuFileNewcomponent);
-        menuFileNewcomponent.activate.connect(() => {new_designer().new_component();});
-        menuFileNewcomponent.set_sensitive(false);
-
-        menuFileSeparator1 = new Gtk.SeparatorMenuItem();
-        menuFileMenu.append(menuFileSeparator1);
-
-        menuFileSaveproject = new Gtk.MenuItem.with_label("Save Project");
-        menuFileMenu.append(menuFileSaveproject);
-        menuFileSaveproject.activate.connect(() => {save_project (false);});
-        menuFileSaveproject.set_sensitive(false);
-
-        menuFileSaveasproject = new Gtk.MenuItem.with_label("Save Project As");
-        menuFileMenu.append(menuFileSaveasproject);
-        menuFileSaveasproject.activate.connect(() => {save_project (true);});
-        menuFileSaveasproject.set_sensitive(false);
-
-        menuFileSeparator2 = new Gtk.SeparatorMenuItem();
-        menuFileMenu.append(menuFileSeparator2);
-
-        menuFileOpenproject = new Gtk.MenuItem.with_label("Open Project");
-        menuFileMenu.append(menuFileOpenproject);
-        menuFileOpenproject.activate.connect(() => {open_project ();});
-
-        menuFileSeparator3 = new Gtk.SeparatorMenuItem();
-        menuFileMenu.append(menuFileSeparator3);
-
-        menuFileSave = new Gtk.MenuItem.with_label("Save Component");
-        menuFileMenu.append(menuFileSave);
-        menuFileSave.activate.connect(() => {save_component (false);});
-        menuFileSave.set_sensitive(false);
-
-        menuFileSaveas = new Gtk.MenuItem.with_label("Save Component As");
-        menuFileMenu.append(menuFileSaveas);
-        menuFileSaveas.activate.connect(() => {save_component (true);});
-        menuFileSaveas.set_sensitive(false);
-
-        menuFileSeparator4 = new Gtk.SeparatorMenuItem();
-        menuFileMenu.append(menuFileSeparator4);
-
-        menuFileOpen = new Gtk.MenuItem.with_label("Open Component");
-        menuFileMenu.append(menuFileOpen);
-        menuFileOpen.activate.connect(() => {open_component ();});
-        menuFileOpen.set_sensitive(false);
-
-        menuFileOpenplugincomponent = new Gtk.MenuItem.with_label("Open Plugin Component");
-        menuFileMenu.append(menuFileOpenplugincomponent);
-        menuFileOpenplugincomponent.activate.connect(() => {open_plugin_component ();});
-        menuFileOpenplugincomponent.set_sensitive(false);
-
-        menuFileSeparator5 = new Gtk.SeparatorMenuItem();
-        menuFileMenu.append(menuFileSeparator5);
-
-        menuFileExport = new Gtk.MenuItem.with_label("Export");
-        menuFileMenu.append(menuFileExport);
-        menuFileExport.set_sensitive(false);
-        menuFileExportMenu = new Gtk.Menu();
-        menuFileExport.set_submenu(menuFileExportMenu);
-
-        menuFileExportPng = new Gtk.MenuItem.with_label("Design Image as PNG Image");
-        menuFileExportMenu.append(menuFileExportPng);
-        menuFileExportPng.activate.connect(export_png);
-
-        menuFileExportPdf = new Gtk.MenuItem.with_label("Design Image as PDF Document");
-        menuFileExportMenu.append(menuFileExportPdf);
-        menuFileExportPdf.activate.connect(export_pdf);
-
-        menuFileExportSvg = new Gtk.MenuItem.with_label("Design Image as SVG Image");
-        menuFileExportMenu.append(menuFileExportSvg);
-        menuFileExportSvg.activate.connect(export_svg);
-
-        menuFileSeparator6 = new Gtk.SeparatorMenuItem();
-        menuFileMenu.append(menuFileSeparator6);
-
-        menuFilePagesetup = new Gtk.MenuItem.with_label("Page Setup");
-        menuFileMenu.append(menuFilePagesetup);
-        menuFilePagesetup.activate.connect(print_page_setup);
-
-        menuFilePrint = new Gtk.MenuItem.with_label("Print");
-        menuFileMenu.append(menuFilePrint);
-        menuFilePrint.activate.connect(print);
-        menuFilePrint.set_sensitive(false);
-
-        menuFileSeparator7 = new Gtk.SeparatorMenuItem();
-        menuFileMenu.append(menuFileSeparator7);
-
-        menuFileRemovecomponent = new Gtk.MenuItem.with_label("Remove Component");
-        menuFileMenu.append(menuFileRemovecomponent);
-        menuFileRemovecomponent.activate.connect(() => {remove_component();});
-        menuFileRemovecomponent.set_sensitive(false);
-
-        menuFileRemoveplugincomponent = new Gtk.MenuItem.with_label("Remove Plugin Component");
-        menuFileMenu.append(menuFileRemoveplugincomponent);
-        menuFileRemoveplugincomponent.set_sensitive(false);
-
-        menuFileSeparator8 = new Gtk.SeparatorMenuItem();
-        menuFileMenu.append(menuFileSeparator8);
-
-        menuFileExit = new Gtk.MenuItem.with_label("Close");
-        menuFileMenu.append(menuFileExit);
-        menuFileExit.activate.connect(() => {close_window();});
-
-        menuView = new Gtk.MenuItem.with_label("View");
-        menubar.append(menuView);
-        menuViewMenu = new Gtk.Menu();
-        menuView.set_submenu(menuViewMenu);
-
-        menuViewFitdesign = new Gtk.MenuItem.with_label("Fit Design to Display");
-        menuViewMenu.append(menuViewFitdesign);
-        menuViewFitdesign.activate.connect(() => {fit_design();});
-
-        menuViewSeparator1 = new Gtk.SeparatorMenuItem();
-        menuViewMenu.append(menuViewSeparator1);
-
-        menuViewShowgrid = new Gtk.CheckMenuItem.with_label("Show Grid");
-        menuViewMenu.append(menuViewShowgrid);
-        menuViewShowgrid.active = true;
-        menuViewShowgrid.toggled.connect(
-            (menuItem) => {
-                showGrid = menuItem.active;
-                update_display();
-            }
-        );
-
-        menuViewLivescrollupdate = new Gtk.CheckMenuItem.with_label("Live Scroll Update");
-        menuViewMenu.append(menuViewLivescrollupdate);
-        menuViewLivescrollupdate.active = false;
-        menuViewLivescrollupdate.toggled.connect(
-            (menuItem) => {
-                liveScrollUpdate = menuItem.active;
-            }
-        );
-
-        menuViewShadowcomponent = new Gtk.CheckMenuItem.with_label("Shadow Component");
-        menuViewMenu.append(menuViewShadowcomponent);
-        menuViewShadowcomponent.active = false;
-        menuViewShadowcomponent.toggled.connect(
-            (menuItem) => {
-                shadowComponent = menuItem.active;
-            }
-        );
-
-        menuViewHighlighterrors = new Gtk.CheckMenuItem.with_label("Highlight Errors");
-        menuViewMenu.append(menuViewHighlighterrors);
-        menuViewHighlighterrors.active = true;
-        menuViewHighlighterrors.toggled.connect(
-            (menuItem) => {
-                highlightErrors = menuItem.active;
-                update_display();
-            }
-        );
-
-        menuViewColourbackgrounds = new Gtk.CheckMenuItem.with_label("Colour Backgrounds");
-        menuViewMenu.append(menuViewColourbackgrounds);
-        menuViewColourbackgrounds.active = true;
-        menuViewColourbackgrounds.toggled.connect(
-            (menuItem) => {
-                colourBackgrounds = menuItem.active;
-                update_display();
-            }
-        );
-
-        menuViewShowdesignerhints = new Gtk.CheckMenuItem.with_label("Show Designer Hints");
-        menuViewMenu.append(menuViewShowdesignerhints);
-        menuViewShowdesignerhints.active = true;
-        menuViewShowdesignerhints.toggled.connect(
-            (menuItem) => {
-                showHints = menuItem.active;
-                update_display();
-            }
-        );
-
-        menuEdit = new Gtk.MenuItem.with_label("Edit");
-        menubar.append(menuEdit);
-        menuEditMenu = new Gtk.Menu();
-        menuEdit.set_submenu(menuEditMenu);
-
-        menuEditAutobind = new Gtk.CheckMenuItem.with_label("Automatic Binding");
-        menuEditMenu.append(menuEditAutobind);
-        menuEditAutobind.active = true;
-        menuEditAutobind.toggled.connect(
-            (menuItem) => {
-                autoBind = menuItem.active;
-                update_display();
-            }
-        );
-
-        menuRun = new Gtk.MenuItem.with_label("Run");
-        menubar.append(menuRun);
-        menuRunMenu = new Gtk.Menu();
-        menuRun.set_sensitive(false);
-        menuRun.set_submenu(menuRunMenu);
-
-        menuRunRun = new Gtk.MenuItem.with_label("Run");
-        menuRunRun.activate.connect(run_circuit);
-        menuRunMenu.append(menuRunRun);
-
-        menuRunCheckcircuit = new Gtk.MenuItem.with_label("Check Circuit Validity");
-        menuRunCheckcircuit.activate.connect(validate_circuit);
-        menuRunMenu.append(menuRunCheckcircuit);
-
-        menuRunSeparator1 = new Gtk.SeparatorMenuItem();
-        menuRunMenu.append(menuRunSeparator1);
-
-        menuRunStartpaused = new Gtk.CheckMenuItem.with_label("Start Paused");
-        menuRunMenu.append(menuRunStartpaused);
-
-        menuComponent = new Gtk.MenuItem.with_label("Component");
-        menubar.append(menuComponent);
-        menuComponentMenu = new Gtk.Menu();
-        menuComponent.set_sensitive(false);
-        menuComponent.set_submenu(menuComponentMenu);
-
-        menuComponentMakeroot = new Gtk.MenuItem.with_label("Set as Root");
-        menuComponentMakeroot.activate.connect(set_root_component);
-        menuComponentMenu.append(menuComponentMakeroot);
-
-        menuComponentCustomise = new Gtk.MenuItem.with_label("Customise");
-        menuComponentCustomise.activate.connect(customise_component);
-        menuComponentMenu.append(menuComponentCustomise);
-
-        menuProject = new Gtk.MenuItem.with_label("Project");
-        menubar.append(menuProject);
-        menuProjectMenu = new Gtk.Menu();
-        menuProject.set_sensitive(false);
-        menuProject.set_submenu(menuProjectMenu);
-
-        menuProjectStatistics = new Gtk.MenuItem.with_label("Statistics");
-        menuProjectStatistics.activate.connect(display_statistics);
-        menuProjectMenu.append(menuProjectStatistics);
-
-        menuProjectOptions = new Gtk.MenuItem.with_label("Options");
-        menuProjectOptions.activate.connect(configure_project);
-        menuProjectMenu.append(menuProjectOptions);
-
-        menuWindows = new Gtk.MenuItem.with_label("Windows");
-        menubar.append(menuWindows);
-        menuWindows.set_sensitive(false);
-
-        // Component listing defined dynamically
-
-        menuHelp = new Gtk.MenuItem.with_label("Help");
-        menubar.append(menuHelp);
-        menuHelpMenu = new Gtk.Menu();
-        menuHelp.set_submenu(menuHelpMenu);
-
-        menuHelpAbout = new Gtk.MenuItem.with_label("About");
-        menuHelpMenu.append(menuHelpAbout);
-        menuHelpAbout.activate.connect(show_about);
-
-        // Toolbar
-
-        hiddenRadioToolButton = new Gtk.RadioToolButton(null);
-
-        toolbar = new Gtk.Toolbar();
-        toolbar.toolbar_style = Gtk.ToolbarStyle.ICONS;
-        vBox.pack_start(toolbar, false, true, 0);
-
-        toolScrollImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/scroll.png");
-        toolScroll = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolScroll.set_label("Scroll");
-        toolScroll.set_icon_widget(toolScrollImage);
-        toolbar.insert(toolScroll, -1);
-        toolScroll.set_tooltip_text("Scroll: Move your view of the circuit with click and drag.");
-        toolScroll.clicked.connect(() => {mouseMode = MouseMode.SCROLL; update_overlay();});
-        toolScroll.active = true;
-
-        toolZoomImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/zoom.png");
-        toolZoom = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolZoom.set_label("Zoom");
-        toolZoom.set_icon_widget(toolZoomImage);
-        toolbar.insert(toolZoom, -1);
-        toolZoom.set_tooltip_text("Zoom: Drag downward to zoom in or upward to zoom out.");
-        toolZoom.clicked.connect(() => {mouseMode = MouseMode.ZOOM; update_overlay();});
-
-        toolSeparator1 = new Gtk.SeparatorToolItem();
-        toolbar.insert(toolSeparator1, -1);
-
-        toolCursorImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/cursor.png");
-        toolCursor = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolCursor.set_label("Cursor");
-        toolCursor.set_icon_widget(toolCursorImage);
-        toolbar.insert(toolCursor, -1);
-        toolCursor.set_tooltip_text("Select: Click on an object to select it.");
-        toolCursor.clicked.connect(() => {mouseMode = MouseMode.SELECT; update_overlay();});
-
-        toolMoveImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/move.png");
-        toolMove = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolMove.set_label("Move");
-        toolMove.set_icon_widget(toolMoveImage);
-        toolbar.insert(toolMove, -1);
-        toolMove.set_tooltip_text("Move: Click and drag an object to move it.");
-        toolMove.clicked.connect(() => {mouseMode = MouseMode.MOVE; update_overlay();});
-
-        toolOrientateImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/orientate.png");
-        toolOrientate = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolOrientate.set_label("Orientate");
-        toolOrientate.set_icon_widget(toolOrientateImage);
-        toolbar.insert(toolOrientate, -1);
-        toolOrientate.set_tooltip_text("Orientate: Change the rotation of a component by dragging it. Flip by clicking.");
-        toolOrientate.clicked.connect(() => {mouseMode = MouseMode.ORIENTATE; update_overlay();});
-
-        toolDeleteImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/delete.png");
-        toolDelete = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolDelete.set_label("Delete");
-        toolDelete.set_icon_widget(toolDeleteImage);
-        toolbar.insert(toolDelete, -1);
-        toolDelete.set_tooltip_text("Delete: Click on an object to delete it.");
-        toolDelete.clicked.connect(() => {mouseMode = MouseMode.DELETE; update_overlay();});
-
-        toolAdjustImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/adjust.png");
-        toolAdjust = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolAdjust.set_label("Adjust");
-        toolAdjust.set_icon_widget(toolAdjustImage);
-        toolbar.insert(toolAdjust, -1);
-        toolAdjust.set_tooltip_text("Adjust: Click on an object to change its properties.");
-        toolAdjust.clicked.connect(() => {mouseMode = MouseMode.ADJUST; update_overlay();});
-
-        toolSeparator2 = new Gtk.SeparatorToolItem();
-        toolbar.insert(toolSeparator2, -1);
-
-        toolAnnotateImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/annotate.png");
-        toolAnnotate = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolAnnotate.set_label("Annotate");
-        toolAnnotate.set_icon_widget(toolAnnotateImage);
-        toolbar.insert(toolAnnotate, -1);
-        toolAnnotate.set_tooltip_text("Annotate: Click to insert a text comment.");
-        toolAnnotate.clicked.connect(() => {mouseMode = MouseMode.ANNOTATE; update_overlay();});
-
-        toolWireImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/wire.png");
-        toolWire = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolWire.set_label("Wire");
-        toolWire.set_icon_widget(toolWireImage);
-        toolbar.insert(toolWire, -1);
-        toolWire.set_tooltip_text("Wire: Insert a wire by clicking on successive points. Click again on the last point to finalise the wire. Click on the previous point to undo. Click this button again to forget the wire currently being draw.");
-        toolWire.clicked.connect(
-            () => {
-                if (mouseMode == MouseMode.WIRE) {
-                    designer.forget_wire();
-                    update_display();
-                }
-                mouseMode = MouseMode.WIRE;
-                update_overlay();
-            }
-        );
-
-        toolBindImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/bind.png");
-        toolBind = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolBind.set_label("Bind");
-        toolBind.set_icon_widget(toolBindImage);
-        toolbar.insert(toolBind, -1);
-        toolBind.set_tooltip_text("Bind: Click where a wire meets a pin or another wire to connect them. Click on an existing connection to remove it.");
-        toolBind.clicked.connect(() => {mouseMode = MouseMode.BIND; update_overlay();});
-
-        toolTagImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/tag.png");
-        toolTag = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolTag.set_label("Tag");
-        toolTag.set_icon_widget(toolTagImage);
-        toolbar.insert(toolTag, -1);
-        toolTag.set_tooltip_text("Tag: Drag to or from a wire to create an interface to the higher (container) component.");
-        toolTag.clicked.connect(() => {mouseMode = MouseMode.TAG; update_overlay();});
-
-        toolInvertImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/invert.png");
-        toolInvert = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolInvert.set_label("Invert");
-        toolInvert.set_icon_widget(toolInvertImage);
-        toolbar.insert(toolInvert, -1);
-        toolInvert.set_tooltip_text("Invert: Click on the end of a pin to invert it.");
-        toolInvert.clicked.connect(() => {mouseMode = MouseMode.INVERT; update_overlay();});
-
-        toolSeparator3 = new Gtk.SeparatorToolItem();
-        toolbar.insert(toolSeparator3, -1);
-
-        toolCustomsImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/custom.png");
-        toolCustoms = new Gtk.MenuToolButton(toolCustomsImage, "Custom...");
-        toolbar.insert(toolCustoms, -1);
-        toolCustoms.set_tooltip_text("Custom Components: Select a custom component from the drop-down menu. Click the button for the last used component.");
-        toolCustoms.clicked.connect(
-            () => {
-                if (hasDesigner) {
-                    if (designer.set_insert_last_custom()) {
-                        deselect_tools();
-                        mouseMode = MouseMode.INSERT;
-                        designer.set_insert_last_custom();
-                        update_overlay();
-                    }
-                }
-            }
-        );
-
-        toolPluginsImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/plugin.png");
-        toolPlugins = new Gtk.MenuToolButton(toolPluginsImage, "Plugin...");
-        toolbar.insert(toolPlugins, -1);
-        toolPlugins.set_tooltip_text("Plugin Components: Select a plugin component from the drop-down menu. Click the button for the last used component.");
-        toolPlugins.clicked.connect(
-            () => {
-                if (hasDesigner) {
-                    if (designer.set_insert_last_plugin()) {
-                        deselect_tools();
-                        mouseMode = MouseMode.INSERT;
-                        designer.set_insert_last_plugin();
-                        update_overlay();
-                    }
-                }
-            }
-        );
-
-        // Component listing defined Dynamically
-
-        toolSeparator4 = new Gtk.SeparatorToolItem();
-        toolbar.insert(toolSeparator4, -1);
-
-        standardComponentDefs = Core.standardComponentDefs;
-        for (int i = 0; i < standardComponentDefs.length; i ++) {
-            ComponentDef componentDef = standardComponentDefs[i];
-            Gtk.Image toolStandardImage;
-            Gtk.RadioToolButton toolStandard;
-            toolStandardImage = new Gtk.Image.from_file(Config.resourcesDir + "components/icons/" + componentDef.iconFilename);
-            toolStandardImage.icon_size = 24;
-            toolStandard = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-            toolStandard.set_label(componentDef.name);
-            toolStandard.set_icon_widget(toolStandardImage);
-            toolStandard.clicked.connect(
-                () => {
-                    if (hasDesigner) {
-                        mouseMode = MouseMode.INSERT;
-                        designer.set_insert_component(componentDef);
-                        update_overlay();
-                    }
-                }
-            );
-            toolStandards += toolStandard;
-            toolStandardImages += toolStandardImage;
-            toolbar.insert(toolStandard, -1);
-            toolStandard.set_tooltip_text(componentDef.name + ": " + componentDef.description);
-        }
-
-        // Main Display
-
-        controller = new Gtk.EventBox();
-        vBox.pack_start(controller, true, true, 0);
-        controller.button_press_event.connect(mouse_down);
-        controller.set_events(Gdk.EventMask.POINTER_MOTION_MASK);
-        controller.motion_notify_event.connect(mouse_move);
-        controller.button_release_event.connect(mouse_up);
-
-        display = new Gtk.DrawingArea();
-        controller.add(display);
-        display.draw.connect((context) => {render_design(context); return false;});
-        display.configure_event.connect(() => {gridCache = null; update_display(); return false;});
-
-        printSettings = new Gtk.PrintSettings();
-        pageSetup = new Gtk.PageSetup();
-        pageSetup.set_orientation(Gtk.PageOrientation.LANDSCAPE);
-
-        // File Filters
-
-        anysspFileFilter = new Gtk.FileFilter();
-        anysspFileFilter.set_filter_name("Any SmartSim Project Format (.ssp)");
-        anysspFileFilter.add_pattern("*.ssp");
-
-        sspFileFilter = new Gtk.FileFilter();
-        sspFileFilter.set_filter_name("SmartSim Project Format (.ssp)");
-        sspFileFilter.add_pattern("*.ssp");
-
-        anysscFileFilter = new Gtk.FileFilter();
-        anysscFileFilter.set_filter_name("Any SmartSim Component Format (.ssc, .ssc.xml, .xml)");
-        anysscFileFilter.add_pattern("*.ssc");
-        anysscFileFilter.add_pattern("*.ssc.xml");
-        anysscFileFilter.add_pattern("*.xml");
-
-        sscFileFilter = new Gtk.FileFilter();
-        sscFileFilter.set_filter_name("SmartSim Component (.ssc)");
-        sscFileFilter.add_pattern("*.ssc");
-
-        xmlFileFilter = new Gtk.FileFilter();
-        xmlFileFilter.set_filter_name("SmartSim Component (.xml)");
-        xmlFileFilter.add_pattern("*.xml");
-
-        sscxmlFileFilter = new Gtk.FileFilter();
-        sscxmlFileFilter.set_filter_name("SmartSim Component (.ssc.xml)");
-        sscxmlFileFilter.add_pattern("*.ssc.xml");
-
-        anyssxFileFilter = new Gtk.FileFilter();
-        anyssxFileFilter.set_filter_name("Any SmartSim Plugin Component (.ssx)");
-        anyssxFileFilter.add_pattern("*.ssx");
-
-        ssxFileFilter = new Gtk.FileFilter();
-        ssxFileFilter.set_filter_name("SmartSim Plugin Component (.ssx)");
-        ssxFileFilter.add_pattern("*.ssx");
-
-        pngFileFilter = new Gtk.FileFilter();
-        pngFileFilter.set_filter_name("Portable Network Graphic (.png)");
-        pngFileFilter.add_pattern("*.png");
-
-        pdfFileFilter = new Gtk.FileFilter();
-        pdfFileFilter.set_filter_name("Adobe Portable Document (.pdf)");
-        pdfFileFilter.add_pattern("*.pdf");
-
-        svgFileFilter = new Gtk.FileFilter();
-        svgFileFilter.set_filter_name("Scalable Vector Graphic (.svg)");
-        svgFileFilter.add_pattern("*.svg");
-
-        anyFileFilter = new Gtk.FileFilter();
-        anyFileFilter.set_filter_name("Any File");
-        anyFileFilter.add_pattern("*");
-
-        // Update window and custom component selections
-
-        update_custom_menu();
-        update_plugin_menu();
-
-        // Finish
-
-        show_all();
+    }
+
+    private void connect_tool(Gtk.Builder builder, string name, MouseMode mode) throws UICommon.LoadError.MISSING_OBJECT {
+        (UICommon.get_object_critical(builder, name) as Gtk.RadioToolButton).clicked.connect(() => {mouseMode = mode; update_display();});
+    }
+
+
+    // Signal handlers.
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_delete_window")]
+    public bool ui_delete_window(Gtk.Window window, Gdk.Event userdata) {
+        return close_window();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_close")]
+    public void ui_close(Gtk.Activatable activatable) {
+        close_window();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_new_project")]
+    public void ui_new_project(Gtk.Activatable activatable) {
+        new_project();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_new_component")]
+    public void ui_new_component(Gtk.Activatable activatable) {
+        new_designer().new_component();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_save_project")]
+    public void ui_save_project(Gtk.Activatable activatable) {
+        save_project(false);
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_save_project_as")]
+    public void ui_save_project_as(Gtk.Activatable activatable) {
+        save_project(true);
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_open_project")]
+    public void ui_open_project(Gtk.Activatable activatable) {
+        open_project();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_save_component")]
+    public void ui_save_component(Gtk.Activatable activatable) {
+        save_component(false);
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_save_component_as")]
+    public void ui_save_component_as(Gtk.Activatable activatable) {
+        save_component(true);
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_open_component")]
+    public void ui_open_component(Gtk.Activatable activatable) {
+        open_component();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_open_plugin_component")]
+    public void ui_open_plugin_component(Gtk.Activatable activatable) {
+        open_plugin_component();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_export_png")]
+    public void ui_export_png(Gtk.Activatable activatable) {
+        export_png();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_export_pdf")]
+    public void ui_export_pdf(Gtk.Activatable activatable) {
+        export_pdf();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_export_svg")]
+    public void ui_export_svg(Gtk.Activatable activatable) {
+        export_svg();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_page_setup")]
+    public void ui_page_setup(Gtk.Activatable activatable) {
+        print_page_setup();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_print")]
+    public void ui_print(Gtk.Activatable activatable) {
+        print();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_remove_component")]
+    public void ui_remove_component(Gtk.Activatable activatable) {
+        remove_component();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_fit_design")]
+    public void ui_fit_design(Gtk.Activatable activatable) {
+        fit_design();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_show_grid")]
+    public void ui_show_grid(Gtk.CheckMenuItem menuItem) {
+        showGrid = menuItem.active;
+        update_display();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_live_scroll")]
+    public void ui_live_scroll(Gtk.CheckMenuItem menuItem) {
+        liveScrollUpdate = menuItem.active;
+        update_display();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_shadow_component")]
+    public void ui_shadow_component(Gtk.CheckMenuItem menuItem) {
+        shadowComponent = menuItem.active;
+        update_display();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_highlight_errors")]
+    public void ui_highlight_errors(Gtk.CheckMenuItem menuItem) {
+        highlightErrors = menuItem.active;
+        update_display();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_colour_backgrounds")]
+    public void ui_colour_backgrounds(Gtk.CheckMenuItem menuItem) {
+        colourBackgrounds = menuItem.active;
+        update_display();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_show_hints")]
+    public void ui_show_hints(Gtk.CheckMenuItem menuItem) {
+        showHints = menuItem.active;
+        update_display();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_autobind")]
+    public void ui_autobind(Gtk.CheckMenuItem menuItem) {
+        autoBind = menuItem.active;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_run")]
+    public void ui_run(Gtk.Activatable activatable) {
+        run_circuit();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_check")]
+    public void ui_check(Gtk.Activatable activatable) {
+        validate_circuit();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_set_root")]
+    public void ui_set_root(Gtk.Activatable activatable) {
+        set_root_component();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_customise")]
+    public void ui_customise(Gtk.Activatable activatable) {
+        customise_component();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_project_statistics")]
+    public void ui_project_statistics(Gtk.Activatable activatable) {
+        display_statistics();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_project_properties")]
+    public void ui_project_properties(Gtk.Activatable activatable) {
+        configure_project();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_about")]
+    public void ui_about(Gtk.Activatable activatable) {
+        show_about();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_mouse_down")]
+    public bool ui_mouse_down(Gtk.Widget widget, Gdk.EventButton event) {
+        mouse_down(event);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_mouse_move")]
+    public bool ui_mouse_move(Gtk.Widget widget, Gdk.EventMotion event) {
+        mouse_move(event);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_mouse_up")]
+    public bool ui_mouse_up(Gtk.Widget widget, Gdk.EventButton event) {
+        mouse_up(event);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_render")]
+    public bool ui_render(Gtk.Widget widget, Cairo.Context context) {
+        render_design(context);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_display_configure")]
+    public bool ui_display_configure(Gtk.Widget widget, Gdk.Event event) {
+        gridCache = null;
+        update_display();
+        return false;
     }
 
     /**
@@ -1227,7 +909,7 @@ public class DesignerWindow : Gtk.Window {
             CircuitInformation circuitInformation = new CircuitInformation(project);
 
             if (circuitInformation.summary != "") {
-                BasicDialog.information(this, "Statistics:\n\n" + circuitInformation.summary);
+                BasicDialog.information(window, "Statistics:\n\n" + circuitInformation.summary);
             }
         }
     }
@@ -1236,16 +918,14 @@ public class DesignerWindow : Gtk.Window {
      * Handles mouse button down in the work area. Records mouse
      * (drag) starting point.
      */
-    private bool mouse_down(Gdk.EventButton event) {
+    private void mouse_down(Gdk.EventButton event) {
         mouseIsDown = true;
 
         xMouseStart = (int)(event.x);
         yMouseStart = (int)(event.y);
-
-        return false;
     }
 
-    private bool mouse_move(Gdk.EventMotion event) {
+    private void mouse_move(Gdk.EventMotion event) {
         Gtk.Allocation areaAllocation;
         controller.get_allocation(out areaAllocation);
         int width = areaAllocation.width;
@@ -1339,26 +1019,24 @@ public class DesignerWindow : Gtk.Window {
                 designer.shadowComponentInst.xPosition = xBoardEnd;
                 designer.shadowComponentInst.yPosition = yBoardEnd;
                 designer.shadowComponentInst.direction = direction;
-
+                stderr.printf("y\n");
                 update_overlay();
             }
             break;
         }
-
-        return false;
     }
 
     /**
      * Handles mouse button up in the work area. Performs an action
      * which is determined by //mouseMode//.
      */
-    private bool mouse_up(Gdk.EventButton event) {
+    private void mouse_up(Gdk.EventButton event) {
         mouseIsDown = false;
 
         if (project != null) {
             if (project.running) {
                 stderr.printf ("Cannot edit running circuit!\n");
-                return false;
+                return;
             }
         }
 
@@ -1548,8 +1226,6 @@ public class DesignerWindow : Gtk.Window {
         }
 
         update_display();
-
-        return false;
     }
 
     /**
@@ -1569,15 +1245,15 @@ public class DesignerWindow : Gtk.Window {
                     } else {
                         designer.set_name("Not saved - " + designer.customComponentDef.name);
                     }
-                    set_title(Core.programName + " - " + project.name + " - " + designer.designerName);
+                    window.set_title(Core.programName + " - " + project.name + " - " + designer.designerName);
                 } else {
-                    set_title(Core.programName + " - " + project.name + " - " + designer.designerName);
+                    window.set_title(Core.programName + " - " + project.name + " - " + designer.designerName);
                 }
             } else {
-                set_title(Core.programName + " - " + project.name);
+                window.set_title(Core.programName + " - " + project.name);
             }
         } else {
-            set_title(Core.programName);
+            window.set_title(Core.programName);
         }
     }
 
@@ -1589,7 +1265,7 @@ public class DesignerWindow : Gtk.Window {
 
         Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog(
             "Load Component",
-            this,
+            window,
             Gtk.FileChooserAction.OPEN,
             "_Cancel",
             Gtk.ResponseType.CANCEL,
@@ -1597,10 +1273,7 @@ public class DesignerWindow : Gtk.Window {
             Gtk.ResponseType.ACCEPT
         );
 
-        fileChooser.add_filter(anysscFileFilter);
         fileChooser.add_filter(sscFileFilter);
-        fileChooser.add_filter(sscxmlFileFilter);
-        fileChooser.add_filter(xmlFileFilter);
         fileChooser.add_filter(anyFileFilter);
 
         if (fileChooser.run() == Gtk.ResponseType.ACCEPT) {
@@ -1628,7 +1301,7 @@ public class DesignerWindow : Gtk.Window {
 
         Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog(
             "Load Component",
-            this,
+            window,
             Gtk.FileChooserAction.OPEN,
             "_Cancel",
             Gtk.ResponseType.CANCEL,
@@ -1636,7 +1309,6 @@ public class DesignerWindow : Gtk.Window {
             Gtk.ResponseType.ACCEPT
         );
 
-        fileChooser.add_filter(anyssxFileFilter);
         fileChooser.add_filter(ssxFileFilter);
         fileChooser.add_filter(anyFileFilter);
 
@@ -1672,7 +1344,7 @@ public class DesignerWindow : Gtk.Window {
         if (componentFileName == "" || saveAs) {
             Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog(
                 "Save Component",
-                this,
+                window,
                 Gtk.FileChooserAction.SAVE,
                 "_Cancel",
                 Gtk.ResponseType.CANCEL,
@@ -1681,8 +1353,6 @@ public class DesignerWindow : Gtk.Window {
             );
 
             fileChooser.add_filter(sscFileFilter);
-            fileChooser.add_filter(sscxmlFileFilter);
-            fileChooser.add_filter(xmlFileFilter);
             fileChooser.add_filter(anyFileFilter);
             fileChooser.do_overwrite_confirmation = true;
 
@@ -1695,10 +1365,6 @@ public class DesignerWindow : Gtk.Window {
                     } else {
                         if (fileChooser.filter == sscFileFilter) {
                             componentFileName += ".ssc";
-                        } else if (fileChooser.filter == sscxmlFileFilter) {
-                            componentFileName += ".ssc.xml";
-                        } else if (fileChooser.filter == xmlFileFilter) {
-                            componentFileName += ".xml";
                         }
                     }
                     if (GLib.FileUtils.test(componentFileName, GLib.FileTest.EXISTS)) {
@@ -1729,7 +1395,7 @@ public class DesignerWindow : Gtk.Window {
 
         Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog(
             "Load Project",
-            this,
+            window,
             Gtk.FileChooserAction.OPEN,
             "_Cancel",
             Gtk.ResponseType.CANCEL,
@@ -1737,7 +1403,6 @@ public class DesignerWindow : Gtk.Window {
             Gtk.ResponseType.ACCEPT
         );
 
-        fileChooser.add_filter(anysspFileFilter);
         fileChooser.add_filter(sspFileFilter);
         fileChooser.add_filter(anyFileFilter);
 
@@ -1767,7 +1432,7 @@ public class DesignerWindow : Gtk.Window {
         if (project.filename == "" || saveAs) {
             Gtk.FileChooserDialog fileChooser = new Gtk.FileChooserDialog(
                 "Save Project",
-                this,
+                window,
                 Gtk.FileChooserAction.SAVE,
                 "_Cancel",
                 Gtk.ResponseType.CANCEL,
@@ -1786,7 +1451,7 @@ public class DesignerWindow : Gtk.Window {
                     if ("." in project.filename) {
                         stderr.printf("File extension already given\n");
                     } else {
-                        if (fileChooser.filter == anysspFileFilter) {
+                        if (fileChooser.filter == sspFileFilter) {
                             project.filename += ".ssp";
                         }
                     }
@@ -1948,7 +1613,7 @@ public class DesignerWindow : Gtk.Window {
      * configuring the page setup for printing.
      */
     public void print_page_setup() {
-        pageSetup = Gtk.print_run_page_setup_dialog(this, pageSetup, printSettings);
+        pageSetup = Gtk.print_run_page_setup_dialog(window, pageSetup, printSettings);
     }
 
     /**
@@ -1986,7 +1651,7 @@ public class DesignerWindow : Gtk.Window {
         Gtk.PrintOperationResult result;
 
         try {
-            result = printOperation.run(Gtk.PrintOperationAction.PRINT_DIALOG, this);
+            result = printOperation.run(Gtk.PrintOperationAction.PRINT_DIALOG, window);
         } catch {
             stderr.printf("Print operation failed!\n");
             return;
@@ -1998,7 +1663,7 @@ public class DesignerWindow : Gtk.Window {
     }
 
     public void update_overlay() {
-        if (visible) {
+        if (window.visible) {
             display.queue_draw();
         }
     }
@@ -2006,7 +1671,7 @@ public class DesignerWindow : Gtk.Window {
     public void update_display() {
         staticCache = null;
 
-        if (visible) {
+        if (window.visible) {
             display.queue_draw();
         }
     }
@@ -2292,7 +1957,7 @@ public class DesignerWindow : Gtk.Window {
 
         if (hasDesigner) {
             unregister_designerwindow();
-            hide();
+            window.hide();
             gridCache = null;
         } else {
             force_destroy_window();
@@ -2302,7 +1967,7 @@ public class DesignerWindow : Gtk.Window {
 
     private bool comfirm_close() {
         Gtk.MessageDialog messageDialog = new Gtk.MessageDialog(
-            this,
+            window,
             Gtk.DialogFlags.MODAL,
             Gtk.MessageType.QUESTION,
             Gtk.ButtonsType.NONE,
@@ -2343,7 +2008,7 @@ public class DesignerWindow : Gtk.Window {
 
         unregister_designerwindow();
 
-        destroy();
+        window.destroy();
     }
 
     private bool remove_component() {
@@ -2351,7 +2016,7 @@ public class DesignerWindow : Gtk.Window {
             return false;
         }
 
-        if (BasicDialog.ask_proceed(this, "Are you sure you want to remove this component from the project?\nAll unsaved progress will be lost.", "Remove", "Keep") == Gtk.ResponseType.OK) {
+        if (BasicDialog.ask_proceed(window, "Are you sure you want to remove this component from the project?\nAll unsaved progress will be lost.", "Remove", "Keep") == Gtk.ResponseType.OK) {
             if (project.remove_component(designer.customComponentDef) == 0) {
                 project.update_custom_menus();
                 project.update_plugin_menus();
@@ -2370,7 +2035,7 @@ public class DesignerWindow : Gtk.Window {
             return false;
         }
 
-        if (BasicDialog.ask_proceed(this, "Are you sure you want to remove this plugin component from the project?\nThis will only dissociate the plugin with the project. The plugin will remain loaded until SmartSim is closed.\n", "Remove", "Keep") == Gtk.ResponseType.OK) {
+        if (BasicDialog.ask_proceed(window, "Are you sure you want to remove this plugin component from the project?\nThis will only dissociate the plugin with the project. The plugin will remain loaded until SmartSim is closed.\n", "Remove", "Keep") == Gtk.ResponseType.OK) {
             if (project.remove_plugin_component(pluginComponentDef) == 0) {
                 project.update_plugin_menus();
             }
@@ -2447,6 +2112,30 @@ public class DesignerWindow : Gtk.Window {
         if (hasDesigner && hasProject) {
             project.set_root_component (designer.customComponentDef);
         }
+    }
+
+    public bool visible {
+        public get {
+            return window.visible;
+        }
+    }
+    public void show() {
+        window.show_all();
+    }
+    /**
+     * Bring window to the front.
+     */
+    public void present() {
+        window.present();
+    }
+    /**
+     * Access the underlying Gtk.Window
+     *
+     * Use only when you need to use the window as a dialog parent.
+     * Currently in used for a transition period.
+     */
+    public Gtk.Window gtk_window {
+        get {return window;}
     }
 
     /**

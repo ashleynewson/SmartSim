@@ -325,7 +325,7 @@ public class Designer {
                 bool notValid = true;
                 while (notValid) {
                     notValid = false;
-                    PropertiesQuery tagQuery = new PropertiesQuery("Interface Tag Properties", window, tagProperties);
+                    PropertiesQuery tagQuery = new PropertiesQuery("Interface Tag Properties", window.gtk_window, tagProperties);
 
                     if (tagQuery.run() == Gtk.ResponseType.APPLY) {
                         string option;
@@ -529,7 +529,7 @@ public class Designer {
 
                 string title = componentInst.componentDef.name + " Component Properties";
 
-                PropertiesQuery componentQuery = new PropertiesQuery(title, window, componentProperties);
+                PropertiesQuery componentQuery = new PropertiesQuery(title, window.gtk_window, componentProperties);
 
                 if (componentQuery.run() == Gtk.ResponseType.APPLY) {
                     for (int i = 0; i < componentInst.pinInsts.length; i++) {
@@ -581,7 +581,7 @@ public class Designer {
                 PropertySet annotationProperties = new PropertySet("Annotation", "Annotation text query");
                 annotationProperties.add_item(new PropertyItemString("Text", "Text to display.", text));
                 annotationProperties.add_item(new PropertyItemDouble("Font Size", "Font size with which to display text", fontSize, 0, 10000));
-                PropertiesQuery annotationQuery = new PropertiesQuery("Annotation Properties", window, annotationProperties);
+                PropertiesQuery annotationQuery = new PropertiesQuery("Annotation Properties", window.gtk_window, annotationProperties);
 
                 if (annotationQuery.run() == Gtk.ResponseType.APPLY) {
                     text = PropertyItemString.get_data(annotationProperties, "Text");
@@ -616,7 +616,7 @@ public class Designer {
                 }
 
                 wireProperties.add_item(selection);
-                PropertiesQuery wireQuery = new PropertiesQuery("Wire Properties", window, wireProperties);
+                PropertiesQuery wireQuery = new PropertiesQuery("Wire Properties", window.gtk_window, wireProperties);
 
                 if (wireQuery.run() == Gtk.ResponseType.APPLY) {
                     switch (selection.get_option()) {
