@@ -26,56 +26,10 @@
  * Allows a user to control and explore a circuit, using the
  * CompiledCircuit as a back-end.
  */
-public class SimulatorWindow : Gtk.Window {
-    private Gtk.Box vBox;
-    private Gtk.MenuBar menubar;
-    private Gtk.MenuItem menuSimulation;
-    private Gtk.Menu menuSimulationMenu;
-    private Gtk.CheckMenuItem menuSimulationRun;
-    private Gtk.MenuItem menuSimulationSeparator1;
-    private Gtk.MenuItem menuSimulationExit;
-    private Gtk.MenuItem menuView;
-    private Gtk.Menu menuViewMenu;
-    private Gtk.MenuItem menuViewFitdesign;
-    private Gtk.CheckMenuItem menuViewAutofitdesign;
-    private Gtk.MenuItem menuViewSeparator1;
-    private Gtk.MenuItem menuViewTimingdiagram;
-    private Gtk.Toolbar toolbar;
-    private Gtk.RadioToolButton toolScroll;
-    private Gtk.Image toolScrollImage;
-    private Gtk.RadioToolButton toolZoom;
-    private Gtk.Image toolZoomImage;
-    private Gtk.SeparatorToolItem toolSeparator1;
-    private Gtk.RadioToolButton toolContext;
-    private Gtk.Image toolContextImage;
-    private Gtk.RadioToolButton toolInteract;
-    private Gtk.Image toolInteractImage;
-    private Gtk.RadioToolButton toolExplore;
-    private Gtk.Image toolExploreImage;
-    private Gtk.RadioToolButton toolWatch;
-    private Gtk.Image toolWatchImage;
-    private Gtk.SeparatorToolItem toolSeparator2;
-    private Gtk.ToolButton toolShrink;
-    private Gtk.Image toolShrinkImage;
-    private Gtk.SeparatorToolItem toolSeparator3;
+public class SimulatorWindow {
+    private Gtk.Window window;
     private Gtk.ToggleToolButton toolRun;
-    private Gtk.Image toolRunImage;
-    private Gtk.ToolButton toolSinglestep;
-    private Gtk.Image toolSinglestepImage;
-    private Gtk.ToolButton toolMultistep;
-    private Gtk.Image toolMultistepImage;
-    private Gtk.SeparatorToolItem toolSeparator4;
-    private Gtk.ToggleToolButton toolMaxspeed;
-    private Gtk.Image toolMaxspeedImage;
-    private Gtk.ToolItem toolSpeed;
-    private Gtk.Box toolSpeedBox;
-    private Gtk.Label toolSpeedLabel;
     private Gtk.SpinButton toolSpeedSpin;
-    private Gtk.SeparatorToolItem toolSeparator5;
-    private Gtk.ToolItem toolStepsize;
-    private Gtk.Box toolStepsizeBox;
-    private Gtk.Label toolStepsizeLabel;
-    private Gtk.SpinButton toolStepsizeSpin;
     private Gtk.EventBox controller;
     private Gtk.DrawingArea display;
 
@@ -198,229 +152,131 @@ public class SimulatorWindow : Gtk.Window {
     public void populate() {
         stderr.printf("Simulation Window Created\n");
 
-        set_default_size(800, 600);
-        set_border_width(0);
-        destroy.connect(close_simulation);
-        set_title(Core.programName + " - Simulation");
-
         try {
-            icon = new Gdk.Pixbuf.from_file(Config.resourcesDir + "images/icons/smartsim64.png");
-        } catch {
-            stderr.printf("Could not load window image.\n");
+            Gtk.Builder builder = new Gtk.Builder();
+            try {
+                builder.add_from_file(Config.resourcesDir + "ui/simulator.ui");
+            } catch (FileError e) {
+                throw new UICommon.LoadError.MISSING_RESOURCE(e.message);
+            } catch (Error e) {
+                throw new UICommon.LoadError.BAD_RESOURCE(e.message);
+            }
+
+            // Connect basic signals
+            builder.connect_signals(this);
+
+            // Get references to useful things
+            window = UICommon.get_object_critical(builder, "window") as Gtk.Window;
+            toolSpeedSpin = UICommon.get_object_critical(builder, "speed") as Gtk.SpinButton;
+            toolRun = UICommon.get_object_critical(builder, "tool_run") as Gtk.ToggleToolButton;
+            controller = UICommon.get_object_critical(builder, "controller") as Gtk.EventBox;
+            display = UICommon.get_object_critical(builder, "display") as Gtk.DrawingArea;
+
+            // Connect tools
+            connect_tool(builder, "tool_scroll", MouseMode.SCROLL);
+            connect_tool(builder, "tool_zoom", MouseMode.ZOOM);
+            connect_tool(builder, "tool_context", MouseMode.CONTEXT);
+            connect_tool(builder, "tool_interact", MouseMode.INTERACT);
+            connect_tool(builder, "tool_explore", MouseMode.EXPLORE);
+            connect_tool(builder, "tool_watch", MouseMode.WATCH);
+
+            window.set_title(Core.programName + " - Simulation");
+
+            window.show_all();
+        } catch (UICommon.LoadError e) {
+            UICommon.fatal_load_error(e);
         }
 
-        vBox = new Gtk.Box(Gtk.Orientation.VERTICAL, 2);
-        add(vBox);
-
-        // Menus
-
-        menubar = new Gtk.MenuBar();
-        vBox.pack_start(menubar, false, true, 0);
-
-        menuSimulation = new Gtk.MenuItem.with_label("Simulation");
-        menubar.append(menuSimulation);
-        menuSimulationMenu = new Gtk.Menu();
-        menuSimulation.set_submenu(menuSimulationMenu);
-
-        menuSimulationRun = new Gtk.CheckMenuItem.with_label("Run");
-        menuSimulationMenu.append(menuSimulationRun);
-        menuSimulationRun.toggled.connect(() => {run_toggle(menuSimulationRun);});
-
-        menuSimulationSeparator1 = new Gtk.SeparatorMenuItem();
-        menuSimulationMenu.append(menuSimulationSeparator1);
-
-        menuSimulationExit = new Gtk.MenuItem.with_label("Close Simulation");
-        menuSimulationMenu.append(menuSimulationExit);
-        menuSimulationExit.activate.connect(() => {destroy();});
-
-        menuView = new Gtk.MenuItem.with_label("View");
-        menubar.append(menuView);
-        menuViewMenu = new Gtk.Menu();
-        menuView.set_submenu(menuViewMenu);
-
-        menuViewFitdesign = new Gtk.MenuItem.with_label("Fit Design to Display");
-        menuViewMenu.append(menuViewFitdesign);
-        menuViewFitdesign.activate.connect(() => {fit_design();});
-
-        menuViewAutofitdesign = new Gtk.CheckMenuItem.with_label("Auto Fit When Exploring");
-        menuViewMenu.append(menuViewAutofitdesign);
-        menuViewAutofitdesign.active = true;
-        menuViewAutofitdesign.toggled.connect((menuItem) => {autoFitDesign = menuItem.active;});
-
-        menuViewSeparator1 = new Gtk.SeparatorMenuItem();
-        menuViewMenu.append(menuViewSeparator1);
-
-        menuViewTimingdiagram = new Gtk.MenuItem.with_label("Show Timing Diagram");
-        menuViewMenu.append(menuViewTimingdiagram);
-        menuViewTimingdiagram.activate.connect(() => {show_timing_diagram();});
-
-        // Toolbar
-
-        toolbar = new Gtk.Toolbar();
-        toolbar.toolbar_style = Gtk.ToolbarStyle.ICONS;
-        vBox.pack_start(toolbar, false, true, 0);
-
-        toolScrollImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/scroll.png");
-        toolScroll = new Gtk.RadioToolButton(null);
-        toolScroll.set_label("Scroll");
-        toolScroll.set_icon_widget(toolScrollImage);
-        toolbar.insert(toolScroll, -1);
-        toolScroll.set_tooltip_text("Scroll: Move your view of the circuit with click and drag.");
-        toolScroll.clicked.connect(() => {mouseMode = MouseMode.SCROLL;});
-
-        toolZoomImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/zoom.png");
-        toolZoom = new Gtk.RadioToolButton.from_widget(toolScroll);
-        toolZoom.set_label("Zoom");
-        toolZoom.set_icon_widget(toolZoomImage);
-        toolbar.insert(toolZoom, -1);
-        toolZoom.set_tooltip_text("Zoom: Drag downward to zoom in or upward to zoom out.");
-        toolZoom.clicked.connect(() => {mouseMode = MouseMode.ZOOM;});
-
-        toolSeparator1 = new Gtk.SeparatorToolItem();
-        toolbar.insert(toolSeparator1, -1);
-
-        toolContextImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/context.png");
-        toolContext = new Gtk.RadioToolButton.from_widget(toolScroll);
-        toolContext.set_label("Context");
-        toolContext.set_icon_widget(toolContextImage);
-        toolbar.insert(toolContext, -1);
-        toolContext.set_tooltip_text("Context: Interact or explore depending on what you click on. See Interact and Explore tools.");
-        toolContext.clicked.connect(() => {mouseMode = MouseMode.CONTEXT;});
-        toolContext.active = true;
-
-        toolInteractImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/interact.png");
-        toolInteract = new Gtk.RadioToolButton.from_widget(toolScroll);
-        toolInteract.set_label("Interact");
-        toolInteract.set_icon_widget(toolInteractImage);
-        toolbar.insert(toolInteract, -1);
-        toolInteract.set_tooltip_text("Interact: Click on an interactive component to interact with it.");
-        toolInteract.clicked.connect(() => {mouseMode = MouseMode.INTERACT;});
-
-        toolExploreImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/explore.png");
-        toolExplore = new Gtk.RadioToolButton.from_widget(toolScroll);
-        toolExplore.set_label("Explore");
-        toolExplore.set_icon_widget(toolExploreImage);
-        toolbar.insert(toolExplore, -1);
-        toolExplore.set_tooltip_text("Explore: Click on sub components to expand them and look at the activity inside them. Click on the background (or use the shrink tool) to go back to the higher level.");
-        toolExplore.clicked.connect(() => {mouseMode = MouseMode.EXPLORE;});
-
-        toolWatchImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/watch.png");
-        toolWatch = new Gtk.RadioToolButton.from_widget(toolScroll);
-        toolWatch.set_label("Watch");
-        toolWatch.set_icon_widget(toolWatchImage);
-        toolbar.insert(toolWatch, -1);
-        toolWatch.set_tooltip_text("Watch: Click on a wire to add it to the logic timing diagram.");
-        toolWatch.clicked.connect(() => {mouseMode = MouseMode.WATCH;});
-
-        toolSeparator2 = new Gtk.SeparatorToolItem();
-        toolbar.insert(toolSeparator2, -1);
-
-        toolShrinkImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/shrink.png");
-        toolShrink = new Gtk.ToolButton(toolShrinkImage, "Shrink");
-        toolbar.insert(toolShrink, -1);
-        toolShrink.set_tooltip_text("Shrink: Explore the immediately higher level component (the component containing the currently viewed one).");
-        toolShrink.clicked.connect(
-            () => {
-                compiledCircuit.shrink_component();
-                if (autoFitDesign) {
-                    fit_design();
-                }
-                update_display(true);
-            }
-        );
-
-        toolSeparator3 = new Gtk.SeparatorToolItem();
-        toolbar.insert(toolSeparator3, -1);
-
-        toolRunImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/run.png");
-        toolRun = new Gtk.ToggleToolButton();
-        toolRun.set_label("Run");
-        toolRun.set_icon_widget(toolRunImage);
-        toolbar.insert(toolRun, -1);
-        toolRun.set_tooltip_text("Run: Toggle between a running and paused simulation.");
-        toolRun.toggled.connect(() => {run_toggle(toolRun);});
-
-        toolSinglestepImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/singlestep.png");
-        toolSinglestep = new Gtk.ToolButton(toolSinglestepImage, "Single Step");
-        toolbar.insert(toolSinglestep, -1);
-        toolSinglestep.set_tooltip_text("Single Step: Step through the simulation a single iteration at a time.");
-        toolSinglestep.clicked.connect(() => {step(false);});
-
-        toolMultistepImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/multistep.png");
-        toolMultistep = new Gtk.ToolButton(toolMultistepImage, "Multi Step");
-        toolbar.insert(toolMultistep, -1);
-        toolMultistep.set_tooltip_text("Multi Step: Step through the simulation by a specified number of iterations.");
-        toolMultistep.clicked.connect(() => {step(true);});
-
-        toolSeparator4 = new Gtk.SeparatorToolItem();
-        toolbar.insert(toolSeparator4, -1);
-
-        toolSpeed = new Gtk.ToolItem();
-        toolbar.insert(toolSpeed, -1);
-        toolSpeedBox = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
-        toolSpeed.add(toolSpeedBox);
-        toolSpeedLabel = new Gtk.Label("Speed (Hz):");
-        toolSpeedBox.pack_start(toolSpeedLabel, false, true, 0);
-        toolSpeedSpin = new Gtk.SpinButton.with_range(0.1, 1000.0, 1.0);
-        toolSpeedBox.pack_start(toolSpeedSpin, false, true, 0);
-        toolSpeedSpin.set_value(50.0);
-        toolSpeedSpin.set_snap_to_ticks(false);
-        toolSpeedSpin.set_digits(1);
-        toolSpeedSpin.value_changed.connect(
-            () => {
-                if (!toolMaxspeed.active) {
-                    change_speed((int)(1000.0 / toolSpeedSpin.get_value()));
-                }
-            }
-        );
-        toolSpeedSpin.set_sensitive(false);
-
-        toolMaxspeedImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/fastest.png");
-        toolMaxspeed = new Gtk.ToggleToolButton();
-        toolMaxspeed.set_label("Maximum Speed");
-        toolMaxspeed.set_icon_widget(toolMaxspeedImage);
-        toolbar.insert(toolMaxspeed, -1);
-        toolMaxspeed.set_tooltip_text("Maximum Speed: Toggle between running as fast as possible and running at a specified speed.");
-        toolMaxspeed.active = true;
-        toolMaxspeed.toggled.connect(
-            () => {
-                if (toolMaxspeed.active) {
-                    toolSpeedSpin.set_sensitive(false);
-                    change_speed(0);
-                } else {
-                    toolSpeedSpin.set_sensitive(true);
-                    change_speed((int)(1000.0 / toolSpeedSpin.get_value()));
-                }
-            }
-        );
-
-        toolSeparator5 = new Gtk.SeparatorToolItem();
-        toolbar.insert(toolSeparator5, -1);
-
-        toolStepsize = new Gtk.ToolItem();
-        toolbar.insert(toolStepsize, -1);
-        toolStepsizeBox = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
-        toolStepsize.add(toolStepsizeBox);
-        toolStepsizeLabel = new Gtk.Label("Multi Step:");
-        toolStepsizeBox.pack_start(toolStepsizeLabel, false, true, 0);
-        toolStepsizeSpin = new Gtk.SpinButton.with_range(1, 1000000, 1.0);
-        toolStepsizeBox.pack_start(toolStepsizeSpin, false, true, 0);
-        toolStepsizeSpin.set_value(50.0);
-        toolStepsizeSpin.value_changed.connect(() => {multistepSize = toolStepsizeSpin.get_value_as_int();});
-
-        controller = new Gtk.EventBox();
-        vBox.pack_start(controller, true, true, 0);
-        controller.button_press_event.connect(mouse_down);
-        controller.button_release_event.connect(mouse_up);
-
-        display = new Gtk.DrawingArea();
-        controller.add(display);
-        display.draw.connect((context) => {render(context); return false;});
-        display.configure_event.connect((context) => {update_display(true); return false;});
-
-        show_all();
-
         timingDiagram = new TimingDiagram(compiledCircuit);
+    }
+
+    private void connect_tool(Gtk.Builder builder, string name, MouseMode mode) throws UICommon.LoadError.MISSING_OBJECT {
+        (UICommon.get_object_critical(builder, name) as Gtk.RadioToolButton).clicked.connect(() => {mouseMode = mode; update_display();});
+    }
+
+    // Signal handlers.
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_delete_window")]
+    public bool ui_delete_window(Gtk.Window window, Gdk.Event event) {
+        close_simulation();
+        return true;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_close")]
+    public void ui_close(Gtk.Activatable activatable) {
+        close_simulation();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_fit_design")]
+    public void ui_fit_design(Gtk.Activatable activatable) {
+        fit_design();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_autofit")]
+    public void ui_autofit(Gtk.CheckMenuItem checkMenuItem) {
+        autoFitDesign = checkMenuItem.active;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_show_timing_diagram")]
+    public void ui_show_timing_diagram(Gtk.Activatable activatable) {
+        show_timing_diagram();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_shrink")]
+    public void ui_shrink(Gtk.ToolButton toolButton) {
+        compiledCircuit.shrink_component();
+        if (autoFitDesign) {
+            fit_design();
+        }
+        update_display(true);
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_run")]
+    public void ui_run(Gtk.ToggleToolButton toggleToolButton) {
+        if (toggleToolButton.active) {
+            run();
+        } else {
+            pause();
+        }
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_singlestep")]
+    public void ui_singlestep(Gtk.ToolButton toolButton) {
+        step(false);
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_multistep")]
+    public void ui_multistep(Gtk.ToolButton toolButton) {
+        step(true);
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_change_speed")]
+    public void ui_change_speed(Gtk.SpinButton spinButton) {
+        change_speed((int)(1000.0 / toolSpeedSpin.get_value()));
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_max_speed")]
+    public void ui_max_speed(Gtk.ToggleToolButton toggleToolButton) {
+        if (toggleToolButton.active) {
+            toolSpeedSpin.set_sensitive(false);
+            change_speed(0);
+        } else {
+            toolSpeedSpin.set_sensitive(true);
+            change_speed((int)(1000.0 / toolSpeedSpin.get_value()));
+        }
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_change_step")]
+    public void ui_change_step(Gtk.SpinButton spinButton) {
+        multistepSize = spinButton.get_value_as_int();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_mouse_down")]
+    public bool ui_mouse_down(Gtk.Widget widget, Gdk.EventButton event) {
+        mouse_down(event);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_mouse_up")]
+    public bool ui_mouse_up(Gtk.Widget widget, Gdk.EventButton event) {
+        mouse_up(event);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_render")]
+    public bool ui_render(Gtk.Widget widget, Cairo.Context context) {
+        render(context);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT simulator_window_ui_display_configure")]
+    public bool ui_display_configure(Gtk.Widget widget, Gdk.Event event) {
+        update_display(true);
+        return false;
     }
 
     private void change_speed(int newCycleDelay) {
@@ -441,26 +297,6 @@ public class SimulatorWindow : Gtk.Window {
         }
 
         microCycleDelay = cycleDelay * 1000;
-    }
-
-    /**
-     * Toggles whether the simulation is running or paused. Does nothing
-     * if the circuit is in the ERROR state.
-     */
-    private void run_toggle(Gtk.Widget widget) {
-        bool doRun = false;
-
-        if (widget == menuSimulationRun) {
-            doRun = menuSimulationRun.active;
-        } else if (widget == toolRun) {
-            doRun = toolRun.active;
-        }
-
-        if (doRun) {
-            run();
-        } else {
-            pause();
-        }
     }
 
     private void step(bool multistep) {
@@ -500,7 +336,6 @@ public class SimulatorWindow : Gtk.Window {
             refreshSourceID = Timeout.add(refreshDelay, refresh_cycle, Priority.DEFAULT);
         }
         runState = RunState.RUNNING;
-        menuSimulationRun.active = true;
         toolRun.active = true;
 
         timeBeforeRender = 0;
@@ -525,7 +360,6 @@ public class SimulatorWindow : Gtk.Window {
         }
 
         runState = RunState.PAUSED;
-        menuSimulationRun.active = false;
         toolRun.active = false;
 
         update_display(true);
@@ -787,7 +621,7 @@ public class SimulatorWindow : Gtk.Window {
             return;
         }
 
-        if (visible) {
+        if (window.visible) {
             display.queue_draw();
         }
     }
@@ -865,5 +699,7 @@ public class SimulatorWindow : Gtk.Window {
         BasicDialog.information(null, "Simulation Summary:\nIterations: " + compiledCircuit.iterationCount.to_string());
 
         compiledCircuit.project.running = false;
+
+        window.destroy();
     }
 }

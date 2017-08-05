@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <!-- Hidden radio button, used mainly for nice group names -->
+  <object id="tool_group" class="GtkRadioToolButton">
+    <property name="active">False</property>
+    <property name="sensitive">False</property>
+  </object>
+  <object id="speed_adjustment" class="GtkAdjustment">
+    <property name="lower">0</property>
+    <property name="upper">1000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">50</property>
+  </object>
+  <object id="step_adjustment" class="GtkAdjustment">
+    <property name="lower">0</property>
+    <property name="upper">1000000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">50</property>
+  </object>
+  <object id="window" class="GtkWindow">
+    <property name="title">Simulation</property>
+    <property name="default_width">800</property>
+    <property name="default_height">600</property>
+    <property name="border_width">0</property>
+    <signal name="delete_event" handler="simulator_window_ui_delete_window"/>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <!-- Menu -->
+        <child>
+          <object class="GtkMenuBar">
+            <child>
+              <object class="GtkMenuItem">
+                <property name="label">Simulation</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="label">Close</property>
+                        <signal name="activate" handler="simulator_window_ui_close"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="label">View</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="label">Fit Design</property>
+                        <signal name="activate" handler="simulator_window_ui_fit_design"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckMenuItem">
+                        <property name="label">Auto-fit Whilst Exploring</property>
+                        <property name="active">True</property>
+                        <signal name="activate" handler="simulator_window_ui_autofit"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="label">Show Timing Diagram</property>
+                        <signal name="activate" handler="simulator_window_ui_show_timing_diagram"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkToolbar">
+            <property name="toolbar_style">icons</property>
+            <!-- radio tools' signals connected in code -->
+            <child>
+              <object id="tool_scroll" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Scroll</property>
+                <property name="icon_name">smartsim-scroll</property>
+                <property name="tooltip_text">Scroll: Move the view of the circuit using click and drag.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_zoom" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Zoom</property>
+                <property name="icon_name">smartsim-zoom</property>
+                <property name="tooltip_text">Zoom: Drag downward to zoom in, or upward to zoom out.</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+              </object>
+            </child>
+            <child>
+              <object id="tool_context" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Context</property>
+                <property name="icon_name">smartsim-context</property>
+                <property name="tooltip_text">Context: Interact or explore depending on what you click on.</property>
+                <property name="active">True</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_interact" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Interact</property>
+                <property name="icon_name">smartsim-interact</property>
+                <property name="tooltip_text">Interact: Click on an interactive component to interact with it.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_explore" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Explore</property>
+                <property name="icon_name">smartsim-explore</property>
+                <property name="tooltip_text">Explore: Click on sub components to expand them and look at the activity inside them. Click on the background (or use the shrink tool) to go back to the higher level.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_watch" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Watch</property>
+                <property name="icon_name">smartsim-watch</property>
+                <property name="tooltip_text">Watch: Click on a wire to add it to the logic timing diagram.</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+              </object>
+            </child>
+            <child>
+              <object id="tool_shrink" class="GtkToolButton">
+                <property name="label">Shrink</property>
+                <property name="icon_name">smartsim-shrink</property>
+                <property name="tooltip_text">Shrink: Explore the immediately higher level component (the component containing the currently viewed one).</property>
+                <signal name="clicked" handler="simulator_window_ui_shrink"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+              </object>
+            </child>
+            <child>
+              <object id="tool_run" class="GtkToggleToolButton">
+                <property name="label">Run</property>
+                <property name="icon_name">smartsim-run</property>
+                <property name="tooltip_text">Run: Toggle between a running and paused simulation.</property>
+                <signal name="toggled" handler="simulator_window_ui_run"/>
+              </object>
+            </child>
+            <child>
+              <object id="tool_singlestep" class="GtkToolButton">
+                <property name="label">Single-step</property>
+                <property name="icon_name">smartsim-singlestep</property>
+                <property name="tooltip_text">Single-step: Step through the simulation a single iteration at a time.</property>
+                <signal name="clicked" handler="simulator_window_ui_singlestep"/>
+              </object>
+            </child>
+            <child>
+              <object id="tool_multistep" class="GtkToolButton">
+                <property name="label">Multi-step</property>
+                <property name="icon_name">smartsim-multistep</property>
+                <property name="tooltip_text">Multi-step: Step through the simulation by a pecified number of iterations.</property>
+                <signal name="clicked" handler="simulator_window_ui_multistep"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+              </object>
+            </child>
+            <child>
+              <object class="GtkToolItem">
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">horizontal</property>
+                    <property name="spacing">0</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Speed (Hz):</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="speed" class="GtkSpinButton">
+                        <property name="adjustment">speed_adjustment</property>
+                        <property name="value">50.0</property>
+                        <property name="digits">1</property>
+                        <property name="sensitive">False</property>
+                        <signal name="value_changed" handler="simulator_window_ui_change_speed"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object id="tool_maxspeed" class="GtkToggleToolButton">
+                <property name="label">Max Speed</property>
+                <property name="icon_name">smartsim-fastest</property>
+                <property name="tooltip_text">Maximum Speed: Toggle between running as fast as possible and running up to a specified speed limit</property>
+                <property name="active">True</property>
+                <signal name="toggled" handler="simulator_window_ui_max_speed"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+              </object>
+            </child>
+            <child>
+              <object class="GtkToolItem">
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">horizontal</property>
+                    <property name="spacing">0</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Multi Step:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton">
+                        <property name="adjustment">step_adjustment</property>
+                        <property name="value">50</property>
+                        <signal name="value_changed" handler="simulator_window_ui_change_step"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object id="controller" class="GtkEventBox">
+            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+            <signal name="button_press_event" handler="simulator_window_ui_mouse_down"/>
+            <signal name="button_release_event" handler="simulator_window_ui_mouse_up"/>
+            <child>
+              <object id="display" class="GtkDrawingArea">
+                <signal name="draw" handler="simulator_window_ui_render"/>
+                <signal name="configure_event" handler="simulator_window_ui_display_configure"/>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="fill">True</property>
+            <property name="expand">True</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
