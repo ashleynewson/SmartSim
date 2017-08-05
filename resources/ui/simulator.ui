@@ -20,6 +20,7 @@
   </object>
   <object id="window" class="GtkWindow">
     <property name="title">Simulation</property>
+    <property name="icon_name">smartsim</property>
     <property name="default_width">800</property>
     <property name="default_height">600</property>
     <property name="border_width">0</property>
