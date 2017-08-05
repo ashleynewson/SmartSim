@@ -548,7 +548,7 @@ public class DesignerWindow {
 
     // Signal handlers.
     [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_delete_window")]
-    public bool ui_delete_window(Gtk.Window window, Gdk.Event userdata) {
+    public bool ui_delete_window(Gtk.Window window, Gdk.Event event) {
         return close_window();
     }
     [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT designer_window_ui_close")]
