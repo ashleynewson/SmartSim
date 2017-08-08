@@ -30,55 +30,22 @@
  */
 public class Customiser {
     private Gtk.Dialog dialog;
-    private Gtk.Box layoutHBox;
-    private Gtk.Box layoutVBox;
-    private Gtk.RadioToolButton hiddenRadioToolButton;
-    private Gtk.Toolbar toolbar;
-    private Gtk.RadioToolButton toolScroll;
-    private Gtk.Image toolScrollImage;
-    private Gtk.RadioToolButton toolZoom;
-    private Gtk.Image toolZoomImage;
-    private Gtk.SeparatorToolItem toolSeparator1;
-    private Gtk.RadioToolButton toolPin;
-    private Gtk.Image toolPinImage;
     private Gtk.EventBox controller;
     private Gtk.DrawingArea display;
-    private Gtk.Box controlsVBox;
-    private Gtk.Box nameHBox;
     private Gtk.Entry nameEntry;
-    private Gtk.Label nameLabel;
-    private Gtk.Box descriptionHBox;
     private Gtk.Entry descriptionEntry;
-    private Gtk.Label descriptionLabel;
-    private Gtk.Box labelHBox;
-    private Gtk.Entry labelEntry;
-    private Gtk.Label labelLabel;
-    private Gtk.Box pinHBox;
     private Gtk.SpinButton pinSpinButton;
-    private Gtk.Label pinLabel;
     private Gtk.Label tagNameLabel;
     private Gtk.CheckButton requiredCheck;
-    private Gtk.Box labelTypeVBox;
-    private Gtk.Label labelTypeLabel;
     private Gtk.RadioButton labelTypeNoneRadio;
     private Gtk.RadioButton labelTypeTextRadio;
     private Gtk.RadioButton labelTypeTextBarRadio;
     private Gtk.RadioButton labelTypeClockRadio;
-    private Gtk.Box pinLabelHBox;
     private Gtk.Entry pinLabelEntry;
-    private Gtk.Label pinLabelLabel;
-    private Gtk.Label boundsLabel;
-    private Gtk.Grid boundsGrid;
-    private Gtk.Label rightBoundLabel;
     private Gtk.SpinButton rightBoundSpinButton;
-    private Gtk.Label downBoundLabel;
     private Gtk.SpinButton downBoundSpinButton;
-    private Gtk.Label leftBoundLabel;
     private Gtk.SpinButton leftBoundSpinButton;
-    private Gtk.Label upBoundLabel;
     private Gtk.SpinButton upBoundSpinButton;
-    private Gtk.Button colourButton;
-    private Gtk.Button closeButton;
 
     private Cairo.Surface gridCache;
 
@@ -179,220 +146,121 @@ public class Customiser {
      * Create a new Gtk Dialog and populate it with widgets
      */
     private void populate() {
-        dialog = new Gtk.Dialog.with_buttons("Customise Component", parent.gtk_window, Gtk.DialogFlags.MODAL);
-
-        Gtk.Box content = dialog.get_content_area() as Gtk.Box;
-        dialog.set_default_size(600, 200);
-        dialog.set_border_width(1);
-
-        layoutHBox = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
-        content.pack_start(layoutHBox, true, true, 1);
-
-        layoutVBox = new Gtk.Box(Gtk.Orientation.VERTICAL, 2);
-        layoutHBox.pack_start(layoutVBox, true, true, 1);
-
-        hiddenRadioToolButton = new Gtk.RadioToolButton(null);
-
-        toolbar = new Gtk.Toolbar();
-        toolbar.toolbar_style = Gtk.ToolbarStyle.ICONS;
-        layoutVBox.pack_start(toolbar, false, true, 0);
-
-        toolScrollImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/scroll.png");
-        toolScroll = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolScroll.set_label("Scroll");
-        toolScroll.set_icon_widget(toolScrollImage);
-        toolbar.insert(toolScroll, -1);
-        toolScroll.set_tooltip_text("Scroll: Move your view of the component with click and drag.");
-        toolScroll.clicked.connect(() => {mouseMode = MouseMode.SCROLL;});
-
-        toolZoomImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/zoom.png");
-        toolZoom = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolZoom.set_label("Zoom");
-        toolZoom.set_icon_widget(toolZoomImage);
-        toolbar.insert(toolZoom, -1);
-        toolZoom.set_tooltip_text("Zoom: Drag downward to zoom in or upward to zoom out.");
-        toolZoom.clicked.connect(() => {mouseMode = MouseMode.ZOOM;});
-
-        toolSeparator1 = new Gtk.SeparatorToolItem();
-        toolbar.insert(toolSeparator1, -1);
-
-        toolPinImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/pin.png");
-        toolPin = new Gtk.RadioToolButton.from_widget(hiddenRadioToolButton);
-        toolPin.set_label("Pin");
-        toolPin.set_icon_widget(toolPinImage);
-        toolbar.insert(toolPin, -1);
-        toolPin.set_tooltip_text("Pin: Click outside the component to position a pin.");
-        toolPin.clicked.connect(() => {mouseMode = MouseMode.PIN;});
-        toolPin.active = true;
-
-        controller = new Gtk.EventBox();
-        layoutVBox.pack_start(controller, true, true, 1);
-        controller.button_press_event.connect(mouse_down);
-        controller.button_release_event.connect(mouse_up);
-
-        display = new Gtk.DrawingArea();
-        controller.add(display);
-        display.draw.connect((context) => {render_def(context); return false;});
-        display.configure_event.connect(() => {gridCache = null; update_display(); return false;});
-
-        controlsVBox = new Gtk.Box(Gtk.Orientation.VERTICAL, 2);
-        layoutHBox.pack_start(controlsVBox, false, true, 1);
-
-        nameHBox = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
-        controlsVBox.pack_start(nameHBox, false, true, 1);
-        nameLabel = new Gtk.Label("Name:");
-        nameHBox.pack_start(nameLabel, false, true, 1);
-
-        nameEntry = new Gtk.Entry();
-        nameEntry.text = customComponentDef.name;
-        nameHBox.pack_start(nameEntry, true, true, 1);
-
-        descriptionHBox = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
-        controlsVBox.pack_start(descriptionHBox, false, true, 1);
-        descriptionLabel = new Gtk.Label("Description:");
-        descriptionHBox.pack_start(descriptionLabel, false, true, 1);
-
-        descriptionEntry = new Gtk.Entry();
-        descriptionEntry.text = customComponentDef.description;
-        descriptionHBox.pack_start(descriptionEntry, true, true, 1);
-
-        labelHBox = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
-        controlsVBox.pack_start(labelHBox, false, true, 1);
-        labelLabel = new Gtk.Label("Box Label:");
-        labelHBox.pack_start(labelLabel, false, true, 1);
-
-        labelEntry = new Gtk.Entry();
-        labelEntry.text = customComponentDef.label;
-        labelEntry.changed.connect(
-            () => {
-                customComponentDef.label = labelEntry.text;
-                update_display();
+        try {
+            Gtk.Builder builder = new Gtk.Builder();
+            try {
+                builder.add_from_file(Config.resourcesDir + "ui/customiser.ui");
+            } catch (FileError e) {
+                throw new UICommon.LoadError.MISSING_RESOURCE(e.message);
+            } catch (Error e) {
+                throw new UICommon.LoadError.BAD_RESOURCE(e.message);
             }
-        );
-        labelHBox.pack_start(labelEntry, true, true, 1);
 
+            // Connect basic signals
+            builder.connect_signals(this);
 
-        if (customComponentDef.pinDefs.length > 0) {
-            selectedPinID = 0;
-            selectedPin = customComponentDef.pinDefs[selectedPinID];
-            tag = customComponentDef.resolve_tag_id(selectedPinID);
+            // Get references to useful things
+            dialog = UICommon.get_object_critical(builder, "dialog") as Gtk.Dialog;
+            controller = UICommon.get_object_critical(builder, "controller") as Gtk.EventBox;
+            display = UICommon.get_object_critical(builder, "display") as Gtk.DrawingArea;
+            nameEntry = UICommon.get_object_critical(builder, "name") as Gtk.Entry;
+            descriptionEntry = UICommon.get_object_critical(builder, "description") as Gtk.Entry;
+            pinSpinButton = UICommon.get_object_critical(builder, "pin_select") as Gtk.SpinButton;
+            tagNameLabel = UICommon.get_object_critical(builder, "tag_name") as Gtk.Label;
+            requiredCheck = UICommon.get_object_critical(builder, "required") as Gtk.CheckButton;
+            pinLabelEntry = UICommon.get_object_critical(builder, "pin_label") as Gtk.Entry;
+            labelTypeNoneRadio = UICommon.get_object_critical(builder, "label_style_none") as Gtk.RadioButton;
+            labelTypeTextRadio = UICommon.get_object_critical(builder, "label_style_text") as Gtk.RadioButton;
+            labelTypeTextBarRadio = UICommon.get_object_critical(builder, "label_style_bartext") as Gtk.RadioButton;
+            labelTypeClockRadio = UICommon.get_object_critical(builder, "label_style_clock") as Gtk.RadioButton;
+            rightBoundSpinButton = UICommon.get_object_critical(builder, "right_bound") as Gtk.SpinButton;
+            downBoundSpinButton = UICommon.get_object_critical(builder, "down_bound") as Gtk.SpinButton;
+            leftBoundSpinButton = UICommon.get_object_critical(builder, "left_bound") as Gtk.SpinButton;
+            upBoundSpinButton = UICommon.get_object_critical(builder, "up_bound") as Gtk.SpinButton;
 
-            pinHBox = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
-            controlsVBox.pack_start(pinHBox, false, true, 1);
-            pinLabel = new Gtk.Label("Pin Select:");
-            pinHBox.pack_start(pinLabel, false, true, 1);
+            // Connect tools
+            connect_tool(builder, "tool_scroll", MouseMode.SCROLL);
+            connect_tool(builder, "tool_zoom", MouseMode.ZOOM);
+            connect_tool(builder, "tool_pin", MouseMode.PIN);
 
-            pinSpinButton = new Gtk.SpinButton.with_range(0, customComponentDef.pinDefs.length - 1, 1);
-            pinSpinButton.value = 0;
-            pinSpinButton.changed.connect(update_selection);
-            pinHBox.pack_start(pinSpinButton, true, true, 1);
-
-            if (tag != null) {
-                tagNameLabel = new Gtk.Label("Maps to: " + tag.text);
-            } else {
-                tagNameLabel = new Gtk.Label("There is no matching tag!");
+            // Enable pin controls if we have pins
+            if (customComponentDef.pinDefs.length > 0) {
+                (UICommon.get_object_critical(builder, "pin_controls") as Gtk.Widget).sensitive = true;
+                (UICommon.get_object_critical(builder, "pin_adjustment") as Gtk.Adjustment).upper = customComponentDef.pinDefs.length - 1;
             }
-            controlsVBox.pack_start(tagNameLabel, false, true, 1);
 
-            requiredCheck = new Gtk.CheckButton.with_label("Connection Required");
-            requiredCheck.active = selectedPin.required;
-            requiredCheck.toggled.connect(
-                () => {
-                    if (selectedPin != null) {
-                        selectedPin.required = requiredCheck.active;
-                    }
-                }
-            );
-            controlsVBox.pack_start(requiredCheck, false, true, 1);
+            dialog.set_transient_for(parent.gtk_window);
 
-            labelTypeVBox = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-            controlsVBox.pack_start(labelTypeVBox, false, true, 1);
-            labelTypeLabel = new Gtk.Label("Pin labels can be text or a symbol:");
-            labelTypeVBox.pack_start(labelTypeLabel, false, true, 1);
-
-            labelTypeNoneRadio = new Gtk.RadioButton.with_label(null, "No Label");
-            labelTypeNoneRadio.toggled.connect(update_label_type);
-            labelTypeVBox.pack_start(labelTypeNoneRadio, false, true, 1);
-
-            labelTypeTextRadio = new Gtk.RadioButton.with_label_from_widget(labelTypeNoneRadio, "Text");
-            labelTypeTextRadio.toggled.connect(update_label_type);
-            labelTypeVBox.pack_start(labelTypeTextRadio, false, true, 1);
-
-            labelTypeTextBarRadio = new Gtk.RadioButton.with_label_from_widget(labelTypeNoneRadio, "Text With Bar");
-            labelTypeTextBarRadio.toggled.connect(update_label_type);
-            labelTypeVBox.pack_start(labelTypeTextBarRadio, false, true, 1);
-
-            labelTypeClockRadio = new Gtk.RadioButton.with_label_from_widget(labelTypeNoneRadio, "Clock");
-            labelTypeClockRadio.toggled.connect(update_label_type);
-            labelTypeVBox.pack_start(labelTypeClockRadio, false, true, 1);
-
-            pinLabelHBox = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 2);
-            controlsVBox.pack_start(pinLabelHBox, false, true, 1);
-            pinLabelLabel = new Gtk.Label("Pin Label:");
-            pinLabelHBox.pack_start(pinLabelLabel, false, true, 1);
-
-            pinLabelEntry = new Gtk.Entry();
-            pinLabelEntry.text = selectedPin.label;
-            pinLabelEntry.changed.connect(
-                () => {
-                    if (selectedPin != null) {
-                        selectedPin.label = pinLabelEntry.text;
-                        update_display();
-                    }
-                }
-            );
-            pinLabelHBox.pack_start(pinLabelEntry, true, true, 1);
+            dialog.show_all();
+        } catch (UICommon.LoadError e) {
+            UICommon.fatal_load_error(e);
         }
+    }
 
+    private void connect_tool(Gtk.Builder builder, string name, MouseMode mode) throws UICommon.LoadError.MISSING_OBJECT {
+        (UICommon.get_object_critical(builder, name) as Gtk.RadioToolButton).clicked.connect(() => {mouseMode = mode; update_display();});
+    }
 
-        boundsLabel = new Gtk.Label("Bounds define the visual size:");
-        controlsVBox.pack_start(boundsLabel, false, true, 1);
-
-        boundsGrid = new Gtk.Grid();
-        controlsVBox.pack_start(boundsGrid, false, true, 1);
-
-        rightBoundLabel = new Gtk.Label("Right:");
-        boundsGrid.attach(rightBoundLabel, 0, 0, 1, 1);
-
-        rightBoundSpinButton = new Gtk.SpinButton.with_range(0, (double)int.MAX, 5);
-        rightBoundSpinButton.value = (double)customComponentDef.rightBound;
-        rightBoundSpinButton.value_changed.connect(update_bounds);
-        boundsGrid.attach(rightBoundSpinButton, 1, 0, 1, 1);
-
-        downBoundLabel = new Gtk.Label("Down:");
-        boundsGrid.attach(downBoundLabel, 0, 1, 1, 1);
-
-        downBoundSpinButton = new Gtk.SpinButton.with_range(0, (double)int.MAX, 5);
-        downBoundSpinButton.value = (double)customComponentDef.downBound;
-        downBoundSpinButton.value_changed.connect(update_bounds);
-        boundsGrid.attach(downBoundSpinButton, 1, 1, 1, 1);
-
-        leftBoundLabel = new Gtk.Label("Left:");
-        boundsGrid.attach(leftBoundLabel, 0, 2, 1, 1);
-
-        leftBoundSpinButton = new Gtk.SpinButton.with_range((double)int.MIN, 0, 5);
-        leftBoundSpinButton.value = (double)customComponentDef.leftBound;
-        leftBoundSpinButton.value_changed.connect(update_bounds);
-        boundsGrid.attach(leftBoundSpinButton, 1, 2, 1, 1);
-
-        upBoundLabel = new Gtk.Label("Up:");
-        boundsGrid.attach(upBoundLabel, 0, 3, 1, 1);
-
-        upBoundSpinButton = new Gtk.SpinButton.with_range((double)int.MIN, 0, 5);
-        upBoundSpinButton.value = (double)customComponentDef.upBound;
-        upBoundSpinButton.value_changed.connect(update_bounds);
-        boundsGrid.attach(upBoundSpinButton, 1, 3, 1, 1);
-
-        colourButton = new Gtk.Button.with_label("Background Colour");
-        colourButton.clicked.connect(() => {set_colour();});
-        controlsVBox.pack_start(colourButton, false, true, 1);
-
-        dialog.response.connect(response_handler);
-
-        closeButton = new Gtk.Button.with_label("Close");
-        dialog.add_action_widget(closeButton, Gtk.ResponseType.CLOSE);
-
-        dialog.show_all();
+    // Signal handlers.
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_response")]
+    public void ui_response(Gtk.Dialog dialog, int response_id) {
+        update_values();
+        dialog.destroy();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_mouse_down")]
+    public bool ui_mouse_down(Gtk.Widget widget, Gdk.EventButton event) {
+        mouse_down(event);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_mouse_up")]
+    public bool ui_mouse_up(Gtk.Widget widget, Gdk.EventButton event) {
+        mouse_up(event);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_render")]
+    public bool ui_render(Gtk.Widget widget, Cairo.Context context) {
+        render_def(context);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_display_configure")]
+    public bool ui_display_configure(Gtk.Widget widget, Gdk.Event event) {
+        gridCache = null;
+        update_display();
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_update_box_label")]
+    public void ui_update_box_label(Gtk.Entry entry) {
+        customComponentDef.label = entry.text;
+        update_display();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_pin_select")]
+    public void ui_pin_select(Gtk.SpinButton spinButton) {
+        update_selection();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_update_required")]
+    public void ui_update_required(Gtk.CheckButton checkButton) {
+        if (selectedPin != null) {
+            selectedPin.required = checkButton.active;
+        }
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_update_pin_label_style")]
+    public void ui_update_pin_label_style(Gtk.RadioButton radioButton) {
+        update_label_type();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_update_pin_label")]
+    public void ui_update_pin_label(Gtk.Entry entry) {
+        if (selectedPin != null) {
+            selectedPin.label = entry.text;
+            update_display();
+        }
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_update_bounds")]
+    public void ui_update_bounds(Gtk.SpinButton spinButton) {
+        update_bounds();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT customiser_ui_set_colour")]
+    public void ui_set_colour(Gtk.Button button) {
+        set_colour();
     }
 
     /**
@@ -507,14 +375,6 @@ public class Customiser {
      */
     public void run() {
         dialog.run();
-    }
-
-    /**
-     * Handles the response of the customiser dialog. (On close.)
-     */
-    public void response_handler(int response_id) {
-        update_values();
-        dialog.destroy();
     }
 
     public void set_colour() {

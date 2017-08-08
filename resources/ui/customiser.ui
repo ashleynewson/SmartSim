@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <!-- Hidden radio button, used mainly for nice group names -->
+  <object id="tool_group" class="GtkRadioToolButton">
+    <property name="active">False</property>
+    <property name="sensitive">False</property>
+  </object>
+  <object id="pin_adjustment" class="GtkAdjustment">
+    <property name="lower">0</property>
+    <property name="upper">0</property><!-- Set in code -->
+    <property name="step_increment">1</property>
+    <property name="page_increment">1</property>
+  </object>
+  <object id="right_adjustment" class="GtkAdjustment">
+    <property name="lower">0</property>
+    <property name="upper">1000</property>
+    <property name="step_increment">5</property>
+    <property name="page_increment">20</property>
+  </object>
+  <object id="down_adjustment" class="GtkAdjustment">
+    <property name="lower">0</property>
+    <property name="upper">1000</property>
+    <property name="step_increment">5</property>
+    <property name="page_increment">20</property>
+  </object>
+  <object id="left_adjustment" class="GtkAdjustment">
+    <property name="lower">-1000</property>
+    <property name="upper">0</property>
+    <property name="step_increment">5</property>
+    <property name="page_increment">20</property>
+  </object>
+  <object id="up_adjustment" class="GtkAdjustment">
+    <property name="lower">-1000</property>
+    <property name="upper">0</property>
+    <property name="step_increment">5</property>
+    <property name="page_increment">20</property>
+  </object>
+  <object id="dialog" class="GtkDialog">
+    <property name="modal">True</property>
+    <property name="title">Customise</property>
+    <property name="icon_name">smartsim</property>
+    <property name="default_width">600</property>
+    <property name="default_height">200</property>
+    <property name="border_width">1</property>
+    <signal name="response" handler="customiser_ui_response"/>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="layout_style">end</property>
+            <child>
+              <object id="close_button" class="GtkButton">
+                <property name="label">Close</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">1</property>
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="spacing">1</property>
+                <child>
+                  <object class="GtkToolbar">
+                    <property name="toolbar_style">icons</property>
+                    <!-- radio tools' signals connected in code -->
+                    <child>
+                      <object id="tool_scroll" class="GtkRadioToolButton">
+                        <property name="group">tool_group</property>
+                        <property name="label">Scroll</property>
+                        <property name="icon_name">smartsim-scroll</property>
+                        <property name="tooltip_text">Scroll: Move the view of the circuit using click and drag.</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="tool_zoom" class="GtkRadioToolButton">
+                        <property name="group">tool_group</property>
+                        <property name="label">Zoom</property>
+                        <property name="icon_name">smartsim-zoom</property>
+                        <property name="tooltip_text">Zoom: Drag downward to zoom in, or upward to zoom out.</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorToolItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object id="tool_pin" class="GtkRadioToolButton">
+                        <property name="group">tool_group</property>
+                        <property name="label">Pin</property>
+                        <property name="icon_name">smartsim-pin</property>
+                        <property name="tooltip_text">Pin: Click outside the component to position a pin.</property>
+                        <property name="active">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object id="controller" class="GtkEventBox">
+                    <property name="events">GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                    <signal name="button_press_event" handler="customiser_ui_mouse_down"/>
+                    <signal name="button_release_event" handler="customiser_ui_mouse_up"/>
+                    <child>
+                      <object id="display" class="GtkDrawingArea">
+                        <signal name="draw" handler="customiser_ui_render"/>
+                        <signal name="configure_event" handler="customiser_ui_display_configure"/>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="fill">True</property>
+                    <property name="expand">True</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="fill">True</property>
+                <property name="expand">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="spacing">1</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">horizontal</property>
+                    <property name="spacing">2</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Name:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="name" class="GtkEntry">
+                      </object>
+                      <packing>
+                        <property name="fill">True</property>
+                        <property name="expand">True</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">horizontal</property>
+                    <property name="spacing">2</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Description:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="description" class="GtkEntry">
+                      </object>
+                      <packing>
+                        <property name="fill">True</property>
+                        <property name="expand">True</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">horizontal</property>
+                    <property name="spacing">2</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Box Label:</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="box_label" class="GtkEntry">
+                        <signal name="changed" handler="customiser_ui_update_box_label"/>
+                      </object>
+                      <packing>
+                        <property name="fill">True</property>
+                        <property name="expand">True</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object id="pin_controls" class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="sensitive">False</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">0</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="orientation">horizontal</property>
+                            <property name="spacing">2</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label">Pin Select:</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object id="pin_select" class="GtkSpinButton">
+                                <property name="adjustment">pin_adjustment</property>
+                                <signal name="value_changed" handler="customiser_ui_pin_select"/>
+                              </object>
+                              <packing>
+                                <property name="fill">True</property>
+                                <property name="expand">True</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object id="tag_name" class="GtkLabel">
+                          </object>
+                        </child>
+                        <child>
+                          <object id="required" class="GtkCheckButton">
+                            <property name="label">Connection Required</property>
+                            <signal name="toggled" handler="customiser_ui_update_required"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">Pin labels can be text or a symbol:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object id="label_style_none" class="GtkRadioButton">
+                            <property name="label">No label</property>
+                            <signal name="toggled" handler="customiser_ui_update_pin_label_style"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object id="label_style_text" class="GtkRadioButton">
+                            <property name="label">Text</property>
+                            <property name="group">label_style_none</property>
+                            <signal name="toggled" handler="customiser_ui_update_pin_label_style"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object id="label_style_bartext" class="GtkRadioButton">
+                            <property name="label">Text with bar</property>
+                            <property name="group">label_style_none</property>
+                            <signal name="toggled" handler="customiser_ui_update_pin_label_style"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object id="label_style_clock" class="GtkRadioButton">
+                            <property name="label">Clock</property>
+                            <property name="group">label_style_none</property>
+                            <signal name="toggled" handler="customiser_ui_update_pin_label_style"/>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object id="pin_label" class="GtkEntry">
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Bounds define the visual size:</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkGrid">
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Right</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object id="right_bound" class="GtkSpinButton">
+                        <property name="adjustment">right_adjustment</property>
+                        <signal name="value_changed" handler="customiser_ui_update_bounds"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Down</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object id="down_bound" class="GtkSpinButton">
+                        <property name="adjustment">down_adjustment</property>
+                        <signal name="value_changed" handler="customiser_ui_update_bounds"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Left</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object id="left_bound" class="GtkSpinButton">
+                        <property name="adjustment">left_adjustment</property>
+                        <signal name="value_changed" handler="customiser_ui_update_bounds"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Up</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object id="up_bound" class="GtkSpinButton">
+                        <property name="adjustment">up_adjustment</property>
+                        <signal name="value_changed" handler="customiser_ui_update_bounds"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">3</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton">
+                    <property name="label">Background Colour</property>
+                    <signal name="clicked" handler="customiser_ui_set_colour"/>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="position">0</property>
+            <property name="fill">True</property>
+            <property name="expand">True</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="close">close_button</action-widget>
+    </action-widgets>
+  </object>
+</interface>
