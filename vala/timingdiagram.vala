@@ -20,40 +20,8 @@
  */
 
 
-public class TimingDiagram : Gtk.Window {
-    private Gtk.Box vBox;
-    private Gtk.MenuBar menubar;
-    private Gtk.MenuItem menuFile;
-    private Gtk.Menu menuFileMenu;
-    private Gtk.MenuItem menuFileExport;
-    private Gtk.Menu menuFileExportMenu;
-    private Gtk.MenuItem menuFileExportPng;
-    private Gtk.MenuItem menuFileExportPdf;
-    private Gtk.MenuItem menuFileExportSvg;
-    private Gtk.MenuItem menuFileSeparator1;
-    private Gtk.MenuItem menuFileExit;
-    private Gtk.MenuItem menuRecording;
-    private Gtk.Menu menuRecordingMenu;
-    private Gtk.MenuItem menuRecordingReset;
-    private Gtk.MenuItem menuView;
-    private Gtk.Menu menuViewMenu;
-    private Gtk.CheckMenuItem menuViewAlwaysontop;
-    private Gtk.MenuItem menuViewSeparator1;
-    private Gtk.CheckMenuItem menuViewShowgrid;
-    private Gtk.MenuItem menuViewSeparator2;
-    private Gtk.MenuItem menuViewReset;
-    private Gtk.Toolbar toolbar;
-    private Gtk.RadioToolButton toolScroll;
-    private Gtk.Image toolScrollImage;
-    private Gtk.RadioToolButton toolZoom;
-    private Gtk.Image toolZoomImage;
-    private Gtk.SeparatorToolItem toolSeparator1;
-    private Gtk.RadioToolButton toolMove;
-    private Gtk.Image toolMoveImage;
-    private Gtk.RadioToolButton toolDelete;
-    private Gtk.Image toolDeleteImage;
-    private Gtk.RadioToolButton toolAdjust;
-    private Gtk.Image toolAdjustImage;
+public class TimingDiagram {
+    private Gtk.Window window;
     private Gtk.EventBox controller;
     private Gtk.DrawingArea display;
 
@@ -124,180 +92,125 @@ public class TimingDiagram : Gtk.Window {
     public void populate() {
         stderr.printf("Timing Diagram Window Created\n");
 
-        set_default_size(800, 400);
-        set_border_width(0);
-        delete_event.connect(hide_diagram);
-        set_title(Core.programName + " - Timing Diagram");
-
         try {
-            icon = new Gdk.Pixbuf.from_file(Config.resourcesDir + "images/icons/smartsim64.png");
-        } catch {
-            stderr.printf("Could not load window image.\n");
+            Gtk.Builder builder = new Gtk.Builder();
+            try {
+                builder.add_from_file(Config.resourcesDir + "ui/timingdiagram.ui");
+            } catch (FileError e) {
+                throw new UICommon.LoadError.MISSING_RESOURCE(e.message);
+            } catch (Error e) {
+                throw new UICommon.LoadError.BAD_RESOURCE(e.message);
+            }
+
+            // Connect basic signals
+            builder.connect_signals(this);
+
+            // Get references to useful things
+            window = UICommon.get_object_critical(builder, "window") as Gtk.Window;
+            controller = UICommon.get_object_critical(builder, "controller") as Gtk.EventBox;
+            display = UICommon.get_object_critical(builder, "display") as Gtk.DrawingArea;
+
+            // Connect tools
+            connect_tool(builder, "tool_scroll", MouseMode.SCROLL);
+            connect_tool(builder, "tool_zoom", MouseMode.ZOOM);
+            connect_tool(builder, "tool_move", MouseMode.MOVE);
+            connect_tool(builder, "tool_adjust", MouseMode.ADJUST);
+            connect_tool(builder, "tool_delete", MouseMode.DELETE);
+
+            window.set_title(Core.programName + " - Timing Diagram");
+
+            window.show_all();
+        } catch (UICommon.LoadError e) {
+            UICommon.fatal_load_error(e);
         }
 
-        vBox = new Gtk.Box(Gtk.Orientation.VERTICAL, 2);
-        add(vBox);
-
-        // Menus
-
-        menubar = new Gtk.MenuBar();
-        vBox.pack_start(menubar, false, true, 0);
-
-        menuFile = new Gtk.MenuItem.with_label("File");
-        menubar.append(menuFile);
-        menuFileMenu = new Gtk.Menu();
-        menuFile.set_submenu(menuFileMenu);
-
-        menuFileExport = new Gtk.MenuItem.with_label("Export");
-        menuFileMenu.append(menuFileExport);
-        menuFileExportMenu = new Gtk.Menu();
-        menuFileExport.set_submenu(menuFileExportMenu);
-
-        menuFileExportPng = new Gtk.MenuItem.with_label("Diagram Image as PNG Image");
-        menuFileExportMenu.append(menuFileExportPng);
-        menuFileExportPng.activate.connect(export_png);
-
-        menuFileExportPdf = new Gtk.MenuItem.with_label("Diagram Image as PDF Document");
-        menuFileExportMenu.append(menuFileExportPdf);
-        menuFileExportPdf.activate.connect(export_pdf);
-
-        menuFileExportSvg = new Gtk.MenuItem.with_label("Diagram Image as SVG Image");
-        menuFileExportMenu.append(menuFileExportSvg);
-        menuFileExportSvg.activate.connect(export_svg);
-
-        menuFileSeparator1 = new Gtk.SeparatorMenuItem();
-        menuFileMenu.append(menuFileSeparator1);
-
-        menuFileExit = new Gtk.MenuItem.with_label("Close Timing Diagram");
-        menuFileMenu.append(menuFileExit);
-        menuFileExit.activate.connect(() => {hide_diagram();});
-
-        menuRecording = new Gtk.MenuItem.with_label("Recording");
-        menubar.append(menuRecording);
-        menuRecordingMenu = new Gtk.Menu();
-        menuRecording.set_submenu(menuRecordingMenu);
-
-        menuRecordingReset = new Gtk.MenuItem.with_label("Reset");
-        menuRecordingMenu.append(menuRecordingReset);
-        menuRecordingReset.activate.connect(() => {reset_timings();});
-
-        menuView = new Gtk.MenuItem.with_label("View");
-        menubar.append(menuView);
-        menuViewMenu = new Gtk.Menu();
-        menuView.set_submenu(menuViewMenu);
-
-        menuViewAlwaysontop = new Gtk.CheckMenuItem.with_label("Always On Top");
-        menuViewMenu.append(menuViewAlwaysontop);
-        menuViewAlwaysontop.active = true;
-        menuViewAlwaysontop.toggled.connect(
-            (menuItem) => {
-                set_keep_above(menuItem.active);
-                alwaysOnTop = menuItem.active;
-            }
-        );
-
-        menuViewSeparator1 = new Gtk.SeparatorMenuItem();
-        menuViewMenu.append(menuViewSeparator1);
-
-        menuViewShowgrid = new Gtk.CheckMenuItem.with_label("Show Grid");
-        menuViewMenu.append(menuViewShowgrid);
-        menuViewShowgrid.active = true;
-        menuViewShowgrid.toggled.connect(
-            (menuItem) => {
-                showGrid = menuItem.active;
-                update_display(true);
-            }
-        );
-
-        menuViewSeparator2 = new Gtk.SeparatorMenuItem();
-        menuViewMenu.append(menuViewSeparator2);
-
-        menuViewReset = new Gtk.MenuItem.with_label("Reset View");
-        menuViewMenu.append(menuViewReset);
-        menuViewReset.activate.connect(() => {reset_view();});
-
-        // Toolbar
-
-        toolbar = new Gtk.Toolbar();
-        toolbar.toolbar_style = Gtk.ToolbarStyle.ICONS;
-        vBox.pack_start(toolbar, false, true, 0);
-
-        toolScrollImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/scroll.png");
-        toolScroll = new Gtk.RadioToolButton(null);
-        toolScroll.set_label("Scroll");
-        toolScroll.set_icon_widget(toolScrollImage);
-        toolbar.insert(toolScroll, -1);
-        toolScroll.set_tooltip_text("Scroll: Move your view of the timing diagram with click and drag.");
-        toolScroll.clicked.connect(() => {mouseMode = MouseMode.SCROLL;});
-
-        toolZoomImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/zoom.png");
-        toolZoom = new Gtk.RadioToolButton.from_widget(toolScroll);
-        toolZoom.set_label("Zoom");
-        toolZoom.set_icon_widget(toolZoomImage);
-        toolbar.insert(toolZoom, -1);
-        toolZoom.set_tooltip_text("Zoom: Drag downward to stretch vertically, rightward to stretch horizontally.");
-        toolZoom.clicked.connect(() => {mouseMode = MouseMode.ZOOM;});
-
-        toolSeparator1 = new Gtk.SeparatorToolItem();
-        toolbar.insert(toolSeparator1, -1);
-
-        toolMoveImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/move.png");
-        toolMove = new Gtk.RadioToolButton.from_widget(toolScroll);
-        toolMove.set_label("Move");
-        toolMove.set_icon_widget(toolMoveImage);
-        toolbar.insert(toolMove, -1);
-        toolMove.set_tooltip_text("Move: Click and drag a trace to reorder it.");
-        toolMove.clicked.connect(() => {mouseMode = MouseMode.MOVE;});
-
-        toolDeleteImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/delete.png");
-        toolDelete = new Gtk.RadioToolButton.from_widget(toolScroll);
-        toolDelete.set_label("Delete");
-        toolDelete.set_icon_widget(toolDeleteImage);
-        toolbar.insert(toolDelete, -1);
-        toolDelete.set_tooltip_text("Delete: Click on a trace to delete it.");
-        toolDelete.clicked.connect(() => {mouseMode = MouseMode.DELETE;});
-
-        toolAdjustImage = new Gtk.Image.from_file(Config.resourcesDir + "images/toolbar/adjust.png");
-        toolAdjust = new Gtk.RadioToolButton.from_widget(toolScroll);
-        toolAdjust.set_label("Adjust");
-        toolAdjust.set_icon_widget(toolAdjustImage);
-        toolbar.insert(toolAdjust, -1);
-        toolAdjust.set_tooltip_text("Adjust: Click on a trace to change its properties.");
-        toolAdjust.clicked.connect(() => {mouseMode = MouseMode.ADJUST;});
-
-        // Display Area
-
-        controller = new Gtk.EventBox();
-        vBox.pack_start(controller, true, true, 0);
-        controller.button_press_event.connect(mouse_down);
-        controller.set_events(Gdk.EventMask.POINTER_MOTION_MASK);
-        controller.motion_notify_event.connect(mouse_move);
-        controller.button_release_event.connect(mouse_up);
-
-        display = new Gtk.DrawingArea();
-        controller.add(display);
-        display.draw.connect((context) => {render(context); return false;});
-        display.configure_event.connect(() => {update_display(true); return false;});
-
-        show_all();
-        hide();
-
+        window.hide();
         update_display();
     }
 
+    private void connect_tool(Gtk.Builder builder, string name, MouseMode mode) throws UICommon.LoadError.MISSING_OBJECT {
+        (UICommon.get_object_critical(builder, name) as Gtk.RadioToolButton).clicked.connect(() => {mouseMode = mode; update_display();});
+    }
+
+    // Signal handlers.
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_delete_window")]
+    public bool ui_delete_window(Gtk.Window window, Gdk.Event event) {
+        hide_diagram();
+        return true;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_close")]
+    public void ui_close(Gtk.Activatable activatable) {
+        hide_diagram();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_export_png")]
+    public void ui_export_png(Gtk.Activatable activatable) {
+        export_png();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_export_pdf")]
+    public void ui_export_pdf(Gtk.Activatable activatable) {
+        export_pdf();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_export_svg")]
+    public void ui_export_svg(Gtk.Activatable activatable) {
+        export_svg();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_reset_recording")]
+    public void ui_reset_recording(Gtk.Activatable activatable) {
+        reset_timings();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_always_on_top")]
+    public void ui_always_on_top(Gtk.CheckMenuItem checkMenuItem) {
+        window.set_keep_above(checkMenuItem.active);
+        alwaysOnTop = checkMenuItem.active;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_show_grid")]
+    public void ui_show_grid(Gtk.CheckMenuItem checkMenuItem) {
+        showGrid = checkMenuItem.active;
+        update_display(true);
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_reset_view")]
+    public void ui_reset_view(Gtk.Activatable activatable) {
+        reset_view();
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_mouse_down")]
+    public bool ui_mouse_down(Gtk.Widget widget, Gdk.EventButton event) {
+        mouse_down(event);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_mouse_move")]
+    public bool ui_mouse_move(Gtk.Widget widget, Gdk.EventMotion event) {
+        mouse_move(event);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_mouse_up")]
+    public bool ui_mouse_up(Gtk.Widget widget, Gdk.EventButton event) {
+        mouse_up(event);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_render")]
+    public bool ui_render(Gtk.Widget widget, Cairo.Context context) {
+        render(context);
+        return false;
+    }
+    [CCode (instance_pos = -1, cname = "G_MODULE_EXPORT timing_diagram_ui_display_configure")]
+    public bool ui_display_configure(Gtk.Widget widget, Gdk.Event event) {
+        update_display(true);
+        return false;
+    }
+
     public void close_diagram() {
-        destroy();
+        window.destroy();
     }
 
     public bool hide_diagram() {
-        hide();
+        window.hide();
         return true;
     }
 
     public void show_diagram() {
-        show_all();
-        present();
-        set_keep_above(menuViewAlwaysontop.active);
+        window.show_all();
+        window.present();
+        window.set_keep_above(alwaysOnTop);
         update_display(true);
     }
 
@@ -312,9 +225,9 @@ public class TimingDiagram : Gtk.Window {
         PropertyItemString labelProperty = new PropertyItemString("Label", "Display this text next to the graph.", "");
         propertySet.add_item(labelProperty);
 
-        PropertiesQuery propertiesQuery = new PropertiesQuery("Watch Wire", this, propertySet);
+        PropertiesQuery propertiesQuery = new PropertiesQuery("Watch Wire", this.window, propertySet);
 
-        set_keep_above(false);
+        window.set_keep_above(false);
 
         if (propertiesQuery.run() == Gtk.ResponseType.APPLY) {
             string label = labelProperty.data;
@@ -332,7 +245,7 @@ public class TimingDiagram : Gtk.Window {
             update_display(true);
         }
 
-        set_keep_above(alwaysOnTop);
+        window.set_keep_above(alwaysOnTop);
     }
 
     private void forget_wire(int wireNumber) {
@@ -392,9 +305,9 @@ public class TimingDiagram : Gtk.Window {
             PropertyItemString labelProperty = new PropertyItemString("Label", "Display this text next to the graph.", labels[wireNumber]);
             propertySet.add_item(labelProperty);
 
-            PropertiesQuery propertiesQuery = new PropertiesQuery("Watch Wire", this, propertySet);
+            PropertiesQuery propertiesQuery = new PropertiesQuery("Watch Wire", this.window, propertySet);
 
-            set_keep_above(false);
+            window.set_keep_above(false);
 
             if (propertiesQuery.run() == Gtk.ResponseType.APPLY) {
                 string label = labelProperty.data;
@@ -408,7 +321,7 @@ public class TimingDiagram : Gtk.Window {
                 update_display(true);
             }
 
-            set_keep_above(alwaysOnTop);
+            window.set_keep_above(alwaysOnTop);
         }
     }
 
@@ -443,10 +356,6 @@ public class TimingDiagram : Gtk.Window {
     }
 
     private bool mouse_move(Gdk.EventMotion event) {
-        if (Gtk.events_pending()) {
-            return false;
-        }
-
         barPosition = event.x;
 
         update_display(false);
@@ -638,13 +547,13 @@ public class TimingDiagram : Gtk.Window {
             backgroundCache = null;
         }
 
-        if (visible) {
+        if (window.visible) {
             display.queue_draw();
         }
     }
 
     public void render(Cairo.Context displayContext) {
-        if (!visible) {
+        if (!window.visible) {
             return;
         }
 
@@ -671,8 +580,6 @@ public class TimingDiagram : Gtk.Window {
             render_ruler(backgroundContext, width, height, largestLength);
 
             largestLengthCache = largestLength;
-
-            render_bar(backgroundContext, height, largestLength);
         } else {
             largestLength = largestLengthCache;
         }
@@ -683,6 +590,8 @@ public class TimingDiagram : Gtk.Window {
 
         // Render the graph data
         render_graphs(context, width, largestLength);
+
+        render_bar(context, height, largestLength);
 
         // Update on screen
         displayContext.set_source_surface(offScreenSurface, 0, 0);

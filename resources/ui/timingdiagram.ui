@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <!-- Hidden radio button, used mainly for nice group names -->
+  <object id="tool_group" class="GtkRadioToolButton">
+    <property name="active">False</property>
+    <property name="sensitive">False</property>
+  </object>
+  <object id="window" class="GtkWindow">
+    <property name="title">Timing Diagram</property>
+    <property name="icon_name">smartsim</property>
+    <property name="default_width">800</property>
+    <property name="default_height">400</property>
+    <property name="border_width">0</property>
+    <signal name="delete_event" handler="timing_diagram_ui_delete_window"/>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <!-- Menu -->
+        <child>
+          <object class="GtkMenuBar">
+            <child>
+              <object class="GtkMenuItem">
+                <property name="label">File</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object id="menu_file_export" class="GtkMenuItem">
+                        <property name="label">Export</property>
+                        <child type="submenu">
+                          <object class="GtkMenu">
+                            <child>
+                              <object id="menu_export_png" class="GtkMenuItem">
+                                <property name="label">Diagram Image as PNG Image</property>
+                                <signal name="activate" handler="timing_diagram_ui_export_png"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object id="menu_export_pdf" class="GtkMenuItem">
+                                <property name="label">Diagram Image as PDF Document</property>
+                                <signal name="activate" handler="timing_diagram_ui_export_pdf"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object id="menu_export_svg" class="GtkMenuItem">
+                                <property name="label">Diagram Image as SVG Image</property>
+                                <signal name="activate" handler="timing_diagram_ui_export_svg"/>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="label">Close Timing Diagram</property>
+                        <signal name="activate" handler="timing_diagram_ui_close"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="label">Recording</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="label">Reset</property>
+                        <signal name="activate" handler="timing_diagram_ui_reset_recording"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="label">View</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <child>
+                      <object class="GtkCheckMenuItem">
+                        <property name="label">Always On Top</property>
+                        <property name="active">True</property>
+                        <signal name="activate" handler="timing_diagram_ui_always_on_top"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckMenuItem">
+                        <property name="label">Show Grid</property>
+                        <property name="active">True</property>
+                        <signal name="activate" handler="timing_diagram_ui_show_grid"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="label">Reset View</property>
+                        <signal name="activate" handler="timing_diagram_ui_reset_view"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkToolbar">
+            <property name="toolbar_style">icons</property>
+            <!-- radio tools' signals connected in code -->
+            <child>
+              <object id="tool_scroll" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Scroll</property>
+                <property name="icon_name">smartsim-scroll</property>
+                <property name="tooltip_text">Scroll: Move the view of the Timing Diagram using click and drag.</property>
+                <property name="active">True</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_zoom" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Zoom</property>
+                <property name="icon_name">smartsim-zoom</property>
+                <property name="tooltip_text">Zoom: Drag downward to zoom in, or upward to zoom out.</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem">
+              </object>
+            </child>
+            <child>
+              <object id="tool_move" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Move</property>
+                <property name="icon_name">smartsim-move</property>
+                <property name="tooltip_text">Move: Click and drag a trace to reorder it.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_delete" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Delete</property>
+                <property name="icon_name">smartsim-delete</property>
+                <property name="tooltip_text">Delete: Click on trace to delete it.</property>
+              </object>
+            </child>
+            <child>
+              <object id="tool_adjust" class="GtkRadioToolButton">
+                <property name="group">tool_group</property>
+                <property name="label">Adjust</property>
+                <property name="icon_name">smartsim-adjust</property>
+                <property name="tooltip_text">Adjust: Click on a trace to change its properties.</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object id="controller" class="GtkEventBox">
+            <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+            <signal name="button_press_event" handler="timing_diagram_ui_mouse_down"/>
+            <signal name="motion_notify_event" handler="timing_diagram_ui_mouse_move"/>
+            <signal name="button_release_event" handler="timing_diagram_ui_mouse_up"/>
+            <child>
+              <object id="display" class="GtkDrawingArea">
+                <signal name="draw" handler="timing_diagram_ui_render"/>
+                <signal name="configure_event" handler="timing_diagram_ui_display_configure"/>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="fill">True</property>
+            <property name="expand">True</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

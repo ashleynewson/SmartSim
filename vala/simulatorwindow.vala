@@ -694,7 +694,7 @@ public class SimulatorWindow {
 
         runState = RunState.HALTING;
 
-        timingDiagram.destroy();
+        timingDiagram.close_diagram();
 
         BasicDialog.information(null, "Simulation Summary:\nIterations: " + compiledCircuit.iterationCount.to_string());
 
