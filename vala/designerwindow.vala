@@ -1583,16 +1583,8 @@ public class DesignerWindow {
      * about the SmartSim software package.
      */
     private void show_about() {
-        Gdk.Pixbuf logo = null;
-
-        try {
-            logo = new Gdk.Pixbuf.from_file(Config.resourcesDir + "images/icons/smartsim64.png");
-        } catch {
-            stderr.printf("Could not load logo image.\n");
-        }
-
         Gtk.AboutDialog aboutDialog = new Gtk.AboutDialog();
-        aboutDialog.logo = logo;
+        aboutDialog.set_logo_icon_name("smartsim");
         aboutDialog.program_name = Core.programName;
         aboutDialog.title = "About " + Core.programName;
         aboutDialog.version = Core.versionString;
