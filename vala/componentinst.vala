@@ -117,7 +117,7 @@ public class ComponentInst {
     /**
      * Load a component instance from a file using libxml.
      */
-    public ComponentInst.load(Xml.Node* xmlnode, Project project, WireInst[] newWireInsts) throws ComponentInstLoadError.INVALID, ComponentInstLoadError.MISSING_DEF {
+    public ComponentInst.load(Xml.Node* xmlnode, Project project, Gee.Collection<WireInst> newWireInsts) throws ComponentInstLoadError.INVALID, ComponentInstLoadError.MISSING_DEF {
         myID = -1;
         string defName = "";
         componentDef = null;
@@ -359,7 +359,7 @@ public class ComponentInst {
     /**
      * Finds a WireInst within an array of WireInsts with a given ID.
      */
-    private WireInst? resolve_wire_id(WireInst[] anyWireInsts, int wireid) {
+    private WireInst? resolve_wire_id(Gee.Collection<WireInst> anyWireInsts, int wireid) {
         foreach (WireInst wireInst in anyWireInsts) {
             if (wireInst.myID == wireid) {
                 return wireInst;

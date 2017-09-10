@@ -162,13 +162,14 @@ public class Designer {
      */
     public void add_componentInst(int x, int y, Direction direction, bool autoBind = false) {
         if (hasInsert) {
-            foreach (ComponentInst componentInst in customComponentDef.componentInsts) {
-                if (componentInst.xPosition == x && componentInst.yPosition == y) {
-                    return;
-                }
+            // Prevent adding an overlapping component.
+            if (customComponentDef.get_components_satisfying(
+                    (i)=>{return i.xPosition == x && i.yPosition == y;}
+                ).size > 0) {
+                return;
             }
 
-            ComponentInst componentInst = customComponentDef.add_componentInst(insertComponentDef, x, y, direction);
+            ComponentInst componentInst = customComponentDef.new_component(insertComponentDef, x, y, direction);
 
             if (autoBind) {
                 auto_connect_component(componentInst);
@@ -180,7 +181,7 @@ public class Designer {
      * Add an annotation to the design.
      */
     public void add_annotation(int x, int y, string text, double fontSize = 12) {
-        customComponentDef.add_annotation(x, y, text, fontSize);
+        customComponentDef.new_annotation(x, y, text, fontSize);
     }
 
     /**
@@ -193,7 +194,7 @@ public class Designer {
         if (hasPath) {
             switch (currentPath.append (x, y, diagonalThreshold)) {
             case 1:
-                WireInst wireInst = customComponentDef.add_wire();
+                WireInst wireInst = customComponentDef.new_wire();
                 wireInst.import_path(currentPath);
                 if (autoBind) {
                     auto_connect_path(currentPath);
@@ -219,31 +220,25 @@ public class Designer {
      * any wires passing through (//x//, //y//).
      */
     public int bind_wire(int x, int y) {
-        WireInst[] wireInsts = {};
-        WireInst compositeWireInst = new WireInst();
-        bool addComposite = false;
-        int wiresAdded = 0;
+        Gee.Set<WireInst> found = customComponentDef.get_wires_satisfying(
+            (i)=>{return i.find(x, y) != null;}
+        );
 
-        foreach (WireInst wireInst in customComponentDef.wireInsts) {
-            if (wireInst.find(x, y) != null) {
-                addComposite = true;
-                wiresAdded ++;
+        if (found.size > 0) {
+            WireInst compositeWireInst = customComponentDef.new_wire();
+
+            foreach (WireInst wireInst in found) {
                 compositeWireInst.merge(wireInst);
-            } else {
-                wireInsts += wireInst;
             }
+
+            if (compositeWireInst.count_find(x, y) > 1) {
+                compositeWireInst.mark(x, y);
+            }
+
+            customComponentDef.delete_wires(found);
         }
 
-        if (compositeWireInst.count_find(x, y) > 1) {
-            compositeWireInst.mark(x, y);
-        }
-        if (addComposite) {
-            wireInsts += compositeWireInst;
-        }
-
-        customComponentDef.wireInsts = wireInsts;
-
-        return wiresAdded;
+        return found.size;
     }
 
     /**
@@ -252,24 +247,21 @@ public class Designer {
      * //bind_wire// - it does not break up paths.
      */
     public int unbind_wire(int x, int y) {
-        WireInst[] wireInsts = {};
-        int wiresUnbound = 0;
+        Gee.Set<WireInst> found = customComponentDef.get_wires_satisfying(
+            (i)=>{return i.find(x, y) != null;}
+        );
 
-        foreach (WireInst wireInst in customComponentDef.wireInsts) {
-            if (wireInst.find(x, y) != null) {
-                WireInst[] addWireInsts;
-                addWireInsts = wireInst.unmerge(x, y);
-                foreach (WireInst addWireInst in addWireInsts) {
-                    wireInsts += addWireInst;
-                }
-            } else {
-                wireInsts += wireInst;
+        if (found.size > 0) {
+            foreach (WireInst wireInst in found) {
+                // This unmerge steals the pin bindings.
+                WireInst[] addWireInsts = wireInst.unmerge(x, y);
+                // Remove first in case it's simply re-added.
+                customComponentDef.delete_wire(wireInst);
+                customComponentDef.add_wires_array(addWireInsts);
             }
         }
 
-        customComponentDef.wireInsts = wireInsts;
-
-        return wiresUnbound;
+        return found.size;
     }
 
     /**
@@ -689,9 +681,9 @@ public class Designer {
      * vertically. If //ignoreSelect// is true, all wires move.
      */
     public void move_wires(int x, int y, bool ignoreSelect, bool autoBind = false) {
-        foreach (WireInst wireInst in customComponentDef.wireInsts) {
+        foreach (WireInst wireInst in customComponentDef.get_wires_satisfying((x)=>{return x.selected;})) {
             wireInst.move(x, y, false);
-            if (wireInst.selected && autoBind) {
+            if (autoBind) {
                 auto_connect_wire(wireInst);
             }
         }

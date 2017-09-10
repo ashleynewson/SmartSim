@@ -246,6 +246,7 @@ VALA_PACKAGES= \
 	--pkg gtk+-3.0 \
 	--pkg librsvg-2.0 \
 	--pkg libxml-2.0 \
+	--pkg gee-0.8 \
 	--pkg gmodule-2.0 \
 	$(NOTHING)
 

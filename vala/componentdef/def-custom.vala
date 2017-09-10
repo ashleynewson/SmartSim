@@ -40,15 +40,15 @@ public class CustomComponentDef : ComponentDef {
     /**
      * All the components contained within the design.
      */
-    public ComponentInst[] componentInsts;
+    public Gee.Set<ComponentInst> componentInsts;
     /**
      * All the wires contained within the design.
      */
-    public WireInst[] wireInsts;
+    public Gee.Set<WireInst> wireInsts;
     /**
      * All the annotations contained within the design.
      */
-    public Annotation[] annotations;
+    public Gee.Set<Annotation> annotations;
     /**
      * The project which this component belongs to.
      */
@@ -62,6 +62,9 @@ public class CustomComponentDef : ComponentDef {
     public CustomComponentDef(Project project) {
         base();
 
+        componentInsts = new Gee.HashSet<ComponentInst>();
+        wireInsts = new Gee.HashSet<WireInst>();
+        annotations = new Gee.HashSet<Annotation>();
         this.project = project;
     }
 
@@ -219,88 +222,170 @@ public class CustomComponentDef : ComponentDef {
         }
     }
 
+    public delegate bool TestFunction<T>(T item);
+    private Gee.Set<T> filter_set<T>(Gee.Set<T> collection, TestFunction<T> test) {
+        Gee.Set<T> newSet = new Gee.HashSet<T>();
+        foreach (T item in collection) {
+            if (test(item)) {
+                newSet.add(item);
+            }
+        }
+        return newSet;
+    }
+
+    public Gee.Set<ComponentInst> get_components_satisfying(TestFunction<ComponentInst> test) {
+        return filter_set(componentInsts, test);
+    }
+    public Gee.Set<WireInst> get_wires_satisfying(TestFunction<WireInst> test) {
+        return filter_set(wireInsts, test);
+    }
+    public Gee.Set<Annotation> get_annotations_satisfying(TestFunction<Annotation> test) {
+        return filter_set(annotations, test);
+    }
+
     /**
      * Add a new ComponentInst of type //componentDef//, at
      * (//x//, //y//), facing //direction// to the design.
      */
-    public ComponentInst add_componentInst(ComponentDef componentDef, int x, int y, Direction direction) {
+    public ComponentInst new_component(ComponentDef componentDef, int x, int y, Direction direction) {
         ComponentInst componentInst = new ComponentInst(componentDef, x, y, direction);
-        ComponentInst[] newComponentInsts = componentInsts;
-        newComponentInsts += componentInst;
-        componentInsts = newComponentInsts;
-        stdout.printf("Added component\n");
+        componentInsts.add(componentInst);
+        stderr.printf("Added component\n");
         return componentInst;
+    }
+    /**
+     * Add an pre-made component to the design.
+     */
+    public void add_component(ComponentInst toAdd) {
+        componentInsts.add(toAdd);
+    }
+    public void add_components(Gee.Collection<ComponentInst> toAdd) {
+        componentInsts.add_all(toAdd);
+    }
+    public void add_components_array(ComponentInst[] toAdd) {
+        componentInsts.add_all_array(toAdd);
     }
 
     /**
      * Add a new Annotation at (//x//, //y//), with text //text// of
      * font size //fontSize// to the design.
      */
-    public void add_annotation(int x, int y, string text, double fontSize = 12) {
+    public Annotation new_annotation(int x, int y, string text, double fontSize = 12) {
         Annotation annotation = new Annotation(x, y, text, fontSize);
-        Annotation[] newAnnotations = annotations;
-        newAnnotations += annotation;
-        annotations = newAnnotations;
-        stdout.printf("Added annotation\n");
+        annotations.add(annotation);
+        stderr.printf("Added annotation\n");
+        return annotation;
+    }
+    /**
+     * Add an pre-made annotation to the design.
+     */
+    public void add_annotation(Annotation toAdd) {
+        annotations.add(toAdd);
+    }
+    public void add_annotations(Gee.Collection<Annotation> toAdd) {
+        annotations.add_all(toAdd);
+    }
+    public void add_annotations_array(Annotation[] toAdd) {
+        annotations.add_all_array(toAdd);
     }
 
     /**
      * Adds a new wire to the design and returns it.
      */
-    public WireInst add_wire() {
+    public WireInst new_wire() {
         WireInst wireInst = new WireInst();
-        WireInst[] newWireInsts = wireInsts;
-        newWireInsts += wireInst;
-        wireInsts = newWireInsts;
-        stdout.printf("Added wire\n");
+        wireInsts.add(wireInst);
+        stderr.printf("Added wire\n");
         return wireInst;
+    }
+    /**
+     * Add an pre-made wire to the design.
+     */
+    public void add_wire(WireInst toAdd) {
+        wireInsts.add(toAdd);
+    }
+    public void add_wires(Gee.Collection<WireInst> toAdd) {
+        wireInsts.add_all(toAdd);
+    }
+    public void add_wires_array(WireInst[] toAdd) {
+        wireInsts.add_all_array(toAdd);
     }
 
     /**
      * Deletes any selected components.
      */
     public void delete_selected_components() {
-        ComponentInst[] newComponentInsts = {};
-        foreach (ComponentInst componentInst in componentInsts) {
-            if (componentInst.selected) {
-                componentInst.detatch_all();
-                stdout.printf("Component deleted\n");
-            } else {
-                newComponentInsts += componentInst;
-            }
+        delete_components(
+            get_components_satisfying((i)=>{return i.selected;})
+        );
+    }
+    /**
+     * Deletes specified components from the component.
+     */
+    public void delete_components(Gee.Collection<ComponentInst> toRemove) {
+        foreach (ComponentInst componentInst in toRemove) {
+            componentInst.detatch_all();
         }
-        componentInsts = newComponentInsts;
+        componentInsts.remove_all(toRemove);
+    }
+    public void delete_components_array(ComponentInst[] toRemove) {
+        foreach (ComponentInst componentInst in toRemove) {
+            componentInst.detatch_all();
+        }
+        componentInsts.remove_all_array(toRemove);
+    }
+    public void delete_component(ComponentInst toRemove) {
+        toRemove.detatch_all();
+        componentInsts.remove(toRemove);
     }
 
     /**
      * Deletes any selected wires.
      */
     public void delete_selected_wires() {
-        WireInst[] newWireInsts = {};
-        foreach (WireInst wireInst in wireInsts) {
-            if (wireInst.selected) {
-                wireInst.disconnect_components();
-                stdout.printf("Wire deleted\n");
-            } else {
-                newWireInsts += wireInst;
-            }
+        delete_wires(
+            get_wires_satisfying((i)=>{return i.selected;})
+        );
+    }
+    /**
+     * Deletes specified wires from the component.
+     */
+    public void delete_wires(Gee.Collection<WireInst> toRemove) {
+        foreach (WireInst wireInst in toRemove) {
+            wireInst.disconnect_components();
         }
-        wireInsts = newWireInsts;
+        wireInsts.remove_all(toRemove);
+    }
+    public void delete_wires_array(WireInst[] toRemove) {
+        foreach (WireInst wireInst in toRemove) {
+            wireInst.disconnect_components();
+        }
+        wireInsts.remove_all_array(toRemove);
+    }
+    public void delete_wire(WireInst toRemove) {
+        toRemove.disconnect_components();
+        wireInsts.remove(toRemove);
     }
 
     /**
      * Deletes any selected annotations.
      */
     public void delete_selected_annotations() {
-        Annotation[] newAnnotations = {};
-        foreach (Annotation annotation in annotations) {
-            if (annotation.selected) {
-                stdout.printf("Annotation deleted\n");
-            } else {
-                newAnnotations += annotation;
-            }
-        }
-        annotations = newAnnotations;
+        delete_annotations(
+            get_annotations_satisfying((i)=>{return i.selected;})
+        );
+    }
+    /**
+     * Deletes specified annotations from the component.
+     */
+    public void delete_annotations(Gee.Collection<Annotation> toRemove) {
+        annotations.remove_all(toRemove);
+    }
+    public void delete_annotations_array(Annotation[] toRemove) {
+        annotations.remove_all_array(toRemove);
+    }
+    public void delete_annotation(Annotation toRemove) {
+        annotations.remove(toRemove);
     }
 
     /**
@@ -309,14 +394,20 @@ public class CustomComponentDef : ComponentDef {
     public void update_ids() {
         stdout.printf("Updating Component IDs\n");
 
-        for (int i = 0; i < componentInsts.length; i ++) {
-            componentInsts[i].myID = i;
+        {
+            int i = 0;
+            foreach (ComponentInst componentInst in componentInsts) {
+                componentInst.myID = i++;
+            }
         }
 
         stdout.printf("Updating Wire IDs\n");
 
-        for (int i = 0; i < wireInsts.length; i ++) {
-            wireInsts[i].myID = i;
+        {
+            int i = 0;
+            foreach (WireInst wireInst in wireInsts) {
+                wireInst.myID = i++;
+            }
         }
     }
 
@@ -395,10 +486,12 @@ public class CustomComponentDef : ComponentDef {
     public int validate_overlaps() {
         int errorCount = 0;
 
-        for (int i1 = 0; i1 < componentInsts.length; i1++) {
-            ComponentInst componentInst1 = componentInsts[i1];
-            for (int i2 = i1+1; i2 < componentInsts.length; i2++) {
-                ComponentInst componentInst2 = componentInsts[i2];
+        ComponentInst[] componentInstsArray = componentInsts.to_array();
+
+        for (int i1 = 0; i1 < componentInstsArray.length; i1++) {
+            ComponentInst componentInst1 = componentInstsArray[i1];
+            for (int i2 = i1+1; i2 < componentInstsArray.length; i2++) {
+                ComponentInst componentInst2 = componentInstsArray[i2];
                 if (componentInst1.xPosition == componentInst2.xPosition
                     && componentInst1.yPosition == componentInst2.yPosition) {
                     stdout.printf("Found overlaping components!\n");
@@ -449,9 +542,9 @@ public class CustomComponentDef : ComponentDef {
             return 1;
         }
 
-        ComponentInst[] newComponentInsts = {};
-        WireInst[] newWireInsts = {};
-        Annotation[] newAnnotations = {};
+        Gee.HashSet<ComponentInst> newComponentInsts = new Gee.HashSet<ComponentInst>();
+        Gee.HashSet<WireInst> newWireInsts = new Gee.HashSet<WireInst>();
+        Gee.HashSet<Annotation> newAnnotations = new Gee.HashSet<Annotation>();
 
         for (xmlnode = xmlroot->children; xmlnode != null; xmlnode = xmlnode->next) {
             if (xmlnode->type != Xml.ElementType.ELEMENT_NODE) {
@@ -463,7 +556,7 @@ public class CustomComponentDef : ComponentDef {
                 {
                     WireInst newWireInst = new WireInst.load(xmlnode);
 
-                    newWireInsts += newWireInst;
+                    newWireInsts.add(newWireInst);
                 }
                 break;
             case "component":
@@ -472,7 +565,7 @@ public class CustomComponentDef : ComponentDef {
 
                     try {
                         newComponentInst = new ComponentInst.load(xmlnode, project, newWireInsts);
-                        newComponentInsts += newComponentInst;
+                        newComponentInsts.add(newComponentInst);
                     } catch (ComponentInstLoadError.INVALID error) {
                         stderr.printf("Error adding new component: %s\n", error.message);
                         throw new CustomComponentDefLoadError.INVALID(error.message);
@@ -485,11 +578,9 @@ public class CustomComponentDef : ComponentDef {
                 break;
             case "annotation":
                 {
-                    Annotation newAnnotation;
-
                     try {
-                        newAnnotation = new Annotation.load(xmlnode);
-                        newAnnotations += newAnnotation;
+                        Annotation newAnnotation = new Annotation.load(xmlnode);
+                        newAnnotations.add(newAnnotation);
                     } catch (AnnotationLoadError.EMPTY error) {
                         stderr.printf("Error adding new annotation: %s\n", error.message);
                     }
@@ -561,21 +652,20 @@ public class CustomComponentDef : ComponentDef {
 
         stdout.printf("Saving wire data...\n");
 
-        for (int i = 0; i < wireInsts.length; i ++) {
-            wireInsts[i].save(xmlWriter);
+        foreach (WireInst wireInst in wireInsts) {
+            wireInst.save(xmlWriter);
         }
 
         stdout.printf("Saving component data...\n");
 
-        for (int i = 0; i < componentInsts.length; i ++) {
-            componentInsts[i].save(xmlWriter);
+        foreach (ComponentInst componentInst in componentInsts) {
+            componentInst.save(xmlWriter);
         }
-
 
         stdout.printf("Saving annotation data...\n");
 
-        for (int i = 0; i < annotations.length; i ++) {
-            annotations[i].save(xmlWriter);
+        foreach (Annotation annotation in annotations) {
+            annotation.save(xmlWriter);
         }
 
         xmlWriter.end_element();
