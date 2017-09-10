@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="3.20"/>
+  <requires lib="gtk+" version="3.14"/>
   <!-- Hidden radio button, used mainly for nice group names -->
   <object id="tool_group" class="GtkRadioToolButton">
     <property name="active">False</property>
