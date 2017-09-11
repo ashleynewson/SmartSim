@@ -1948,8 +1948,8 @@ public class DesignerWindow {
         }
 
         if (hasDesigner) {
-            unregister_designerwindow();
             window.hide();
+            unregister_designerwindow();
             gridCache = null;
         } else {
             force_destroy_window();
