@@ -145,7 +145,7 @@ Installation Names
 `/usr/local/bin', include files under `/usr/local/include', etc.  You
 can specify an installation prefix other than `/usr/local' by giving
 `configure' the option `--prefix=PREFIX', where PREFIX must be an
-absolute file name.
+absolute directory name.
 
    You can specify separate installation prefixes for
 architecture-specific files and architecture-independent files.  If you
