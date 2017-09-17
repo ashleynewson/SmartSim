@@ -222,25 +222,14 @@ public class CustomComponentDef : ComponentDef {
         }
     }
 
-    public delegate bool TestFunction<T>(T item);
-    private Gee.Set<T> filter_set<T>(Gee.Set<T> collection, TestFunction<T> test) {
-        Gee.Set<T> newSet = new Gee.HashSet<T>();
-        foreach (T item in collection) {
-            if (test(item)) {
-                newSet.add(item);
-            }
-        }
-        return newSet;
+    public Gee.Set<ComponentInst> get_components_satisfying(Util.TestFunction<ComponentInst> test) {
+        return Util.filter_set(componentInsts, test);
     }
-
-    public Gee.Set<ComponentInst> get_components_satisfying(TestFunction<ComponentInst> test) {
-        return filter_set(componentInsts, test);
+    public Gee.Set<WireInst> get_wires_satisfying(Util.TestFunction<WireInst> test) {
+        return Util.filter_set(wireInsts, test);
     }
-    public Gee.Set<WireInst> get_wires_satisfying(TestFunction<WireInst> test) {
-        return filter_set(wireInsts, test);
-    }
-    public Gee.Set<Annotation> get_annotations_satisfying(TestFunction<Annotation> test) {
-        return filter_set(annotations, test);
+    public Gee.Set<Annotation> get_annotations_satisfying(Util.TestFunction<Annotation> test) {
+        return Util.filter_set(annotations, test);
     }
 
     /**

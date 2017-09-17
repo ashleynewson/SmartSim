@@ -54,6 +54,7 @@ C_FILES_ROOT= \
 	timingdiagram.c \
 	uicommon.c \
 	updatequeue.c \
+	util.c \
 	$(NOTHING)
 
 C_FILES_COMPONENTDEF= \
@@ -175,6 +176,7 @@ SOURCE_FILES= \
 	timingdiagram.vala \
 	uicommon.vala \
 	updatequeue.vala \
+	util.vala \
 	$(NOTHING)
 
 PLUGIN_COMMON_CFLAGS= \
