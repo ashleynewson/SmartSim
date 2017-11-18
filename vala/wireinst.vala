@@ -30,15 +30,15 @@ public class WireInst {
      * Stores information about a connection to a component, including
      * a marker.
      */
-    public struct RegisteredComponent {
-        weak ComponentInst componentInst;
-        Marker marker;
+    public class RegisteredComponent {
+        public weak ComponentInst componentInst;
+        public Marker marker;
     }
 
     /**
      * Stores information about all connections to components.
      */
-    public RegisteredComponent[] registeredComponents;
+    public Gee.HashSet<RegisteredComponent> registeredComponents;
 
     /**
      * IDs are unique to a custom component design.
@@ -82,6 +82,7 @@ public class WireInst {
      * Creates a new WireInst.
      */
     public WireInst() {
+        registeredComponents = new Gee.HashSet<RegisteredComponent>();
     }
 
     ~WireInst() {
@@ -273,8 +274,7 @@ public class WireInst {
             }
         }
 
-        RegisteredComponent[] newRegisteredComponents = registeredComponents;
-        RegisteredComponent newRegisteredComponent = RegisteredComponent();
+        RegisteredComponent newRegisteredComponent = new RegisteredComponent();
 
         Marker newMarker = Marker();
 
@@ -293,24 +293,17 @@ public class WireInst {
         newRegisteredComponent.componentInst = newComponentInst;
         newRegisteredComponent.marker = newMarker;
 
-        newRegisteredComponents += newRegisteredComponent;
-
-        registeredComponents = newRegisteredComponents;
+        registeredComponents.add(newRegisteredComponent);
     }
 
     /**
      * Unregisters all connections to component //oldComponentInst//.
      */
     public void unregister_component(ComponentInst oldComponentInst) {
-        RegisteredComponent[] newRegisteredComponents = {};
-
-        foreach (RegisteredComponent registeredComponent in registeredComponents) {
-            if (registeredComponent.componentInst != oldComponentInst) {
-                newRegisteredComponents += registeredComponent;
-            }
-        }
-
-        registeredComponents = newRegisteredComponents;
+        Util.filter_set_remove<RegisteredComponent>(
+            registeredComponents,
+            (i) => {return i.componentInst != oldComponentInst;}
+        );
     }
 
     /**
@@ -318,16 +311,10 @@ public class WireInst {
      * which is at (//x//, //y//).
      */
     public void unregister_component_xy(ComponentInst oldComponentInst, int x, int y) {
-        RegisteredComponent[] newRegisteredComponents = {};
-
-        foreach (RegisteredComponent registeredComponent in registeredComponents) {
-            Marker marker = registeredComponent.marker;
-            if (registeredComponent.componentInst != oldComponentInst || marker.x != x || marker.y != y) {
-                newRegisteredComponents += registeredComponent;
-            }
-        }
-
-        registeredComponents = newRegisteredComponents;
+        Util.filter_set_remove<RegisteredComponent>(
+            registeredComponents,
+            (i) => {return i.componentInst != oldComponentInst || i.marker.x != x || i.marker.y != y;}
+        );
     }
 
     /**
@@ -338,7 +325,7 @@ public class WireInst {
         foreach (RegisteredComponent registeredComponent in registeredComponents) {
             registeredComponent.componentInst.disconnect_wire(this, false);
         }
-        registeredComponents = {};
+        registeredComponents.clear();
     }
 
     /**
@@ -349,7 +336,7 @@ public class WireInst {
     public void merge(WireInst sourceWireInst) {
         Path[] newPaths = paths;
         Marker[] newMarkers = markers;
-        RegisteredComponent[] newRegisteredComponents = registeredComponents;
+        Gee.HashSet<RegisteredComponent> newRegisteredComponents = new Gee.HashSet<RegisteredComponent>();
 
         foreach (Path path in sourceWireInst.paths) {
             if (!try_merge_paths(path)) {
@@ -365,7 +352,7 @@ public class WireInst {
 
         foreach (RegisteredComponent registeredComponent in sourceWireInst.registeredComponents) {
             registeredComponent.componentInst.change_wire(sourceWireInst, this);
-            newRegisteredComponents += registeredComponent;
+            newRegisteredComponents.add(registeredComponent);
         }
 
         paths = newPaths;
