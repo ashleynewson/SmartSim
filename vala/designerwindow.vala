@@ -1019,7 +1019,6 @@ public class DesignerWindow {
                 designer.shadowComponentInst.xPosition = xBoardEnd;
                 designer.shadowComponentInst.yPosition = yBoardEnd;
                 designer.shadowComponentInst.direction = direction;
-                stderr.printf("y\n");
                 update_overlay();
             }
             break;
