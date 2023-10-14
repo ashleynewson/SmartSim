@@ -6,7 +6,7 @@ NOTHING=
 
 VALAC=valac
 
-VAPIDIR=/usr/share/vala-0.16/vapi/
+VAPIDIR=/usr/share/vala/vapi/
 
 WINCC=i586-mingw32msvc-cc
 

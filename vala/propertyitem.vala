@@ -29,7 +29,7 @@ public abstract class PropertyItem {
     public string name;
     public string description;
 
-    public PropertyItem(string name, string description = "") {
+    protected PropertyItem(string name, string description = "") {
         this.name = name;
         this.description = description;
     }
